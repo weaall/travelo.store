@@ -1,6 +1,5 @@
 import mysql from "mysql2";
 import dotenv from "dotenv";
-import { DefaultDeserializer } from "v8";
 
 dotenv.config();
 
