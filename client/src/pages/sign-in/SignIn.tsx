@@ -11,6 +11,7 @@ export default function SignIn() {
 
             <tw.ContentsBg />
             <tw.ContentsWrap>
+
                 <tw.ContentsLabel>Welcome Back</tw.ContentsLabel>
                 <tw.ContentsText>Enter your details below</tw.ContentsText>
                 <tw.Input></tw.Input>
@@ -26,6 +27,7 @@ export default function SignIn() {
                         <KaKao />
                         <Naver />
                     </tw.SocialButtonWrap>
+                    
                 </tw.SocialWrap>
             </tw.ContentsWrap>
         </tw.Container>
