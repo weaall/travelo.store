@@ -1,8 +1,24 @@
+import { useState } from "react"
+import { axios, axiosInstance } from "../../utils/axios.utils"
 import KaKao from "./Kakao"
 import Naver from "./Naver"
 import * as tw from "./SignIn.styles"
 
 export default function SignIn() {
+    const [tables, setTables] = useState()
+
+    const fetchData = async () => {
+        try {
+            const response = await axiosInstance.get("/")
+            setTables(response.data)
+            console.log(response.data)
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                window.alert("올바른 접근이 아닙니다.")
+            }
+        }
+    }
+
     return (
         <tw.Container>
             <tw.BannerWrap>
@@ -17,7 +33,7 @@ export default function SignIn() {
                 <tw.Input></tw.Input>
                 <tw.Input></tw.Input>
 
-                <tw.RegBtn>Sign in</tw.RegBtn>
+                <tw.RegBtn onClick={()=>fetchData()}>Sign in</tw.RegBtn>
                 <tw.PwLabel>Forgot your password?</tw.PwLabel>
 
                 <tw.SocialWrap>
