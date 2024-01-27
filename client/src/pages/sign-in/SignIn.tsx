@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { axios, axiosInstance } from "../../utils/axios.utils"
 import KaKao from "./Kakao"
 import Naver from "./Naver"
@@ -18,6 +18,10 @@ export default function SignIn() {
             }
         }
     }
+
+    useEffect(() => {
+        fetchData()
+    },[])
 
     return (
         <tw.Container>
