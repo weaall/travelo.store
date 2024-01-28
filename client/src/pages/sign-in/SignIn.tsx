@@ -3,13 +3,25 @@ import { axios, axiosInstance } from "../../utils/axios.utils"
 import KaKao from "./Kakao"
 import Naver from "./Naver"
 import * as tw from "./SignIn.styles"
+import { ModalPortal } from "../../hook/modal/ModalPortal"
+import LoginModal from "../../hook/modal/LoginModal"
 
 export default function SignIn() {
     const [tables, setTables] = useState()
 
+    const [isModalOpen, setIsModalOpen] = useState(false)
+
+    const openModal = () => {
+        setIsModalOpen(true)
+    }
+
+    const closeModal = () => {
+        setIsModalOpen(false)
+    }
+
     const fetchData = async () => {
         try {
-            const response = await axiosInstance.get("/")
+            const response = await axiosInstance.get("/dept")
             setTables(response.data)
             console.log(response.data)
         } catch (error) {
@@ -21,7 +33,7 @@ export default function SignIn() {
 
     useEffect(() => {
         fetchData()
-    },[])
+    }, [])
 
     return (
         <tw.Container>
@@ -31,13 +43,12 @@ export default function SignIn() {
 
             <tw.ContentsBg />
             <tw.ContentsWrap>
-
                 <tw.ContentsLabel>Welcome Back</tw.ContentsLabel>
                 <tw.ContentsText>Enter your details below</tw.ContentsText>
                 <tw.Input></tw.Input>
                 <tw.Input></tw.Input>
 
-                <tw.RegBtn onClick={()=>fetchData()}>Sign in</tw.RegBtn>
+                <tw.RegBtn onClick={openModal}>Sign in</tw.RegBtn>
                 <tw.PwLabel>Forgot your password?</tw.PwLabel>
 
                 <tw.SocialWrap>
@@ -47,9 +58,14 @@ export default function SignIn() {
                         <KaKao />
                         <Naver />
                     </tw.SocialButtonWrap>
-                    
                 </tw.SocialWrap>
             </tw.ContentsWrap>
+
+            {isModalOpen && (
+                <ModalPortal>
+                    <LoginModal onClose={closeModal} />
+                </ModalPortal>
+            )}
         </tw.Container>
     )
 }
