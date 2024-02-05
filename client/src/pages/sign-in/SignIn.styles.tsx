@@ -2,7 +2,6 @@ import tw from "tailwind-styled-components"
 
 export const Container = tw.div`h-full flex flex-col items-center bg-gradient-to-r from-teal-400 to-teal-100 rounded-t-[32px]`
 
-
 export const BannerWrap = tw.div`py-20`
 export const BannerLabel = tw.h1`text-4xl text-white font-bold`
 

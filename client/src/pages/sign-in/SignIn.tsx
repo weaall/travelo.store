@@ -48,7 +48,7 @@ export default function SignIn() {
                 <tw.Input></tw.Input>
                 <tw.Input></tw.Input>
 
-                <tw.RegBtn onClick={openModal}>Sign in</tw.RegBtn>
+                <tw.RegBtn>Sign in</tw.RegBtn>
                 <tw.PwLabel>Forgot your password?</tw.PwLabel>
 
                 <tw.SocialWrap>

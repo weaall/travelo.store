@@ -12,7 +12,6 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
     return (
         <div className="absolute top-0">
             <div>
-                <h3>아이디와 비밀번호 모두 입력해주세요.</h3>
                 <button type="button" onClick={onClose}>
                     닫기
                 </button>
