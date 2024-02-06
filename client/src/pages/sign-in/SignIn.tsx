@@ -21,7 +21,7 @@ export default function SignIn() {
 
     const fetchData = async () => {
         try {
-            const response = await axiosInstance.get("/dept")
+            const response = await axiosInstance.post("/auth/kakao", {id:123126})
             setTables(response.data)
             console.log(response.data)
         } catch (error) {
@@ -32,7 +32,6 @@ export default function SignIn() {
     }
 
     useEffect(() => {
-        fetchData()
     }, [])
 
     return (
@@ -48,7 +47,7 @@ export default function SignIn() {
                 <tw.Input></tw.Input>
                 <tw.Input></tw.Input>
 
-                <tw.RegBtn>Sign in</tw.RegBtn>
+                <tw.RegBtn onClick={()=>fetchData()}>Sign in</tw.RegBtn>
                 <tw.PwLabel>Forgot your password?</tw.PwLabel>
 
                 <tw.SocialWrap>

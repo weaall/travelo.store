@@ -12,7 +12,7 @@ export default function Naver() {
 
     return (
         <tw.SocialButton onClick={loginHandler}>
-            <tw.SocialSVG alt="" src={require("../../asset/svg/btn_naver.svg").default}></tw.SocialSVG>
+            <tw.SocialSVG alt="" src={require("../../assets/svg/btn_naver.svg").default}></tw.SocialSVG>
         </tw.SocialButton>
     )
 }

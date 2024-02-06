@@ -5,6 +5,7 @@ import * as tw from "./App.styles"
 import Header from "./components/header/Header"
 import Main from "./pages/main/Main"
 import SignIn from "./pages/sign-in/SignIn"
+import AuthKaKao from "./pages/auth/Auth.kakao"
 
 function App() {
     return (
@@ -15,6 +16,7 @@ function App() {
                     <Routes>
                         <Route path="/main" element={<Main />} />
                         <Route path="/" element={<SignIn />} />
+                        <Route path="/auth/kakao" element={<AuthKaKao />} />
                     </Routes>
                 </tw.ContentsWrap>
             </tw.Container>

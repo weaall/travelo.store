@@ -1,10 +1,6 @@
-import { useEffect } from "react"
 import * as tw from "./Main.styles"
 
 export default function Main() {
-    const code = new URL(document.location.toString()).searchParams.get("code")
-
-    useEffect(() => {}, [])
 
     return (
         <tw.Container>
