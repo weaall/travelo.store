@@ -1,12 +1,36 @@
 import pool from "../config/db";
+import bcrypt from "bcrypt";
 import CustomError from "../utils/customError";
 
 import jwt from "jsonwebtoken";
-import { userDataProps } from "../interface/interfaces";
+import { SignUpParams, userDataProps } from "../interface/interfaces";
 
 const JWT_SECRET = process.env.JWT_SECRET || "";
 
 const authService = {
+    async singUp({ email, password, name, phone_num }: SignUpParams) {
+
+        
+        const hashedPassword = await bcrypt .hash(password, 12);
+        const checkIdSql = "SELECT * FROM user WHERE email = ?";
+        const checkIdParams = [email];
+        const singUpSql = "INSERT INTO user (email, password, name, phone_num) VALUES (? , ? , ? , ?)";
+        const singUpParams = [email, hashedPassword, name, phone_num];
+        try {
+            const [rows] = await pool.execute(checkIdSql, checkIdParams);
+
+            if (JSON.stringify(rows) !== JSON.stringify([])) {
+                throw new CustomError("이미 존재하는 이메일입니다.", 409);
+            }
+
+            const [result] = await pool.execute(singUpSql, singUpParams);
+
+            return result;
+        } catch (error) {
+            throw error;
+        }
+    },
+
     async kakaoSignIn(id: string) {
         if (!id) {
             throw new CustomError("POST data is missing or empty.", 400);
@@ -41,8 +65,8 @@ const authService = {
                     throw new CustomError("Internal Server Error", 500);
                 }
             }
-        } catch (err) {
-            throw new CustomError("Internal Server Error", 500);
+        } catch (error) {
+            throw error
         }
     },
 };

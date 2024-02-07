@@ -11,7 +11,7 @@ export const ContentsWrap = tw.div`bg-white w-full px-[10%] rounded-t-[32px] pt-
 export const ContentsLabel = tw.p`text-3xl font-bold`
 export const ContentsText = tw.p`text-base text-gray-400 py-3`
 
-export const Input = tw.input`w-full h-14 ps-6 pe-6 rounded-[12px] border border-main outline-main my-2`
+export const Input = tw.input`w-full h-14 ps-6 pe-6 rounded-[12px] border border-main outline-main my-2 font-3xl`
 
 export const RegBtn = tw.button`bg-gradient-to-r from-teal-400 to-teal-200 
 w-full h-14 font-bold text-white rounded-[12px] my-2`

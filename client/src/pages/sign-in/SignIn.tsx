@@ -4,11 +4,11 @@ import KaKao from "./Kakao"
 import Naver from "./Naver"
 import * as tw from "./SignIn.styles"
 import { ModalPortal } from "../../hook/modal/ModalPortal"
-import LoginModal from "../../hook/modal/LoginModal"
+import LoginModal from "../../hook/modal/ModalLayout"
+import { useNavigate } from "react-router-dom"
 
 export default function SignIn() {
-    const [tables, setTables] = useState()
-
+    const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false)
 
     const openModal = () => {
@@ -17,18 +17,6 @@ export default function SignIn() {
 
     const closeModal = () => {
         setIsModalOpen(false)
-    }
-
-    const fetchData = async () => {
-        try {
-            const response = await axiosInstance.post("/auth/kakao", {id:123126})
-            setTables(response.data)
-            console.log(response.data)
-        } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                window.alert("올바른 접근이 아닙니다.")
-            }
-        }
     }
 
     useEffect(() => {
@@ -47,8 +35,8 @@ export default function SignIn() {
                 <tw.Input></tw.Input>
                 <tw.Input></tw.Input>
 
-                <tw.RegBtn onClick={()=>fetchData()}>Sign in</tw.RegBtn>
-                <tw.PwLabel>Forgot your password?</tw.PwLabel>
+                <tw.RegBtn>Sign in</tw.RegBtn>
+                <tw.PwLabel onClick={()=>navigate("/signup")}>Forgot your password?</tw.PwLabel>
 
                 <tw.SocialWrap>
                     <tw.SocialLabel>Or sign in with</tw.SocialLabel>

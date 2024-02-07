@@ -15,8 +15,8 @@ function AuthKaKao() {
     const getToken = async () => {
         try {
             const grant_type = "authorization_code"
-            const REST_API_KEY = "b517102fd48b9146ce57e06961774d4d"
-            const REDIRECT_URI = "http://localhost:3000/auth/kakao"
+            const REST_API_KEY = process.env.REACT_APP_REST_API_KEY
+            const REDIRECT_URI = process.env.REACT_APP_REDIRECT_URI
             const AUTHORIZE_CODE = code
 
             const res = await axios.post(

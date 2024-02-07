@@ -8,3 +8,10 @@ export interface userDataProps {
     social_id: string;
     admin: number;
 }
+
+export interface SignUpParams {
+    email: string;
+    password: string;
+    name: string;
+    phone_num: string;
+}
