@@ -1,6 +1,6 @@
 import tw from "tailwind-styled-components"
 
-export const Container = tw.div`w-full h-full bg-zinc-400/[0.3] absolute top-0`
+export const Container = tw.div`w-full h-full bg-zinc-400/[0.3] fixed top-0`
 export const ModalWrap = tw.div`max-w-[28rem] w-[80%] h-[32rem] flex flex-col rounded-[16px] p-6
 bg-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2`
 

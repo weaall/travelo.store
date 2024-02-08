@@ -30,16 +30,23 @@ export default function SignUp() {
         isPhoneNumber: false,
     })
 
+    const [termsValid, setTermsValid] = useState(false)
+
+    const isFormValid = () => {
+        return formValid.isEmail && formValid.isPassword && formValid.isUserName && formValid.isPhoneNumber && termsValid
+    }
+
     const handleInput = (e: React.FormEvent<HTMLInputElement>, validationFunction: (value: string) => boolean, validationKey: string) => {
         const { value } = (e as React.ChangeEvent<HTMLInputElement>).target
         setFormValid({
             ...formValid,
-            [validationKey]: value === "" ? false : !validationFunction(value),
+            [validationKey]: validationFunction(value),
         })
     }
+
     const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
-        const sanitizedValue = name === "phoneNumber" ? value.replace(/[^0-9]/g, "") : value
+        const sanitizedValue = name === "phone_num" ? value.replace(/[^0-9]/g, "") : value
         setFormData({ ...formData, [name]: sanitizedValue })
     }
 
@@ -84,7 +91,7 @@ export default function SignUp() {
                     <tw.VerifyBtn>Verify</tw.VerifyBtn>
                 </tw.FlexWrap>
                 <tw.UnderTag draggable="true" $validator={formValid.isEmail}>
-                    {formData.email === "" ? "" : formValid.isEmail === true ? "example@gmail.com 형식으로 입력해 주세요." : "올바른 이메일입니다."}
+                    {formData.email === "" ? "" : formValid.isEmail === false ? "example@gmail.com 형식으로 입력해 주세요." : "올바른 이메일입니다."}
                 </tw.UnderTag>
 
                 <tw.UpperTag>Password</tw.UpperTag>
@@ -99,7 +106,7 @@ export default function SignUp() {
                 <tw.UnderTag draggable="true" $validator={formValid.isPassword}>
                     {formData.password === ""
                         ? ""
-                        : formValid.isPassword === true
+                        : formValid.isPassword === false
                         ? "영문,숫자,특수문자를 포함한 8자리 이상을 입력해 주세요. "
                         : "올바른 비밀번호입니다."}
                 </tw.UnderTag>
@@ -113,7 +120,7 @@ export default function SignUp() {
                     maxLength={8}
                 />
                 <tw.UnderTag draggable="true" $validator={formValid.isUserName}>
-                    {formData.name === "" ? "" : formValid.isUserName === true ? "올바른 이름을 입력해주세요." : "올바른 이름입니다."}
+                    {formData.name === "" ? "" : formValid.isUserName === false ? "올바른 이름을 입력해주세요." : "올바른 이름입니다."}
                 </tw.UnderTag>
 
                 <tw.UpperTag>Your Phone Number</tw.UpperTag>
@@ -125,25 +132,27 @@ export default function SignUp() {
                     maxLength={11}
                 />
                 <tw.UnderTag draggable="true" $validator={formValid.isPhoneNumber}>
-                    {formData.phone_num === "" ? "" : formValid.isPhoneNumber === true ? "올바른 전화번호를 입력해주세요." : "올바른 전화번호입니다."}
+                    {formData.phone_num === "" ? "" : formValid.isPhoneNumber === false ? "올바른 전화번호를 입력해주세요." : "올바른 전화번호입니다."}
                 </tw.UnderTag>
 
                 <tw.FlexWrap>
-                    <tw.CheckBox type="checkbox" />
+                    <tw.CheckBox checked={termsValid} onChange={() => setTermsValid((prevTermsValid) => !prevTermsValid)} type="checkbox" />
                     <tw.CheckLabel>
                         I agree to the
-                        <tw.Terms onClick={() => openModal()}> Terms & Conditions </tw.Terms>
-                        and 
-                        <tw.Terms onClick={() => openModal()}> Privacy Policy</tw.Terms>
+                        <tw.Terms onClick={openModal}> Terms & Conditions </tw.Terms>
+                        and
+                        <tw.Terms onClick={openModal}> Privacy Policy</tw.Terms>
                     </tw.CheckLabel>
                 </tw.FlexWrap>
 
-                <tw.RegBtn onClick={()=>onClickSignUp()}>Create account</tw.RegBtn>
+                <tw.RegBtn onClick={onClickSignUp} $validator={isFormValid()} disabled={!isFormValid()}>
+                    Create account
+                </tw.RegBtn>
             </tw.ContentsWrap>
 
             {isModalOpen && (
                 <ModalPortal>
-                    <Terms onClose={closeModal}/>
+                    <Terms onClose={closeModal} />
                 </ModalPortal>
             )}
         </tw.Container>

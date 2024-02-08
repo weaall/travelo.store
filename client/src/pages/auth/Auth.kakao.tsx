@@ -66,9 +66,11 @@ function AuthKaKao() {
         try {
             const response = await axiosInstance.post("/auth/kakao", data)
             const receivedToken = response.data.data
-            Cookies.set("jwt", receivedToken, { expires: 6 })
-            window.alert("성공적으로 로그인되었습니다.")
-            navigate("/main")
+            if (response.status === 201) {
+                Cookies.set("jwt", receivedToken, { expires: 6 })
+                window.alert("성공적으로 로그인되었습니다.")
+                navigate("/main")
+            }
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 window.alert("올바른 접근이 아닙니다.")
