@@ -2,12 +2,12 @@ import { useEffect, useState } from "react"
 import { axios, axiosInstance } from "../../utils/axios.utils"
 import KaKao from "./Kakao"
 import Naver from "./Naver"
-import * as tw from "./SignIn.styles"
 import { ModalPortal } from "../../hook/modal/ModalPortal"
 import LoginModal from "../../hook/modal/ModalLayout"
 import { useNavigate } from "react-router-dom"
 import { checkValidEmail, checkValidPassword } from "../../utils/regExp.utils"
 import Cookies from "js-cookie"
+import * as tw from "./SignIn.styles"
 
 export default function SignIn() {
     const navigate = useNavigate()
@@ -77,11 +77,9 @@ export default function SignIn() {
                 <tw.BannerLabel>Weaall</tw.BannerLabel>
             </tw.BannerWrap>
 
-            <tw.ContentsBg />
             <tw.ContentsWrap>
-                <tw.ContentsLabel>Welcome Back</tw.ContentsLabel>
-                <tw.ContentsText>Enter your details below</tw.ContentsText>
 
+                <tw.InputWrap>
                 <tw.UpperTag>Your Email</tw.UpperTag>
                 <tw.Input
                     onChange={onChangeInput}
@@ -112,9 +110,11 @@ export default function SignIn() {
                         : "올바른 비밀번호입니다."}
                 </tw.UnderTag>
 
-                <tw.RegBtn onClick={onClickSignIn} $validator={isFormValid()} disabled={!isFormValid()}>
+                </tw.InputWrap>
+
+                <tw.SignInBtn onClick={onClickSignIn} $validator={isFormValid()} disabled={!isFormValid()}>
                     Sign in
-                </tw.RegBtn>
+                </tw.SignInBtn>
                 <tw.PwLabel onClick={() => navigate("/signup")}>Forgot your password?</tw.PwLabel>
 
                 <tw.SocialWrap>

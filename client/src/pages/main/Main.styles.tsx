@@ -1,6 +1,6 @@
 import tw from "tailwind-styled-components"
 
-export const Container = tw.div`h-full flex flex-col items-center rounded-t-[32px] bg-gray-200 py-10`
+export const Container = tw.div`mt-24 h-full flex flex-col items-center rounded-[32px] bg-gray-100 py-10`
 export const ContentsWrap = tw.div``
 
 export const MainContainer = tw.div` w-full`
@@ -12,7 +12,7 @@ export const SelectRegion = tw.div `w-full mx-4 flex ml-2`
 export const SelectStartDate = tw.div`w-1/2 h-full border-r border-gray-300 ml-2 flex items-center`
 export const SelectEndDate = tw.div`w-1/2 h-full ml-2 flex items-center`
 
-export const SortContainer = tw.div` m-[10%] rounded-md h-14 bg-white flex text-xl font-semibold cursor-pointer text-center items-center`
+export const SortContainer = tw.div`my-10 mx-[10%] rounded-md h-14 bg-white flex text-xl font-semibold cursor-pointer text-center items-center`
 export const SortBtn = tw.button` w-1/2 h-full border-r border-gray-300`
 export const FilterBtn = tw.button` w-1/2 h-full`
 
