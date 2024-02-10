@@ -5,9 +5,17 @@ import { axiosInstance } from "../../utils/axios.utils"
 import Cookies from "js-cookie"
 
 import * as styled from "./Auth.styles"
+import { useSetRecoilState } from "recoil"
+import { HeaderRenderAtom } from "../../recoil/HeaderRender.Atom"
 
 function AuthKaKao() {
     const navigate = useNavigate()
+
+    const setHeaderRender = useSetRecoilState(HeaderRenderAtom);
+
+    const headerRender = () => {
+        setHeaderRender((prevCount) => prevCount + 1);
+      };
 
     const params = new URL(document.location.toString()).searchParams
     const code = params.get("code")
@@ -69,6 +77,7 @@ function AuthKaKao() {
             if (response.status === 201) {
                 Cookies.set("jwt", receivedToken, { expires: 6 })
                 window.alert("성공적으로 로그인되었습니다.")
+                headerRender();
                 navigate("/main")
             }
         } catch (error) {

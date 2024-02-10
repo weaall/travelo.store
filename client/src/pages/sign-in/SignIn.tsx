@@ -8,9 +8,13 @@ import { useNavigate } from "react-router-dom"
 import { checkValidEmail, checkValidPassword } from "../../utils/regExp.utils"
 import Cookies from "js-cookie"
 import * as tw from "./SignIn.styles"
+import { useSetRecoilState } from "recoil"
+import { HeaderRenderAtom } from "../../recoil/HeaderRender.Atom"
 
 export default function SignIn() {
     const navigate = useNavigate()
+    const setHeaderRender = useSetRecoilState(HeaderRenderAtom);
+    
     const [isModalOpen, setIsModalOpen] = useState(false)
 
     const openModal = () => {
@@ -48,6 +52,10 @@ export default function SignIn() {
         setFormData({ ...formData, [name]: value })
     }
 
+    const headerRender = () => {
+        setHeaderRender((prevCount) => prevCount + 1);
+      };
+
     const onClickSignIn = async () => {
         try {
             const response = await axiosInstance.post("/auth/sign-in", formData)
@@ -55,6 +63,7 @@ export default function SignIn() {
             if (response.status === 201) {
                 Cookies.set("jwt", receivedToken, { expires: 6 })
                 window.alert("성공적으로 로그인되었습니다.")
+                headerRender();
                 navigate("/main")
             }
             
@@ -74,7 +83,7 @@ export default function SignIn() {
     return (
         <tw.Container>
             <tw.BannerWrap>
-                <tw.BannerLabel>Weaall</tw.BannerLabel>
+                <tw.BannerLabel>weaall dev</tw.BannerLabel>
             </tw.BannerWrap>
 
             <tw.ContentsWrap>
