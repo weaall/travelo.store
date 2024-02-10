@@ -16,7 +16,7 @@ function App() {
                     <Header />
                     <Routes>
                         <Route path="/main" element={<Main />} />
-                        <Route path="/" element={<SignIn />} />
+                        <Route path="/signin" element={<SignIn />} />
                         <Route path="/signup" element={<SignUp />} />
                         <Route path="/auth/kakao" element={<AuthKaKao />} />
                     </Routes>

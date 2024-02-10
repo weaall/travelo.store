@@ -5,8 +5,8 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                main: "#2dd4bf",
-                "t-main": "#dddddd",
+                main: "#6666ff",
+                tomain: "#9999ff",
             },
             screens: {
                 mobile: { max: "640px" },
