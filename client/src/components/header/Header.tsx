@@ -1,14 +1,28 @@
 import { useNavigate } from "react-router-dom"
 import Cookies from "js-cookie"
 import { useEffect, useState } from "react"
-import { HeaderRenderAtom } from "../../recoil/HeaderRender.Atom"
+import { HeaderRenderAtom, HeaderVisibleAtom } from "../../recoil/HeaderRender.Atom"
 import { useRecoilState } from "recoil"
 import * as tw from "./Header.styles"
+import { ModalPortal } from "../../hook/modal/ModalPortal"
+import Terms from "../../hook/modal/Terms/Terms.modal"
 
 export default function Header() {
     const navigate = useNavigate()
 
     const [headerRender, setHeaderRender] = useRecoilState(HeaderRenderAtom)
+    const [headerVisible, setHeaderheaderVisible] = useRecoilState(HeaderVisibleAtom)
+
+    const [isModalOpen, setIsModalOpen] = useState(false)
+
+    const openModal = () => {
+        setIsModalOpen(true)
+    }
+
+    const closeModal = () => {
+        setIsModalOpen(false)
+    }
+
     const [isSignIn, setIsSignIn] = useState(false)
 
     const checkSignInState = () => {
@@ -37,7 +51,7 @@ export default function Header() {
         <tw.Container>
             <tw.ContentsWrap>
                 <tw.NavWrap>
-                    <tw.ActiveBtn>
+                    <tw.ActiveBtn onClick={openModal}>
                         <tw.GnbSvg alt="" src={require("../../assets/svg/spinner.svg").default}></tw.GnbSvg>
                     </tw.ActiveBtn>
                     <tw.NavHome onClick={() => navigate("/main")}>weaall Dev</tw.NavHome>
@@ -52,6 +66,11 @@ export default function Header() {
                     )}
                 </tw.NavWrap>
             </tw.ContentsWrap>
+            {isModalOpen && (
+                <ModalPortal>
+                    <Terms onClose={closeModal} />
+                </ModalPortal>
+            )}
         </tw.Container>
     )
 }

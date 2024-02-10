@@ -25,6 +25,15 @@ export default function SignIn() {
         setIsModalOpen(false)
     }
 
+    const checkSignInState = () => {
+        const jwtToken = Cookies.get("jwt")
+        if (jwtToken) {
+            window.alert("올바른 접근이 아닙니다.")
+            navigate("/main")
+        } else {
+        }
+    }
+
     const [formData, setFormData] = useState({
         email: "",
         password: "",
@@ -78,7 +87,7 @@ export default function SignIn() {
         }
     }
 
-    useEffect(() => {}, [])
+    useEffect(() => {checkSignInState()}, [])
 
     return (
         <tw.Container>

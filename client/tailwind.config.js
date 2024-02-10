@@ -12,6 +12,15 @@ module.exports = {
                 mobile: { max: "640px" },
                 tablet: { min: "641px", max: "1024px" },
             },
+            keyframes: {
+                modal: {
+                  from: { transform: "translate(-50%, -50%) translateY(-100%)" },
+                  to: { transform: "translate(-50%, -50%) translateY(0)" },
+                },
+              },
+              animation: {
+                modal: "modal 0.7s ease-in-out 1",
+              },
         },
     },
     plugins: [],
