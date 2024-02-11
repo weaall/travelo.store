@@ -51,7 +51,7 @@ export default function Header() {
         <tw.Container>
             <tw.ContentsWrap>
                 <tw.NavWrap>
-                    <tw.ActiveBtn onClick={openModal}>
+                    <tw.ActiveBtn onClick={()=>navigate("/me")}>
                         <tw.GnbSvg alt="" src={require("../../assets/svg/spinner.svg").default}></tw.GnbSvg>
                     </tw.ActiveBtn>
                     <tw.NavHome onClick={() => navigate("/main")}>weaall Dev</tw.NavHome>
