@@ -11,7 +11,7 @@ const getJwtFromCookie = (): string | null => {
     return null
 }
 
-export const frontEndAuthMiddleware = async (config: AxiosRequestConfig) => {
+export const sendJWT = async (config: AxiosRequestConfig) => {
   const jwt = getJwtFromCookie();
   
   if (jwt) {

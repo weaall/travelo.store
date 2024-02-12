@@ -1,4 +1,5 @@
-import { ResultSetHeader, RowDataPacket } from "mysql2/promise";
+import { RowDataPacket } from "mysql2/promise";
+import { Request } from "express";
 
 export interface userRowsProps extends RowDataPacket{
     id: number;
@@ -9,6 +10,13 @@ export interface userRowsProps extends RowDataPacket{
     social: string;
     social_id: string;
     admin: number;
+}
+
+export interface JWTCheck extends Request {
+    user: {
+        id: string;
+        ad: string;
+    };
 }
 
 export interface userDataProps {
