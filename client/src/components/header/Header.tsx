@@ -1,17 +1,18 @@
-import { useNavigate } from "react-router-dom"
-import Cookies from "js-cookie"
 import { useEffect, useState } from "react"
-import { HeaderRenderAtom, HeaderVisibleAtom } from "../../recoil/HeaderRender.Atom"
+import { useNavigate } from "react-router-dom"
 import { useRecoilState } from "recoil"
-import * as tw from "./Header.styles"
+import Cookies from "js-cookie"
+
+import { HeaderRenderAtom } from "../../recoil/HeaderRender.Atom"
 import { ModalPortal } from "../../hook/modal/ModalPortal"
 import Terms from "../../hook/modal/Terms/Terms.modal"
+import UserMenu from "../usermenu/UserMenu"
+import * as tw from "./Header.styles"
 
 export default function Header() {
     const navigate = useNavigate()
 
     const [headerRender, setHeaderRender] = useRecoilState(HeaderRenderAtom)
-    const [headerVisible, setHeaderheaderVisible] = useRecoilState(HeaderVisibleAtom)
 
     const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -31,15 +32,17 @@ export default function Header() {
             setIsSignIn(true)
         } else {
             setIsSignIn(false)
+            setIsMenuOpen(false)
         }
     }
 
-    const logoutClick = () => {
-        if (window.confirm("로그아웃 하시겠습니까?")) {
-            Cookies.remove("jwt")
-            setHeaderRender((prevCount) => prevCount + 1)
-            navigate("/main")
+    const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false)
+
+    const changeMenuState = () => {
+        if (!isMenuOpen) {
+            setIsMenuOpen(true)
         } else {
+            setIsMenuOpen(false)
         }
     }
 
@@ -50,8 +53,9 @@ export default function Header() {
     return (
         <tw.Container>
             <tw.ContentsWrap>
+                <UserMenu isMenuOpen={isMenuOpen} />
                 <tw.NavWrap>
-                    <tw.ActiveBtn onClick={()=>navigate("/me")}>
+                    <tw.ActiveBtn>
                         <tw.GnbSvg alt="" src={require("../../assets/svg/spinner.svg").default}></tw.GnbSvg>
                     </tw.ActiveBtn>
                     <tw.NavHome onClick={() => navigate("/main")}>weaall Dev</tw.NavHome>
@@ -61,7 +65,7 @@ export default function Header() {
                         </>
                     ) : (
                         <>
-                            <tw.SignInBtn onClick={() => logoutClick()}>로그아웃</tw.SignInBtn>
+                            <tw.SignInBtn onClick={changeMenuState}>메뉴</tw.SignInBtn>
                         </>
                     )}
                 </tw.NavWrap>

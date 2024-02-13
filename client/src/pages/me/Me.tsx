@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react"
 import * as tw from "./Me.styles"
-import { sendJWT  } from "../../utils/jwtUtils"
+import { sendJWT } from "../../utils/jwtUtils"
 import { axios, axiosInstance } from "../../utils/axios.utils"
 import { useNavigate } from "react-router-dom"
 import { userDataProps } from "../../interface/interfaces"
 
-export default function Me(){
+export default function Me() {
     const navigate = useNavigate()
 
     const [userInfo, setUserInfo] = useState<userDataProps>({
@@ -25,7 +25,6 @@ export default function Me(){
 
             const response = await axiosInstance.request(config)
             setUserInfo(response.data.data)
-            console.log(userInfo)
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 if (error.response.status === 409) {
@@ -39,23 +38,25 @@ export default function Me(){
         }
     }
 
-    useEffect(()=>{
-        fetchUser();
-    },[])
-    return<tw.Container>
-        <tw.InputWrap>
-            <tw.UpperTag>Email</tw.UpperTag>
-            <tw.Input/>
-            <tw.UpperTag>Name</tw.UpperTag>
-            <tw.Input/>
-            <tw.UpperTag></tw.UpperTag>
-            <tw.Input/>
-            <tw.UpperTag></tw.UpperTag>
-            <tw.Input/>
-            <tw.UpperTag></tw.UpperTag>
-            <tw.Input/>
-            <tw.UpperTag></tw.UpperTag>
-            <tw.Input/>
-        </tw.InputWrap>
-    </tw.Container>
+    useEffect(() => {
+        fetchUser()
+    }, [])
+    return (
+        <tw.Container>
+            <tw.InputWrap>
+                <tw.UpperTag>Email</tw.UpperTag>
+                <tw.Input />
+                <tw.UpperTag>Name</tw.UpperTag>
+                <tw.Input />
+                <tw.UpperTag></tw.UpperTag>
+                <tw.Input />
+                <tw.UpperTag></tw.UpperTag>
+                <tw.Input />
+                <tw.UpperTag></tw.UpperTag>
+                <tw.Input />
+                <tw.UpperTag></tw.UpperTag>
+                <tw.Input />
+            </tw.InputWrap>
+        </tw.Container>
+    )
 }
