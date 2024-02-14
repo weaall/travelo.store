@@ -22,6 +22,11 @@ export default function UserMenu({ isMenuOpen }: UserMenuProps) {
         }
     }
 
+    const navigateClick = (url : string) =>{
+        setHeaderRender((prevCount) => prevCount + 1)
+        navigate(`/${url}`)
+    }
+
     return (
         <tw.MenuWrap $validator={isMenuOpen}>
             <tw.MenuNav>
@@ -43,7 +48,7 @@ export default function UserMenu({ isMenuOpen }: UserMenuProps) {
                 <tw.MenuLabel>숙소관리</tw.MenuLabel>
                 <tw.MenuUl>
                     <tw.MenuLi>
-                        <tw.MenuA>숙소등록</tw.MenuA>
+                        <tw.MenuA onClick={()=>navigateClick("hotelreg")}>숙소등록</tw.MenuA>
                     </tw.MenuLi>
                 </tw.MenuUl>
             </tw.MenuNav>

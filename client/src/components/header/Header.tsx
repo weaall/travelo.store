@@ -32,7 +32,6 @@ export default function Header() {
             setIsSignIn(true)
         } else {
             setIsSignIn(false)
-            setIsMenuOpen(false)
         }
     }
 
@@ -48,6 +47,7 @@ export default function Header() {
 
     useEffect(() => {
         checkSignInState()
+        setIsMenuOpen(false)
     }, [headerRender])
 
     return (

@@ -41,3 +41,31 @@ export interface SignInParams {
     email: string;
     password: string;
 }
+
+
+export interface HotelRows extends RowDataPacket{
+    id: number;
+    user_id: number;
+    name: string;
+    region_id: number;
+    address: string;
+    address_detail: string;
+    postcode: number;
+    reg_num: number;
+    bank: string;
+    account: number;
+    account_owner: string;
+}
+
+export interface RegHotelParams{
+    user_id: number;
+    name: string;
+    region_id: number;
+    address: string;
+    address_detail: string;
+    postcode: number;
+    reg_num: number;
+    bank: string;
+    account: number;
+    account_owner: string;
+}

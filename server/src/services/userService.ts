@@ -1,4 +1,4 @@
-import { FieldPacket, ResultSetHeader } from "mysql2";
+import { FieldPacket } from "mysql2";
 import pool from "../config/db";
 import CustomError from "../utils/customError";
 import { userRowsProps } from "../interface/interfaces";
