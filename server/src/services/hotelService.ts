@@ -5,7 +5,7 @@ import { HotelRows, RegHotelParams } from "../interface/interfaces"
 
 
 const hotelService = {
-    async regHotel({ user_id, name, region_id, address, address_detail, postcode, reg_num, bank, account, account_owner }: RegHotelParams) {
+    async regHotel({ user_id, name, region_id, address, address_detail, postcode, reg_num, bank, account, account_owner }: RegHotelParams, url :string) {
         const checkIdSql = "SELECT * FROM hotel_reg WHERE user_id = ? AND name = ?"
         const checkIdParams = [user_id, name]
         const singUpSql =
@@ -26,17 +26,17 @@ const hotelService = {
         }
     },
 
-    async checkHotelRegList({ user_id}) {
-        const checkIdSql = "SELECT * FROM hotel_reg WHERE user_id = ?"
-        const checkIdParams = [user_id]
-        try {
-            const [rows, fields]: [HotelRows[], FieldPacket[]] = await pool.execute(checkIdSql, checkIdParams)
+    // async checkHotelRegList({ user_id}:string) {
+    //     const checkIdSql = "SELECT * FROM hotel_reg WHERE user_id = ?"
+    //     const checkIdParams = [user_id]
+    //     try {
+    //         const [rows, fields]: [HotelRows[], FieldPacket[]] = await pool.execute(checkIdSql, checkIdParams)
 
-            return rows;
-        } catch (error) {
-            throw error
-        }
-    },
+    //         return rows;
+    //     } catch (error) {
+    //         throw error
+    //     }
+    // },
 }
 
 export default hotelService
