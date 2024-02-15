@@ -3,6 +3,7 @@ import pool from "../config/db"
 import CustomError from "../utils/customError"
 import { HotelRows, RegHotelParams } from "../interface/interfaces"
 
+
 const hotelService = {
     async regHotel({ user_id, name, region_id, address, address_detail, postcode, reg_num, bank, account, account_owner }: RegHotelParams) {
         const checkIdSql = "SELECT * FROM hotel_reg WHERE user_id = ? AND name = ?"

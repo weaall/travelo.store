@@ -43,6 +43,12 @@ export default function Header() {
         } else {
             setIsMenuOpen(false)
         }
+
+    }
+
+    const navigateClick = (url: string) => {
+        setHeaderRender((prevCount) => prevCount + 1)
+        navigate(url)
     }
 
     useEffect(() => {
@@ -58,10 +64,10 @@ export default function Header() {
                     <tw.ActiveBtn>
                         <tw.GnbSvg alt="" src={require("../../assets/svg/spinner.svg").default}></tw.GnbSvg>
                     </tw.ActiveBtn>
-                    <tw.NavHome onClick={() => navigate("/main")}>weaall Dev</tw.NavHome>
+                    <tw.NavHome onClick={() => navigateClick("/main")}>weaall Dev</tw.NavHome>
                     {isSignIn === false ? (
                         <>
-                            <tw.SignInBtn onClick={() => navigate("/signin")}>로그인</tw.SignInBtn>
+                            <tw.SignInBtn onClick={() => navigateClick("/signin")}>로그인</tw.SignInBtn>
                         </>
                     ) : (
                         <>
