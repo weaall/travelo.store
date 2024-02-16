@@ -5,8 +5,9 @@ import CustomError from "../utils/customError"
 const hotelService = {
     async checkHotelReg() {
         const checkIdSql = "SELECT * FROM hotel_reg"
+        const connection = await pool.getConnection()
         try {
-            const [result, fields]: [ResultSetHeader, FieldPacket[]] = await pool.execute(checkIdSql)
+            const [result, fields]: [ResultSetHeader, FieldPacket[]] = await connection.execute(checkIdSql)
 
             return result
         } catch (error) {

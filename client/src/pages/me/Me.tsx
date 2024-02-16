@@ -25,6 +25,7 @@ export default function Me() {
 
             const response = await axiosInstance.request(config)
             setUserInfo(response.data.data)
+            console.log(response.data.data)
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 if (error.response.status === 409) {

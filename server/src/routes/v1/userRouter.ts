@@ -7,7 +7,9 @@ import { JWTCheck } from "../../interface/interfaces";
 const userRouter = Router();
 
 userRouter.get("/me", isAuthenticated,
-    asyncHandler((req: Request, res: Response) => userController.me(req as JWTCheck, res))
+    asyncHandler(
+        (req: Request, res: Response) => 
+        userController.me(req as JWTCheck, res))
 );
 
 

@@ -8,5 +8,4 @@ const pool = mysql.createPool({
     queueLimit: 10,
 });
 
-
 export default pool;

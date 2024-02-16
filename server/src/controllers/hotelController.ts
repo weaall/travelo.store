@@ -1,18 +1,22 @@
-import { Request, Response } from "express";
-import hotelService from "../services/hotelService";
+import { Response } from "express"
+import { JWTCheck } from "../interface/interfaces";
+import hotelService from "../services/hotelService"
 
 const hotelController = {
-    async regHotel(req: Request, res: Response){
+    async regHotel(req: JWTCheck, res: Response) {
+        const urls = (req.files as any[]).map((file) => file.location)
 
-        const s3FileUrl = (req.file as Express.Multer.File).buffer;
+        console.log("req.user.id : ",req.user.id)
+        console.log("req.body : ", req.body)
+        console.log("urls: ", urls)
 
-        const data = await hotelService.regHotel(req.body, s3FileUrl.toString());
+        const data = await hotelService.regHotel(req.user.id,req.body, urls)
 
         res.status(201).json({
             error: null,
             data: data,
-        });
+        })
     },
-};
+}
 
-export default hotelController;
+export default hotelController
