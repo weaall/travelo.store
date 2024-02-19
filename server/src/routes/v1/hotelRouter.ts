@@ -14,4 +14,10 @@ hotelRouter.post(
     asyncHandler((req: Request, res: Response) => hotelController.regHotel(req as JWTCheck, res)),
 )
 
+hotelRouter.get(
+    "/me",
+    isAuthenticated,
+    asyncHandler((req: Request, res: Response) => hotelController.myHotel(req as JWTCheck, res)),
+)
+
 export default hotelRouter

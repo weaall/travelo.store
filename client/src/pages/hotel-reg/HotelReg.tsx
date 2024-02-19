@@ -35,9 +35,9 @@ export default function HotelReg() {
     const onClickRegister = async () => {
         try {
 
-            const formDataWithFile = new FormData()
-            formDataWithFile.append("images", file as Blob)
-            formDataWithFile.append("data", JSON.stringify(formData))
+            const regDatas = new FormData()
+            regDatas.append("images", file as Blob)
+            regDatas.append("data", JSON.stringify(formData))
 
             const config = await sendJWT({
                 headers: {
@@ -45,7 +45,7 @@ export default function HotelReg() {
                   },
                 method: "post",
                 url: "/hotel/reg",
-                data: formDataWithFile
+                data: regDatas
             })
 
 

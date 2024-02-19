@@ -4,7 +4,6 @@ import userService from "../services/userService";
 
 const userController = {
     async me(req: JWTCheck, res: Response) {
-        console.log(req.user)
         const user = await userService.me(req.user.id);
 
         res.status(200).json({

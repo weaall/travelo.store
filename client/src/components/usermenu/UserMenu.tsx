@@ -50,6 +50,9 @@ export default function UserMenu({ isMenuOpen }: UserMenuProps) {
                     <tw.MenuLi>
                         <tw.MenuA onClick={()=>navigateClick("hotelreg")}>숙소등록</tw.MenuA>
                     </tw.MenuLi>
+                    <tw.MenuLi>
+                        <tw.MenuA onClick={()=>navigateClick("hotel/me")}>내숙소</tw.MenuA>
+                    </tw.MenuLi>
                 </tw.MenuUl>
             </tw.MenuNav>
         </tw.MenuWrap>

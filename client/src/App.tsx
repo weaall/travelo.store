@@ -9,6 +9,7 @@ import AuthKaKao from "./pages/auth/Auth.kakao"
 import SignUp from "./pages/sign-up/SignUp"
 import Me from "./pages/me/Me"
 import HotelReg from "./pages/hotel-reg/HotelReg"
+import HotelMe from "./pages/hotel-me/HotelMe"
 
 function App() {
     return (
@@ -22,6 +23,7 @@ function App() {
                         <Route path="/signup" element={<SignUp />} />
                         <Route path="/me" element={<Me />} />
                         <Route path="/hotelreg" element={<HotelReg />} />
+                        <Route path="/hotel/me" element={<HotelMe />} />
                         <Route path="/auth/kakao" element={<AuthKaKao />} />
                     </Routes>
                 </tw.ContentsWrap>
