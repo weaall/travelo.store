@@ -75,7 +75,7 @@ function AuthKaKao() {
             const response = await axiosInstance.post("/auth/kakao", data)
             const receivedToken = response.data.data
             if (response.status === 201) {
-                Cookies.set("jwt", receivedToken, { expires: 6 })
+                Cookies.set("jwt", receivedToken, { expires: 1 })
                 window.alert("성공적으로 로그인되었습니다.")
                 headerRender();
                 navigate("/main")

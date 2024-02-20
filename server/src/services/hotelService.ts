@@ -1,4 +1,4 @@
-import { FieldPacket } from "mysql2"
+import { FieldPacket, ResultSetHeader } from "mysql2"
 import pool from "../config/db"
 import CustomError from "../utils/customError"
 import { HotelRows, RegHotelParams } from "../interface/interfaces"
@@ -6,29 +6,30 @@ import { HotelRows, RegHotelParams } from "../interface/interfaces"
 
 const hotelService = {
     async regHotel(user_id: string, { name, address, address_detail, postcode, reg_num, bank, account, owner }: RegHotelParams, urls: string[]) {
-        const checkIdSql = "SELECT * FROM hotel_reg WHERE user_id = ? AND name = ?"
-        const checkIdParams = [user_id, name]
 
-        const singUpSql =
-            "INSERT INTO hotel_reg (user_id, name, address, address_detail, postcode, reg_num, bank, account, owner) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
-        const singUpParams = [user_id, name, address, address_detail, postcode, reg_num, bank, account, owner]
+        const addHotelSql =
+            "INSERT INTO hotel (user_id, name, postcode, address, address_detail) VALUES (?, ?, ?, ?, ?)"
+        const addHotelValues = [user_id, name, postcode, address, address_detail]
 
-        const urlParams = urls.map((url) => [url])
-        const imageUrlsSql = "INSERT INTO hotel_reg_doc (url) VALUES (?)"
+        const addHotelRegSql =  "INSERT INTO hotel_reg (hotel_id, reg_num, bank, account, owner) VALUES (?, ?, ?, ?, ?)"
+        const addHotelRegValues = [reg_num, bank, account, owner]
+
+        const addRegDocSql = "INSERT INTO hotel_reg_doc (hotel_id, url) VALUES (?,?)"
+        const addRegDocValues = urls.map((url) => [url])
 
         const connection = await pool.getConnection()
         try {
             await connection.beginTransaction()
 
-            const [rows, fields]: [HotelRows[], FieldPacket[]] = await connection.execute(checkIdSql, checkIdParams)
+            const [addHotelResult] : [ResultSetHeader, FieldPacket[]] = await connection.execute(addHotelSql, addHotelValues)
 
-            if (rows.length > 0) {
-                throw new CustomError("이미 등록된 호텔입니다.", 409)
-            }
+            const hotel_id = addHotelResult.insertId;
 
-            const [result] = await connection.execute(singUpSql, singUpParams)
+            console.log([hotel_id, ...addHotelRegValues])
 
-            const [urlResult] = await connection.execute(imageUrlsSql, [urlParams])
+            const [addHotelRegResult] = await connection.execute(addHotelRegSql, [hotel_id, ...addHotelRegValues])
+
+            const [addRegDocResult] = await connection.execute(addRegDocSql, [hotel_id, ...addRegDocValues])
 
             await connection.commit()
             

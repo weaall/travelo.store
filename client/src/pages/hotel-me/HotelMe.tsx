@@ -24,9 +24,9 @@ export default function HotelMe() {
                 if (error.response.status === 409) {
                     window.alert("올바른 접근이 아닙니다.")
                     navigate("/")
-                } else {
+                } else if (error.response.status === 401) {
                     window.alert("올바른 접근이 아닙니다.")
-                    navigate("/")
+                    navigate("/main")
                 }
             }
         }
@@ -42,14 +42,11 @@ export default function HotelMe() {
                 {hotelInfo.map((hotel, index) => (
                     <tw.HotelWrap key={index}>
                         <h3>{hotel.name}</h3>
+                        <p>우편번호: {hotel.postcode}</p>
                         <p>주소: {hotel.address}</p>
                         <p>상세주소: {hotel.address_detail}</p>
-                        <p>우편번호: {hotel.postcode}</p>
                         <p>사업자등록번호: {hotel.reg_num}</p>
-                        <p>은행: {hotel.bank}</p>
-                        <p>계좌번호: {hotel.account}</p>
-                        <p>소유자: {hotel.owner}</p>
-                        상태: {hotel.per === 0 ? "심사중" : "사용중"}
+                        <p>상태: {hotel.per === 0 ? "심사중" : "사용중"}</p>
                     </tw.HotelWrap>
                 ))}
             </tw.HotelList>
