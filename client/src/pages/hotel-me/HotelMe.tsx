@@ -40,13 +40,12 @@ export default function HotelMe() {
         <tw.Container>
             <tw.HotelList>
                 {hotelInfo.map((hotel, index) => (
-                    <tw.HotelWrap key={index}>
-                        <h3>{hotel.name}</h3>
-                        <p>우편번호: {hotel.postcode}</p>
-                        <p>주소: {hotel.address}</p>
-                        <p>상세주소: {hotel.address_detail}</p>
-                        <p>사업자등록번호: {hotel.reg_num}</p>
-                        <p>상태: {hotel.per === 0 ? "심사중" : "사용중"}</p>
+                    <tw.HotelWrap key={index}  onClick={() => navigate("/hotel/mgmt", { state: hotel.id })}>
+                        <tw.HotelName>{hotel.name}</tw.HotelName>
+                        <tw.HotelText>우편번호: {hotel.postcode}</tw.HotelText>
+                        <tw.HotelText>주소: {hotel.address}</tw.HotelText>
+                        <tw.HotelText>상세주소: {hotel.address_detail}</tw.HotelText>
+                        <tw.HotelText>상태: {hotel.permission === 0 ? "심사중" : "사용중"}</tw.HotelText>
                     </tw.HotelWrap>
                 ))}
             </tw.HotelList>

@@ -45,8 +45,24 @@ const hotelService = {
     async myHotel( user_id : string) {
         const connection = await pool.getConnection()
         
-        const checkIdSql = "SELECT * FROM hotel_reg WHERE user_id = ?"
+        const checkIdSql = "SELECT * FROM hotel WHERE user_id = ?"
         const checkIdParams = [user_id]
+        try {
+            const [rows, fields]: [HotelRows[], FieldPacket[]] = await connection.execute(checkIdSql, checkIdParams)
+
+            return rows;
+        } catch (error) {
+            throw error
+        } finally {
+            connection.release()
+        }
+    },
+
+    async checkHotelById( user_id : string, id : string) {
+        const connection = await pool.getConnection()
+        
+        const checkIdSql = "SELECT * FROM hotel WHERE user_id = ? and id = ?"
+        const checkIdParams = [user_id, id]
         try {
             const [rows, fields]: [HotelRows[], FieldPacket[]] = await connection.execute(checkIdSql, checkIdParams)
 

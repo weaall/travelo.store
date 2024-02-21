@@ -15,10 +15,18 @@ const hotelController = {
     },
 
     async myHotel(req: JWTCheck, res: Response) {
-
         const data = await hotelService.myHotel(req.user.id);
 
-        res.status(201).json({
+        res.status(200).json({
+            error: null,
+            data: data,
+        })
+    },
+
+    async checkHotelById(req: JWTCheck, res: Response) {
+        const data = await hotelService.checkHotelById(req.user.id, req.params.id);
+
+        res.status(200).json({
             error: null,
             data: data,
         })

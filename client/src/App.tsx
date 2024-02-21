@@ -10,6 +10,7 @@ import SignUp from "./pages/sign-up/SignUp"
 import Me from "./pages/me/Me"
 import HotelReg from "./pages/hotel-reg/HotelReg"
 import HotelMe from "./pages/hotel-me/HotelMe"
+import HotelMgmt from "./pages/hotel-mgmt/HotelMgmt"
 
 function App() {
     return (
@@ -24,6 +25,7 @@ function App() {
                         <Route path="/me" element={<Me />} />
                         <Route path="/hotelreg" element={<HotelReg />} />
                         <Route path="/hotel/me" element={<HotelMe />} />
+                        <Route path="/hotel/mgmt" element={<HotelMgmt />} />
                         <Route path="/auth/kakao" element={<AuthKaKao />} />
                     </Routes>
                 </tw.ContentsWrap>

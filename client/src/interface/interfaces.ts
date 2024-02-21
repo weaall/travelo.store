@@ -18,14 +18,15 @@ export interface RegHotelProps{
 }
 
 export interface HotelDataProps{
+    id: number;
     name: string;
+    postcode: number;
     address: string;
     address_detail: string;
-    postcode: number;
-    reg_num: number;
-    bank: string;
-    account: number;
-    owner: string;
-    per: number;
+    description: string;
+    check_in: string;
+    check_out: string;
+    tel_num: number;
+    permission: number;
 }
 

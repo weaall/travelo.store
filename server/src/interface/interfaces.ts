@@ -47,14 +47,14 @@ export interface HotelRows extends RowDataPacket{
     id: number;
     user_id: number;
     name: string;
-    region_id: number;
+    postcode: number;
     address: string;
     address_detail: string;
-    postcode: number;
-    reg_num: number;
-    bank: string;
-    account: number;
-    account_owner: string;
+    description: string;
+    check_in: string;
+    check_out: string;
+    tel_num: string;
+    permission: number;
 }
 
 export interface RegHotelParams{
