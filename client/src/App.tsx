@@ -25,7 +25,9 @@ function App() {
                         <Route path="/me" element={<Me />} />
                         <Route path="/hotelreg" element={<HotelReg />} />
                         <Route path="/hotel/me" element={<HotelMe />} />
-                        <Route path="/hotel/mgmt" element={<HotelMgmt />} />
+                        <Route path="hotel/mgmt/">
+                            <Route path=":hotelId/*" element={<HotelMgmt />} />
+                        </Route>
                         <Route path="/auth/kakao" element={<AuthKaKao />} />
                     </Routes>
                 </tw.ContentsWrap>

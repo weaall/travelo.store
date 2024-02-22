@@ -30,3 +30,27 @@ export interface HotelDataProps{
     permission: number;
 }
 
+export interface HotelDataInInfo{
+    name: string;
+    postcode: number;
+    address: string;
+    address_detail: string;
+    description: string;
+    check_in: string;
+    check_out: string;
+    tel_num: number;
+    permission: number;
+    wifi: number;
+    always_check_in: number;
+    breakfast: number;
+    breakfast_price: number;
+    barbecue: number;
+    carpark: number;
+    restaurant: number;
+    cafe: number;
+    pool: number;
+    spa: number;
+    fitness: number;
+    convenience_store: number;
+}
+

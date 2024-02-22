@@ -40,7 +40,7 @@ export default function HotelMe() {
         <tw.Container>
             <tw.HotelList>
                 {hotelInfo.map((hotel, index) => (
-                    <tw.HotelWrap key={index}  onClick={() => navigate("/hotel/mgmt", { state: hotel.id })}>
+                    <tw.HotelWrap key={index}  onClick={() => navigate("/hotel/mgmt/" + hotel.id)}>
                         <tw.HotelName>{hotel.name}</tw.HotelName>
                         <tw.HotelText>우편번호: {hotel.postcode}</tw.HotelText>
                         <tw.HotelText>주소: {hotel.address}</tw.HotelText>
