@@ -68,3 +68,12 @@ export interface RegHotelParams{
     account: number;
     owner: string;
 }
+
+export interface HotelServProps{
+    hotel_id : number; 
+    wifi : number;
+    always_check_in : number;
+    breakfast: number;
+    breakfast_price: number;
+    barbeque : number;
+}

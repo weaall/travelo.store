@@ -1,7 +1,7 @@
 import { FieldPacket, ResultSetHeader } from "mysql2"
 import pool from "../config/db"
 import CustomError from "../utils/customError"
-import { HotelRows, RegHotelParams } from "../interface/interfaces"
+import { HotelRows, HotelServProps, RegHotelParams } from "../interface/interfaces"
 
 
 const hotelService = {
@@ -28,11 +28,8 @@ const hotelService = {
             const hotel_id = addHotelResult.insertId
 
             const [addHotelRegResult] = await connection.execute(addHotelRegSql, [hotel_id, ...addHotelRegValues])
-
             const [addHotelServResult] = await connection.execute(addHotelServSql, hotel_id)
-
             const [addHotelFacilResult] = await connection.execute(addHotelFacilSql, hotel_id)
-
             const [addRegDocResult] = await connection.execute(addRegDocSql, [hotel_id, ...addRegDocValues])
 
             await connection.commit()
@@ -77,17 +74,75 @@ const hotelService = {
             connection.release()
         }
     },
-    async getHotelInfoById(user_id: string, id: string) {
+
+    async getHotelInfoById(user_id: string, hotel_id: string) {
         const connection = await pool.getConnection()
 
         const getHotelInfoSql =
-            "select * from hotel as H left join hotel_service as S on H.id = S.hotel_id left join hotel_facility as F using (hotel_id) where user_id = ? and  H.id = ? "
-        const getHotelInfoSqlParams = [user_id, id]
+            "SELECT * FROM hotel AS H left join hotel_service as S on H.id = S.hotel_id left join hotel_facility as F using (hotel_id) where user_id = ? and  H.id = ? "
+        const getHotelInfoSqlParams = [user_id, hotel_id]
 
         try {
+
             const [rows, fields]: [HotelRows[], FieldPacket[]] = await connection.execute(getHotelInfoSql, getHotelInfoSqlParams)
 
             return rows
+        } catch (error) {
+            throw error
+        } finally {
+            connection.release()
+        }
+    },
+
+    async putHotelServ(user_id: string, {hotel_id, wifi, always_check_in, breakfast, breakfast_price, barbeque}: HotelServProps) {
+        const connection = await pool.getConnection()
+
+        const checkAuthSql = "SELECT * FROM hotel WHERE id = ? and user_id = ?"
+        const checkAuthParams = [hotel_id, user_id]
+
+        const putHotelServSql = 
+        "UPDATE hotel_service SET wifi = ?, always_check_in = ?, breakfast = ?, breakfast_price = ?, barbeque = ? WHERE hotel_id = ?"
+        const putHotelServParams = [wifi, always_check_in, breakfast, breakfast_price, barbeque, hotel_id]
+
+        try {
+
+            const [rows, fields]: [HotelRows[], FieldPacket[]] = await connection.execute(checkAuthSql, checkAuthParams)
+
+            if (rows.length === 0) {
+                throw new CustomError("UNAUTHORIZED", 401)
+            }
+
+            const [putHotelServResult] = await connection.execute(putHotelServSql, putHotelServParams)
+
+            return 
+        } catch (error) {
+            throw error
+        } finally {
+            connection.release()
+        }
+    },
+
+    async putHotelFacil(user_id: string, hotel_id: string) {
+        const connection = await pool.getConnection()
+
+        const checkAuthSql = "SELECT * FROM hotel WHERE id = ? and user_id = ?"
+        const checkAuthParams = [hotel_id, user_id]
+
+        const putHotelFacilSql = 
+        "UPDATE hotel_facility SET carpark = ?, restaurant = ?, cafe = ?, pool = ?, spa = ?, fitness = ?, convenience_store = ? WHERE hotel_id = ?"
+        const putHotelFacilParams = [hotel_id]
+
+        try {
+
+            const [rows, fields]: [HotelRows[], FieldPacket[]] = await connection.execute(checkAuthSql, checkAuthParams)
+
+            if (rows.length === 0) {
+                throw new CustomError("UNAUTHORIZED", 401)
+            }
+
+            const [putHotelFacilResult] = await connection.execute(putHotelFacilSql, putHotelFacilParams)
+
+            return 
         } catch (error) {
             throw error
         } finally {

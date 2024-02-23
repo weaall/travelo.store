@@ -29,7 +29,13 @@ hotelRouter.get(
 hotelRouter.get(
     "/mgmt/info/:id",
     isAuthenticated,
-    asyncHandler((req: Request, res: Response) => hotelController.getHotelInfoById(req as JWTCheck, res)),
+    asyncHandler((req: Request, res: Response) => hotelController.checkHotelById(req as JWTCheck, res)),
+)
+
+hotelRouter.put(
+    "/mgmt/serv",
+    isAuthenticated,
+    asyncHandler((req: Request, res: Response) => hotelController.putHotelServ(req as JWTCheck, res)),
 )
 
 
