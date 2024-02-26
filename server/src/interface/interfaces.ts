@@ -1,7 +1,7 @@
 import { RowDataPacket } from "mysql2/promise";
 import { Request } from "express";
 
-export interface userRowsProps extends RowDataPacket{
+export interface userRowsProps extends RowDataPacket {
     id: number;
     email: string;
     password: string;
@@ -42,8 +42,7 @@ export interface SignInParams {
     password: string;
 }
 
-
-export interface HotelRows extends RowDataPacket{
+export interface HotelRows extends RowDataPacket {
     id: number;
     user_id: number;
     name: string;
@@ -57,7 +56,31 @@ export interface HotelRows extends RowDataPacket{
     permission: number;
 }
 
-export interface RegHotelParams{
+export interface HotelInfoRows extends RowDataPacket {
+    name: string;
+    postcode: number;
+    address: string;
+    address_detail: string;
+    description: string;
+    check_in: string;
+    check_out: string;
+    tel_num: number;
+    permission: number;
+    wifi: number;
+    always_check_in: number;
+    breakfast: number;
+    breakfast_price: number;
+    barbecue: number;
+    carpark: number;
+    restaurant: number;
+    cafe: number;
+    pool: number;
+    spa: number;
+    fitness: number;
+    convenience_store: number;
+}
+
+export interface RegHotelParams {
     user_id: number;
     name: string;
     address: string;
@@ -69,11 +92,22 @@ export interface RegHotelParams{
     owner: string;
 }
 
-export interface HotelServProps{
-    hotel_id : number; 
-    wifi : number;
-    always_check_in : number;
+export interface HotelServProps {
+    hotel_id: number;
+    wifi: number;
+    always_check_in: number;
     breakfast: number;
     breakfast_price: number;
-    barbeque : number;
+    barbecue: number;
+}
+
+export interface HotelFacilProps {
+    hotel_id: number;
+    carpark: number;
+    restaurant: number;
+    cafe: number;
+    swimming_pool: number;
+    spa: number;
+    fitness: number;
+    convenience_store: number;
 }

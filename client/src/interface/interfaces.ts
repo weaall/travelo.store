@@ -31,6 +31,7 @@ export interface HotelDataProps{
 }
 
 export interface HotelDataInInfo{
+    hotel_id: number;
     name: string;
     postcode: number;
     address: string;
@@ -48,9 +49,10 @@ export interface HotelDataInInfo{
     carpark: number;
     restaurant: number;
     cafe: number;
-    pool: number;
+    swimming_pool: number;
     spa: number;
     fitness: number;
     convenience_store: number;
 }
+
 

@@ -33,8 +33,6 @@ const hotelController = {
     },
 
     async getHotelInfoById(req: JWTCheck, res: Response) {
-        console.log(req.user.id)
-        console.log(req.params.id)
         const data = await hotelService.getHotelInfoById(req.user.id, req.params.id);
 
         res.status(200).json({
@@ -53,7 +51,8 @@ const hotelController = {
     },
 
     async putHotelFacil(req: JWTCheck, res: Response) {
-        const data = await hotelService.putHotelFacil(req.user.id, req.params.id);
+        const data = await hotelService.putHotelFacil(req.user.id, req.body);
+
 
         res.status(200).json({
             error: null,
