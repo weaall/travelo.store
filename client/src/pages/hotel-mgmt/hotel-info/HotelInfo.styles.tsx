@@ -21,3 +21,11 @@ export const CheckBox = tw.input`ml-2 w-6 h-6 cursor-pointer accent-main`
 export const InputBox = tw.input`mr-10 w-auto text-lg py-1 px-4 border border-black outline-main rounded-xl`
 export const Select = tw.select`mr-10 w-auto text-lg py-1 px-4 border border-black outline-main rounded-xl`
 export const DescInput = tw.textarea`my-2 w-auto h-full text-lg py-1 px-4 border border-black outline-main rounded-xl`
+
+export const UploadWrap = tw.div`p-6 text-center bg-gray-100 rounded-2xl`
+export const ImgLabel = tw.p`my-4 font-bold`
+
+export const ImgContainer = tw.div`grid grid-cols-2 justify-center`
+export const ImgWrap = tw.div`w-full h-auto relative`
+export const Img = tw.img`rounded-lg`
+export const RemoveBtn = tw.button`py-2 hover:text-main hover:font-bold`

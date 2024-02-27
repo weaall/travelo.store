@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { ChangeEvent, DragEvent, useEffect, useState } from 'react';
 import { sendJWT } from "../../../utils/jwtUtils";
 import { axios, axiosInstance } from "../../../utils/axios.utils";
 import { useNavigate } from "react-router-dom";
@@ -33,14 +33,12 @@ export default function HotelInfo({ hotelId }: { hotelId: string | undefined }) 
 
     const [infoData, setInfoData] = useState({
         hotel_id: 0,
-        carpark: 0,
-        restaurant: 0,
-        cafe: 0,
-        swimming_pool: 0,
-        spa: 0,
-        fitness: 0,
-        convenience_store: 0,
+        description: "",
+        check_in: 0,
+        check_out: 0,
+        tel_num:  0,
     });
+    
 
     const [servData, setServData] = useState({
         hotel_id: 0,
@@ -61,6 +59,33 @@ export default function HotelInfo({ hotelId }: { hotelId: string | undefined }) 
         fitness: 0,
         convenience_store: 0,
     });
+
+    const [files, setFiles] = useState<File[]>([]);
+    const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+
+    const onDragOver = (e: DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+    };
+
+    const onDrop = (e: DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+
+        const droppedFiles = e.dataTransfer.files;
+        const newFiles = Array.from(droppedFiles).slice(0, 10 - files.length);
+        setFiles((prevFiles) => [...prevFiles, ...newFiles]);
+
+        const previews = [...files, ...newFiles].map((file) => URL.createObjectURL(file));
+        setImagePreviews(previews);
+    };
+
+    const removeFile = (index: number) => {
+        const newFiles = [...files];
+        newFiles.splice(index, 1);
+        setFiles(newFiles);
+
+        const previews = newFiles.map((file) => URL.createObjectURL(file));
+        setImagePreviews(previews);
+    };
 
     const onChangeServ = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -254,6 +279,19 @@ export default function HotelInfo({ hotelId }: { hotelId: string | undefined }) 
                         <tw.DescInput></tw.DescInput>
                     </tw.HalfCol>
                 </tw.ContentsFlex>
+                <tw.UploadWrap onDragOver={onDragOver} onDrop={onDrop}>
+                    <tw.ImgLabel>이미지를 드래그 앤 드롭하세요.</tw.ImgLabel>
+                    <tw.ImgContainer>
+                        {imagePreviews.map((preview, index) => (
+                            <tw.ImgWrap key={index}>
+                                <tw.RemoveBtn onClick={() => removeFile(index)} style={{ marginLeft: "10px" }}>
+                                    삭제
+                                </tw.RemoveBtn>
+                                <tw.Img src={preview} alt={`이미지 미리보기 ${index + 1}`} />
+                            </tw.ImgWrap>
+                        ))}
+                    </tw.ImgContainer>
+                </tw.UploadWrap>
             </tw.ContentsWrap>
 
             <tw.ContentsWrap>
