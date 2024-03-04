@@ -1,7 +1,7 @@
 import { FieldPacket, ResultSetHeader } from "mysql2"
 import pool from "../config/db"
 import CustomError from "../utils/customError"
-import { HotelInfoRows, HotelRows, HotelServProps, HotelFacilProps ,RegHotelParams } from "../interface/interfaces"
+import { HotelInfoRows, HotelRows, HotelInfoProps, HotelServProps, HotelFacilProps ,RegHotelParams } from "../interface/interfaces"
 
 
 const hotelService = {
@@ -98,6 +98,49 @@ const hotelService = {
 
             return rows;
         } catch (error) {
+            throw error;
+        } finally {
+            connection.release();
+        }
+    },
+
+    async putHotelInfo(
+        user_id: string,
+        { hotel_id, description, check_in, check_out, tel_num }: HotelInfoProps,
+        urls: string[]
+    ) {
+        const connection = await pool.getConnection();
+
+        const checkAuthSql = "SELECT * FROM hotel WHERE id = ? and user_id = ?";
+        const checkAuthParams = [hotel_id, user_id];
+
+        const putHotelInfoSql =
+            "UPDATE hotel SET description = ?,check_in = ?, check_out = ?, tel_num = ? WHERE id = ?";
+        const putHotelInfoParams = [description, check_in, check_out, tel_num, hotel_id];
+
+        const addHotelImgSql = "INSERT INTO hotel_img (hotel_id, url) VALUES (?,?)";
+        const addHotelImgParams = urls.map((url) => [url]);
+
+        try {
+            await connection.beginTransaction();
+
+            const [rows, fields]: [HotelRows[], FieldPacket[]] = await connection.execute(
+                checkAuthSql,
+                checkAuthParams,
+            );
+
+            if (rows.length === 0) {
+                throw new CustomError("UNAUTHORIZED", 401);
+            }
+
+            const [putHotelInfoResult] = await connection.execute(putHotelInfoSql, putHotelInfoParams);
+            const [addRegDocResult] = await connection.execute(addHotelImgSql, [hotel_id, ...addHotelImgParams]);
+            
+            await connection.commit();
+
+            return;
+        } catch (error) {
+            await connection.rollback();
             throw error;
         } finally {
             connection.release();

@@ -2,8 +2,6 @@ import dotenv from "dotenv"
 import router from "./routes"
 import Express, { Request, Response, NextFunction } from "express"
 import CustomError from "./utils/customError"
-import pool from "./config/db"
-import { upload } from "./config/multer"
 
 dotenv.config()
 
@@ -21,18 +19,6 @@ app.listen(port, () => {
     console.log(`localhost:${port} connected`)
 })
 
-app.post("/api/v1/upload", upload.single("image"), async (req: Request, res: Response) => {
-    try {
-        const s3FileUrl = (req.file as any).location
-
-        const [result] = await pool.execute("INSERT INTO region (name) VALUES (?)", [s3FileUrl])
-
-        res.status(200).json({ success: true, fileId: result })
-    } catch (error) {
-        console.error("파일 업로드 중 오류:", error)
-        res.status(500).json({ success: false, error: "내부 서버 오류" })
-    }
-})
 
 app.use((error: CustomError, req: Request, res: Response, next: NextFunction) => {
     console.log(error)

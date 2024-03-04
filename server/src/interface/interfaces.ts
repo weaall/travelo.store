@@ -92,6 +92,14 @@ export interface RegHotelParams {
     owner: string;
 }
 
+export interface HotelInfoProps {
+    hotel_id: number;
+    description: string;
+    check_in: number;
+    check_out: number;
+    tel_num: number;
+}
+
 export interface HotelServProps {
     hotel_id: number;
     wifi: number;
