@@ -12,6 +12,10 @@ export interface userRowsProps extends RowDataPacket {
     admin: number;
 }
 
+export interface urlRows extends RowDataPacket {
+    url: string;
+}
+
 export interface JWTCheck extends Request {
     user: {
         id: string;
@@ -40,6 +44,10 @@ export interface SignUpParams {
 export interface SignInParams {
     email: string;
     password: string;
+}
+
+export interface HotelIdParams {
+    hotel_id: number;
 }
 
 export interface HotelRows extends RowDataPacket {

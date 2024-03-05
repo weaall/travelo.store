@@ -1,4 +1,4 @@
-import { Response } from "express"
+import { Response, Request } from "express"
 import { JWTCheck } from "../interface/interfaces"
 import hotelService from "../services/hotelService"
 
@@ -39,6 +39,15 @@ const hotelController = {
             error: null,
             data: data,
         })
+    },
+
+    async getHotelImgUrl(req: Request, res: Response){
+        const data = await hotelService.getHotelImgUrl(req.params.id);
+
+        res.status(200).json({
+            error: null,
+            data: data,
+        });
     },
 
     async putHotelInfo(req: JWTCheck, res: Response) {

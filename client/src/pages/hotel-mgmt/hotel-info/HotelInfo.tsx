@@ -26,7 +26,7 @@ interface FacilData {
     convenience_store: number;
 }
 
-export default function HotelInfo({ hotelId }: { hotelId: string | undefined }) {
+export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }) {
     const navigate = useNavigate();
 
     const [hotelData, setHotelData] = useState<HotelDataInInfo>();
@@ -61,22 +61,40 @@ export default function HotelInfo({ hotelId }: { hotelId: string | undefined }) 
 
     const [files, setFiles] = useState<File[]>([]);
     const [imagePreviews, setImagePreviews] = useState<string[]>([]);
-    const imageUrl = "https://weaall-s3.s3.ap-northeast-2.amazonaws.com/jfGJvHfxD.png";
 
     const fetchImageFile = async () => {
         try {
-            const response = await fetch(imageUrl);
-            const blob = await response.blob();
-            const file = new File([blob], "image.png", { type: "image/png" });
-
-            setFiles([file]);
-            setImagePreviews([URL.createObjectURL(file)]);
-            console.log(files);
+            const urlResponse = await axiosInstance.get("/hotel/img/" + hotel_id);
+            console.log(urlResponse.data.data);
+    
+            const imagesData = urlResponse.data.data;
+    
+            const newFiles = [];
+            const imagePreviews = [];
+    
+            for (let i = 0; i < imagesData.length; i++) {
+                const imageUrl = imagesData[i].url; // Assuming 'url' is the image URL
+    
+                const response = await fetch(imageUrl);
+                const blob = await response.blob();
+    
+                // Extract file extension from the URL
+                const urlParts = imageUrl.split(".");
+                const fileExtension = urlParts[urlParts.length - 1];
+    
+                const file = new File([blob], `image${i + 1}.${fileExtension}`, { type: `image/${fileExtension}` });
+    
+                newFiles.push(file);
+                imagePreviews.push(URL.createObjectURL(file));
+            }
+    
+            setFiles(newFiles);
+            setImagePreviews(imagePreviews);
         } catch (error) {
-            window.alert("올바른 접근이 아닙니다.");
-            navigate("/");
+            console.error("Error fetching or processing image data:", error);
         }
     };
+    
 
     useEffect(() => {
         fetchImageFile();
@@ -111,6 +129,11 @@ export default function HotelInfo({ hotelId }: { hotelId: string | undefined }) 
         setInfoData({ ...infoData, [name]: value });
     };
 
+    const onChangeSelect = (name: string, e: React.ChangeEvent<HTMLSelectElement>) => {
+        const { value } = e.target;
+        setInfoData({ ...infoData, [name]: value });
+    };
+
     const onChangeDesk = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setInfoData({ ...infoData, [name]: value });
@@ -139,12 +162,11 @@ export default function HotelInfo({ hotelId }: { hotelId: string | undefined }) 
         try {
             const config = await sendJWT({
                 method: "get",
-                url: "/hotel/mgmt/info/" + hotelId,
+                url: "/hotel/mgmt/info/" + hotel_id,
             });
 
             const response = await axiosInstance.request(config);
             const fetchedData = response.data.data[0];
-            console.log(response.data.data[0]);
             setHotelData(fetchedData);
             setInfoData({
                 hotel_id: fetchedData.hotel_id,
@@ -203,7 +225,8 @@ export default function HotelInfo({ hotelId }: { hotelId: string | undefined }) 
             });
 
             const response = await axiosInstance.request(config);
-            window.alert(response);
+            fetchHotelData();
+            window.alert("저장완료");
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 if (error.response.status === 409) {
@@ -315,7 +338,7 @@ export default function HotelInfo({ hotelId }: { hotelId: string | undefined }) 
 
     useEffect(() => {
         fetchHotelData();
-    }, [hotelId]);
+    }, [hotel_id]);
 
     return (
         <tw.Container>
@@ -336,9 +359,9 @@ export default function HotelInfo({ hotelId }: { hotelId: string | undefined }) 
 
                         <tw.OptionWrap>
                             <tw.Label>체크인</tw.Label>
-                            <tw.Select defaultValue={infoData.check_in}>
+                            <tw.Select value={infoData.check_in} onChange={(e) => onChangeSelect('check_in', e)}>
                                 {[...Array(24).keys()].map((hour) => (
-                                    <option key={hour} value={infoData.check_in}>
+                                    <option key={hour} value={hour}>
                                         {hour}
                                     </option>
                                 ))}
@@ -347,9 +370,9 @@ export default function HotelInfo({ hotelId }: { hotelId: string | undefined }) 
 
                         <tw.OptionWrap>
                             <tw.Label>체크아웃</tw.Label>
-                            <tw.Select defaultValue={infoData.check_out}>
+                            <tw.Select value={infoData.check_out} onChange={(e) => onChangeSelect('check_out', e)}>
                                 {[...Array(24).keys()].map((hour) => (
-                                    <option key={hour} value={infoData.check_out}>
+                                    <option key={hour} value={hour}>
                                         {hour}
                                     </option>
                                 ))}

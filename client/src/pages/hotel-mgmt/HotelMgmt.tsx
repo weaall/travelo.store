@@ -60,7 +60,7 @@ export default function HotelMgmt() {
             </tw.NavWrap>
             <tw.ContentsWrap>
                 <Routes>
-                    <Route path="" element={<HotelInfo hotelId={hotelId}/>}/>
+                    <Route path="" element={<HotelInfo hotel_id={hotelId}/>}/>
                 </Routes>
             </tw.ContentsWrap>
         </tw.Container>

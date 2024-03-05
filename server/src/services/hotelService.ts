@@ -1,7 +1,8 @@
 import { FieldPacket, ResultSetHeader } from "mysql2"
 import pool from "../config/db"
 import CustomError from "../utils/customError"
-import { HotelInfoRows, HotelRows, HotelInfoProps, HotelServProps, HotelFacilProps ,RegHotelParams } from "../interface/interfaces"
+import { HotelIdParams, HotelInfoRows, HotelRows, HotelInfoProps, HotelServProps, HotelFacilProps ,RegHotelParams, urlRows } from "../interface/interfaces"
+import { deleteHotelImg } from "../config/multer";
 
 
 const hotelService = {
@@ -104,11 +105,31 @@ const hotelService = {
         }
     },
 
+    async getHotelImgUrl(id: string) {
+        const connection = await pool.getConnection();
+
+        const checkHotelImgSql = "SELECT url FROM hotel_img where hotel_id = ?";
+        const checkHotelImgParams = [id];
+        try {
+            const [checkHotelImgResult]: [urlRows[], FieldPacket[]] = await connection.execute(
+                checkHotelImgSql,
+                checkHotelImgParams,
+            );
+
+            return checkHotelImgResult;
+        } catch (error) {
+            throw error;
+        } finally {
+            connection.release();
+        }
+    },
+
     async putHotelInfo(
         user_id: string,
         { hotel_id, description, check_in, check_out, tel_num }: HotelInfoProps,
-        urls: string[]
+        urls: string[],
     ) {
+        console.log(urls);
         const connection = await pool.getConnection();
 
         const checkAuthSql = "SELECT * FROM hotel WHERE id = ? and user_id = ?";
@@ -117,6 +138,12 @@ const hotelService = {
         const putHotelInfoSql =
             "UPDATE hotel SET description = ?,check_in = ?, check_out = ?, tel_num = ? WHERE id = ?";
         const putHotelInfoParams = [description, check_in, check_out, tel_num, hotel_id];
+
+        const checkHotelImgSql = "SELECT url FROM hotel_img where hotel_id = ?";
+        const checkHotelImgParams = [hotel_id];
+
+        const deleteHotelImgSql = "DELETE FROM hotel_img where hotel_id = ?";
+        const deleteHotelImgParams = [hotel_id];
 
         const addHotelImgSql = "INSERT INTO hotel_img (hotel_id, url) VALUES (?,?)";
         const addHotelImgParams = urls.map((url) => [url]);
@@ -134,8 +161,23 @@ const hotelService = {
             }
 
             const [putHotelInfoResult] = await connection.execute(putHotelInfoSql, putHotelInfoParams);
-            const [addRegDocResult] = await connection.execute(addHotelImgSql, [hotel_id, ...addHotelImgParams]);
+            const [checkHotelImgResult]: [urlRows[], FieldPacket[]] = await connection.execute(
+                checkHotelImgSql,
+                checkHotelImgParams,
+            );
+            const imageUrls: string[] = checkHotelImgResult.map((row) => row.url);
+
+            await deleteHotelImg(imageUrls);
+
+            const [deleteHotelImgResult] = await connection.execute(deleteHotelImgSql, deleteHotelImgParams);
             
+            if (addHotelImgParams.length > 0) {
+                for (const imageUrl of urls) {
+                    await connection.execute(addHotelImgSql, [hotel_id, imageUrl]);
+                }
+            }
+            
+
             await connection.commit();
 
             return;
@@ -191,7 +233,16 @@ const hotelService = {
 
         const putHotelFacilSql =
             "UPDATE hotel_facility SET carpark = ?, restaurant = ?, cafe = ?, swimming_pool = ?, spa = ?, fitness = ?, convenience_store = ? WHERE hotel_id = ?";
-        const putHotelFacilParams = [carpark, restaurant, cafe, swimming_pool, spa, fitness, convenience_store, hotel_id];
+        const putHotelFacilParams = [
+            carpark,
+            restaurant,
+            cafe,
+            swimming_pool,
+            spa,
+            fitness,
+            convenience_store,
+            hotel_id,
+        ];
 
         try {
             const [rows, fields]: [HotelRows[], FieldPacket[]] = await connection.execute(
