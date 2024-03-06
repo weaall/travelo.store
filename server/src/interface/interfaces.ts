@@ -64,6 +64,23 @@ export interface HotelRows extends RowDataPacket {
     permission: number;
 }
 
+export interface AuthRows extends RowDataPacket {
+    name: string;
+}
+
+export interface TypeRows extends RowDataPacket {
+    id: number;
+    name: string;
+}
+
+export interface RoomRows extends RowDataPacket {
+    id: number;
+    name: string;
+    bed_type_id: number;
+    view_type_id: number;
+    discount: number;
+}
+
 export interface HotelInfoRows extends RowDataPacket {
     name: string;
     postcode: number;

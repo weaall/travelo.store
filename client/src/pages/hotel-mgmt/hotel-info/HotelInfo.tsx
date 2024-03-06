@@ -65,33 +65,32 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
     const fetchImageFile = async () => {
         try {
             const urlResponse = await axiosInstance.get("/hotel/img/" + hotel_id);
-            console.log(urlResponse.data.data);
-    
+
             const imagesData = urlResponse.data.data;
-    
+
             const newFiles = [];
             const imagePreviews = [];
-    
+
             for (let i = 0; i < imagesData.length; i++) {
-                const imageUrl = imagesData[i].url; // Assuming 'url' is the image URL
-    
+                const imageUrl = imagesData[i].url;
+
                 const response = await fetch(imageUrl);
                 const blob = await response.blob();
-    
-                // Extract file extension from the URL
+
                 const urlParts = imageUrl.split(".");
                 const fileExtension = urlParts[urlParts.length - 1];
-    
+
                 const file = new File([blob], `image${i + 1}.${fileExtension}`, { type: `image/${fileExtension}` });
-    
+
                 newFiles.push(file);
                 imagePreviews.push(URL.createObjectURL(file));
             }
-    
+
             setFiles(newFiles);
             setImagePreviews(imagePreviews);
         } catch (error) {
-            console.error("Error fetching or processing image data:", error);
+            window.alert("올바른 접근이 아닙니다.");
+            navigate("/main");
         }
     };
     

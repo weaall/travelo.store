@@ -5,11 +5,11 @@ import { Routes, Route, useParams,  useNavigate, useLocation } from "react-route
 import { HotelDataProps } from "../../interface/interfaces"
 import * as tw from "./HotelMgmt.styles"
 import HotelInfo from "./hotel-info/HotelInfo"
+import HotelRoom from "./hotel-room/HotelRoom"
 
 export default function HotelMgmt() {
     const navigate = useNavigate()
     const { hotelId } = useParams();
-    const newId = hotelId
 
     const [hotelData, setHotelData] = useState<HotelDataProps>()
 
@@ -54,13 +54,14 @@ export default function HotelMgmt() {
             </tw.HotelStateWrap>
             <tw.NavWrap>
                 <tw.NavBtn onClick={() => navigate("./")}>숙소정보</tw.NavBtn>
-                <tw.NavBtn>객실관리</tw.NavBtn>
+                <tw.NavBtn onClick={() => navigate("./room")}>객실관리</tw.NavBtn>
                 <tw.NavBtn>가격설정</tw.NavBtn>
                 <tw.NavBtn>메세지</tw.NavBtn>
             </tw.NavWrap>
             <tw.ContentsWrap>
                 <Routes>
                     <Route path="" element={<HotelInfo hotel_id={hotelId}/>}/>
+                    <Route path="/room" element={<HotelRoom hotel_id={hotelId}/>}/>
                 </Routes>
             </tw.ContentsWrap>
         </tw.Container>
