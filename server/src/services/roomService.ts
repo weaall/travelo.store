@@ -1,7 +1,17 @@
-import { FieldPacket, ResultSetHeader } from "mysql2"
-import pool from "../config/db"
-import CustomError from "../utils/customError"
-import { AuthRows, RoomRows, TypeRows } from "../interface/interfaces";
+import { FieldPacket, ResultSetHeader } from "mysql2";
+import pool from "../config/db";
+import CustomError from "../utils/customError";
+import {
+    HotelIdParams,
+    RoomRegProps,
+    RoomInfoProps,
+    RoomServProps,
+    AuthRows,
+    RoomRows,
+    TypeRows,
+    urlRows,
+} from "../interface/interfaces";
+import { deleteRoomImg } from "../config/multer";
 
 const roomService = {
     async getBedType() {
@@ -32,9 +42,9 @@ const roomService = {
             connection.release();
         }
     },
-    async getRoom({ hotel_id }) {
+    async getRoomByHotel(id : string) {
         const getRoomSql = "SELECT * FROM room WHERE hotel_id = ?";
-        const getRoomValues = [hotel_id];
+        const getRoomValues = [id];
 
         const connection = await pool.getConnection();
         try {
@@ -50,7 +60,7 @@ const roomService = {
             connection.release();
         }
     },
-    async regRoom(user_id: string, { hotel_id, name, bed_type_id, view_type_id }) {
+    async regRoom(user_id: string, { hotel_id, name, bed_type_id, view_type_id }: RoomRegProps) {
         const checkAuthSql = "SELECT name FROM hotel WHERE id = ? and user_id = ?";
         const checkAuthValues = [hotel_id, user_id];
 
@@ -81,6 +91,94 @@ const roomService = {
             return;
         } catch (error) {
             await connection.rollback();
+            throw error;
+        } finally {
+            connection.release();
+        }
+    },
+    async putRoomInfo(
+        user_id: string,
+        { hotel_id, room_id, name, bed_type_id, view_type_id }: RoomInfoProps,
+        urls: string[],
+    ) {
+        const checkAuthSql = "SELECT name FROM hotel WHERE id = ? and user_id = ?";
+        const checkAuthValues = [hotel_id, user_id];
+
+        const putRoomInfoSql = "UPDATE room SET name = ?,bed_type_id = ?, view_type_id = ? WHERE room_id = ?";
+        const putRoomInfoValues = [name, bed_type_id, view_type_id, room_id];
+
+        const checkRoomImgSql = "SELECT url FROM room_img where room_id = ?";
+        const checkRoomImgValues = [room_id];
+
+        const deleteRoomImgSql = "DELETE FROM room_img where room_id = ?";
+        const deleteRoomImgValues = [room_id];
+
+        const addRoomImgSql = "INSERT INTO room_img (room_id, url) VALUES (?,?)";
+        const addRoomImgValues = urls.map((url) => [url]);
+
+        const connection = await pool.getConnection();
+        try {
+            await connection.beginTransaction();
+
+            const [checkAuthResult, fields]: [AuthRows[], FieldPacket[]] = await connection.execute(
+                checkAuthSql,
+                checkAuthValues,
+            );
+
+            if (checkAuthResult.length === 0) {
+                throw new CustomError("UNAUTHORIZED", 401);
+            }
+
+            const [putRoomInfoResult] = await connection.execute(putRoomInfoSql, putRoomInfoValues);
+            const [checkRoomImgResult]: [urlRows[], FieldPacket[]] = await connection.execute(
+                checkRoomImgSql,
+                checkRoomImgValues,
+            );
+            const imageUrls: string[] = checkRoomImgResult.map((row) => row.url);
+
+            await deleteRoomImg(imageUrls);
+
+            const [deleteHotelImgResult] = await connection.execute(deleteRoomImgSql, deleteRoomImgValues);
+
+            if (addRoomImgValues.length > 0) {
+                for (const imageUrl of urls) {
+                    await connection.execute(addRoomImgSql, [room_id, imageUrl]);
+                }
+            }
+
+            await connection.commit();
+
+            return;
+        } catch (error) {
+            await connection.rollback();
+            throw error;
+        } finally {
+            connection.release();
+        }
+    },
+    async putRoomServ(user_id: string, { hotel_id, room_id, no_smoking, toiletries }: RoomServProps) {
+        const checkAuthSql = "SELECT name FROM hotel WHERE id = ? and user_id = ?";
+        const checkAuthValues = [hotel_id, user_id];
+
+        const putRoomServSql = "UPDATE room_service SET no_smoking = ?, toiletries = ? WHERE room_id = ?";
+        const putRoomServValues = [no_smoking, toiletries, room_id];
+
+        const connection = await pool.getConnection();
+
+        try {
+            const [checkAuthResult, fields]: [AuthRows[], FieldPacket[]] = await connection.execute(
+                checkAuthSql,
+                checkAuthValues,
+            );
+
+            if (checkAuthResult.length === 0) {
+                throw new CustomError("UNAUTHORIZED", 401);
+            }
+
+            const [putRoomServResult] = await connection.execute(putRoomServSql, putRoomServValues);
+
+            return;
+        } catch (error) {
             throw error;
         } finally {
             connection.release();

@@ -247,6 +247,7 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
                     check_out: hotelData.check_out,
                     tel_num: hotelData.tel_num,
                 });
+                fetchImageFile();
             }
         }
     };

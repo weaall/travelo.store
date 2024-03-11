@@ -1,25 +1,36 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { sendJWT } from "../../../utils/jwtUtils"
 import { axios, axiosInstance } from "../../../utils/axios.utils"
 
 import * as tw from "./HotelRoom.styles";
+import { ModalPortal } from "../../../hook/modal/ModalPortal";
+import RegRoomModal from "../../../hook/modal/RegRoom/RegRoom.modal";
 
 
 export default function HotelRoom({ hotel_id }: { hotel_id: string | undefined }) {
+
+    const [isModalOpen, setIsModalOpen] = useState(false)
+
+    const openModal = () => {
+        setIsModalOpen(true)
+    }
+
+    const closeModal = () => {
+        setIsModalOpen(false)
+    }
+
     const [roomData, setRoomData] = useState();
 
     const navigate = useNavigate();
 
     const fetchRoom = async () => {
         try {
-            const config = await sendJWT({
-                method: "get",
-                url: "/hotel/mgmt/" + hotel_id,
-            });
+            console.log(hotel_id)
 
-            const response = await axiosInstance.request(config);
+            const response = await axiosInstance.get("/room/hotel/" + hotel_id)
+
             setRoomData(response.data.data[0]);
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
@@ -34,16 +45,26 @@ export default function HotelRoom({ hotel_id }: { hotel_id: string | undefined }
         }
     };
 
+    useEffect(() => {
+        fetchRoom()
+    }, [])
+
     return (
         <tw.Container>
             <tw.ContentsWrap>
             <tw.ContentsFlex>
                     <tw.Title>객실관리</tw.Title>
                     <tw.HalfFlex>
-                        <tw.SetBtn>추가</tw.SetBtn>
+                        <tw.SetBtn onClick={openModal}>추가</tw.SetBtn>
                     </tw.HalfFlex>
                 </tw.ContentsFlex>
             </tw.ContentsWrap>
+
+            {isModalOpen && (
+                <ModalPortal>
+                    <RegRoomModal onClose={closeModal} hotel_id={hotel_id}/>
+                </ModalPortal>
+            )}
         </tw.Container>
     );
 }

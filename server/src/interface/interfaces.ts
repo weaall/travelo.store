@@ -144,3 +144,25 @@ export interface HotelFacilProps {
     fitness: number;
     convenience_store: number;
 }
+
+export interface RoomRegProps {
+    hotel_id: number;
+    name: string;
+    bed_type_id: number;
+    view_type_id: number;
+}
+
+export interface RoomInfoProps {
+    hotel_id: number;
+    room_id: number;
+    name: string;
+    bed_type_id: number;
+    view_type_id: number;
+}
+
+export interface RoomServProps {
+    hotel_id: number;
+    room_id: number;
+    no_smoking: number;
+    toiletries: number;
+}
