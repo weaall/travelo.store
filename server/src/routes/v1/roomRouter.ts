@@ -7,5 +7,7 @@ import isAuthenticated from "../../middlewares/isAuthenticated"
 const roomRouter = Router()
 
 roomRouter.get("/hotel/:id", asyncHandler(roomController.getRoomByHotel));
+roomRouter.get("/bed", asyncHandler(roomController.getBedType));
+roomRouter.get("/view", asyncHandler(roomController.getViewType));
 
 export default roomRouter

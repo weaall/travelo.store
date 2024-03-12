@@ -27,7 +27,6 @@ export default function HotelRoom({ hotel_id }: { hotel_id: string | undefined }
 
     const fetchRoom = async () => {
         try {
-            console.log(hotel_id)
 
             const response = await axiosInstance.get("/room/hotel/" + hotel_id)
 

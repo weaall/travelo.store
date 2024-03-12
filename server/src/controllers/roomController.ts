@@ -12,6 +12,22 @@ const roomController = {
             data: data,
         });
     },
+    async getBedType(req: Request, res: Response){
+        const data = await roomService.getBedType();
+
+        res.status(200).json({
+            error: null,
+            data: data,
+        });
+    },
+    async getViewType(req: Request, res: Response){
+        const data = await roomService.getViewType();
+
+        res.status(200).json({
+            error: null,
+            data: data,
+        });
+    },
 
 }
 export default roomController
