@@ -7,7 +7,15 @@ import isAuthenticated from "../../middlewares/isAuthenticated"
 const roomRouter = Router()
 
 roomRouter.get("/hotel/:id", asyncHandler(roomController.getRoomByHotel));
+
 roomRouter.get("/bed", asyncHandler(roomController.getBedType));
+
 roomRouter.get("/view", asyncHandler(roomController.getViewType));
+
+roomRouter.post(
+    "/reg",
+    isAuthenticated,
+    asyncHandler((req: Request, res: Response) => roomController.regRoom(req as JWTCheck, res)),
+);
 
 export default roomRouter

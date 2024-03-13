@@ -3,7 +3,6 @@ import { JWTCheck } from "../interface/interfaces"
 import roomService from "../services/roomService";
 
 const roomController = {
-
     async getRoomByHotel(req: Request, res: Response){
         const data = await roomService.getRoomByHotel(req.params.id);
 
@@ -27,6 +26,14 @@ const roomController = {
             error: null,
             data: data,
         });
+    },
+    async regRoom(req: JWTCheck, res: Response) {
+        const data = await roomService.regRoom(req.user.id, req.body);
+
+        res.status(201).json({
+            error: null,
+            data: data,
+        })
     },
 
 }

@@ -15,6 +15,9 @@ export default function RegRoomModal({ onClose, hotel_id }: ModalProps) {
 
     const [roomData, setRoomData] = useState({
         hotel_id: hotel_id,
+        name: "",
+        bed_type_id: 0,
+        view_type_id: 0,
     });
     const [bedList, setBedList] = useState([
         {
@@ -29,15 +32,22 @@ export default function RegRoomModal({ onClose, hotel_id }: ModalProps) {
         },
     ]);
 
-    const [selectedBed, setSelectedBed] = useState<number | string>("");
-    const [selectedView, setSelectedView] = useState<number | string>("");
+    const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target
+        setRoomData({ ...roomData, [name]: value })
+    }
+
+    const onChangeSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const { name, value } = e.target
+        setRoomData({ ...roomData, [name]: value })
+    }
 
     const onClickRegister = async () => {
         if (window.confirm("저장하시겠습니까?")) {
             try {
                 const config = await sendJWT({
-                    method: "put",
-                    url: "/hotel/mgmt/facil",
+                    method: "post",
+                    url: "/room/reg",
                     data: roomData,
                 });
                 const response = await axiosInstance.request(config);
@@ -100,9 +110,9 @@ export default function RegRoomModal({ onClose, hotel_id }: ModalProps) {
                 </tw.TitleWrap>
                 <tw.InputWrap>
                     <tw.UpperTag>호텔이름</tw.UpperTag>
-                    <tw.Input />
+                    <tw.Input value={roomData.name} onChange={onChangeInput} name="name"/>
                     <tw.UpperTag>베드 타입</tw.UpperTag>
-                    <tw.Select value={selectedBed} onChange={(e) => setSelectedBed(e.target.value)}>
+                    <tw.Select value={roomData.bed_type_id} onChange={onChangeSelect} name="bed_type_id">
                         {bedList.map((bed) => (
                             <option key={bed.id} value={bed.id}>
                                 {bed.name}
@@ -110,7 +120,7 @@ export default function RegRoomModal({ onClose, hotel_id }: ModalProps) {
                         ))}
                     </tw.Select>
                     <tw.UpperTag>뷰 타입</tw.UpperTag>
-                    <tw.Select value={selectedView} onChange={(e) => setSelectedView(e.target.value)}>
+                    <tw.Select value={roomData.view_type_id} onChange={onChangeSelect} name="view_type_id">
                         {viewList.map((view) => (
                             <option key={view.id} value={view.id}>
                                 {view.name}
@@ -119,7 +129,7 @@ export default function RegRoomModal({ onClose, hotel_id }: ModalProps) {
                     </tw.Select>
                 </tw.InputWrap>
                 <tw.RegWrap>
-                    <tw.RegBtn $validator={true}>등록하기</tw.RegBtn>
+                    <tw.RegBtn onClick={onClickRegister} $validator={true}>등록하기</tw.RegBtn>
                 </tw.RegWrap>
             </tw.ModalWrap>
         </tw.Container>

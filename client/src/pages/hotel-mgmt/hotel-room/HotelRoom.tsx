@@ -21,7 +21,13 @@ export default function HotelRoom({ hotel_id }: { hotel_id: string | undefined }
         setIsModalOpen(false)
     }
 
-    const [roomData, setRoomData] = useState();
+    const [roomData, setRoomData] = useState([
+        {
+            id: 0,
+            name: "",
+            bed_type_id: 0,
+        },
+    ]);
 
     const navigate = useNavigate();
 
@@ -30,7 +36,8 @@ export default function HotelRoom({ hotel_id }: { hotel_id: string | undefined }
 
             const response = await axiosInstance.get("/room/hotel/" + hotel_id)
 
-            setRoomData(response.data.data[0]);
+            console.log(response.data.data)
+            setRoomData(response.data.data);
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 if (error.response.status === 409) {
@@ -51,17 +58,24 @@ export default function HotelRoom({ hotel_id }: { hotel_id: string | undefined }
     return (
         <tw.Container>
             <tw.ContentsWrap>
-            <tw.ContentsFlex>
+                <tw.ContentsFlex>
                     <tw.Title>객실관리</tw.Title>
                     <tw.HalfFlex>
-                        <tw.SetBtn onClick={openModal}>추가</tw.SetBtn>
+                        <tw.AddBtn onClick={openModal}>추가</tw.AddBtn>
                     </tw.HalfFlex>
                 </tw.ContentsFlex>
+                <tw.RoomList>
+                {roomData.map((room, index) => (
+                    <tw.RoomWrap key={index}>
+                        <tw.RoomName>{room.name}</tw.RoomName>
+                    </tw.RoomWrap>
+                ))}
+                </tw.RoomList>
             </tw.ContentsWrap>
 
             {isModalOpen && (
                 <ModalPortal>
-                    <RegRoomModal onClose={closeModal} hotel_id={hotel_id}/>
+                    <RegRoomModal onClose={closeModal} hotel_id={hotel_id} />
                 </ModalPortal>
             )}
         </tw.Container>

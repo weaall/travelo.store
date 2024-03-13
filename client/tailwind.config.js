@@ -19,7 +19,7 @@ module.exports = {
                 },
               },
               animation: {
-                modal: "modal 0.7s ease-in-out 1",
+                modal: "modal 0.5s ease-in-out 1",
               },
         },
     },
