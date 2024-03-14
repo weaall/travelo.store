@@ -42,8 +42,11 @@ const roomService = {
             connection.release();
         }
     },
-    async getRoomByHotel(id : string) {
-        const getRoomSql = "SELECT * FROM room WHERE hotel_id = ?";
+    async getRoomByHotel(id: string) {
+        const getRoomSql = `SELECT R.id, R.name, R.num, B.id AS bed_type_id, B.name AS bed_type, V.id AS view_type_id, V.name AS view_type, discount FROM room AS R 
+        LEFT JOIN bed_type AS B ON R.bed_type_id = B.id
+        LEFT JOIN view_type AS V ON R.view_type_id = V.id
+        WHERE hotel_id = ?`;
         const getRoomValues = [id];
 
         const connection = await pool.getConnection();
@@ -60,13 +63,13 @@ const roomService = {
             connection.release();
         }
     },
-    async regRoom(user_id: string, { hotel_id, name, bed_type_id, view_type_id }: RoomRegProps) {
+    async regRoom(user_id: string, { hotel_id, name, num, bed_type_id, view_type_id }: RoomRegProps) {
         const checkAuthSql = "SELECT name FROM hotel WHERE id = ? and user_id = ?";
         const checkAuthValues = [hotel_id, user_id];
 
         const addRoomSql =
-            "INSERT INTO room (hotel_id, name, bed_type_id, view_type_id, discount) VALUES (?, ?, ?, ?, ?)";
-        const addRoomValues = [hotel_id, name, bed_type_id, view_type_id, 0];
+            "INSERT INTO room (hotel_id, name, num, bed_type_id, view_type_id, discount) VALUES (?, ?, ?, ?, ?, ?)";
+        const addRoomValues = [hotel_id, name, num, bed_type_id, view_type_id, 0];
 
         const connection = await pool.getConnection();
         try {

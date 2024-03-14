@@ -16,8 +16,9 @@ export default function RegRoomModal({ onClose, hotel_id }: ModalProps) {
     const [roomData, setRoomData] = useState({
         hotel_id: hotel_id,
         name: "",
-        bed_type_id: 0,
-        view_type_id: 0,
+        num: 1,
+        bed_type_id: 1,
+        view_type_id: 1,
     });
     const [bedList, setBedList] = useState([
         {
@@ -110,7 +111,15 @@ export default function RegRoomModal({ onClose, hotel_id }: ModalProps) {
                 </tw.TitleWrap>
                 <tw.InputWrap>
                     <tw.UpperTag>호텔이름</tw.UpperTag>
-                    <tw.Input value={roomData.name} onChange={onChangeInput} name="name"/>
+                    <tw.Input value={roomData.name} onChange={onChangeInput} name="name" />
+                    <tw.UpperTag>인원</tw.UpperTag>
+                    <tw.Select value={roomData.num} onChange={onChangeSelect} name="num">
+                        {[1, 2, 3, 4].map((num) => (
+                            <option key={num} value={num}>
+                                {num}
+                            </option>
+                        ))}
+                    </tw.Select>
                     <tw.UpperTag>베드 타입</tw.UpperTag>
                     <tw.Select value={roomData.bed_type_id} onChange={onChangeSelect} name="bed_type_id">
                         {bedList.map((bed) => (
@@ -127,9 +136,12 @@ export default function RegRoomModal({ onClose, hotel_id }: ModalProps) {
                             </option>
                         ))}
                     </tw.Select>
+                    
                 </tw.InputWrap>
                 <tw.RegWrap>
-                    <tw.RegBtn onClick={onClickRegister} $validator={true}>등록하기</tw.RegBtn>
+                    <tw.RegBtn onClick={onClickRegister} $validator={true}>
+                        등록하기
+                    </tw.RegBtn>
                 </tw.RegWrap>
             </tw.ModalWrap>
         </tw.Container>

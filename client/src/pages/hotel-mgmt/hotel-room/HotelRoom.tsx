@@ -13,7 +13,7 @@ export default function HotelRoom({ hotel_id }: { hotel_id: string | undefined }
 
     const [isModalOpen, setIsModalOpen] = useState(false)
 
-    const openModal = () => {
+    const openRegModal = () => {
         setIsModalOpen(true)
     }
 
@@ -25,7 +25,12 @@ export default function HotelRoom({ hotel_id }: { hotel_id: string | undefined }
         {
             id: 0,
             name: "",
+            num: 0,
             bed_type_id: 0,
+            bed_type: "",
+            view_type_id: 0,
+            view_type: "",
+            discount: 0,
         },
     ]);
 
@@ -35,8 +40,6 @@ export default function HotelRoom({ hotel_id }: { hotel_id: string | undefined }
         try {
 
             const response = await axiosInstance.get("/room/hotel/" + hotel_id)
-
-            console.log(response.data.data)
             setRoomData(response.data.data);
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
@@ -61,15 +64,26 @@ export default function HotelRoom({ hotel_id }: { hotel_id: string | undefined }
                 <tw.ContentsFlex>
                     <tw.Title>객실관리</tw.Title>
                     <tw.HalfFlex>
-                        <tw.AddBtn onClick={openModal}>추가</tw.AddBtn>
+                        <tw.AddBtn onClick={openRegModal}>추가</tw.AddBtn>
                     </tw.HalfFlex>
                 </tw.ContentsFlex>
                 <tw.RoomList>
-                {roomData.map((room, index) => (
-                    <tw.RoomWrap key={index}>
-                        <tw.RoomName>{room.name}</tw.RoomName>
-                    </tw.RoomWrap>
-                ))}
+                    {roomData.map((room, index) => (
+                        <tw.RoomWrap key={index}>
+                            <tw.ContentsFlex>
+                                <tw.RoomName>{room.name}</tw.RoomName>
+                                <tw.HalfFlex>
+                                    <tw.AddBtn>수정</tw.AddBtn>
+                                    <tw.AddBtn>삭제</tw.AddBtn>
+                                </tw.HalfFlex>
+                            </tw.ContentsFlex>
+                            <tw.ContentsFlex>
+                                <tw.RoomText>숙박인원 : {room.num}인</tw.RoomText>
+                                <tw.RoomText>{room.bed_type}</tw.RoomText>
+                                <tw.RoomText>({room.view_type})</tw.RoomText>
+                            </tw.ContentsFlex>
+                        </tw.RoomWrap>
+                    ))}
                 </tw.RoomList>
             </tw.ContentsWrap>
 

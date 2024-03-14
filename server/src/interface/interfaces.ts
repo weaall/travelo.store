@@ -76,8 +76,11 @@ export interface TypeRows extends RowDataPacket {
 export interface RoomRows extends RowDataPacket {
     id: number;
     name: string;
+    num: number;
     bed_type_id: number;
+    bed_type: string;
     view_type_id: number;
+    view_type: string;
     discount: number;
 }
 
@@ -148,6 +151,7 @@ export interface HotelFacilProps {
 export interface RoomRegProps {
     hotel_id: number;
     name: string;
+    num: number;
     bed_type_id: number;
     view_type_id: number;
 }
