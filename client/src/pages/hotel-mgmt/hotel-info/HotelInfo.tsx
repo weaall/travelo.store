@@ -93,7 +93,6 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
             navigate("/main");
         }
     };
-    
 
     useEffect(() => {
         fetchImageFile();
@@ -167,31 +166,9 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
             const response = await axiosInstance.request(config);
             const fetchedData = response.data.data[0];
             setHotelData(fetchedData);
-            setInfoData({
-                hotel_id: fetchedData.hotel_id,
-                description: fetchedData.description,
-                check_in: fetchedData.check_in,
-                check_out: fetchedData.check_out,
-                tel_num: fetchedData.tel_num,
-            });
-            setServData({
-                hotel_id: fetchedData.hotel_id,
-                wifi: fetchedData.wifi,
-                always_check_in: fetchedData.always_check_in,
-                breakfast: fetchedData.breakfast,
-                breakfast_price: fetchedData.breakfast_price,
-                barbecue: fetchedData.barbecue,
-            });
-            setFacilData({
-                hotel_id: fetchedData.hotel_id,
-                carpark: fetchedData.carpark,
-                restaurant: fetchedData.restaurant,
-                cafe: fetchedData.cafe,
-                swimming_pool: fetchedData.swimming_pool,
-                spa: fetchedData.spa,
-                fitness: fetchedData.fitness,
-                convenience_store: fetchedData.convenience_store,
-            });
+            setInfoData(fetchedData);
+            setServData(fetchedData);
+            setFacilData(fetchedData);
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 if (error.response.status === 409) {
@@ -240,13 +217,7 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
     const clickInfoReset = () => {
         if (window.confirm("되돌리시겠습니까?")) {
             if (hotelData) {
-                setInfoData({
-                    hotel_id: hotelData.hotel_id,
-                    description: hotelData.description,
-                    check_in: hotelData.check_in,
-                    check_out: hotelData.check_out,
-                    tel_num: hotelData.tel_num,
-                });
+                setInfoData(hotelData);
                 fetchImageFile();
             }
         }
@@ -281,14 +252,7 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
     const clickServReset = () => {
         if (window.confirm("되돌리시겠습니까?")) {
             if (hotelData) {
-                setServData({
-                    hotel_id: hotelData.hotel_id,
-                    wifi: hotelData.wifi,
-                    always_check_in: hotelData.always_check_in,
-                    breakfast: hotelData.breakfast,
-                    breakfast_price: hotelData.breakfast_price,
-                    barbecue: hotelData.barbecue,
-                });
+                setServData(hotelData);
             }
         }
     };
@@ -322,16 +286,7 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
     const clickFacilReset = () => {
         if (window.confirm("되돌리시겠습니까?")) {
             if (hotelData) {
-                setFacilData({
-                    hotel_id: hotelData.hotel_id,
-                    carpark: hotelData.carpark,
-                    restaurant: hotelData.restaurant,
-                    cafe: hotelData.cafe,
-                    swimming_pool: hotelData.swimming_pool,
-                    spa: hotelData.spa,
-                    fitness: hotelData.fitness,
-                    convenience_store: hotelData.convenience_store,
-                });
+                setFacilData(hotelData);
             }
         }
     };
@@ -354,12 +309,17 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
                     <tw.HalfCol>
                         <tw.OptionWrap>
                             <tw.Label>전화번호</tw.Label>
-                            <tw.InputBox value={infoData.tel_num} maxLength={11} name="tel_num" onChange={onChangeInfo}></tw.InputBox>
+                            <tw.InputBox
+                                value={infoData.tel_num}
+                                maxLength={11}
+                                name="tel_num"
+                                onChange={onChangeInfo}
+                            ></tw.InputBox>
                         </tw.OptionWrap>
 
                         <tw.OptionWrap>
                             <tw.Label>체크인</tw.Label>
-                            <tw.Select value={infoData.check_in} onChange={(e) => onChangeSelect('check_in', e)}>
+                            <tw.Select value={infoData.check_in} onChange={(e) => onChangeSelect("check_in", e)}>
                                 {[...Array(24).keys()].map((hour) => (
                                     <option key={hour} value={hour}>
                                         {hour}
@@ -370,7 +330,7 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
 
                         <tw.OptionWrap>
                             <tw.Label>체크아웃</tw.Label>
-                            <tw.Select value={infoData.check_out} onChange={(e) => onChangeSelect('check_out', e)}>
+                            <tw.Select value={infoData.check_out} onChange={(e) => onChangeSelect("check_out", e)}>
                                 {[...Array(24).keys()].map((hour) => (
                                     <option key={hour} value={hour}>
                                         {hour}
@@ -381,8 +341,11 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
                     </tw.HalfCol>
                     <tw.HalfCol>
                         <tw.Label>설명</tw.Label>
-                        <tw.DescInput value={infoData.description} name="description" 
-                        onChange={onChangeDesk}></tw.DescInput>
+                        <tw.DescInput
+                            value={infoData.description}
+                            name="description"
+                            onChange={onChangeDesk}
+                        ></tw.DescInput>
                     </tw.HalfCol>
                 </tw.ContentsFlex>
                 <tw.UploadWrap onDragOver={onDragOver} onDrop={onDrop}>

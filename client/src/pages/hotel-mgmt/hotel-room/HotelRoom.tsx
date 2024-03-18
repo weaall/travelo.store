@@ -1,25 +1,36 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { sendJWT } from "../../../utils/jwtUtils"
-import { axios, axiosInstance } from "../../../utils/axios.utils"
+import { sendJWT } from "../../../utils/jwtUtils";
+import { axios, axiosInstance } from "../../../utils/axios.utils";
 
 import * as tw from "./HotelRoom.styles";
 import { ModalPortal } from "../../../hook/modal/ModalPortal";
-import RegRoomModal from "../../../hook/modal/RegRoom/RegRoom.modal";
-
+import RegRoomModal from "../../../hook/modal/reg-room/RegRoom.modal";
+import SetRoomModal from "../../../hook/modal/set-room/SetRoom.modal";
 
 export default function HotelRoom({ hotel_id }: { hotel_id: string | undefined }) {
-
-    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [isRegModalOpen, setIsRegModalOpen] = useState(false);
 
     const openRegModal = () => {
-        setIsModalOpen(true)
-    }
+        setIsRegModalOpen(true);
+    };
 
-    const closeModal = () => {
-        setIsModalOpen(false)
-    }
+    const closeRegModal = () => {
+        setIsRegModalOpen(false);
+    };
+
+    const [isSetModalOpen, setIsSetModalOpen] = useState(false);
+    const [roomId, setRoomId] = useState(0);
+
+    const openSetModal = (id: number) => {
+        setRoomId(id);
+        setIsSetModalOpen(true);
+      };
+
+    const closeSetModal = () => {
+        setIsSetModalOpen(false);
+    };
 
     const [roomData, setRoomData] = useState([
         {
@@ -38,8 +49,7 @@ export default function HotelRoom({ hotel_id }: { hotel_id: string | undefined }
 
     const fetchRoom = async () => {
         try {
-
-            const response = await axiosInstance.get("/room/hotel/" + hotel_id)
+            const response = await axiosInstance.get("/room/hotel/" + hotel_id);
             setRoomData(response.data.data);
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
@@ -55,8 +65,8 @@ export default function HotelRoom({ hotel_id }: { hotel_id: string | undefined }
     };
 
     useEffect(() => {
-        fetchRoom()
-    }, [])
+        fetchRoom();
+    }, []);
 
     return (
         <tw.Container>
@@ -73,7 +83,7 @@ export default function HotelRoom({ hotel_id }: { hotel_id: string | undefined }
                             <tw.ContentsFlex>
                                 <tw.RoomName>{room.name}</tw.RoomName>
                                 <tw.HalfFlex>
-                                    <tw.AddBtn>수정</tw.AddBtn>
+                                    <tw.AddBtn onClick={() => openSetModal(room.id)}>수정</tw.AddBtn>
                                     <tw.AddBtn>삭제</tw.AddBtn>
                                 </tw.HalfFlex>
                             </tw.ContentsFlex>
@@ -87,9 +97,15 @@ export default function HotelRoom({ hotel_id }: { hotel_id: string | undefined }
                 </tw.RoomList>
             </tw.ContentsWrap>
 
-            {isModalOpen && (
+            {isRegModalOpen && (
                 <ModalPortal>
-                    <RegRoomModal onClose={closeModal} hotel_id={hotel_id} />
+                    <RegRoomModal onClose={closeRegModal} hotel_id={hotel_id} />
+                </ModalPortal>
+            )}
+
+            {isSetModalOpen && (
+                <ModalPortal>
+                    <SetRoomModal onClose={closeSetModal} room_id={roomId} />
                 </ModalPortal>
             )}
         </tw.Container>

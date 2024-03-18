@@ -11,6 +11,14 @@ const roomController = {
             data: data,
         });
     },
+    async getRoomById(req: Request, res: Response){
+        const data = await roomService.getRoomById(req.params.id);
+
+        res.status(200).json({
+            error: null,
+            data: data,
+        });
+    },
     async getBedType(req: Request, res: Response){
         const data = await roomService.getBedType();
 

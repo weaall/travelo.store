@@ -8,9 +8,14 @@ const roomRouter = Router()
 
 roomRouter.get("/hotel/:id", asyncHandler(roomController.getRoomByHotel));
 
-roomRouter.get("/bed", asyncHandler(roomController.getBedType));
+
+roomRouter.get("/:id", asyncHandler(roomController.getRoomById));
+
+roomRouter.get("/bed",asyncHandler(roomController.getBedType));
 
 roomRouter.get("/view", asyncHandler(roomController.getViewType));
+
+roomRouter.get("/:id", asyncHandler(roomController.getRoomById));
 
 roomRouter.post(
     "/reg",
