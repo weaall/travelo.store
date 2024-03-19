@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import React, { DragEvent, useEffect, useState } from "react";
 import { sendJWT } from "../../../utils/jwtUtils";
 import { axios, axiosInstance } from "../../../utils/axios.utils";
 import { useNavigate } from "react-router-dom";
@@ -34,6 +34,69 @@ export default function SetRoomModal({ onClose, room_id }: ModalProps) {
             name: "",
         },
     ]);
+
+    const [files, setFiles] = useState<File[]>([]);
+    const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+
+    const fetchImageFile = async () => {
+        try {
+            const urlResponse = await axiosInstance.get("/room/img/" + room_id);
+
+            const imagesData = urlResponse.data.data;
+
+            const newFiles = [];
+            const imagePreviews = [];
+
+            for (let i = 0; i < imagesData.length; i++) {
+                const imageUrl = imagesData[i].url;
+
+                const response = await fetch(imageUrl);
+                const blob = await response.blob();
+
+                const urlParts = imageUrl.split(".");
+                const fileExtension = urlParts[urlParts.length - 1];
+
+                const file = new File([blob], `image${i + 1}.${fileExtension}`, { type: `image/${fileExtension}` });
+
+                newFiles.push(file);
+                imagePreviews.push(URL.createObjectURL(file));
+            }
+
+            setFiles(newFiles);
+            setImagePreviews(imagePreviews);
+        } catch (error) {
+            window.alert("올바른 접근이 아닙니다.");
+            navigate("/main");
+        }
+    };
+
+    // useEffect(() => {
+    //     fetchImageFile();
+    // }, []);
+
+    const onDragOver = (e: DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+    };
+
+    const onDrop = (e: DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+
+        const droppedFiles = e.dataTransfer.files;
+        const newFiles = Array.from(droppedFiles).slice(0, 10 - files.length);
+        setFiles((prevFiles) => [...prevFiles, ...newFiles]);
+
+        const previews = [...files, ...newFiles].map((file) => URL.createObjectURL(file));
+        setImagePreviews(previews);
+    };
+
+    const removeFile = (index: number) => {
+        const newFiles = [...files];
+        newFiles.splice(index, 1);
+        setFiles(newFiles);
+
+        const previews = newFiles.map((file) => URL.createObjectURL(file));
+        setImagePreviews(previews);
+    };
 
     const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
@@ -153,7 +216,20 @@ export default function SetRoomModal({ onClose, room_id }: ModalProps) {
                             </option>
                         ))}
                     </tw.Select>
-                    
+
+                    <tw.UploadWrap onDragOver={onDragOver} onDrop={onDrop}>
+                        <tw.ImgLabel>이미지를 드래그 앤 드롭하세요.</tw.ImgLabel>
+                        <tw.ImgContainer>
+                            {imagePreviews.map((preview, index) => (
+                                <tw.ImgWrap key={index}>
+                                    <tw.RemoveBtn onClick={() => removeFile(index)} style={{ marginLeft: "10px" }}>
+                                        삭제
+                                    </tw.RemoveBtn>
+                                    <tw.Img src={preview} alt={`이미지 미리보기 ${index + 1}`} draggable={false} />
+                                </tw.ImgWrap>
+                            ))}
+                        </tw.ImgContainer>
+                    </tw.UploadWrap>
                 </tw.InputWrap>
                 <tw.RegWrap>
                     <tw.RegBtn onClick={onClickRegister} $validator={true}>
