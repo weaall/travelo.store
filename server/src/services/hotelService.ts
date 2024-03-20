@@ -129,7 +129,6 @@ const hotelService = {
         { hotel_id, description, check_in, check_out, tel_num }: HotelInfoProps,
         urls: string[],
     ) {
-        console.log(urls);
         const connection = await pool.getConnection();
 
         const checkAuthSql = "SELECT * FROM hotel WHERE id = ? and user_id = ?";

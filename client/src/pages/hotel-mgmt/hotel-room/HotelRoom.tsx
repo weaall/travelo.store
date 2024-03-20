@@ -105,7 +105,7 @@ export default function HotelRoom({ hotel_id }: { hotel_id: string | undefined }
 
             {isSetModalOpen && (
                 <ModalPortal>
-                    <SetRoomModal onClose={closeSetModal} room_id={roomId} />
+                    <SetRoomModal onClose={closeSetModal} hotel_id={hotel_id} room_id={roomId} />
                 </ModalPortal>
             )}
         </tw.Container>

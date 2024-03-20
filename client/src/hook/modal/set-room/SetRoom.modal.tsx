@@ -7,13 +7,15 @@ import * as tw from "./SetRoom.modal.styles"
 
 interface ModalProps {
     onClose: () => void;
+    hotel_id: string | undefined;
     room_id: number | undefined;
 }
 
-export default function SetRoomModal({ onClose, room_id }: ModalProps) {
+export default function SetRoomModal({ onClose, hotel_id, room_id }: ModalProps) {
     const navigate = useNavigate();
 
     const [roomData, setRoomData] = useState({
+        hotel_id: hotel_id,
         room_id: room_id,
         name: "",
         num: 1,
@@ -70,9 +72,10 @@ export default function SetRoomModal({ onClose, room_id }: ModalProps) {
         }
     };
 
-    // useEffect(() => {
-    //     fetchImageFile();
-    // }, []);
+    useEffect(() => {
+        console.log(hotel_id)
+        fetchImageFile();
+    }, []);
 
     const onDragOver = (e: DragEvent<HTMLDivElement>) => {
         e.preventDefault();
@@ -82,7 +85,7 @@ export default function SetRoomModal({ onClose, room_id }: ModalProps) {
         e.preventDefault();
 
         const droppedFiles = e.dataTransfer.files;
-        const newFiles = Array.from(droppedFiles).slice(0, 10 - files.length);
+        const newFiles = Array.from(droppedFiles).slice(0, 6 - files.length);
         setFiles((prevFiles) => [...prevFiles, ...newFiles]);
 
         const previews = [...files, ...newFiles].map((file) => URL.createObjectURL(file));
@@ -108,34 +111,11 @@ export default function SetRoomModal({ onClose, room_id }: ModalProps) {
         setRoomData({ ...roomData, [name]: value })
     }
 
-    const onClickRegister = async () => {
-        if (window.confirm("저장하시겠습니까?")) {
-            try {
-                const config = await sendJWT({
-                    method: "post",
-                    url: "/room/reg",
-                    data: roomData,
-                });
-                const response = await axiosInstance.request(config);
-                window.alert("저장완료");
-            } catch (error) {
-                if (axios.isAxiosError(error) && error.response) {
-                    if (error.response.status === 409) {
-                        window.alert("올바른 접근이 아닙니다.");
-                        navigate("/");
-                    } else if (error.response.status === 401) {
-                        window.alert("올바른 접근이 아닙니다.");
-                        navigate("/main");
-                    }
-                }
-            }
-        }
-    };
-
     const fetchRoomInfo = async () => {
         try {
             const response = await axiosInstance.get("/room/" + room_id);
-            setRoomData(response.data.data[0]);
+            const fetchedData = response.data.data[0];
+            setRoomData(fetchedData);
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 if (error.response.status === 401) {
@@ -174,6 +154,40 @@ export default function SetRoomModal({ onClose, room_id }: ModalProps) {
         }
     };
 
+    const clickInfoSave = async () => {
+        try {
+            const allInfoData = new FormData();
+
+            for (let i = 0; i < files.length; i++) {
+                allInfoData.append("images", files[i]);
+            }
+
+            console.log(roomData)
+
+            allInfoData.append("data", JSON.stringify(roomData));
+            const config = await sendJWT({
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+                method: "put",
+                url: "/room/info",
+                data: allInfoData,
+            });
+
+            const response = await axiosInstance.request(config);
+            fetchRoomInfo();
+            window.alert("저장완료");
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                if (error.response.status === 409) {
+                    window.alert("올바른 접근이 아닙니다.");
+                } else {
+                    window.alert("올바른 접근이 아닙니다.");
+                }
+            }
+        }
+    };
+
     useEffect(() => {
         fetchRoomInfo();
         fetchBedType();
@@ -190,6 +204,13 @@ export default function SetRoomModal({ onClose, room_id }: ModalProps) {
                     <tw.Title>객실정보수정</tw.Title>
                 </tw.TitleWrap>
                 <tw.InputWrap>
+                <tw.ContentsFlex>
+                    <tw.SubTitle>숙소정보</tw.SubTitle>
+                    <tw.HalfFlex>
+                        <tw.ResetBtn>되돌리기</tw.ResetBtn>
+                        <tw.SetBtn onClick={clickInfoSave}>저장</tw.SetBtn>
+                    </tw.HalfFlex>
+                </tw.ContentsFlex>
                     <tw.UpperTag>호텔이름</tw.UpperTag>
                     <tw.Input value={roomData.name} onChange={onChangeInput} name="name" />
                     <tw.UpperTag>인원</tw.UpperTag>
@@ -222,7 +243,7 @@ export default function SetRoomModal({ onClose, room_id }: ModalProps) {
                         <tw.ImgContainer>
                             {imagePreviews.map((preview, index) => (
                                 <tw.ImgWrap key={index}>
-                                    <tw.RemoveBtn onClick={() => removeFile(index)} style={{ marginLeft: "10px" }}>
+                                    <tw.RemoveBtn onClick={() => removeFile(index)}>
                                         삭제
                                     </tw.RemoveBtn>
                                     <tw.Img src={preview} alt={`이미지 미리보기 ${index + 1}`} draggable={false} />
@@ -231,11 +252,6 @@ export default function SetRoomModal({ onClose, room_id }: ModalProps) {
                         </tw.ImgContainer>
                     </tw.UploadWrap>
                 </tw.InputWrap>
-                <tw.RegWrap>
-                    <tw.RegBtn onClick={onClickRegister} $validator={true}>
-                        등록하기
-                    </tw.RegBtn>
-                </tw.RegWrap>
             </tw.ModalWrap>
         </tw.Container>
     );

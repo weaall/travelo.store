@@ -64,7 +64,7 @@ const roomService = {
         }
     },
     async getRoomById(id: string) {
-        const getRoomSql = `SELECT R.id, R.name, R.num, B.id AS bed_type_id, B.name AS bed_type, V.id AS view_type_id, V.name AS view_type, discount FROM room AS R 
+        const getRoomSql = `SELECT R.id AS room_id, R.name, R.num, B.id AS bed_type_id, B.name AS bed_type, V.id AS view_type_id, V.name AS view_type, discount FROM room AS R 
         LEFT JOIN bed_type AS B ON R.bed_type_id = B.id
         LEFT JOIN view_type AS V ON R.view_type_id = V.id
         WHERE R.id = ?`;
@@ -78,6 +78,25 @@ const roomService = {
             );
 
             return getRoomResult;
+        } catch (error) {
+            throw error;
+        } finally {
+            connection.release();
+        }
+    },
+
+    async getRoomImgUrl(id: string) {
+        const connection = await pool.getConnection();
+
+        const checkRoomImgSql = "SELECT url FROM room_img where room_id = ?";
+        const checkRoomImgParams = [id];
+        try {
+            const [checkRoomImgResult]: [urlRows[], FieldPacket[]] = await connection.execute(
+                checkRoomImgSql,
+                checkRoomImgParams,
+            );
+
+            return checkRoomImgResult;
         } catch (error) {
             throw error;
         } finally {
