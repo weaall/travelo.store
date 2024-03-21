@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { sendJWT } from "../../../utils/jwtUtils";
 import { axios, axiosInstance } from "../../../utils/axios.utils";
 
+import dayjs from 'dayjs'
+
 import * as tw from "./HotelPrice.styles";
 import { ModalPortal } from "../../../hook/modal/ModalPortal";
 import SetRoomModal from "../../../hook/modal/set-room/SetRoom.modal";
@@ -69,6 +71,7 @@ export default function HotelPrice({ hotel_id }: { hotel_id: string | undefined 
                         <tw.RoomWrap key={index}>
                             <tw.ContentsFlex>
                                 <tw.RoomName>{room.name}</tw.RoomName>
+                                <p>{dayjs(new Date()).format('YYYY-MM-DD')}</p> {/* 2022-05-16 */}
                             </tw.ContentsFlex>
                             <tw.ContentsFlex>
                                 <tw.RoomText>숙박인원 : {room.num}인</tw.RoomText>

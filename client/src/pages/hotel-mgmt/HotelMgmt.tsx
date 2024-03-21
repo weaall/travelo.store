@@ -56,7 +56,7 @@ export default function HotelMgmt() {
             <tw.NavWrap>
                 <tw.NavBtn onClick={() => navigate("./")}>숙소정보</tw.NavBtn>
                 <tw.NavBtn onClick={() => navigate("./room")}>객실관리</tw.NavBtn>
-                <tw.NavBtn onClick={() => navigate("./price")}>가격설정</tw.NavBtn>
+                <tw.NavBtn onClick={() => navigate("./price")}>가격관리</tw.NavBtn>
                 <tw.NavBtn>메세지</tw.NavBtn>
             </tw.NavWrap>
             <tw.ContentsWrap>
