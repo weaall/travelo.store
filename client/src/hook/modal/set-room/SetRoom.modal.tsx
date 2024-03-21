@@ -73,7 +73,6 @@ export default function SetRoomModal({ onClose, hotel_id, room_id }: ModalProps)
     };
 
     useEffect(() => {
-        console.log(hotel_id)
         fetchImageFile();
     }, []);
 
@@ -161,8 +160,6 @@ export default function SetRoomModal({ onClose, hotel_id, room_id }: ModalProps)
             for (let i = 0; i < files.length; i++) {
                 allInfoData.append("images", files[i]);
             }
-
-            console.log(roomData)
 
             allInfoData.append("data", JSON.stringify(roomData));
             const config = await sendJWT({

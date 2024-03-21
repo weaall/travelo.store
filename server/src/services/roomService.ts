@@ -64,7 +64,7 @@ const roomService = {
         }
     },
     async getRoomById(id: string) {
-        const getRoomSql = `SELECT R.id AS room_id, R.name, R.num, B.id AS bed_type_id, B.name AS bed_type, V.id AS view_type_id, V.name AS view_type, discount FROM room AS R 
+        const getRoomSql = `SELECT R.hotel_id, R.id AS room_id, R.name, R.num, B.id AS bed_type_id, B.name AS bed_type, V.id AS view_type_id, V.name AS view_type, discount FROM room AS R 
         LEFT JOIN bed_type AS B ON R.bed_type_id = B.id
         LEFT JOIN view_type AS V ON R.view_type_id = V.id
         WHERE R.id = ?`;
@@ -141,14 +141,14 @@ const roomService = {
     },
     async putRoomInfo(
         user_id: string,
-        { hotel_id, room_id, name, bed_type_id, view_type_id }: RoomInfoProps,
+        { hotel_id, room_id, name, num, bed_type_id, view_type_id }: RoomInfoProps,
         urls: string[],
     ) {
         const checkAuthSql = "SELECT name FROM hotel WHERE id = ? and user_id = ?";
         const checkAuthValues = [hotel_id, user_id];
 
-        const putRoomInfoSql = "UPDATE room SET name = ?,bed_type_id = ?, view_type_id = ? WHERE room_id = ?";
-        const putRoomInfoValues = [name, bed_type_id, view_type_id, room_id];
+        const putRoomInfoSql = "UPDATE room SET name = ?, num = ?, bed_type_id = ?, view_type_id = ? WHERE id = ?";
+        const putRoomInfoValues = [name, num, bed_type_id, view_type_id, room_id];
 
         const checkRoomImgSql = "SELECT url FROM room_img where room_id = ?";
         const checkRoomImgValues = [room_id];

@@ -160,6 +160,7 @@ export interface RoomInfoProps {
     hotel_id: number;
     room_id: number;
     name: string;
+    num: number;
     bed_type_id: number;
     view_type_id: number;
 }

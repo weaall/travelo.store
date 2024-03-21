@@ -52,9 +52,6 @@ const roomController = {
         })
     },
     async putRoomInfo(req: JWTCheck, res: Response) {
-        console.log(req.user.id)
-        console.log(req.body.data)
-        console.log(req.files)
         const urls = (req.files as any[]).map((file) => file.location)
 
         const data = await roomService.putRoomInfo(req.user.id, JSON.parse(req.body.data), urls)
