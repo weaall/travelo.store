@@ -1,104 +1,109 @@
-import React, { useState } from 'react'
+import { useState } from 'react';
+import dayjs from 'dayjs';
 
-export default function Calendar() {
-    
-    const [date, setDate] = useState(new Date());
-    const [viewYear, setViewYear] = useState(date.getFullYear());
-    const [viewMonth, setViewMonth] = useState(date.getMonth());
-    
-    const prevLast = new Date(viewYear, viewMonth, 0);
-    const thisLast = new Date(viewYear, viewMonth + 1, 0);
+function Calendar() {
+    const [date, setDate] = useState(dayjs());
+    const viewYear = date.year();
+    const viewMonth = date.month();
 
-    const PLDate = prevLast.getDate();
-    const PLDay = prevLast.getDay();
+    const prevLast = date.subtract(1, "month").endOf("month");
+    const thisLast = date.endOf("month");
 
-    const TLDate = thisLast.getDate();
-    const TLDay = thisLast.getDay();
+    const PLDate = prevLast.date();
+    const PLDay = prevLast.day();
+
+    const TLDate = thisLast.date();
+    const TLDay = thisLast.day();
 
     const prevDates = [];
-    const thisDates = [...Array(TLDate + 1).keys()].slice(1);
-    const nextDates = [];
+    const thisDates = Array.from({ length: TLDate }, (_, i) => i + 1);
+    const nextDates = Array.from({ length: 6 - TLDay }, (_, i) => i + 1);
 
-    if (PLDay !==6) {
-        for (let i = 0; i < PLDay + 1; i++){
+    if (PLDay !== 6) {
+        for (let i = 0; i < PLDay + 1; i++) {
             prevDates.unshift(PLDate - i);
         }
-    }
-
-    for (let i = 1; i < 7 - TLDay; i++) {
-        nextDates.push(i);
     }
 
     const dates = prevDates.concat(thisDates, nextDates);
     const firstDateIndex = dates.indexOf(1);
     const lastDateIndex = dates.lastIndexOf(TLDate);
 
-
     const prevMonth = () => {
-        date.setMonth(date.getMonth() - 1);
-        setViewMonth(date.getMonth());
-    }
+        if (date.diff(dayjs(), "month") >= 0) {
+            setDate(date.subtract(1, "month"));
+        }
+    };
 
     const nextMonth = () => {
-        date.setMonth(date.getMonth() + 1);
-        setViewMonth(date.getMonth());
-    }
+        if (date.diff(dayjs(), "month") < 2) {
+            setDate(date.add(1, "month"));
+        }
+    };
 
     const goToday = () => {
-        date.setMonth(new Date().getMonth());
-        setViewMonth(date.getMonth());
-    }
+        setDate(dayjs());
+    };
 
-    const navMonth = (props : any) =>{
-        if(props < 7){
+    const navMonth = (day: any) => {
+        if (day < 7) {
             nextMonth();
-        }else{
+        } else {
             prevMonth();
         }
-    }
+    };
 
     return (
-        <div>
-            <div>
-                <div>
-                    <h2>{viewYear}년</h2>
-                    <h2>{viewMonth + 1}월</h2>
-                    <div>
-                        <button onClick={prevMonth}>&lt;</button>
-                        <button onClick={goToday}>Today</button>
-                        <button onClick={nextMonth}>&gt;</button>
-                    </div>
-                </div>
-                <div>
-                    <div>일</div>
-                    <div>일</div>
-                    <div>일</div>
-                    <div>일</div>
-                    <div>일</div>
-                    <div>일</div>
-                    <div>일</div>
-                </div>
-                <div>
-                    {dates.map((date, i) => {
-                        dates[i] = date;
-                        const condition = i >= firstDateIndex && i < lastDateIndex + 1
-                            ? 'this'
-                            : 'other';
-                        if (condition === 'other') {
-                            return (
-                                <div onClick={() => navMonth(date)}>{date}</div>
-                            )
-                        }
-                        else {
-                            return (
-                                <div onClick={() => console.log(viewYear, viewMonth + 1, date)}>{date}</div>
-                            )
-                        }
-                    })}
+        <div className="container mx-auto px-4 py-8">
+            <div className="text-center mb-8">
+                <h2 className="text-xl font-bold">
+                    {viewYear}년 {viewMonth + 1}월
+                </h2>
+                <div className="mt-4">
+                    <button className="px-2 py-1 mx-1 bg-gray-200 text-gray-600 rounded-lg" onClick={prevMonth}>
+                        &lt;
+                    </button>
+                    <button className="px-2 py-1 mx-1 bg-gray-200 text-gray-600 rounded-lg" onClick={goToday}>
+                        Today
+                    </button>
+                    <button className="px-2 py-1 mx-1 bg-gray-200 text-gray-600 rounded-lg" onClick={nextMonth}>
+                        &gt;
+                    </button>
                 </div>
             </div>
+            <div className="flex flex-wrap mb-4">
+                <div className="w-[14%] text-center">일</div>
+                <div className="w-[14%] text-center">월</div>
+                <div className="w-[14%] text-center">화</div>
+                <div className="w-[14%] text-center">수</div>
+                <div className="w-[14%] text-center">목</div>
+                <div className="w-[14%] text-center">금</div>
+                <div className="w-[14%] text-center">토</div>
+            </div>
+            <div className="flex flex-wrap w-full">
+                {dates.map((date, i) => {
+                    const condition = i >= firstDateIndex && i < lastDateIndex + 1 ? "this" : "other";
+                    if (condition === "other") {
+                        return (
+                            <div key={i} className={`w-[14%] p-2 text-center`} onClick={() => navMonth(date)}>
+                                <p className={`text-center text-gray-400`}>{date}</p>
+                            </div>
+                        );
+                    } else {
+                        return (
+                            <div
+                                key={i}
+                                className={`w-[14%] p-2 text-center`}
+                                onClick={() => console.log(viewYear, viewMonth + 1, date)}
+                            >
+                                <p>{date}</p>
+                            </div>
+                        );
+                    }
+                })}
+            </div>
         </div>
-    )
+    );
 }
 
-
+export default Calendar;
