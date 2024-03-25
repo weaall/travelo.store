@@ -34,6 +34,14 @@ export default function HotelPrice({ hotel_id }: { hotel_id: string | undefined 
             view_type_id: 0,
             view_type: "",
             discount: 0,
+            priceInfo: [
+                {
+                    date: "",
+                    price: 0,
+                    room_current: 0,
+                    room_limit: 0,
+                },
+            ],
         },
     ]);
 
@@ -56,6 +64,24 @@ export default function HotelPrice({ hotel_id }: { hotel_id: string | undefined 
         }
     };
 
+    function getFutureDateRange() {
+        const today = dayjs(new Date());
+        const futureDate = today.add(90, 'day');
+        
+        const dateList = Array.from({ length: futureDate.diff(today, 'day') + 1 }, (_, index) => {
+            const date = today.add(index, 'day');
+            return {
+                date: date.format('MM-DD'),
+                dayOfWeek: date.day()
+            };
+        });
+    
+        return dateList;
+    }
+
+    const dateList = getFutureDateRange();
+    
+
     useEffect(() => {
         fetchRoom();
     }, []);
@@ -66,21 +92,32 @@ export default function HotelPrice({ hotel_id }: { hotel_id: string | undefined 
                 <tw.ContentsFlex>
                     <tw.Title>가격관리</tw.Title>
                 </tw.ContentsFlex>
-                <tw.RoomList>
-                    {roomData.map((room, index) => (
-                        <tw.RoomWrap key={index}>
-                            <tw.ContentsFlex>
-                                <tw.RoomName>{room.name}</tw.RoomName>
-                                <p>{dayjs(new Date()).format('YYYY-MM-DD')}</p> {/* 2022-05-16 */}
-                            </tw.ContentsFlex>
-                            <tw.ContentsFlex>
-                                <tw.RoomText>숙박인원 : {room.num}인</tw.RoomText>
-                                <tw.RoomText>{room.bed_type}</tw.RoomText>
-                                <tw.RoomText>({room.view_type})</tw.RoomText>
-                            </tw.ContentsFlex>
-                        </tw.RoomWrap>
-                    ))}
-                </tw.RoomList>
+                <tw.PriceContainer>
+                    <tw.DateContainer>
+                        {dateList.map(({ date, dayOfWeek }, index) => (
+                            <tw.DateWrap key={index} $day={dayOfWeek}>
+                                <tw.DateText>{date}</tw.DateText>
+                            </tw.DateWrap>
+                        ))}
+                    </tw.DateContainer>
+                    <tw.RoomTable>
+                        {roomData.map((room, index) => (
+                            <tw.RoomContainer>
+                                <tw.RoomWrap key={index}>
+                                    <tw.RoomName>{room.name}</tw.RoomName>
+                                    <tw.RoomText>
+                                        ({room.view_type}, {room.bed_type})
+                                    </tw.RoomText>
+                                </tw.RoomWrap>
+                                <tw.PriceWrap>
+                                    <tw.Price></tw.Price>
+                                    <tw.RoomC></tw.RoomC>
+                                    <tw.RoomL></tw.RoomL>
+                                </tw.PriceWrap>
+                            </tw.RoomContainer>
+                        ))}
+                    </tw.RoomTable>
+                </tw.PriceContainer>
             </tw.ContentsWrap>
 
             {isSetModalOpen && (
