@@ -1,8 +1,30 @@
-import { useState } from 'react';
-import dayjs from 'dayjs';
+import { useState } from "react";
+import dayjs from "dayjs";
+
+import * as tw from "./Calendar.styles"
 
 function Calendar() {
     const [date, setDate] = useState(dayjs());
+
+    const [roomData, setRoomData] = useState({
+        id: 0,
+        name: "",
+        num: 0,
+        bed_type_id: 0,
+        bed_type: "",
+        view_type_id: 0,
+        view_type: "",
+        discount: 0,
+        priceInfo: [
+            {
+                date: "",
+                price: 0,
+                room_current: 0,
+                room_limit: 0,
+            },
+        ],
+    });
+
     const viewYear = date.year();
     const viewMonth = date.month();
 
@@ -45,7 +67,7 @@ function Calendar() {
         setDate(dayjs());
     };
 
-    const navMonth = (day: any) => {
+    const navMonth = (day: number) => {
         if (day < 7) {
             nextMonth();
         } else {
@@ -54,55 +76,54 @@ function Calendar() {
     };
 
     return (
-        <div className="container mx-auto px-4 py-8">
-            <div className="text-center mb-8">
-                <h2 className="text-xl font-bold">
+        <tw.Container>
+            <tw.TitleWrap>
+                <tw.YearMonth>
                     {viewYear}년 {viewMonth + 1}월
-                </h2>
-                <div className="mt-4">
-                    <button className="px-2 py-1 mx-1 bg-gray-200 text-gray-600 rounded-lg" onClick={prevMonth}>
-                        &lt;
-                    </button>
-                    <button className="px-2 py-1 mx-1 bg-gray-200 text-gray-600 rounded-lg" onClick={goToday}>
-                        Today
-                    </button>
-                    <button className="px-2 py-1 mx-1 bg-gray-200 text-gray-600 rounded-lg" onClick={nextMonth}>
-                        &gt;
-                    </button>
-                </div>
-            </div>
-            <div className="flex flex-wrap mb-4">
-                <div className="w-[14%] text-center">일</div>
-                <div className="w-[14%] text-center">월</div>
-                <div className="w-[14%] text-center">화</div>
-                <div className="w-[14%] text-center">수</div>
-                <div className="w-[14%] text-center">목</div>
-                <div className="w-[14%] text-center">금</div>
-                <div className="w-[14%] text-center">토</div>
-            </div>
-            <div className="flex flex-wrap w-full">
+                </tw.YearMonth>
+                <tw.NavWrap>
+                    <tw.NavBtn onClick={prevMonth}>&lt;</tw.NavBtn>
+                    <tw.NavBtn onClick={goToday}>Today</tw.NavBtn>
+                    <tw.NavBtn onClick={nextMonth}>&gt;</tw.NavBtn>
+                </tw.NavWrap>
+            </tw.TitleWrap>
+            <tw.DaysWrap>
+                {["일", "월", "화", "수", "목", "금", "토"].map((day, index) => (
+                    <tw.DayWrap key={index}>
+                        <tw.DayLabel $day={index}>{day}</tw.DayLabel>
+                    </tw.DayWrap>
+                ))}
+            </tw.DaysWrap>
+            <tw.DatesWrap>
                 {dates.map((date, i) => {
                     const condition = i >= firstDateIndex && i < lastDateIndex + 1 ? "this" : "other";
+                    const today = dayjs().format("YYYY-MM-DD");
                     if (condition === "other") {
                         return (
-                            <div key={i} className={`w-[14%] p-2 text-center`} onClick={() => navMonth(date)}>
-                                <p className={`text-center text-gray-400`}>{date}</p>
-                            </div>
+                            <tw.DateWrap key={i} onClick={() => navMonth(date)}>
+                                <tw.DateLabel $date={condition}>{date}</tw.DateLabel>
+                            </tw.DateWrap>
+                        );
+                    } else if (dayjs(`${viewYear}-${viewMonth + 1}-${date}`).format("YYYY-MM-DD") === today) {
+                        return (
+                            <tw.DateWrap key={i} onClick={() => console.log(viewYear, viewMonth + 1, date)}>
+                                <tw.DateLabel $date={"today"}>{date}</tw.DateLabel>
+                                <tw.RoomNum>{roomData.priceInfo[0].room_current} / {roomData.priceInfo[0].room_limit}</tw.RoomNum>
+                                <tw.RoomPrice>{roomData.priceInfo[0].price}</tw.RoomPrice>
+                            </tw.DateWrap>
                         );
                     } else {
                         return (
-                            <div
-                                key={i}
-                                className={`w-[14%] p-2 text-center`}
-                                onClick={() => console.log(viewYear, viewMonth + 1, date)}
-                            >
-                                <p>{date}</p>
-                            </div>
+                            <tw.DateWrap key={i} onClick={() => console.log(viewYear, viewMonth + 1, date)}>
+                                <tw.DateLabel $date={condition}>{date}</tw.DateLabel>
+                                <tw.RoomNum>{roomData.priceInfo[0].room_current} / {roomData.priceInfo[0].room_limit}</tw.RoomNum>
+                                <tw.RoomPrice>{roomData.priceInfo[0].price}</tw.RoomPrice>
+                            </tw.DateWrap>
                         );
                     }
                 })}
-            </div>
-        </div>
+            </tw.DatesWrap>
+        </tw.Container>
     );
 }
 
