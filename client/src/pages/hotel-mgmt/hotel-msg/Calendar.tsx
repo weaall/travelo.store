@@ -2,8 +2,20 @@ import { useState } from "react";
 import dayjs from "dayjs";
 
 import * as tw from "./Calendar.styles"
+import { ModalPortal } from "../../../hook/modal/ModalPortal";
+import SetPriceModal from "../../../hook/modal/set-price/SetPrice.modal";
 
 function Calendar() {
+    const [isSetModalOpen, setIsSetModalOpen] = useState(false);
+
+    const openSetModal = () => {
+        setIsSetModalOpen(true);
+      };
+
+    const closeSetModal = () => {
+        setIsSetModalOpen(false);
+    };
+
     const [date, setDate] = useState(dayjs());
 
     const [roomData, setRoomData] = useState({
@@ -15,15 +27,14 @@ function Calendar() {
         view_type_id: 0,
         view_type: "",
         discount: 0,
-        priceInfo: [
-            {
-                date: "",
-                price: 0,
-                room_current: 0,
-                room_limit: 0,
-            },
-        ],
     });
+
+    const [priceData, setPriceData] = useState([{
+        date: "",
+        price: 0,
+        room_current: 0,
+        room_limit: 0,
+    }])
 
     const viewYear = date.year();
     const viewMonth = date.month();
@@ -52,7 +63,7 @@ function Calendar() {
     const lastDateIndex = dates.lastIndexOf(TLDate);
 
     const prevMonth = () => {
-        if (date.diff(dayjs(), "month") >= 0) {
+        if (date.diff(dayjs(), "month") > -1) {
             setDate(date.subtract(1, "month"));
         }
     };
@@ -77,16 +88,21 @@ function Calendar() {
 
     return (
         <tw.Container>
-            <tw.TitleWrap>
-                <tw.YearMonth>
-                    {viewYear}년 {viewMonth + 1}월
-                </tw.YearMonth>
-                <tw.NavWrap>
-                    <tw.NavBtn onClick={prevMonth}>&lt;</tw.NavBtn>
-                    <tw.NavBtn onClick={goToday}>Today</tw.NavBtn>
-                    <tw.NavBtn onClick={nextMonth}>&gt;</tw.NavBtn>
-                </tw.NavWrap>
-            </tw.TitleWrap>
+            <tw.FlexWrap>
+                <tw.TitleWrap>
+                    <tw.YearMonth>
+                        {viewYear}년 {viewMonth + 1}월
+                    </tw.YearMonth>
+                    <tw.NavWrap>
+                        <tw.NavBtn onClick={prevMonth}>&lt;</tw.NavBtn>
+                        <tw.NavBtn onClick={goToday}>Today</tw.NavBtn>
+                        <tw.NavBtn onClick={nextMonth}>&gt;</tw.NavBtn>
+                    </tw.NavWrap>
+                </tw.TitleWrap>
+                <tw.BtnWrap>
+                    <tw.AddBtn onClick={openSetModal}>설정</tw.AddBtn>
+                </tw.BtnWrap>
+            </tw.FlexWrap>
             <tw.DaysWrap>
                 {["일", "월", "화", "수", "목", "금", "토"].map((day, index) => (
                     <tw.DayWrap key={index}>
@@ -108,21 +124,31 @@ function Calendar() {
                         return (
                             <tw.DateWrap key={i} onClick={() => console.log(viewYear, viewMonth + 1, date)}>
                                 <tw.DateLabel $date={"today"}>{date}</tw.DateLabel>
-                                <tw.RoomNum>{roomData.priceInfo[0].room_current} / {roomData.priceInfo[0].room_limit}</tw.RoomNum>
-                                <tw.RoomPrice>{roomData.priceInfo[0].price}</tw.RoomPrice>
+                                <tw.RoomNum>
+                                    {priceData[0].room_current} / {priceData[0].room_limit}
+                                </tw.RoomNum>
+                                <tw.RoomPrice>{priceData[0].price}</tw.RoomPrice>
                             </tw.DateWrap>
                         );
                     } else {
                         return (
                             <tw.DateWrap key={i} onClick={() => console.log(viewYear, viewMonth + 1, date)}>
                                 <tw.DateLabel $date={condition}>{date}</tw.DateLabel>
-                                <tw.RoomNum>{roomData.priceInfo[0].room_current} / {roomData.priceInfo[0].room_limit}</tw.RoomNum>
-                                <tw.RoomPrice>{roomData.priceInfo[0].price}</tw.RoomPrice>
+                                <tw.RoomNum>
+                                    {priceData[0].room_current} / {priceData[0].room_limit}
+                                </tw.RoomNum>
+                                <tw.RoomPrice>{priceData[0].price}</tw.RoomPrice>
                             </tw.DateWrap>
                         );
                     }
                 })}
             </tw.DatesWrap>
+
+            {isSetModalOpen && (
+                <ModalPortal>
+                    <SetPriceModal onClose={closeSetModal} room_id={11} />
+                </ModalPortal>
+            )}
         </tw.Container>
     );
 }

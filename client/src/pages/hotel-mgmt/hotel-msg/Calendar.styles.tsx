@@ -9,12 +9,16 @@ interface DateProps {
 }
 
 export const Container = tw.div`mx-auto px-4 py-8`
+export const FlexWrap = tw.div`flex w-full justify-center`
 
 export const TitleWrap = tw.div`text-center mb-8`
 export const YearMonth = tw.h2`text-xl font-bold`
 
 export const NavWrap = tw.nav`mt-4`
-export const NavBtn = tw.button`px-2 py-1 mx-1 bg-gray-200 text-gray-600 rounded-lg`
+export const NavBtn = tw.button`px-2 py-1 mx-1 bg-gray-100 rounded-lg text-sm font-bold hover:text-main`
+
+export const BtnWrap = tw.div``
+export const AddBtn = tw.button`p-2 font-bold hover:text-main`
 
 export const DaysWrap = tw.div`flex mb-4`
 export const DayWrap = tw.div`w-[14%] text-center`
