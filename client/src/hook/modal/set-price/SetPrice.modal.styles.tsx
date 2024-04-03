@@ -17,7 +17,8 @@ export const CloseBtn = tw.button`w-8 absolute top-4 right-4 group`
 export const CloseSVG = tw.img`h-full w-full group-hover-scale-105`
 
 export const ContentsFlex = tw.div`w-full flex`
-export const HalfFlex = tw.div`w-[50%] flex justify-end `
+export const HalfFlex = tw.div`w-[50%] flex justify-end`
+export const HalfCol = tw.div`w-[50%] flex flex-col`
 
 export const SubTitle = tw.h3`w-[50%] py-4 text-2xl font-bold`
 
@@ -34,10 +35,3 @@ export const RegBtn = tw.button<RegBtnProps>`
 w-full h-14 font-bold text-white rounded-[16px] my-2
 ${(p) => (p.$validator ? "bg-gradient-to-r from-main to-tomain" : "bg-gray-200")}`
 
-export const UploadWrap = tw.div`p-6 text-center bg-gray-100 rounded-2xl my-4`
-export const ImgLabel = tw.p`my-4 font-bold`
-
-export const ImgContainer = tw.div`grid grid-cols-2 justify-centers`
-export const ImgWrap = tw.div`w-full h-auto relative`
-export const Img = tw.img`rounded-lg`
-export const RemoveBtn = tw.button`py-2 hover:text-main hover:font-bold`

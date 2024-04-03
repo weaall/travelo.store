@@ -146,7 +146,7 @@ function Calendar() {
 
             {isSetModalOpen && (
                 <ModalPortal>
-                    <SetPriceModal onClose={closeSetModal} room_id={11} />
+                    <SetPriceModal onClose={closeSetModal} room_id={11} year={viewYear} month={viewMonth + 1}/>
                 </ModalPortal>
             )}
         </tw.Container>

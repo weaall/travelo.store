@@ -101,14 +101,14 @@ export default function SetRoomModal({ onClose, hotel_id, room_id }: ModalProps)
     };
 
     const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target
-        setRoomData({ ...roomData, [name]: value })
-    }
+        const { name, value } = e.target;
+        setRoomData({ ...roomData, [name]: value });
+    };
 
     const onChangeSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const { name, value } = e.target
-        setRoomData({ ...roomData, [name]: value })
-    }
+        const { name, value } = e.target;
+        setRoomData({ ...roomData, [name]: value });
+    };
 
     const fetchRoomInfo = async () => {
         try {
@@ -201,13 +201,13 @@ export default function SetRoomModal({ onClose, hotel_id, room_id }: ModalProps)
                     <tw.Title>객실정보수정</tw.Title>
                 </tw.TitleWrap>
                 <tw.InputWrap>
-                <tw.ContentsFlex>
-                    <tw.SubTitle>숙소정보</tw.SubTitle>
-                    <tw.HalfFlex>
-                        <tw.ResetBtn>되돌리기</tw.ResetBtn>
-                        <tw.SetBtn onClick={clickInfoSave}>저장</tw.SetBtn>
-                    </tw.HalfFlex>
-                </tw.ContentsFlex>
+                    <tw.ContentsFlex>
+                        <tw.SubTitle>숙소정보</tw.SubTitle>
+                        <tw.HalfFlex>
+                            <tw.ResetBtn>되돌리기</tw.ResetBtn>
+                            <tw.SetBtn onClick={clickInfoSave}>저장</tw.SetBtn>
+                        </tw.HalfFlex>
+                    </tw.ContentsFlex>
                     <tw.UpperTag>호텔이름</tw.UpperTag>
                     <tw.Input value={roomData.name} onChange={onChangeInput} name="name" />
                     <tw.UpperTag>인원</tw.UpperTag>
@@ -240,9 +240,7 @@ export default function SetRoomModal({ onClose, hotel_id, room_id }: ModalProps)
                         <tw.ImgContainer>
                             {imagePreviews.map((preview, index) => (
                                 <tw.ImgWrap key={index}>
-                                    <tw.RemoveBtn onClick={() => removeFile(index)}>
-                                        삭제
-                                    </tw.RemoveBtn>
+                                    <tw.RemoveBtn onClick={() => removeFile(index)}>삭제</tw.RemoveBtn>
                                     <tw.Img src={preview} alt={`이미지 미리보기 ${index + 1}`} draggable={false} />
                                 </tw.ImgWrap>
                             ))}
