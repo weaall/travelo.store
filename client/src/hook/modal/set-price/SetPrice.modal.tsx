@@ -7,12 +7,13 @@ import * as tw from "./SetPrice.modal.styles"
 
 interface ModalProps {
     onClose: () => void;
+    hotel_id: string | undefined;
     room_id: number | undefined;
     year: number;
     month: number;
 }
 
-export default function SetPriceModal({ onClose, room_id, year, month }: ModalProps) {
+export default function SetPriceModal({ onClose, hotel_id, room_id, year, month }: ModalProps) {
     const navigate = useNavigate();
 
     const [roomData, setRoomData] = useState({
@@ -20,6 +21,8 @@ export default function SetPriceModal({ onClose, room_id, year, month }: ModalPr
     });
 
     const [priceData, setPriceData] = useState({
+        hotel_id: hotel_id,
+        room_id: room_id,
         year: year,
         month: month,
         days: 0,

@@ -6,6 +6,7 @@ import {
     RoomRegProps,
     RoomInfoProps,
     RoomServProps,
+    MonthPriceProps,
     AuthRows,
     RoomRows,
     TypeRows,
@@ -219,6 +220,29 @@ const roomService = {
             }
 
             const [putRoomServResult] = await connection.execute(putRoomServSql, putRoomServValues);
+
+            return;
+        } catch (error) {
+            throw error;
+        } finally {
+            connection.release();
+        }
+    },
+    async insertRoomDateByMonth(user_id: string, { hotel_id, year }: MonthPriceProps) {
+        const checkAuthSql = "SELECT name FROM hotel WHERE id = ? and user_id = ?";
+        const checkAuthValues = [hotel_id, user_id];
+
+        const connection = await pool.getConnection();
+
+        try {
+            const [checkAuthResult, fields]: [AuthRows[], FieldPacket[]] = await connection.execute(
+                checkAuthSql,
+                checkAuthValues,
+            );
+
+            if (checkAuthResult.length === 0) {
+                throw new CustomError("UNAUTHORIZED", 401);
+            }
 
             return;
         } catch (error) {

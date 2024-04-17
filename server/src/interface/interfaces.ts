@@ -171,3 +171,13 @@ export interface RoomServProps {
     no_smoking: number;
     toiletries: number;
 }
+
+export interface MonthPriceProps {
+    hotel_id: number;
+    year: number;
+    month: number;
+    days: number;
+    friday: number;
+    saturday: number;
+    room_limit: number;
+}

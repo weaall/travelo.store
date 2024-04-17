@@ -5,7 +5,7 @@ import * as tw from "./Calendar.styles"
 import { ModalPortal } from "../../../hook/modal/ModalPortal";
 import SetPriceModal from "../../../hook/modal/set-price/SetPrice.modal";
 
-function Calendar() {
+function Calendar({ hotel_id }: { hotel_id: string | undefined }) {
     const [isSetModalOpen, setIsSetModalOpen] = useState(false);
 
     const openSetModal = () => {
@@ -146,7 +146,7 @@ function Calendar() {
 
             {isSetModalOpen && (
                 <ModalPortal>
-                    <SetPriceModal onClose={closeSetModal} room_id={11} year={viewYear} month={viewMonth + 1}/>
+                    <SetPriceModal onClose={closeSetModal} hotel_id={hotel_id} room_id={11} year={viewYear} month={viewMonth + 1}/>
                 </ModalPortal>
             )}
         </tw.Container>
