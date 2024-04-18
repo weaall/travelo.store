@@ -228,19 +228,22 @@ const roomService = {
             connection.release();
         }
     },
-    async insertRoomDateByMonth(user_id: string, { hotel_id, year }: MonthPriceProps) {
-        const checkAuthSql = "SELECT name FROM hotel WHERE id = ? and user_id = ?";
-        const checkAuthValues = [hotel_id, user_id];
+    async insertRoomDateByMonth(user_id: string, { hotel_id, room_id, year, month, days, friday, saturday, room_limit }: MonthPriceProps) {
+        const roomAuthSql = 
+            `SELECT room.name FROM room
+            INNER JOIN hotel ON room.hotel_id = hotel.id
+            WHERE hotel_id = ? AND room.id = ? AND user_id = ?`;
+        const roomAuthValues = [hotel_id, room_id, user_id];
 
         const connection = await pool.getConnection();
 
         try {
-            const [checkAuthResult, fields]: [AuthRows[], FieldPacket[]] = await connection.execute(
-                checkAuthSql,
-                checkAuthValues,
+            const [roomAuthResult, fields]: [AuthRows[], FieldPacket[]] = await connection.execute(
+                roomAuthSql,
+                roomAuthValues,
             );
 
-            if (checkAuthResult.length === 0) {
+            if (roomAuthResult.length === 0) {
                 throw new CustomError("UNAUTHORIZED", 401);
             }
 

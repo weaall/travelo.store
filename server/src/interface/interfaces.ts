@@ -174,6 +174,7 @@ export interface RoomServProps {
 
 export interface MonthPriceProps {
     hotel_id: number;
+    room_id: number;
     year: number;
     month: number;
     days: number;
