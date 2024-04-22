@@ -172,6 +172,14 @@ export interface RoomServProps {
     toiletries: number;
 }
 
+export interface RoomPriceRows extends RowDataPacket{
+    room_id: number;
+    date: string;
+    price: number;
+    room_current: number;
+    room_limit: number;
+}
+
 export interface MonthPriceProps {
     hotel_id: number;
     room_id: number;

@@ -30,4 +30,12 @@ roomRouter.put(
     asyncHandler((req: Request, res: Response) => roomController.putRoomInfo(req as JWTCheck, res)),
 )
 
+roomRouter.post(
+    "/price/month",
+    isAuthenticated,
+    asyncHandler((req: Request, res: Response) => roomController.insertPriceByMonth(req as JWTCheck, res)),
+);
+
+roomRouter.get("/price/:id", asyncHandler(roomController.getPriceByRoom));
+
 export default roomRouter

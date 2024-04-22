@@ -3,6 +3,12 @@ import router from "./routes"
 import Express, { Request, Response, NextFunction } from "express"
 import CustomError from "./utils/customError"
 
+import dayjs from 'dayjs';
+import isLeapYear from 'dayjs/plugin/isLeapYear';
+import 'dayjs/locale/ko'; 
+dayjs.extend(isLeapYear);
+dayjs.locale('ko')
+
 dotenv.config()
 
 const cors = require("cors")

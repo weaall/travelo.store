@@ -61,6 +61,23 @@ const roomController = {
             data: data,
         })
     },
+    async getPriceByRoom(req: Request, res: Response){
+        const data = await roomService.getPriceByRoom(req.params.id);
+
+        res.status(200).json({
+            error: null,
+            data: data,
+        });
+    },
+    async insertPriceByMonth(req: JWTCheck, res: Response) {
+
+        const data = await roomService.insertPriceByMonth(req.user.id,req.body)
+
+        res.status(201).json({
+            error: null,
+            data: data,
+        })
+    },
 
 }
 export default roomController

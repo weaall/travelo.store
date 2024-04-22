@@ -27,7 +27,9 @@ ${(p) => (p.$day === 0 ? "text-red-500" : p.$day === 6 ? "text-blue-500" : "")}`
 
 export const DatesWrap = tw.div`flex flex-wrap w-full`
 export const DateWrap = tw.div`w-[14%] py-4 p-2 text-center flex flex-col text-center`
+export const TodayWrap = tw.div`w-[14%] py-4 p-2 text-center flex flex-col text-center rounded-lg bg-gray-100`
 export const DateLabel = tw.p<DateProps>`
 ${(p) => (p.$date === "today" ? "text-green-500 font-bold" : p.$date === "other" ? "text-gray-300" : "")}`
+
 export const RoomNum = tw.p`text-xs`
 export const RoomPrice = tw.p`text-xs text-blue-500`

@@ -42,7 +42,7 @@ export default function SetPriceModal({ onClose, hotel_id, room_id, year, month 
             try {
                 const config = await sendJWT({
                     method: "post",
-                    url: "/room/price",
+                    url: "/room/price/month",
                     data: priceData,
                 });
                 const response = await axiosInstance.request(config);
@@ -51,10 +51,8 @@ export default function SetPriceModal({ onClose, hotel_id, room_id, year, month 
                 if (axios.isAxiosError(error) && error.response) {
                     if (error.response.status === 409) {
                         window.alert("올바른 접근이 아닙니다.");
-                        navigate("/");
                     } else if (error.response.status === 401) {
                         window.alert("올바른 접근이 아닙니다.");
-                        navigate("/main");
                     } 
                 }
             }
@@ -89,7 +87,7 @@ export default function SetPriceModal({ onClose, hotel_id, room_id, year, month 
                     <tw.UpperTag>방갯수</tw.UpperTag>
                     <tw.Input onChange={onChangeInput} value={priceData.room_limit} name="room_limit" maxLength={2}/>
                 </tw.InputWrap>
-                <tw.RegBtn $validator={false}>설정</tw.RegBtn>
+                <tw.RegBtn $validator={false} onClick={onClickSave}>설정</tw.RegBtn>
             </tw.ModalWrap>
         </tw.Container>
     );

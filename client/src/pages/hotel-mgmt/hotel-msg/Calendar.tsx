@@ -1,11 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 
 import * as tw from "./Calendar.styles"
 import { ModalPortal } from "../../../hook/modal/ModalPortal";
 import SetPriceModal from "../../../hook/modal/set-price/SetPrice.modal";
+import { axios, axiosInstance } from "../../../utils/axios.utils";
+import { useNavigate } from "react-router-dom";
 
 function Calendar({ hotel_id }: { hotel_id: string | undefined }) {
+
+    const navigate = useNavigate();
+
     const [isSetModalOpen, setIsSetModalOpen] = useState(false);
 
     const openSetModal = () => {
@@ -86,6 +91,25 @@ function Calendar({ hotel_id }: { hotel_id: string | undefined }) {
         }
     };
 
+    const fetchPrice = async () => {
+        try {
+        const response = await axiosInstance .get("/room/price/" + 1);
+            setPriceData(response.data.data)
+            console.log(response.data.data);
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                if (error.response.status === 401) {
+                    window.alert("올바른 접근이 아닙니다.");
+                    navigate("/main");
+                }
+            }
+        }
+    };
+
+    useEffect(() => {
+        fetchPrice();
+    }, []);
+
     return (
         <tw.Container>
             <tw.FlexWrap>
@@ -113,21 +137,40 @@ function Calendar({ hotel_id }: { hotel_id: string | undefined }) {
             <tw.DatesWrap>
                 {dates.map((date, i) => {
                     const condition = i >= firstDateIndex && i < lastDateIndex + 1 ? "this" : "other";
+                    const formattedDate = dayjs(`${viewYear}-${viewMonth + 1}-${date}`).format("YYYY-MM-DD");
                     const today = dayjs().format("YYYY-MM-DD");
+                    const isPastDate = dayjs(formattedDate).isBefore(today, "day");
+                    const matchedPriceData = priceData.find((item) => item.date === formattedDate);
+
                     if (condition === "other") {
                         return (
                             <tw.DateWrap key={i} onClick={() => navMonth(date)}>
                                 <tw.DateLabel $date={condition}>{date}</tw.DateLabel>
                             </tw.DateWrap>
                         );
-                    } else if (dayjs(`${viewYear}-${viewMonth + 1}-${date}`).format("YYYY-MM-DD") === today) {
+                    } else if (dayjs(formattedDate).format("YYYY-MM-DD") === today) {
                         return (
-                            <tw.DateWrap key={i} onClick={() => console.log(viewYear, viewMonth + 1, date)}>
+                            <tw.TodayWrap key={i} onClick={() => console.log(viewYear, viewMonth + 1, date)}>
                                 <tw.DateLabel $date={"today"}>{date}</tw.DateLabel>
                                 <tw.RoomNum>
-                                    {priceData[0].room_current} / {priceData[0].room_limit}
+                                    {matchedPriceData
+                                        ? `${matchedPriceData.room_current} / ${matchedPriceData.room_limit}`
+                                        : "0 / 0"}
                                 </tw.RoomNum>
-                                <tw.RoomPrice>{priceData[0].price}</tw.RoomPrice>
+                                <tw.RoomPrice>{matchedPriceData ? matchedPriceData.price : ""}</tw.RoomPrice>
+                            </tw.TodayWrap>
+                        );
+                    
+                    }else if (isPastDate) {
+                        return (
+                            <tw.DateWrap key={i}>
+                                <tw.DateLabel $date={condition}>{date}</tw.DateLabel>
+                                <tw.RoomNum>
+                                    {matchedPriceData
+                                        ? `${matchedPriceData.room_current} / ${matchedPriceData.room_limit}`
+                                        : "0 / 0"}
+                                </tw.RoomNum>
+                                <tw.RoomPrice>{matchedPriceData ? matchedPriceData.price : "미정"}</tw.RoomPrice>
                             </tw.DateWrap>
                         );
                     } else {
@@ -135,9 +178,11 @@ function Calendar({ hotel_id }: { hotel_id: string | undefined }) {
                             <tw.DateWrap key={i} onClick={() => console.log(viewYear, viewMonth + 1, date)}>
                                 <tw.DateLabel $date={condition}>{date}</tw.DateLabel>
                                 <tw.RoomNum>
-                                    {priceData[0].room_current} / {priceData[0].room_limit}
+                                    {matchedPriceData
+                                        ? `${matchedPriceData.room_current} / ${matchedPriceData.room_limit}`
+                                        : "0 / 0"}
                                 </tw.RoomNum>
-                                <tw.RoomPrice>{priceData[0].price}</tw.RoomPrice>
+                                <tw.RoomPrice>{matchedPriceData ? matchedPriceData.price : "미정"}</tw.RoomPrice>
                             </tw.DateWrap>
                         );
                     }
@@ -146,7 +191,13 @@ function Calendar({ hotel_id }: { hotel_id: string | undefined }) {
 
             {isSetModalOpen && (
                 <ModalPortal>
-                    <SetPriceModal onClose={closeSetModal} hotel_id={hotel_id} room_id={11} year={viewYear} month={viewMonth + 1}/>
+                    <SetPriceModal
+                        onClose={closeSetModal}
+                        hotel_id={hotel_id}
+                        room_id={1}
+                        year={viewYear}
+                        month={viewMonth + 1}
+                    />
                 </ModalPortal>
             )}
         </tw.Container>
