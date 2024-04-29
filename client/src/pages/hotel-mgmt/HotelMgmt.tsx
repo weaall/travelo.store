@@ -7,7 +7,7 @@ import * as tw from "./HotelMgmt.styles"
 import HotelInfo from "./hotel-info/HotelInfo"
 import HotelRoom from "./hotel-room/HotelRoom"
 import HotelPrice from "./hotel-price/HotelPrice"
-import Calendar from "./hotel-msg/Calendar"
+import PriceCalendar from "./hotel-msg/PriceCalendar"
 
 export default function HotelMgmt() {
     const navigate = useNavigate()
@@ -65,7 +65,7 @@ export default function HotelMgmt() {
                     <Route path="" element={<HotelInfo hotel_id={hotelId}/>}/>
                     <Route path="/room" element={<HotelRoom hotel_id={hotelId}/>}/>
                     <Route path="/price" element={<HotelPrice hotel_id={hotelId}/>}/>
-                    <Route path="/msg" element={<Calendar hotel_id={hotelId}/>}/>
+                    <Route path="/msg" element={<PriceCalendar hotel_id={hotelId}/>}/>
                 </Routes>
             </tw.ContentsWrap>
         </tw.Container>

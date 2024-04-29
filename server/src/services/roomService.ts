@@ -12,7 +12,8 @@ import {
     RoomRows,
     TypeRows,
     urlRows,
-    RoomPriceRows
+    RoomPriceRows,
+    DatePriceProps
 } from "../interface/interfaces";
 import { deleteRoomImg } from "../config/multer";
 
@@ -230,7 +231,7 @@ const roomService = {
             connection.release();
         }
     },
-    async getPriceByRoom(room_id : string) {
+    async getPriceByRoom(room_id: string) {
         const getPriceSql = `
             SELECT date_format(date, '%Y-%m-%d') date, price, room_current, room_limit FROM room_date 
             WHERE room_id = ?`;
@@ -239,7 +240,10 @@ const roomService = {
 
         const connection = await pool.getConnection();
         try {
-            const [getPriceResult, fields]: [RoomPriceRows[], FieldPacket[]] = await connection.execute(getPriceSql, getPriceValues);
+            const [getPriceResult, fields]: [RoomPriceRows[], FieldPacket[]] = await connection.execute(
+                getPriceSql,
+                getPriceValues,
+            );
 
             return getPriceResult;
         } catch (error) {
@@ -248,20 +252,62 @@ const roomService = {
             connection.release();
         }
     },
-    async insertPriceByMonth(user_id: string, { hotel_id, room_id, year, month, days, friday, saturday, room_limit }: MonthPriceProps) {
-        const roomAuthSql = 
-            `SELECT room.name FROM room
+    async insertPriceByDate(
+        user_id: string,
+        { hotel_id, room_id, year, month, date, price, room_limit }: DatePriceProps,
+    ) {
+        const roomAuthSql = `SELECT room.name FROM room
             INNER JOIN hotel ON room.hotel_id = hotel.id
             WHERE hotel_id = ? AND room.id = ? AND user_id = ?`;
         const roomAuthValues = [hotel_id, room_id, user_id];
 
-        const insertPriceSql = 
-            `INSERT INTO room_date (room_id, date, price, room_current, room_limit) VALUES (?, ?, ?, 0, ?)`;
+        const insertPriceSql = `
+            INSERT INTO room_date (room_id, date, price, room_current, room_limit) 
+            VALUES (?, ?, ?, 0, ?) 
+            ON DUPLICATE KEY UPDATE 
+            price = VALUES(price), room_limit = VALUES(room_limit)`;
+
+        const insertPriceValues = [room_id, `${year}-${month}-${date}`, price, room_limit];
 
         const connection = await pool.getConnection();
 
         try {
+            const [roomAuthResult, fields]: [AuthRows[], FieldPacket[]] = await connection.execute(
+                roomAuthSql,
+                roomAuthValues,
+            );
 
+            if (roomAuthResult.length === 0) {
+                throw new CustomError("UNAUTHORIZED", 401);
+            }
+
+            await connection.execute(insertPriceSql, insertPriceValues);
+
+            return;
+        } catch (error) {
+            throw error;
+        } finally {
+            connection.release();
+        }
+    },
+    async insertPriceByMonth(
+        user_id: string,
+        { hotel_id, room_id, year, month, days, friday, saturday, room_limit }: MonthPriceProps,
+    ) {
+        const roomAuthSql = `SELECT room.name FROM room
+            INNER JOIN hotel ON room.hotel_id = hotel.id
+            WHERE hotel_id = ? AND room.id = ? AND user_id = ?`;
+        const roomAuthValues = [hotel_id, room_id, user_id];
+
+        const insertPriceSql = `
+            INSERT INTO room_date (room_id, date, price, room_current, room_limit) 
+            VALUES (?, ?, ?, 0, ?) 
+            ON DUPLICATE KEY UPDATE 
+            price = VALUES(price), room_limit = VALUES(room_limit)`;
+
+        const connection = await pool.getConnection();
+
+        try {
             const [roomAuthResult, fields]: [AuthRows[], FieldPacket[]] = await connection.execute(
                 roomAuthSql,
                 roomAuthValues,

@@ -13,7 +13,7 @@ interface ModalProps {
     month: number;
 }
 
-export default function SetPriceModal({ onClose, hotel_id, room_id, year, month }: ModalProps) {
+export default function SetPriceByMonthModal({ onClose, hotel_id, room_id, year, month }: ModalProps) {
     const navigate = useNavigate();
 
     const [roomData, setRoomData] = useState({
@@ -87,7 +87,7 @@ export default function SetPriceModal({ onClose, hotel_id, room_id, year, month 
                     <tw.UpperTag>방갯수</tw.UpperTag>
                     <tw.Input onChange={onChangeInput} value={priceData.room_limit} name="room_limit" maxLength={2}/>
                 </tw.InputWrap>
-                <tw.RegBtn $validator={false} onClick={onClickSave}>설정</tw.RegBtn>
+                <tw.RegBtn $validator={false} onClick={()=>{onClickSave(); onClose();}}>설정</tw.RegBtn>
             </tw.ModalWrap>
         </tw.Container>
     );

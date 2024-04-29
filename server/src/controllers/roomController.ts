@@ -69,6 +69,15 @@ const roomController = {
             data: data,
         });
     },
+    async insertPriceByDate(req: JWTCheck, res: Response) {
+
+        const data = await roomService.insertPriceByDate(req.user.id,req.body)
+
+        res.status(201).json({
+            error: null,
+            data: data,
+        })
+    },
     async insertPriceByMonth(req: JWTCheck, res: Response) {
 
         const data = await roomService.insertPriceByMonth(req.user.id,req.body)

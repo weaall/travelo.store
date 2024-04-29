@@ -190,3 +190,13 @@ export interface MonthPriceProps {
     saturday: number;
     room_limit: number;
 }
+
+export interface DatePriceProps {
+    hotel_id: number;
+    room_id: number;
+    year: number;
+    month: number;
+    date: number;
+    price: number;
+    room_limit: number;
+}

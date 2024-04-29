@@ -34,7 +34,7 @@ export default function HotelPrice({ hotel_id }: { hotel_id: string | undefined 
             view_type_id: 0,
             view_type: "",
             discount: 0,
-            priceInfo: [
+            priceData: [
                 {
                     date: "",
                     price: 0,
@@ -109,11 +109,6 @@ export default function HotelPrice({ hotel_id }: { hotel_id: string | undefined 
                                         ({room.view_type}, {room.bed_type})
                                     </tw.RoomText>
                                 </tw.RoomWrap>
-                                <tw.PriceWrap>
-                                    <tw.Price></tw.Price>
-                                    <tw.RoomC></tw.RoomC>
-                                    <tw.RoomL></tw.RoomL>
-                                </tw.PriceWrap>
                             </tw.RoomContainer>
                         ))}
                     </tw.RoomTable>

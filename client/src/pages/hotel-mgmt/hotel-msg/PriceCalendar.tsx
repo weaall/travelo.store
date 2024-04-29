@@ -1,45 +1,52 @@
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 
-import * as tw from "./Calendar.styles"
+import * as tw from "./PriceCalendar.styles"
 import { ModalPortal } from "../../../hook/modal/ModalPortal";
-import SetPriceModal from "../../../hook/modal/set-price/SetPrice.modal";
 import { axios, axiosInstance } from "../../../utils/axios.utils";
 import { useNavigate } from "react-router-dom";
+import SetDatePriceModal from "../../../hook/modal/set-price-day/SetDatePrice.modal";
+import SetMonthPriceModal from "../../../hook/modal/set-price-month/SetMonthPrice.modal";
 
-function Calendar({ hotel_id }: { hotel_id: string | undefined }) {
-
+export default function PriceCalendar({ hotel_id }: { hotel_id: string | undefined }) {
     const navigate = useNavigate();
+    const refreshPage = () => {
+        window.location.reload();
+    };
 
-    const [isSetModalOpen, setIsSetModalOpen] = useState(false);
+    const [isMonthModalOpen, setIsMonthModalOpen] = useState(false);
 
-    const openSetModal = () => {
-        setIsSetModalOpen(true);
-      };
+    const openMonthModal = () => {
+        setIsMonthModalOpen(true);
+    };
 
-    const closeSetModal = () => {
-        setIsSetModalOpen(false);
+    const closeMonthModal = () => {
+        setIsMonthModalOpen(false);
+        refreshPage();
+    };
+
+    const [isDateModalOpen, setIsDateModalOpen] = useState(false);
+    const [selectedDate, setSelectedDate] = useState<number>(0);
+
+    const openDateModal = () => {
+        setIsDateModalOpen(true);
+    };
+
+    const closeDateModal = () => {
+        setIsDateModalOpen(false);
+        refreshPage();
     };
 
     const [date, setDate] = useState(dayjs());
 
-    const [roomData, setRoomData] = useState({
-        id: 0,
-        name: "",
-        num: 0,
-        bed_type_id: 0,
-        bed_type: "",
-        view_type_id: 0,
-        view_type: "",
-        discount: 0,
-    });
-
-    const [priceData, setPriceData] = useState([{
-        date: "",
-        price: 0,
-        room_current: 0,
-        room_limit: 0,
-    }])
+    const [priceData, setPriceData] = useState([
+        {
+            date: "",
+            price: 0,
+            room_current: 0,
+            room_limit: 0,
+        },
+    ]);
 
     const viewYear = date.year();
     const viewMonth = date.month();
@@ -68,7 +75,7 @@ function Calendar({ hotel_id }: { hotel_id: string | undefined }) {
     const lastDateIndex = dates.lastIndexOf(TLDate);
 
     const prevMonth = () => {
-        if (date.diff(dayjs(), "month") > -1) {
+        if (date.diff(dayjs(), "month") >= 0) {
             setDate(date.subtract(1, "month"));
         }
     };
@@ -93,9 +100,8 @@ function Calendar({ hotel_id }: { hotel_id: string | undefined }) {
 
     const fetchPrice = async () => {
         try {
-        const response = await axiosInstance .get("/room/price/" + 1);
-            setPriceData(response.data.data)
-            console.log(response.data.data);
+            const response = await axiosInstance.get("/room/price/" + 1);
+            setPriceData(response.data.data);
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 if (error.response.status === 401) {
@@ -124,7 +130,7 @@ function Calendar({ hotel_id }: { hotel_id: string | undefined }) {
                     </tw.NavWrap>
                 </tw.TitleWrap>
                 <tw.BtnWrap>
-                    <tw.AddBtn onClick={openSetModal}>설정</tw.AddBtn>
+                    <tw.AddBtn onClick={openMonthModal}>설정</tw.AddBtn>
                 </tw.BtnWrap>
             </tw.FlexWrap>
             <tw.DaysWrap>
@@ -150,7 +156,13 @@ function Calendar({ hotel_id }: { hotel_id: string | undefined }) {
                         );
                     } else if (dayjs(formattedDate).format("YYYY-MM-DD") === today) {
                         return (
-                            <tw.TodayWrap key={i} onClick={() => console.log(viewYear, viewMonth + 1, date)}>
+                            <tw.TodayWrap
+                                key={i}
+                                onClick={() => {
+                                    setSelectedDate(date);
+                                    openDateModal();
+                                }}
+                            >
                                 <tw.DateLabel $date={"today"}>{date}</tw.DateLabel>
                                 <tw.RoomNum>
                                     {matchedPriceData
@@ -160,22 +172,27 @@ function Calendar({ hotel_id }: { hotel_id: string | undefined }) {
                                 <tw.RoomPrice>{matchedPriceData ? matchedPriceData.price : ""}</tw.RoomPrice>
                             </tw.TodayWrap>
                         );
-                    
-                    }else if (isPastDate) {
+                    } else if (isPastDate) {
                         return (
-                            <tw.DateWrap key={i}>
+                            <tw.PastWrap key={i}>
                                 <tw.DateLabel $date={condition}>{date}</tw.DateLabel>
                                 <tw.RoomNum>
                                     {matchedPriceData
                                         ? `${matchedPriceData.room_current} / ${matchedPriceData.room_limit}`
                                         : "0 / 0"}
                                 </tw.RoomNum>
-                                <tw.RoomPrice>{matchedPriceData ? matchedPriceData.price : "미정"}</tw.RoomPrice>
-                            </tw.DateWrap>
+                                <tw.PastPrice>{matchedPriceData ? matchedPriceData.price : "미정"}</tw.PastPrice>
+                            </tw.PastWrap>
                         );
                     } else {
                         return (
-                            <tw.DateWrap key={i} onClick={() => console.log(viewYear, viewMonth + 1, date)}>
+                            <tw.DateWrap
+                                key={i}
+                                onClick={() => {
+                                    setSelectedDate(date);
+                                    openDateModal();
+                                }}
+                            >
                                 <tw.DateLabel $date={condition}>{date}</tw.DateLabel>
                                 <tw.RoomNum>
                                     {matchedPriceData
@@ -189,10 +206,10 @@ function Calendar({ hotel_id }: { hotel_id: string | undefined }) {
                 })}
             </tw.DatesWrap>
 
-            {isSetModalOpen && (
+            {isMonthModalOpen && (
                 <ModalPortal>
-                    <SetPriceModal
-                        onClose={closeSetModal}
+                    <SetMonthPriceModal
+                        onClose={closeMonthModal}
                         hotel_id={hotel_id}
                         room_id={1}
                         year={viewYear}
@@ -200,8 +217,20 @@ function Calendar({ hotel_id }: { hotel_id: string | undefined }) {
                     />
                 </ModalPortal>
             )}
+
+            {isDateModalOpen && (
+                <ModalPortal>
+                    <SetDatePriceModal
+                        onClose={closeDateModal}
+                        hotel_id={hotel_id}
+                        room_id={1}
+                        year={viewYear}
+                        month={viewMonth + 1}
+                        date={selectedDate}
+                    />
+                </ModalPortal>
+            )}
         </tw.Container>
     );
 }
 
-export default Calendar;
