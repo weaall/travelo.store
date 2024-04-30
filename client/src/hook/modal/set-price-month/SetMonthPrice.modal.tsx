@@ -8,7 +8,7 @@ import * as tw from "./SetPrice.modal.styles"
 interface ModalProps {
     onClose: () => void;
     hotel_id: string | undefined;
-    room_id: number | undefined;
+    room_id: string | undefined;
     year: number;
     month: number;
 }

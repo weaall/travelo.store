@@ -16,8 +16,8 @@ function App() {
     return (
         <BrowserRouter>
             <tw.Container className="App">
+                <Header />
                 <tw.ContentsWrap>
-                    <Header />
                     <Routes>
                         <Route path="/main" element={<Main />} />
                         <Route path="/signin" element={<SignIn />} />
@@ -25,7 +25,7 @@ function App() {
                         <Route path="/me" element={<Me />} />
                         <Route path="/hotelreg" element={<HotelReg />} />
                         <Route path="/hotel/me" element={<HotelMe />} />
-                        <Route path="hotel/mgmt/">
+                        <Route path="/hotel/mgmt/">
                             <Route path=":hotelId/*" element={<HotelMgmt />} />
                         </Route>
                         <Route path="/auth/kakao" element={<AuthKaKao />} />

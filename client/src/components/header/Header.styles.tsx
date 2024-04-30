@@ -4,8 +4,8 @@ interface MenuOpenProps {
     $validator: boolean
 }
 
-export const Container = tw.div``
-export const ContentsWrap = tw.div`mt-2 fixed w-full max-w-[840px] h-20 bg-white/[0.7] rounded-3xl border shadow-sm`
+export const Container = tw.div`w-full border-b`
+export const ContentsWrap = tw.div`m-auto max-w-[840px] h-16 bg-white/[0.7]`
 
 export const NavWrap = tw.div`flex px-10 h-full w-full items-center justify-between`
 export const NavHome = tw.button`text-xl`

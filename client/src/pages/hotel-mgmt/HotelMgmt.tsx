@@ -7,7 +7,7 @@ import * as tw from "./HotelMgmt.styles"
 import HotelInfo from "./hotel-info/HotelInfo"
 import HotelRoom from "./hotel-room/HotelRoom"
 import HotelPrice from "./hotel-price/HotelPrice"
-import PriceCalendar from "./hotel-msg/PriceCalendar"
+import PriceCalendar from "./hotel-calendar/PriceCalendar"
 
 export default function HotelMgmt() {
     const navigate = useNavigate()
@@ -38,7 +38,7 @@ export default function HotelMgmt() {
     }
 
     useEffect(() => {
-        fetchHotel()
+        fetchHotel();
     }, [hotelId])
 
     return (
@@ -65,7 +65,9 @@ export default function HotelMgmt() {
                     <Route path="" element={<HotelInfo hotel_id={hotelId}/>}/>
                     <Route path="/room" element={<HotelRoom hotel_id={hotelId}/>}/>
                     <Route path="/price" element={<HotelPrice hotel_id={hotelId}/>}/>
-                    <Route path="/msg" element={<PriceCalendar hotel_id={hotelId}/>}/>
+                    <Route path="/cal" element={<PriceCalendar hotel_id={hotelId}/>}>
+                        <Route path=":room_id/*" element={<HotelMgmt />} />
+                    </Route>
                 </Routes>
             </tw.ContentsWrap>
         </tw.Container>

@@ -30,6 +30,7 @@ export default function HotelRoom({ hotel_id }: { hotel_id: string | undefined }
 
     const closeSetModal = () => {
         setIsSetModalOpen(false);
+        fetchRoom();
     };
 
     const [roomData, setRoomData] = useState([
@@ -66,7 +67,7 @@ export default function HotelRoom({ hotel_id }: { hotel_id: string | undefined }
 
     useEffect(() => {
         fetchRoom();
-    }, []);
+    }, [roomData]);
 
     return (
         <tw.Container>
@@ -83,7 +84,8 @@ export default function HotelRoom({ hotel_id }: { hotel_id: string | undefined }
                             <tw.ContentsFlex>
                                 <tw.RoomName>{room.name}</tw.RoomName>
                                 <tw.HalfFlex>
-                                    <tw.AddBtn onClick={() => openSetModal(room.id)}>수정</tw.AddBtn>
+                                    <tw.AddBtn onClick={() => navigate("../cal/" + room.id)}>가격설정</tw.AddBtn>
+                                    <tw.AddBtn onClick={() => openSetModal(room.id)}>정보수정</tw.AddBtn>
                                     <tw.AddBtn>삭제</tw.AddBtn>
                                 </tw.HalfFlex>
                             </tw.ContentsFlex>

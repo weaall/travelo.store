@@ -1,9 +1,9 @@
 import tw from "tailwind-styled-components"
 
-export const Container = tw.div`mt-24 h-full flex flex-col items-center rounded-[32px] bg-gray-100 py-10`
+export const Container = tw.div`h-full flex flex-col items-center rounded-[32px] bg-gray-100 py-10`
 export const ContentsWrap = tw.div``
 
-export const MainContainer = tw.div` w-full`
+export const MainContainer = tw.div`w-full`
 
 export const SelectContainer = tw.div`mx-10 rounded-md h-24 bg-white shadow-md`
 export const SelectContainerCell1 = tw.div`flex items-center border-b border-gray-300 h-1/2`

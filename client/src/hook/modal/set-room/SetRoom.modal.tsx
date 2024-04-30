@@ -205,7 +205,14 @@ export default function SetRoomModal({ onClose, hotel_id, room_id }: ModalProps)
                         <tw.SubTitle>숙소정보</tw.SubTitle>
                         <tw.HalfFlex>
                             <tw.ResetBtn>되돌리기</tw.ResetBtn>
-                            <tw.SetBtn onClick={clickInfoSave}>저장</tw.SetBtn>
+                            <tw.SetBtn
+                                onClick={() => {
+                                    clickInfoSave();
+                                    onClose();
+                                }}
+                            >
+                                저장
+                            </tw.SetBtn>
                         </tw.HalfFlex>
                     </tw.ContentsFlex>
                     <tw.UpperTag>호텔이름</tw.UpperTag>

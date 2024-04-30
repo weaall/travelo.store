@@ -8,17 +8,24 @@ interface DateProps {
     $date: String
 }
 
-export const Container = tw.div`mx-auto px-4 py-8`
+export const Container = tw.div`m-auto max-w-[840px]`
+
+export const ContentsWrap = tw.div`w-full flex flex-col space-y-2 px-6 py-6 border-b`
+export const ContentsFlex = tw.div`w-full flex items-center justify-between`
+export const HalfCol = tw.div`w-[50%] flex flex-col`
+export const HalfFlex = tw.div`w-[50%] flex justify-end`
 export const FlexWrap = tw.div`flex w-full justify-center`
 
-export const TitleWrap = tw.div`text-center mb-8`
+export const Title = tw.h3`w-[50%] py-6 text-2xl font-bold`
+
+export const TitleWrap = tw.div`w-full text-center m-6`
+export const YearWrap = tw.div`w-full flex justify-between`
 export const YearMonth = tw.h2`text-xl font-bold`
 
 export const NavWrap = tw.nav`mt-4`
 export const NavBtn = tw.button`px-2 py-1 mx-1 bg-gray-100 rounded-lg text-sm font-bold hover:text-main`
 
-export const BtnWrap = tw.div``
-export const AddBtn = tw.button`p-2 font-bold hover:text-main`
+export const AddBtn = tw.button`font-bold hover:text-main`
 
 export const DaysWrap = tw.div`flex mb-4`
 export const DayWrap = tw.div`w-[14%] text-center`
@@ -38,3 +45,7 @@ export const RoomNum = tw.p`text-xs`
 export const RoomPrice = tw.p`text-xs text-blue-500`
 
 export const PastPrice = tw.p`text-xs text-gray-300`
+
+export const RoomWrap = tw.div`py-3 px-4 bg-gray-50 rounded-xl`
+export const RoomName = tw.h2`font-bold text-lg`
+export const RoomText = tw.p`text-sm`

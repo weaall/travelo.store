@@ -76,11 +76,6 @@ export default function Header() {
                     )}
                 </tw.NavWrap>
             </tw.ContentsWrap>
-            {isModalOpen && (
-                <ModalPortal>
-                    <Terms onClose={closeModal} />
-                </ModalPortal>
-            )}
         </tw.Container>
-    )
+    );
 }

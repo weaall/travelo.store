@@ -28,33 +28,33 @@ export default function UserMenu({ isMenuOpen }: UserMenuProps) {
     }
 
     return (
-        <tw.MenuWrap $validator={isMenuOpen}>
-            <tw.MenuNav>
-                <tw.MenuLabelWrap>
-                    <tw.MenuLabel>마이페이지</tw.MenuLabel>
-                    <tw.SignOutBtn onClick={logoutClick}>로그아웃</tw.SignOutBtn>
-                </tw.MenuLabelWrap>
-                <tw.MenuUl>
-                    <tw.MenuLi>
-                        <tw.MenuA>내정보</tw.MenuA>
-                    </tw.MenuLi>
-                    <tw.MenuLi>
-                        <tw.MenuA>예약확인</tw.MenuA>
-                    </tw.MenuLi>
-                    <tw.MenuLi>
-                        <tw.MenuA>이용후기</tw.MenuA>
-                    </tw.MenuLi>
-                </tw.MenuUl>
-                <tw.MenuLabel>숙소관리</tw.MenuLabel>
-                <tw.MenuUl>
-                    <tw.MenuLi>
-                        <tw.MenuA onClick={()=>navigateClick("hotelreg")}>숙소등록</tw.MenuA>
-                    </tw.MenuLi>
-                    <tw.MenuLi>
-                        <tw.MenuA onClick={()=>navigateClick("hotel/me")}>숙소관리</tw.MenuA>
-                    </tw.MenuLi>
-                </tw.MenuUl>
-            </tw.MenuNav>
-        </tw.MenuWrap>
-    )
+            <tw.MenuWrap $validator={isMenuOpen}>
+                <tw.MenuNav>
+                    <tw.MenuLabelWrap>
+                        <tw.MenuLabel>마이페이지</tw.MenuLabel>
+                        <tw.SignOutBtn onClick={logoutClick}>로그아웃</tw.SignOutBtn>
+                    </tw.MenuLabelWrap>
+                    <tw.MenuUl>
+                        <tw.MenuLi>
+                            <tw.MenuA>내정보</tw.MenuA>
+                        </tw.MenuLi>
+                        <tw.MenuLi>
+                            <tw.MenuA>예약확인</tw.MenuA>
+                        </tw.MenuLi>
+                        <tw.MenuLi>
+                            <tw.MenuA>이용후기</tw.MenuA>
+                        </tw.MenuLi>
+                    </tw.MenuUl>
+                    <tw.MenuLabel>숙소관리</tw.MenuLabel>
+                    <tw.MenuUl>
+                        <tw.MenuLi>
+                            <tw.MenuA onClick={() => navigateClick("hotelreg")}>숙소등록</tw.MenuA>
+                        </tw.MenuLi>
+                        <tw.MenuLi>
+                            <tw.MenuA onClick={() => navigateClick("hotel/me")}>숙소관리</tw.MenuA>
+                        </tw.MenuLi>
+                    </tw.MenuUl>
+                </tw.MenuNav>
+            </tw.MenuWrap>
+    );
 }

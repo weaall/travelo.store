@@ -5,7 +5,6 @@ export default function Main() {
     return (
         <tw.Container>
             <tw.MainContainer>
-
                 <tw.SelectContainer>
                     <tw.SelectContainerCell1>
                         <tw.SelectRegion>🔍</tw.SelectRegion>
