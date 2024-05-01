@@ -6,6 +6,26 @@ import { deleteHotelImg } from "../config/multer";
 
 
 const hotelService = {
+    async getHotel(user_id: string, hotel_id: string) {
+        const connection = await pool.getConnection();
+
+        const getHotelInfoSql =
+            "SELECT * FROM hotel AS H left join hotel_service as S on H.id = S.hotel_id left join hotel_facility as F using (hotel_id)";
+        const getHotelInfoSqlParams = [user_id, hotel_id];
+
+        try {
+            const [rows, fields]: [HotelInfoRows[], FieldPacket[]] = await connection.execute(
+                getHotelInfoSql,
+                getHotelInfoSqlParams,
+            );
+
+            return rows;
+        } catch (error) {
+            throw error;
+        } finally {
+            connection.release();
+        }
+    },
     async regHotel(
         user_id: string,
         { name, address, address_detail, postcode, reg_num, bank, account, owner }: RegHotelParams,
