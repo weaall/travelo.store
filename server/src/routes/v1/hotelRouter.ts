@@ -7,6 +7,8 @@ import isAuthenticated from "../../middlewares/isAuthenticated"
 
 const hotelRouter = Router()
 
+hotelRouter.get("/", asyncHandler(hotelController.getHotel));
+
 hotelRouter.get("/img/:id", asyncHandler(hotelController.getHotelImgUrl));
 
 hotelRouter.post(

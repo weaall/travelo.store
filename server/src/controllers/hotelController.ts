@@ -3,6 +3,14 @@ import { JWTCheck } from "../interface/interfaces"
 import hotelService from "../services/hotelService"
 
 const hotelController = {
+    async getHotel(req: Request, res: Response) {
+        const data = await hotelService.getHotel();
+
+        res.status(200).json({
+            error: null,
+            data: data,
+        })
+    },
     async regHotel(req: JWTCheck, res: Response) {
         const urls = (req.files as any[]).map((file) => file.location)
 

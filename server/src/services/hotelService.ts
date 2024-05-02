@@ -6,17 +6,17 @@ import { deleteHotelImg } from "../config/multer";
 
 
 const hotelService = {
-    async getHotel(user_id: string, hotel_id: string) {
+    async getHotel() {
         const connection = await pool.getConnection();
 
         const getHotelInfoSql =
-            "SELECT * FROM hotel AS H left join hotel_service as S on H.id = S.hotel_id left join hotel_facility as F using (hotel_id)";
-        const getHotelInfoSqlParams = [user_id, hotel_id];
+            `SELECT * FROM hotel AS H 
+            left join hotel_service as S on H.id = S.hotel_id 
+            left join hotel_facility as F using (hotel_id)`;
 
         try {
             const [rows, fields]: [HotelInfoRows[], FieldPacket[]] = await connection.execute(
                 getHotelInfoSql,
-                getHotelInfoSqlParams,
             );
 
             return rows;
@@ -31,6 +31,7 @@ const hotelService = {
         { name, address, address_detail, postcode, reg_num, bank, account, owner }: RegHotelParams,
         urls: string[],
     ) {
+        console.log(user_id, name, address, address_detail, postcode, reg_num, bank, account, owner)
         const addHotelSql =
             "INSERT INTO hotel (user_id, name, postcode, address, address_detail) VALUES (?, ?, ?, ?, ?)";
         const addHotelValues = [user_id, name, postcode, address, address_detail];
@@ -55,10 +56,9 @@ const hotelService = {
             );
 
             const hotel_id = addHotelResult.insertId;
-
             const [addHotelRegResult] = await connection.execute(addHotelRegSql, [hotel_id, ...addHotelRegValues]);
-            const [addHotelServResult] = await connection.execute(addHotelServSql, hotel_id);
-            const [addHotelFacilResult] = await connection.execute(addHotelFacilSql, hotel_id);
+            const [addHotelServResult] = await connection.execute(addHotelServSql, [hotel_id]);
+            const [addHotelFacilResult] = await connection.execute(addHotelFacilSql, [hotel_id]);
             const [addRegDocResult] = await connection.execute(addRegDocSql, [hotel_id, ...addRegDocValues]);
 
             await connection.commit();

@@ -1,6 +1,29 @@
+import { useNavigate } from "react-router-dom";
+import { axios, axiosInstance } from "../../utils/axios.utils";
 import * as tw from "./Main.styles"
+import { useEffect } from "react";
 
 export default function Main() {
+    const navigate = useNavigate();
+    
+    const fetchHotel = async () => {
+        try {
+            const response = await axiosInstance .get("/hotel");
+            console.log(response.data.data)
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                if (error.response.status === 401) {
+                    window.alert("올바른 접근이 아닙니다.");
+                    navigate("/main");
+                }
+            }
+        }
+    };
+
+    useEffect(()=>{
+        fetchHotel();
+    },[])
+
 
     return (
         <tw.Container>

@@ -50,7 +50,8 @@ export default function HotelReg() {
 
 
             const response = await axiosInstance.request(config)
-            window.alert(response)
+            window.alert("등록되었습니다.")
+            navigate("/")
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 if (error.response.status === 409) {
