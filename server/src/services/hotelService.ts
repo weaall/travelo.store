@@ -12,7 +12,8 @@ const hotelService = {
         const getHotelInfoSql =
             `SELECT * FROM hotel AS H 
             left join hotel_service as S on H.id = S.hotel_id 
-            left join hotel_facility as F using (hotel_id)`;
+            left join hotel_facility as F using (hotel_id)
+            WHERE H.permission = 1`;
 
         try {
             const [rows, fields]: [HotelInfoRows[], FieldPacket[]] = await connection.execute(
