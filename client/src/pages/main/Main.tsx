@@ -72,25 +72,31 @@ export default function Main() {
                             <tw.HotelPic></tw.HotelPic>
                             <tw.HotelInfo>
                                 <tw.HotelName>{hotel.name}</tw.HotelName>
-                                <tw.HotelAddress>
-                                    {hotel.address} {hotel.address_detail}
-                                </tw.HotelAddress>
-                                <tw.HotelText>서비스</tw.HotelText>
+                                <tw.ContentsFlex>
+                                <tw.AddressSVG
+                                            alt=""
+                                            src={require("../../assets/svg/location_icon.svg").default}
+                                        ></tw.AddressSVG>
+                                    <tw.HotelAddress>
+                                        {hotel.address} {hotel.address_detail}
+                                    </tw.HotelAddress>
+                                </tw.ContentsFlex>
+                                <tw.HotelP>서비스</tw.HotelP>
                                 <tw.HotelServWrap>
-                                    {hotel.wifi === 1 && <tw.HotelText>Wifi</tw.HotelText>}
-                                    {hotel.always_check_in === 1 && <tw.HotelText>24시 체크인</tw.HotelText>}
-                                    {hotel.breakfast === 1 && <tw.HotelText>조식 제공</tw.HotelText>}
-                                    {hotel.barbecue === 1 && <tw.HotelText>바베큐 시설</tw.HotelText>}
+                                    {hotel.wifi === 1 && <tw.HotelComp>Wifi</tw.HotelComp>}
+                                    {hotel.always_check_in === 1 && <tw.HotelComp>24시 체크인</tw.HotelComp>}
+                                    {hotel.breakfast === 1 && <tw.HotelComp>조식 제공</tw.HotelComp>}
+                                    {hotel.barbecue === 1 && <tw.HotelComp>바베큐 시설</tw.HotelComp>}
                                 </tw.HotelServWrap>
-                                <tw.HotelText>편의시설</tw.HotelText>
+                                <tw.HotelP>편의시설</tw.HotelP>
                                 <tw.HotelFacilWrap>
-                                    {hotel.carpark === 1 && <tw.HotelText>주차장</tw.HotelText>}
-                                    {hotel.restaurnat === 1 && <tw.HotelText>레스토랑</tw.HotelText>}
-                                    {hotel.cafe === 1 && <tw.HotelText>카페</tw.HotelText>}
-                                    {hotel.swimming_pool === 1 && <tw.HotelText>수영장</tw.HotelText>}
-                                    {hotel.spa === 1 && <tw.HotelText>스파</tw.HotelText>}
-                                    {hotel.fitness === 1 && <tw.HotelText>피트니스</tw.HotelText>}
-                                    {hotel.convenience_store === 1 && <tw.HotelText>편의점</tw.HotelText>}
+                                    {hotel.carpark === 1 && <tw.HotelComp>주차장</tw.HotelComp>}
+                                    {hotel.restaurnat === 1 && <tw.HotelComp>레스토랑</tw.HotelComp>}
+                                    {hotel.cafe === 1 && <tw.HotelComp>카페</tw.HotelComp>}
+                                    {hotel.swimming_pool === 1 && <tw.HotelComp>수영장</tw.HotelComp>}
+                                    {hotel.spa === 1 && <tw.HotelComp>스파</tw.HotelComp>}
+                                    {hotel.fitness === 1 && <tw.HotelComp>피트니스</tw.HotelComp>}
+                                    {hotel.convenience_store === 1 && <tw.HotelComp>편의점</tw.HotelComp>}
                                 </tw.HotelFacilWrap>
                             </tw.HotelInfo>
                         </tw.HotelWrap>
