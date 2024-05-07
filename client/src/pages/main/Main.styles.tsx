@@ -1,8 +1,6 @@
 import tw from "tailwind-styled-components"
 
-
-
-export const Container = tw.div`w-full h-full flex flex-col items-center rounded-[32px] bg-gray-100 py-10`
+export const Container = tw.div` flex flex-col items-center rounded-[32px] bg-gray-100 py-10`
 
 export const ContentsWrap = tw.div`w-full flex flex-col space-y-2 px-6 py-6 border-b`
 export const ContentsFlex = tw.div`w-full flex items-center`
@@ -26,12 +24,23 @@ export const HotelList = tw.div``
 
 export const HotelWrap = tw.div`my-4 mx-10 rounded-2xl bg-white shadow-md flex group cursor-pointer hover:shadow-xl`
 export const HotelPic = tw.div`w-4/12 h-full rounded-l-2xl rounded-tl-2xl bg-gray-200`
-export const HotelInfo = tw.div`w-5/12 px-5 py-3 space-y-1`
+export const HotelInfo = tw.div`w-8/12 relative px-5 py-3 space-y-1`
 export const HotelName = tw.h2`text-xl font-bold`
-export const HotelAddress = tw.p`text-xs font-bold text-main`
-export const AddressSVG = tw.img`h-3`
+export const HotelAddress = tw.p`text-xs font-bold text-main pl-1`
+export const AddressSVG = tw.img`w-3`
 export const HotelP = tw.p`text-xs`
 export const HotelComp = tw.p`text-xs bg-gray-100 py-1 px-2 rounded-lg`
-export const HotelServWrap = tw.div`flex space-x-2 truncate`
-export const HotelFacilWrap = tw.div`flex space-x-2 truncate group`
-export const Tooltip = tw.span``
+
+export const HotelServWrap = tw.div`flex flex-col py-1 peer/serv`
+export const HotelServList = tw.div`flex pt-1 space-x-2 truncate`
+export const TooltipServ = tw.div`absolute flex flex-wrap bottom-[65%] mx-3 p-3 h-auto w-auto bg-black opacity-0 scale-0 rounded-xl
+peer-hover/serv:opacity-100 peer-hover/serv:scale-100 
+transition-opacity duration-300`
+
+export const HotelFacilWrap = tw.div`flex flex-col py-1 peer/facil`
+export const HotelFacilList = tw.div`flex pt-1 space-x-2 truncate`
+export const TooltipFacil = tw.div`absolute flex flex-wrap bottom-[35%] mx-3 p-3 h-auto w-auto bg-black opacity-0 scale-0 rounded-xl
+peer-hover/facil:opacity-100 peer-hover/facil:scale-100 
+transition-opacity duration-300`
+
+export const ToolTipText = tw.li`px-3 text-white text-sm font-bold`

@@ -24,6 +24,7 @@
     "mysql2": "^3.8.0",
     "passport": "^0.7.0",
     "passport-kakao": "^1.0.1",
+    "redis": "^4.6.13",
     "shortid": "^2.2.16"
   },
   "devDependencies": {

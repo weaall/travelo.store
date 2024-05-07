@@ -25,7 +25,6 @@ app.listen(port, () => {
     console.log(`localhost:${port} connected`)
 })
 
-
 app.use((error: CustomError, req: Request, res: Response, next: NextFunction) => {
     console.log(error)
     if (error.status !== undefined && Math.floor(error.status / 100) === 5) {
@@ -36,3 +35,4 @@ app.use((error: CustomError, req: Request, res: Response, next: NextFunction) =>
         data: null,
     })
 })
+

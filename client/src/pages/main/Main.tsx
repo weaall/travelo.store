@@ -2,7 +2,6 @@ import { useNavigate } from "react-router-dom";
 import { axios, axiosInstance } from "../../utils/axios.utils";
 import { useEffect, useState } from "react";
 
-
 import * as tw from "./Main.styles"
 
 export default function Main() {
@@ -73,31 +72,53 @@ export default function Main() {
                             <tw.HotelInfo>
                                 <tw.HotelName>{hotel.name}</tw.HotelName>
                                 <tw.ContentsFlex>
-                                <tw.AddressSVG
-                                            alt=""
-                                            src={require("../../assets/svg/location_icon.svg").default}
-                                        ></tw.AddressSVG>
+                                    <tw.AddressSVG
+                                        alt=""
+                                        src={require("../../assets/svg/location_icon.svg").default}
+                                    ></tw.AddressSVG>
                                     <tw.HotelAddress>
                                         {hotel.address} {hotel.address_detail}
                                     </tw.HotelAddress>
                                 </tw.ContentsFlex>
-                                <tw.HotelP>서비스</tw.HotelP>
+
                                 <tw.HotelServWrap>
-                                    {hotel.wifi === 1 && <tw.HotelComp>Wifi</tw.HotelComp>}
-                                    {hotel.always_check_in === 1 && <tw.HotelComp>24시 체크인</tw.HotelComp>}
-                                    {hotel.breakfast === 1 && <tw.HotelComp>조식 제공</tw.HotelComp>}
-                                    {hotel.barbecue === 1 && <tw.HotelComp>바베큐 시설</tw.HotelComp>}
+                                    <tw.HotelP>서비스</tw.HotelP>
+                                    <tw.HotelServList>
+                                        {hotel.wifi === 1 && <tw.HotelComp>Wifi</tw.HotelComp>}
+                                        {hotel.always_check_in === 1 && <tw.HotelComp>24시 체크인</tw.HotelComp>}
+                                        {hotel.breakfast === 1 && <tw.HotelComp>조식 제공</tw.HotelComp>}
+                                        {hotel.barbecue === 1 && <tw.HotelComp>바베큐 시설</tw.HotelComp>}
+                                    </tw.HotelServList>
                                 </tw.HotelServWrap>
-                                <tw.HotelP>편의시설</tw.HotelP>
+
                                 <tw.HotelFacilWrap>
-                                    {hotel.carpark === 1 && <tw.HotelComp>주차장</tw.HotelComp>}
-                                    {hotel.restaurnat === 1 && <tw.HotelComp>레스토랑</tw.HotelComp>}
-                                    {hotel.cafe === 1 && <tw.HotelComp>카페</tw.HotelComp>}
-                                    {hotel.swimming_pool === 1 && <tw.HotelComp>수영장</tw.HotelComp>}
-                                    {hotel.spa === 1 && <tw.HotelComp>스파</tw.HotelComp>}
-                                    {hotel.fitness === 1 && <tw.HotelComp>피트니스</tw.HotelComp>}
-                                    {hotel.convenience_store === 1 && <tw.HotelComp>편의점</tw.HotelComp>}
+                                    <tw.HotelP>편의시설</tw.HotelP>
+                                    <tw.HotelFacilList>
+                                        {hotel.carpark === 1 && <tw.HotelComp>주차장</tw.HotelComp>}
+                                        {hotel.restaurnat === 1 && <tw.HotelComp>레스토랑</tw.HotelComp>}
+                                        {hotel.cafe === 1 && <tw.HotelComp>카페</tw.HotelComp>}
+                                        {hotel.swimming_pool === 1 && <tw.HotelComp>수영장</tw.HotelComp>}
+                                        {hotel.spa === 1 && <tw.HotelComp>스파</tw.HotelComp>}
+                                        {hotel.fitness === 1 && <tw.HotelComp>피트니스</tw.HotelComp>}
+                                        {hotel.convenience_store === 1 && <tw.HotelComp>편의점</tw.HotelComp>}
+                                    </tw.HotelFacilList>
                                 </tw.HotelFacilWrap>
+
+                                <tw.TooltipServ>
+                                    {hotel.wifi === 1 && <tw.ToolTipText>Wifi</tw.ToolTipText>}
+                                    {hotel.always_check_in === 1 && <tw.ToolTipText>24시 체크인</tw.ToolTipText>}
+                                    {hotel.breakfast === 1 && <tw.ToolTipText>조식 제공</tw.ToolTipText>}
+                                    {hotel.barbecue === 1 && <tw.ToolTipText>바베큐 시설</tw.ToolTipText>}
+                                </tw.TooltipServ>
+                                <tw.TooltipFacil>
+                                    {hotel.carpark === 1 && <tw.ToolTipText>주차장</tw.ToolTipText>}
+                                    {hotel.restaurnat === 1 && <tw.ToolTipText>레스토랑</tw.ToolTipText>}
+                                    {hotel.cafe === 1 && <tw.ToolTipText>카페</tw.ToolTipText>}
+                                    {hotel.swimming_pool === 1 && <tw.ToolTipText>수영장</tw.ToolTipText>}
+                                    {hotel.spa === 1 && <tw.ToolTipText>스파</tw.ToolTipText>}
+                                    {hotel.fitness === 1 && <tw.ToolTipText>피트니스</tw.ToolTipText>}
+                                    {hotel.convenience_store === 1 && <tw.ToolTipText>편의점</tw.ToolTipText>}
+                                </tw.TooltipFacil>
                             </tw.HotelInfo>
                         </tw.HotelWrap>
                     ))}

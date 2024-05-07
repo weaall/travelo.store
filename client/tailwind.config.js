@@ -14,14 +14,17 @@ module.exports = {
             },
             keyframes: {
                 modal: {
-                  from: { transform: "translate(-50%, -50%) translateY(-100%)" },
-                  to: { transform: "translate(-50%, -50%) translateY(0)" },
+                    from: { transform: "translate(-50%, -50%) translateY(-100%)" },
+                    to: { transform: "translate(-50%, -50%) translateY(0)" },
                 },
-              },
-              animation: {
+            },
+            animation: {
                 modal: "modal 0.5s ease-in-out 1",
-              },
+            },
+            zIndex: {
+                100: "100",
+            },
         },
     },
     plugins: [],
-}
+};

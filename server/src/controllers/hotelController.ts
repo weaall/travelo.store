@@ -1,10 +1,16 @@
 import { Response, Request } from "express"
 import { JWTCheck } from "../interface/interfaces"
 import hotelService from "../services/hotelService"
+import client from "../config/redis";
 
 const hotelController = {
     async getHotel(req: Request, res: Response) {
+        const key : string = req.body;
+        const redisData = client.get(key);
+        console.log(redisData)
+
         const data = await hotelService.getHotel();
+
 
         res.status(200).json({
             error: null,
