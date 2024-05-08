@@ -5,16 +5,33 @@ import client from "../config/redis";
 
 const hotelController = {
     async getHotel(req: Request, res: Response) {
-        const key : string = req.body;
-        const redisData = client.get(key);
-        console.log(redisData)
-
         const data = await hotelService.getHotel();
-
 
         res.status(200).json({
             error: null,
             data: data,
+        });
+    },
+    async getHotelById(req: Request, res: Response) {
+        const key : string = req.params.hotel_id;
+        const redisData = await client.get(key);
+
+        if(redisData === null){
+            const data = await hotelService.getHotelById(req.params.hotel_id);
+
+            console.log(data)
+
+            await client.set(key, data)
+
+            res.status(200).json({
+                error: null,
+                data: data,
+            })
+        }
+
+        res.status(200).json({
+            error: null,
+            data: redisData,
         })
     },
     async regHotel(req: JWTCheck, res: Response) {

@@ -67,7 +67,7 @@ export default function HotelRoom({ hotel_id }: { hotel_id: string | undefined }
 
     useEffect(() => {
         fetchRoom();
-    }, [roomData]);
+    }, []);
 
     return (
         <tw.Container>

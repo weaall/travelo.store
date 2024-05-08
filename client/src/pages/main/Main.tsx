@@ -44,7 +44,7 @@ export default function Main() {
 
     useEffect(()=>{
         fetchHotel();
-    })
+    },[])
 
 
     return (

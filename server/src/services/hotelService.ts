@@ -27,6 +27,29 @@ const hotelService = {
             connection.release();
         }
     },
+    async getHotelById(hotel_id : string) {
+        const connection = await pool.getConnection();
+
+        const getHotelSql =
+            `SELECT * FROM hotel AS H 
+            left join hotel_service as S on H.id = S.hotel_id 
+            left join hotel_facility as F using (hotel_id)
+            WHERE H.permission = 1 and H.id = ?`;
+
+        const getHotelValues = [hotel_id];
+
+        try {
+            const [rows, fields]: [HotelInfoRows[], FieldPacket[]] = await connection.execute(
+                getHotelSql, getHotelValues
+            );
+
+            return rows;
+        } catch (error) {
+            throw error;
+        } finally {
+            connection.release();
+        }
+    },
     async regHotel(
         user_id: string,
         { name, address, address_detail, postcode, reg_num, bank, account, owner }: RegHotelParams,
