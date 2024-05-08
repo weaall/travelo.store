@@ -61,8 +61,7 @@ export default function Main() {
 
     const fetchRoom = async () => {
         try {
-            const response = await axiosInstance.get("/room/hotel/" + hotel_id);
-            setRoomData(response.data.data);
+            const response = await axiosInstance.get("/room/hotel/");
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 if (error.response.status === 409) {
