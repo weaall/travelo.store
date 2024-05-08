@@ -10,7 +10,15 @@ export function getRedis(key: string) {
 }
 
 export function setRedis(key : string, data: Object) {
-    client.set(key, JSON.stringify(data));
+   client.set(key, JSON.stringify(data));
+}
+
+export function setRedis1H(key : string, data: Object, ttl = 3600000) {
+    client.set(key, JSON.stringify(data), "EX", ttl);
+ }
+
+export function delRedis(key: string) {
+    client.del(key);
 }
 
 

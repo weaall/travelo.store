@@ -27,6 +27,23 @@ export default function Main() {
         convenience_store: 0,
 
     }])
+
+    const servItems = [
+        { comp: "wifi", label: "Wifi"},
+        { comp: "always_check_in", label: "24시 체크인"},
+        { comp: "breakfast", label: "조식"},
+        { comp: "barbecue", label: "바베큐"},
+    ]
+
+    const facilItems = [
+        { comp: "carpark", label: "주차장"},
+        { comp: "restaurnat", label: "식당"},
+        { comp: "cafe", label: "카페"},
+        { comp: "swimming_pool", label: "수영장"},
+        { comp: "spa", label: "스파"},
+        { comp: "fitness", label: "피트니스"},
+        { comp: "convenience_store", label: "편의점"},
+    ]
     
     const fetchHotel = async () => {
         try {
@@ -35,6 +52,23 @@ export default function Main() {
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 if (error.response.status === 401) {
+                    window.alert("올바른 접근이 아닙니다.");
+                    navigate("/main");
+                }
+            }
+        }
+    };
+
+    const fetchRoom = async () => {
+        try {
+            const response = await axiosInstance.get("/room/hotel/" + hotel_id);
+            setRoomData(response.data.data);
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                if (error.response.status === 409) {
+                    window.alert("올바른 접근이 아닙니다.");
+                    navigate("/");
+                } else if (error.response.status === 401) {
                     window.alert("올바른 접근이 아닙니다.");
                     navigate("/main");
                 }
@@ -68,58 +102,56 @@ export default function Main() {
                 <tw.HotelList>
                     {hotelList.map((hotel) => (
                         <tw.HotelWrap key={hotel.hotel_id}>
-                            <tw.HotelPic></tw.HotelPic>
-                            <tw.HotelInfo>
-                                <tw.HotelName>{hotel.name}</tw.HotelName>
-                                <tw.ContentsFlex>
-                                    <tw.AddressSVG
-                                        alt=""
-                                        src={require("../../assets/svg/location_icon.svg").default}
-                                    ></tw.AddressSVG>
-                                    <tw.HotelAddress>
-                                        {hotel.address} {hotel.address_detail}
-                                    </tw.HotelAddress>
-                                </tw.ContentsFlex>
+                            <tw.ContentsFlex>
+                                <tw.HotelPic></tw.HotelPic>
+                                <tw.HotelInfo>
+                                    <tw.HotelName>{hotel.name}</tw.HotelName>
+                                    <tw.ContentsFlex>
+                                        <tw.AddressSVG alt="" src={require("../../assets/svg/location_icon.svg").default}></tw.AddressSVG>
+                                        <tw.HotelAddress>
+                                            {hotel.address} {hotel.address_detail}
+                                        </tw.HotelAddress>
+                                    </tw.ContentsFlex>
 
-                                <tw.HotelServWrap>
-                                    <tw.HotelP>서비스</tw.HotelP>
-                                    <tw.HotelServList>
-                                        {hotel.wifi === 1 && <tw.HotelComp>Wifi</tw.HotelComp>}
-                                        {hotel.always_check_in === 1 && <tw.HotelComp>24시 체크인</tw.HotelComp>}
-                                        {hotel.breakfast === 1 && <tw.HotelComp>조식 제공</tw.HotelComp>}
-                                        {hotel.barbecue === 1 && <tw.HotelComp>바베큐 시설</tw.HotelComp>}
-                                    </tw.HotelServList>
-                                </tw.HotelServWrap>
+                                    <tw.HotelServWrap>
+                                        <tw.HotelP>서비스</tw.HotelP>
+                                        <tw.HotelServList>
+                                            {servItems.map((item) =>
+                                                (hotel as any)[item.comp] === 1 ? (
+                                                    <tw.HotelComp key={item.comp}>{item.label}</tw.HotelComp>
+                                                ) : null,
+                                            )}
+                                        </tw.HotelServList>
+                                    </tw.HotelServWrap>
 
-                                <tw.HotelFacilWrap>
-                                    <tw.HotelP>편의시설</tw.HotelP>
-                                    <tw.HotelFacilList>
-                                        {hotel.carpark === 1 && <tw.HotelComp>주차장</tw.HotelComp>}
-                                        {hotel.restaurnat === 1 && <tw.HotelComp>레스토랑</tw.HotelComp>}
-                                        {hotel.cafe === 1 && <tw.HotelComp>카페</tw.HotelComp>}
-                                        {hotel.swimming_pool === 1 && <tw.HotelComp>수영장</tw.HotelComp>}
-                                        {hotel.spa === 1 && <tw.HotelComp>스파</tw.HotelComp>}
-                                        {hotel.fitness === 1 && <tw.HotelComp>피트니스</tw.HotelComp>}
-                                        {hotel.convenience_store === 1 && <tw.HotelComp>편의점</tw.HotelComp>}
-                                    </tw.HotelFacilList>
-                                </tw.HotelFacilWrap>
+                                    <tw.HotelFacilWrap>
+                                        <tw.HotelP>편의시설</tw.HotelP>
+                                        <tw.HotelFacilList>
+                                            {facilItems.map((item) =>
+                                                (hotel as any)[item.comp] === 1 ? (
+                                                    <tw.HotelComp key={item.comp}>{item.label}</tw.HotelComp>
+                                                ) : null,
+                                            )}
+                                        </tw.HotelFacilList>
+                                    </tw.HotelFacilWrap>
 
-                                <tw.TooltipServ>
-                                    {hotel.wifi === 1 && <tw.ToolTipText>Wifi</tw.ToolTipText>}
-                                    {hotel.always_check_in === 1 && <tw.ToolTipText>24시 체크인</tw.ToolTipText>}
-                                    {hotel.breakfast === 1 && <tw.ToolTipText>조식 제공</tw.ToolTipText>}
-                                    {hotel.barbecue === 1 && <tw.ToolTipText>바베큐 시설</tw.ToolTipText>}
-                                </tw.TooltipServ>
-                                <tw.TooltipFacil>
-                                    {hotel.carpark === 1 && <tw.ToolTipText>주차장</tw.ToolTipText>}
-                                    {hotel.restaurnat === 1 && <tw.ToolTipText>레스토랑</tw.ToolTipText>}
-                                    {hotel.cafe === 1 && <tw.ToolTipText>카페</tw.ToolTipText>}
-                                    {hotel.swimming_pool === 1 && <tw.ToolTipText>수영장</tw.ToolTipText>}
-                                    {hotel.spa === 1 && <tw.ToolTipText>스파</tw.ToolTipText>}
-                                    {hotel.fitness === 1 && <tw.ToolTipText>피트니스</tw.ToolTipText>}
-                                    {hotel.convenience_store === 1 && <tw.ToolTipText>편의점</tw.ToolTipText>}
-                                </tw.TooltipFacil>
-                            </tw.HotelInfo>
+                                    <tw.TooltipServ>
+                                        {servItems.map((item) =>
+                                            (hotel as any)[item.comp] === 1 ? (
+                                                <tw.ToolTipText key={item.comp}>{item.label}</tw.ToolTipText>
+                                            ) : null,
+                                        )}
+                                    </tw.TooltipServ>
+                                    <tw.TooltipFacil>
+                                        {facilItems.map((item) =>
+                                            (hotel as any)[item.comp] === 1 ? (
+                                                <tw.ToolTipText key={item.comp}>{item.label}</tw.ToolTipText>
+                                            ) : null,
+                                        )}
+                                    </tw.TooltipFacil>
+                                </tw.HotelInfo>
+                            </tw.ContentsFlex>
+                            <tw.HotelRoom></tw.HotelRoom>
                         </tw.HotelWrap>
                     ))}
                 </tw.HotelList>
