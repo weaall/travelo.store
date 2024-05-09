@@ -12,12 +12,16 @@ export const MainContainer = tw.div`w-full`
 export const SearchContainer = tw.div`mx-10 rounded-md h-24 bg-white shadow-md border`
 
 export const UpperWrap = tw.div`flex h-12 items-center border-b border-gray-300`
-
 export const BottomWrap = tw.div`flex h-12 items-center`
 
-export const SelectRegion = tw.div `w-full mx-4 flex`
+export const SearchWrap = tw.div`w-full h-full flex items-center space-x-4 justify-between`
+export const SearchInput = tw.input`text-me flex-1 font-bold outline-none`
+
 export const CalendarWrap = tw.div`w-1/2 h-full border-r border-gray-300 flex items-center`
 export const PersonWrap = tw.div`w-1/2 h-full flex items-center`
 
-export const SvgWrap = tw.div`mx-3 w-6`
+export const SvgWrap = tw.div`pl-4 w-10`
 export const Svg = tw.img``
+
+export const CloseBtn = tw.button`pr-4 w-10`
+export const CloseSvg = tw.img``
