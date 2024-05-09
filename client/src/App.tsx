@@ -11,6 +11,7 @@ import Me from "./pages/me/Me"
 import HotelReg from "./pages/hotel-reg/HotelReg"
 import HotelMe from "./pages/hotel-me/HotelMe"
 import HotelMgmt from "./pages/hotel-mgmt/HotelMgmt"
+import Search from "./pages/search/Search"
 
 function App() {
     return (
@@ -20,6 +21,7 @@ function App() {
                 <tw.ContentsWrap>
                     <Routes>
                         <Route path="/main" element={<Main />} />
+                        <Route path="/search" element={<Search />} />
                         <Route path="/signin" element={<SignIn />} />
                         <Route path="/signup" element={<SignUp />} />
                         <Route path="/me" element={<Me />} />

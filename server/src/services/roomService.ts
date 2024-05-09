@@ -231,7 +231,7 @@ const roomService = {
             connection.release();
         }
     },
-    async getPriceByRoom(room_id: string) {
+    async getPriceByRoomId(room_id: string) {
         const getPriceSql = `
             SELECT date_format(date, '%Y-%m-%d') date, price, room_current, room_limit FROM room_date 
             WHERE room_id = ?`;

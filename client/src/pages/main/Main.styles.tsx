@@ -9,13 +9,6 @@ export const HalfFlex = tw.div`w-[50%] flex justify-end`
 
 export const MainContainer = tw.div`w-full`
 
-export const SelectContainer = tw.div`mx-10 rounded-md h-24 bg-white shadow-md`
-export const SelectContainerCell1 = tw.div`flex items-center border-b border-gray-300 h-1/2`
-export const SelectContainerCell2 = tw.div`flex h-1/2`
-export const SelectRegion = tw.div `w-full mx-4 flex ml-2`
-export const SelectStartDate = tw.div`w-1/2 h-full border-r border-gray-300 ml-2 flex items-center`
-export const SelectEndDate = tw.div`w-1/2 h-full ml-2 flex items-center`
-
 export const SortContainer = tw.div`my-10 mx-[10%] rounded-md h-14 bg-white flex text-xl font-semibold cursor-pointer text-center items-center`
 export const SortBtn = tw.button` w-1/2 h-full border-r border-gray-300`
 export const FilterBtn = tw.button` w-1/2 h-full`

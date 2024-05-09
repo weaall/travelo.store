@@ -3,9 +3,11 @@ import { axios, axiosInstance } from "../../utils/axios.utils";
 import { useEffect, useState } from "react";
 
 import * as tw from "./Main.styles"
+import Loading from "../../components/loading/Loading";
 
 export default function Main() {
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(true)
 
     const [hotelList, setHotelList] = useState([{
         hotel_id: 0,
@@ -26,6 +28,13 @@ export default function Main() {
         fitness: 0,
         convenience_store: 0,
 
+        roomList: [{
+            id: 0,
+            name: "",
+            num: 0,
+            bed_type: "",
+            view_type: "",
+        }]
     }])
 
     const servItems = [
@@ -47,31 +56,37 @@ export default function Main() {
     
     const fetchHotel = async () => {
         try {
-            const response = await axiosInstance .get("/hotel");
-            setHotelList(response.data.data)
+            const response = await axiosInstance.get("/hotel");
+            const hotelData = response.data.data;
+    
+            const newHotelList = [];
+    
+            for (const hotel of hotelData) {
+                const roomId = hotel.hotel_id;
+                const roomResponse = await axiosInstance.get(`/room/hotel/${roomId}`);
+                const roomData = roomResponse.data.data;
+    
+                const newHotel = {
+                    ...hotel,
+                    roomList: roomData
+                };
+    
+                newHotelList.push(newHotel);
+            }
+    
+            setHotelList(newHotelList);
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 if (error.response.status === 401) {
                     window.alert("올바른 접근이 아닙니다.");
                     navigate("/main");
-                }
-            }
-        }
-    };
-
-    const fetchRoom = async () => {
-        try {
-            const response = await axiosInstance.get("/room/hotel/");
-        } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 409) {
-                    window.alert("올바른 접근이 아닙니다.");
-                    navigate("/");
-                } else if (error.response.status === 401) {
-                    window.alert("올바른 접근이 아닙니다.");
+                } else {
+                    window.alert("알 수 없는 오류");
                     navigate("/main");
                 }
             }
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -79,19 +94,13 @@ export default function Main() {
         fetchHotel();
     },[])
 
+    if (loading) {
+        return <Loading />
+    }
 
     return (
         <tw.Container>
             <tw.MainContainer>
-                <tw.SelectContainer>
-                    <tw.SelectContainerCell1>
-                        <tw.SelectRegion>🔍</tw.SelectRegion>
-                    </tw.SelectContainerCell1>
-                    <tw.SelectContainerCell2>
-                        <tw.SelectStartDate>📅</tw.SelectStartDate>
-                        <tw.SelectEndDate>📅</tw.SelectEndDate>
-                    </tw.SelectContainerCell2>
-                </tw.SelectContainer>
 
                 <tw.SortContainer>
                     <tw.SortBtn>정렬</tw.SortBtn>

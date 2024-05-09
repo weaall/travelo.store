@@ -42,6 +42,6 @@ roomRouter.post(
     asyncHandler((req: Request, res: Response) => roomController.insertPriceByMonth(req as JWTCheck, res)),
 );
 
-roomRouter.get("/price/:id", asyncHandler(roomController.getPriceByRoom));
+roomRouter.get("/price/:id", asyncHandler(roomController.getPriceByRoomId));
 
 export default roomRouter

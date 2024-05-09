@@ -109,8 +109,8 @@ const roomController = {
             data: data,
         });
     },
-    async getPriceByRoom(req: Request, res: Response) {
-        const data = await roomService.getPriceByRoom(req.params.id);
+    async getPriceByRoomId(req: Request, res: Response) {
+        const data = await roomService.getPriceByRoomId(req.params.id);
 
         res.status(200).json({
             error: null,
