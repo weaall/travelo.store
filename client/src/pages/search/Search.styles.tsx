@@ -14,10 +14,12 @@ export const SearchContainer = tw.div`mx-10 rounded-md h-24 bg-white shadow-md b
 export const UpperWrap = tw.div`flex h-12 items-center border-b border-gray-300`
 export const BottomWrap = tw.div`flex h-12 items-center`
 
-export const SearchWrap = tw.div`w-full h-full flex items-center space-x-4 justify-between`
-export const SearchInput = tw.input`text-me flex-1 font-bold outline-none`
+export const SearchWrap = tw.div`w-full h-full flex items-center justify-between`
+export const SearchInput = tw.input`text-me px-4 flex-1 font-bold outline-none`
 
 export const CalendarWrap = tw.div`w-1/2 h-full border-r border-gray-300 flex items-center`
+export const CalendarBtn = tw.button`text-me items-center flex-1 font-bold text-left px-4 `
+
 export const PersonWrap = tw.div`w-1/2 h-full flex items-center`
 
 export const SvgWrap = tw.div`pl-4 w-10`

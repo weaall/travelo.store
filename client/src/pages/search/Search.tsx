@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom";
-import { axios, axiosInstance } from "../../utils/axios.utils";
 import { useEffect, useState } from "react";
+import dayjs from "dayjs";
+
+import { axios, axiosInstance } from "../../utils/axios.utils";
 
 import * as tw from "./Search.styles"
 
@@ -8,13 +10,18 @@ export default function Search() {
     const navigate = useNavigate();
 
     const [searchValue, setSearchValue] = useState("");
-    
+    const [dateValue, setDataValue] = useState({
+        startDate: dayjs().format("YYYY-MM-DD"),
+        endDate: dayjs().add(1, "day").format("YYYY-MM-DD"),
+        diffDate: 1
+    });
+
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchValue(event.target.value);
     };
 
     const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === "Enter" && searchValue.trim() !== "") { 
+        if (event.key === "Enter" && searchValue.trim() !== "") {
             handleSearchSubmit();
         }
     };
@@ -22,6 +29,11 @@ export default function Search() {
     const handleSearchSubmit = () => {
         console.log("검색어:", searchValue);
     };
+
+    useEffect(() => {
+        const newDiffDate = dayjs(dateValue.endDate).diff(dayjs(dateValue.startDate), "day");
+        setDataValue((prevDateValue) => ({ ...prevDateValue, diffDate: newDiffDate }));
+    }, [dateValue.endDate, dateValue.startDate]);
 
     return (
         <tw.Container>
@@ -49,6 +61,7 @@ export default function Search() {
                             <tw.SvgWrap>
                                 <tw.Svg alt="" src={require("../../assets/svg/calendar_icon.svg").default} />
                             </tw.SvgWrap>
+                            <tw.CalendarBtn>{dateValue.startDate} / {dateValue.diffDate}박</tw.CalendarBtn>
                         </tw.CalendarWrap>
                         <tw.PersonWrap>
                             <tw.SvgWrap>
