@@ -2,18 +2,43 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 
-import { axios, axiosInstance } from "../../utils/axios.utils";
-
 import * as tw from "./Search.styles"
+import { ModalPortal } from "../../hook/modal/ModalPortal";
+import SearchDateModal from "../../hook/modal/search_date/SearchDate.modal";
+import SearchPersonModal from "../../hook/modal/search_person/SearchPerson.modal";
 
 export default function Search() {
     const navigate = useNavigate();
 
+    const [isSearchDateModalOpen, setIsSearchDateModalOpen] = useState(false);
+
+    const openSearchDateModal = () => {
+        setIsSearchDateModalOpen(true);
+    };
+
+    const closeSearchDateModal = () => {
+        setIsSearchDateModalOpen(false);
+    };
+
+    const [isSearchPersonModalOpen, setIsSearchPersonModalOpen] = useState(false);
+
+    const openSearchPersonModal = () => {
+        setIsSearchPersonModalOpen(true);
+    };
+
+    const closeSearchPersonModal = () => {
+        setIsSearchPersonModalOpen(false);
+    };
+
     const [searchValue, setSearchValue] = useState("");
-    const [dateValue, setDataValue] = useState({
+    const [dateValue, setDateValue] = useState({
         startDate: dayjs().format("YYYY-MM-DD"),
         endDate: dayjs().add(1, "day").format("YYYY-MM-DD"),
         diffDate: 1
+    });
+    const [personValue, setPersonValue] = useState({
+        adult: 2,
+        child: 0,
     });
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,9 +55,29 @@ export default function Search() {
         console.log("검색어:", searchValue);
     };
 
+    const handleSearchDateSelect = (selectedDates: { startDate: string, endDate: string }) => {
+        setDateValue({
+            ...dateValue,
+            startDate: selectedDates.startDate,
+            endDate: selectedDates.endDate
+        });
+    
+        closeSearchDateModal();
+    };
+
+    const handleSearchPersonSelect = (selectedPerson: { adult: number, child : number }) => {
+        setPersonValue({
+            ...personValue,
+            adult: selectedPerson.adult,
+            child: selectedPerson.child
+        });
+    
+        closeSearchPersonModal();
+    };
+
     useEffect(() => {
         const newDiffDate = dayjs(dateValue.endDate).diff(dayjs(dateValue.startDate), "day");
-        setDataValue((prevDateValue) => ({ ...prevDateValue, diffDate: newDiffDate }));
+        setDateValue((prevDateValue) => ({ ...prevDateValue, diffDate: newDiffDate }));
     }, [dateValue.endDate, dateValue.startDate]);
 
     return (
@@ -61,16 +106,33 @@ export default function Search() {
                             <tw.SvgWrap>
                                 <tw.Svg alt="" src={require("../../assets/svg/calendar_icon.svg").default} />
                             </tw.SvgWrap>
-                            <tw.CalendarBtn>{dateValue.startDate} / {dateValue.diffDate}박</tw.CalendarBtn>
+                            <tw.CalendarBtn onClick={openSearchDateModal}>
+                                {dateValue.startDate} / {dateValue.diffDate}박
+                            </tw.CalendarBtn>
                         </tw.CalendarWrap>
                         <tw.PersonWrap>
                             <tw.SvgWrap>
                                 <tw.Svg alt="" src={require("../../assets/svg/person_icon.svg").default} />
                             </tw.SvgWrap>
+                            <tw.PersonBtn onClick={openSearchPersonModal}>
+                                성인 {personValue.adult}, 아동 {personValue.child}
+                            </tw.PersonBtn>
                         </tw.PersonWrap>
                     </tw.BottomWrap>
                 </tw.SearchContainer>
             </tw.MainContainer>
+
+            {isSearchDateModalOpen && (
+                <ModalPortal>
+                    <SearchDateModal startDate={dateValue.startDate} endDate={dateValue.endDate} onClose={(selectedDates) => handleSearchDateSelect(selectedDates)} />
+                </ModalPortal>
+            )}
+
+            {isSearchPersonModalOpen && (
+                <ModalPortal>
+                    <SearchPersonModal adult={personValue.adult} child={personValue.child} onClose={(selectedPerson) => handleSearchPersonSelect(selectedPerson)} />
+                </ModalPortal>
+            )}
         </tw.Container>
     );
 }

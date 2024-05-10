@@ -98,13 +98,14 @@ export default function PriceCalendar({ hotel_id }: { hotel_id: string | undefin
     const lastDateIndex = dates.lastIndexOf(TLDate);
 
     const prevMonth = () => {
-        if (date.diff(dayjs(), "month") >= 0) {
+        if (date.isAfter(dayjs(), 'month')) {
             setDate(date.subtract(1, "month"));
         }
     };
-
+    
     const nextMonth = () => {
-        if (date.diff(dayjs(), "month") < 2) {
+        const nextThreeMonths = dayjs().add(3, 'month');
+        if (date.isBefore(nextThreeMonths, 'month')) {
             setDate(date.add(1, "month"));
         }
     };
