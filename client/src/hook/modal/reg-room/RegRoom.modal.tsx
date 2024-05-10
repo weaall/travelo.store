@@ -110,7 +110,7 @@ export default function RegRoomModal({ onClose, hotel_id }: ModalProps) {
                     <tw.Title>객실추가</tw.Title>
                 </tw.TitleWrap>
                 <tw.InputWrap>
-                    <tw.UpperTag>호텔이름</tw.UpperTag>
+                    <tw.UpperTag>객실이름</tw.UpperTag>
                     <tw.Input value={roomData.name} onChange={onChangeInput} name="name" />
                     <tw.UpperTag>인원</tw.UpperTag>
                     <tw.Select value={roomData.num} onChange={onChangeSelect} name="num">

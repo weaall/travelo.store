@@ -101,7 +101,7 @@ export default function SearchDateModal({ onClose, startDate, endDate}: ModalPro
         <tw.Container>
             <tw.ModalWrap>
                 <tw.TitleWrap>
-                    <tw.CloseBtn onClick={() => onClose({startDate, endDate})}>
+                    <tw.CloseBtn onClick={() => onClose({ startDate, endDate })}>
                         <tw.CloseSVG alt="" src={require("../../../assets/svg/close_svg.svg").default}></tw.CloseSVG>
                     </tw.CloseBtn>
                     <tw.Title>날짜 선택</tw.Title>
@@ -115,9 +115,15 @@ export default function SearchDateModal({ onClose, startDate, endDate}: ModalPro
                             </tw.YearMonth>
                         </tw.YearWrap>
                         <tw.NavWrap>
-                            <tw.NavBtn onClick={prevMonth}>&lt;</tw.NavBtn>
-                            <tw.NavBtn onClick={goToday}>오늘</tw.NavBtn>
-                            <tw.NavBtn onClick={nextMonth}>&gt;</tw.NavBtn>
+                            <tw.NavBtn onClick={prevMonth}>
+                                <tw.NavSvg alt="" src={require("../../../assets/svg/left_arrow_icon.svg").default} />
+                            </tw.NavBtn>
+                            <tw.NavBtn onClick={goToday}>
+                                <tw.NavSvg alt="" src={require("../../../assets/svg/today_icon.svg").default} />
+                            </tw.NavBtn>
+                            <tw.NavBtn onClick={nextMonth}>
+                                <tw.NavSvg alt="" src={require("../../../assets/svg/right_arrow_icon.svg").default} />
+                            </tw.NavBtn>
                         </tw.NavWrap>
                     </tw.CalTitleWrap>
 

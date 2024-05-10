@@ -15,13 +15,13 @@ export const UpperWrap = tw.div`flex h-14 items-center border-b border-gray-300`
 export const BottomWrap = tw.div`flex h-14 items-center`
 
 export const SearchWrap = tw.div`w-full h-full flex items-center justify-between`
-export const SearchInput = tw.input`text-sm px-4 flex-1 font-bold outline-none`
+export const SearchInput = tw.input`text-sm px-2 flex-1 font-bold outline-none`
 
 export const CalendarWrap = tw.div`w-1/2 h-full border-r border-gray-300 flex items-center`
-export const CalendarBtn = tw.button`text-sm items-center flex-1 font-bold text-left px-4 `
+export const CalendarBtn = tw.button`text-sm items-center flex-1 font-bold text-left px-2`
 
 export const PersonWrap = tw.div`w-1/2 h-full flex items-center`
-export const PersonBtn = tw.button`text-sm items-center flex-1 font-bold text-left px-4 `
+export const PersonBtn = tw.button`text-sm items-center flex-1 font-bold text-left px-2`
 
 export const SvgWrap = tw.div`pl-4 w-10`
 export const Svg = tw.img``

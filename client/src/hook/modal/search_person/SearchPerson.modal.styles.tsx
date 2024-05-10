@@ -22,13 +22,13 @@ export const RegBtn = tw.button<RegBtnProps>`
 w-full h-full font-bold text-white rounded-[16px]
 ${(p) => (p.$validator ? "bg-gradient-to-r from-main to-tomain" : "bg-gray-200")}`
 
-export const InputWrap = tw.div`flex flex-col text-left h-[80%] px-4 overflow-y-auto`
+export const InputWrap = tw.div`flex flex-col text-left h-[80%] py-4`
 
-export const ListWrap = tw.div`flex items-center py-3 px-6 justify-between`
+export const ListWrap = tw.div`flex items-center py-4 px-8 justify-between`
 export const BtnWrap = tw.div`flex justify-center space-x-3`
-export const PlusBtn = tw.button`text-xl font-bold w-6`
-export const MinusBtn = tw.button`text-xl font-bold w-6 group`
-export const BtnSvg = tw.img`group-hover:fill-main`
+export const PlusBtn = tw.button`text-xl font-bold w-6 hover:scale-110`
+export const MinusBtn = tw.button`text-xl font-bold w-6 hover:scale-110`
+export const BtnSvg = tw.img``
 export const Label = tw.label`text-lg font-bold`
 
 

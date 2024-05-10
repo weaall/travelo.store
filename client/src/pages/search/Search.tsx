@@ -48,11 +48,18 @@ export default function Search() {
     const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === "Enter" && searchValue.trim() !== "") {
             handleSearchSubmit();
+        }else if(event.key === "Enter" && searchValue.trim() === ""){
+            window.alert("검색어를 입력해주세요")
         }
     };
 
     const handleSearchSubmit = () => {
-        console.log("검색어:", searchValue);
+        console.log(
+            searchValue, 
+            dateValue.startDate, 
+            dateValue.endDate, 
+            personValue.adult, 
+            personValue.child);
     };
 
     const handleSearchDateSelect = (selectedDates: { startDate: string, endDate: string }) => {
