@@ -49,7 +49,7 @@ export const YearWrap = tw.div`w-full flex justify-start px-4`
 export const YearMonth = tw.h2`text-lg font-bold`
 
 export const NavWrap = tw.nav`w-full flex justify-end px-4 space-x-2`
-export const NavBtn = tw.button`w-6`
+export const NavBtn = tw.button`w-7`
 export const NavSvg = tw.img``
 
 export const AddBtn = tw.button`font-bold hover:text-main`

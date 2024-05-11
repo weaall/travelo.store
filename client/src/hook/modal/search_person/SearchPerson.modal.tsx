@@ -16,15 +16,6 @@ export default function SearchPersonModal({ onClose, adult, child}: ModalProps) 
         child: child
     });
 
-
-    const validator = () => {
-        if (personValue.adult > 0) {
-            return true;
-        } else {
-            return false;
-        }
-    };
-
     const handleIncrement = (type: string) => {
         const newValue = type === "adult" ? Math.min(personValue.adult + 1, 30) : Math.min(personValue.child + 1, 10);
         setPersonValue((prevState) => ({
@@ -81,7 +72,7 @@ export default function SearchPersonModal({ onClose, adult, child}: ModalProps) 
                 </tw.InputWrap>
 
                 <tw.RegWrap>
-                    <tw.RegBtn onClick={() => onClose(personValue)} $validator={validator()}>
+                    <tw.RegBtn onClick={() => onClose(personValue)} $validator={true}>
                         확인
                     </tw.RegBtn>
                 </tw.RegWrap>

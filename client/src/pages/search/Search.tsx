@@ -6,6 +6,7 @@ import * as tw from "./Search.styles"
 import { ModalPortal } from "../../hook/modal/ModalPortal";
 import SearchDateModal from "../../hook/modal/search_date/SearchDate.modal";
 import SearchPersonModal from "../../hook/modal/search_person/SearchPerson.modal";
+import { axios, axiosInstance } from "../../utils/axios.utils";
 
 export default function Search() {
     const navigate = useNavigate();
@@ -80,6 +81,27 @@ export default function Search() {
         });
     
         closeSearchPersonModal();
+    };
+
+    const getSearch = async () => {
+        try {
+            const response = await axiosInstance.get("/search/", {
+                params: {
+                    searchValue: searchValue,
+                    startDate: dateValue.startDate,
+                    endDate: dateValue.endDate,
+                    adult: personValue.adult,
+                    child: personValue.child
+                }
+            });
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                if (error.response.status === 401) {
+                    window.alert("올바른 접근이 아닙니다.");
+                    navigate("/main");
+                }
+            }
+        }
     };
 
     useEffect(() => {
