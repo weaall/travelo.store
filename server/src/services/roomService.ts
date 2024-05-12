@@ -290,6 +290,7 @@ const roomService = {
             connection.release();
         }
     },
+
     async insertPriceByMonth(
         user_id: string,
         { hotel_id, room_id, year, month, days, friday, saturday, room_limit }: MonthPriceProps,
@@ -298,20 +299,17 @@ const roomService = {
             INNER JOIN hotel ON room.hotel_id = hotel.id
             WHERE hotel_id = ? AND room.id = ? AND user_id = ?`;
         const roomAuthValues = [hotel_id, room_id, user_id];
-
+    
         const insertPriceSql = `
             INSERT INTO room_date (room_id, date, price, room_current, room_limit) 
             VALUES (?, ?, ?, 0, ?) 
             ON DUPLICATE KEY UPDATE 
             price = VALUES(price), room_limit = VALUES(room_limit)`;
-
+    
         const connection = await pool.getConnection();
-
+    
         try {
-            const [roomAuthResult, fields]: [AuthRows[], FieldPacket[]] = await connection.execute(
-                roomAuthSql,
-                roomAuthValues,
-            );
+            const [roomAuthResult, fields]: [AuthRows[], FieldPacket[]] = await connection.execute(roomAuthSql, roomAuthValues);
 
             if (roomAuthResult.length === 0) {
                 throw new CustomError("UNAUTHORIZED", 401);
@@ -320,28 +318,32 @@ const roomService = {
             await connection.beginTransaction();
 
             const firstDayOfMonth = dayjs(`${year}-${month}-01`);
+            const today = dayjs();
             const daysInMonth = firstDayOfMonth.daysInMonth();
 
             for (let day = 1; day <= daysInMonth; day++) {
                 const currentDate = dayjs(`${year}-${month}-${day}`);
-                const dayOfWeek = currentDate.day();
+                if (currentDate.isSame(today, "day") || currentDate.isAfter(today, "day")) {
+                    const dayOfWeek = currentDate.day();
 
-                let price = days;
+                    let price = days;
 
-                if (dayOfWeek === 5) {
-                    price = friday;
-                } else if (dayOfWeek === 6) {
-                    price = saturday;
+                    if (dayOfWeek === 5) {
+                        price = friday;
+                    } else if (dayOfWeek === 6) {
+                        price = saturday;
+                    }
+
+                    const insertPriceValues = [room_id, currentDate.format("YYYY-MM-DD"), price, room_limit];
+                    await connection.execute(insertPriceSql, insertPriceValues);
                 }
-
-                const insertPriceValues = [room_id, currentDate.format("YYYY-MM-DD"), price, room_limit];
-                await connection.execute(insertPriceSql, insertPriceValues);
             }
 
             await connection.commit();
 
             return;
         } catch (error) {
+            await connection.rollback();
             throw error;
         } finally {
             connection.release();
