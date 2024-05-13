@@ -139,7 +139,7 @@ export default function PriceCalendar({ hotel_id }: { hotel_id: string | undefin
     useEffect(() => {
         fetchPrice();
         fetchRoomInfo();
-    }, [priceData]);
+    }, []);
 
     return (
         <tw.Container>

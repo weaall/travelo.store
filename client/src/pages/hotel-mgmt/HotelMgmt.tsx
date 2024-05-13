@@ -39,7 +39,7 @@ export default function HotelMgmt() {
 
     useEffect(() => {
         fetchHotel();
-    }, [hotelId])
+    }, [])
 
     return (
         <tw.Container>

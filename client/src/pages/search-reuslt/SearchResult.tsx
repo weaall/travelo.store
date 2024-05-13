@@ -9,33 +9,42 @@ export default function SearchResult() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true)
 
-    const [hotelList, setHotelList] = useState([{
-        hotel_id: 0,
-        name: "",
-        address: "",
-        address_detail: "",
-
-        wifi: 0,
-        always_check_in: 0,
-        breakfast: 0,
-        barbecue: 0,
-
-        carpark: 0,
-        restaurnat: 0,
-        cafe: 0,
-        swimming_pool:0, 
-        spa: 0,
-        fitness: 0,
-        convenience_store: 0,
-
-        roomList: [{
-            id: 0,
+    const [hotelList, setHotelList] = useState([
+        {
+            hotel_id: 0,
             name: "",
-            num: 0,
-            bed_type: "",
-            view_type: "",
-        }]
-    }])
+            address: "",
+            address_detail: "",
+
+            wifi: 0,
+            always_check_in: 0,
+            breakfast: 0,
+            barbecue: 0,
+
+            carpark: 0,
+            restaurnat: 0,
+            cafe: 0,
+            swimming_pool: 0,
+            spa: 0,
+            fitness: 0,
+            convenience_store: 0,
+
+            room_id: 0,
+            room_name: "",
+            room_num: 0,
+            discount: 0,
+
+            room_price: [
+                {
+                    room_id: 0,
+                    date: "",
+                    price: 0,
+                    room_current: 0,
+                    room_limit: 0,
+                },
+            ],
+        },
+    ]);
 
     const servItems = [
         { comp: "wifi", label: "Wifi"},
@@ -65,7 +74,9 @@ export default function SearchResult() {
                     child: 0,
                 },
             });
-            
+
+            setHotelList(response.data.data)
+
             console.log(response.data.data)
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {

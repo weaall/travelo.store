@@ -68,3 +68,12 @@ export interface getSearchData{
         room_limit: number;
     }[];
 }
+
+export interface priceFilter{
+    room_price: {
+        name: string;
+        price: number;
+        room_current: number;
+        room_limit: number;
+    }[];
+}
