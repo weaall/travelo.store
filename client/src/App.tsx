@@ -12,6 +12,7 @@ import HotelReg from "./pages/hotel-reg/HotelReg"
 import HotelMe from "./pages/hotel-me/HotelMe"
 import HotelMgmt from "./pages/hotel-mgmt/HotelMgmt"
 import Search from "./pages/search/Search"
+import SearchResult from "./pages/search-reuslt/SearchResult"
 
 function App() {
     return (
@@ -31,6 +32,7 @@ function App() {
                             <Route path=":hotelId/*" element={<HotelMgmt />} />
                         </Route>
                         <Route path="/auth/kakao" element={<AuthKaKao />} />
+                        <Route path="/search/:searchValue" element={<SearchResult />} />
                     </Routes>
                 </tw.ContentsWrap>
             </tw.Container>

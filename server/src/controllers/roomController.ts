@@ -1,7 +1,6 @@
 import { Response, Request } from "express"
 import { JWTCheck } from "../interface/interfaces"
 import roomService from "../services/roomService";
-import client from "../config/redis";
 import { getRedis, setRedis } from "../utils/redisUtils";
 
 const roomController = {
@@ -38,6 +37,8 @@ const roomController = {
                     data: data,
                 });
             } else {
+                console.log(JSON.parse(redisData).length)
+
                 res.status(200).json({
                     error: null,
                     data: JSON.parse(redisData),

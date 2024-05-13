@@ -53,35 +53,24 @@ export default function SearchResult() {
         { comp: "fitness", label: "피트니스"},
         { comp: "convenience_store", label: "편의점"},
     ]
-    
-    const fetchHotel = async () => {
+
+    const fetchSearch = async () => {
         try {
-            const response = await axiosInstance.get("/hotel");
-            const hotelData = response.data.data;
-    
-            const newHotelList = [];
-    
-            for (const hotel of hotelData) {
-                const roomId = hotel.hotel_id;
-                const roomResponse = await axiosInstance.get(`/room/hotel/${roomId}`);
-                const roomData = roomResponse.data.data;
-    
-                const newHotel = {
-                    ...hotel,
-                    roomList: roomData
-                };
-    
-                newHotelList.push(newHotel);
-            }
-    
-            setHotelList(newHotelList);
+            const response = await axiosInstance.get("/search", {
+                params: {
+                    searchValue: encodeURIComponent("우리집"),
+                    startDate: "2024-05-16",
+                    endDate: "2024-05-18",
+                    adult: 2,
+                    child: 0,
+                },
+            });
+            
+            console.log(response.data.data)
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 if (error.response.status === 401) {
                     window.alert("올바른 접근이 아닙니다.");
-                    navigate("/main");
-                } else {
-                    window.alert("알 수 없는 오류");
                     navigate("/main");
                 }
             }
@@ -91,7 +80,7 @@ export default function SearchResult() {
     };
 
     useEffect(()=>{
-        fetchHotel();
+        fetchSearch();
     },[])
 
     if (loading) {
