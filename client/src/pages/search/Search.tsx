@@ -55,12 +55,7 @@ export default function Search() {
     };
 
     const handleSearchSubmit = () => {
-        console.log(
-            searchValue, 
-            dateValue.startDate, 
-            dateValue.endDate, 
-            personValue.adult, 
-            personValue.child);
+            navigate(`/search/${searchValue}/${dateValue.startDate}/${dateValue.endDate}/${personValue.adult}/${personValue.child}`);
     };
 
     const handleSearchDateSelect = (selectedDates: { startDate: string, endDate: string }) => {

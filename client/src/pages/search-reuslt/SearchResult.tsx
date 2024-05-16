@@ -1,13 +1,15 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { axios, axiosInstance } from "../../utils/axios.utils";
 import { useEffect, useState } from "react";
 
-import * as tw from "./SearchResultstyles"
+import * as tw from "./SearchResultstyles";
 import Loading from "../../components/loading/Loading";
+import { facilItems, servItems } from "../../data/hotelData";
 
 export default function SearchResult() {
     const navigate = useNavigate();
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(true);
+    const { searchValue, startDate, endDate, adult, child } = useParams();
 
     const [hotelList, setHotelList] = useState([
         {
@@ -46,38 +48,21 @@ export default function SearchResult() {
         },
     ]);
 
-    const servItems = [
-        { comp: "wifi", label: "Wifi"},
-        { comp: "always_check_in", label: "24시 체크인"},
-        { comp: "breakfast", label: "조식"},
-        { comp: "barbecue", label: "바베큐"},
-    ]
-
-    const facilItems = [
-        { comp: "carpark", label: "주차장"},
-        { comp: "restaurnat", label: "식당"},
-        { comp: "cafe", label: "카페"},
-        { comp: "swimming_pool", label: "수영장"},
-        { comp: "spa", label: "스파"},
-        { comp: "fitness", label: "피트니스"},
-        { comp: "convenience_store", label: "편의점"},
-    ]
-
     const fetchSearch = async () => {
         try {
             const response = await axiosInstance.get("/search", {
                 params: {
-                    searchValue: encodeURIComponent("우리집"),
-                    startDate: "2024-05-16",
-                    endDate: "2024-05-18",
-                    adult: 2,
-                    child: 0,
+                    searchValue: encodeURIComponent(`${searchValue}`),
+                    startDate: startDate,
+                    endDate: endDate,
+                    adult: adult,
+                    child: child,
                 },
             });
 
-            setHotelList(response.data.data)
+            setHotelList(response.data.data);
 
-            console.log(response.data.data)
+            console.log(response.data.data);
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 if (error.response.status === 401) {
@@ -90,18 +75,17 @@ export default function SearchResult() {
         }
     };
 
-    useEffect(()=>{
+    useEffect(() => {
         fetchSearch();
-    },[])
+    }, []);
 
     if (loading) {
-        return <Loading />
+        return <Loading />;
     }
 
     return (
         <tw.Container>
             <tw.MainContainer>
-
                 <tw.SortContainer>
                     <tw.SortBtn>정렬</tw.SortBtn>
                     <tw.FilterBtn>필터</tw.FilterBtn>
@@ -159,7 +143,14 @@ export default function SearchResult() {
                                     </tw.TooltipFacil>
                                 </tw.HotelInfo>
                             </tw.ContentsFlex>
-                            <tw.HotelRoom></tw.HotelRoom>
+                            <tw.LowerWrap>
+                                <tw.LowerPic></tw.LowerPic>
+                                <tw.LowerRoom>
+                                    <tw.TotalPrice>
+                                        {hotel.room_price.reduce((total, room) => total + room.price, 0).toLocaleString()}원
+                                    </tw.TotalPrice>
+                                </tw.LowerRoom>
+                            </tw.LowerWrap>
                         </tw.HotelWrap>
                     ))}
                 </tw.HotelList>

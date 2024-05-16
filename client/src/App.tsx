@@ -32,7 +32,7 @@ function App() {
                             <Route path=":hotelId/*" element={<HotelMgmt />} />
                         </Route>
                         <Route path="/auth/kakao" element={<AuthKaKao />} />
-                        <Route path="/search/:searchValue" element={<SearchResult />} />
+                        <Route path="/search/:searchValue/:startDate/:endDate/:adult/:child" element={<SearchResult />} />
                     </Routes>
                 </tw.ContentsWrap>
             </tw.Container>

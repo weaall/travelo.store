@@ -23,8 +23,7 @@ export const HotelAddress = tw.p`text-xs font-bold text-main pl-1`
 export const AddressSVG = tw.img`w-3`
 export const HotelP = tw.p`text-xs`
 export const HotelComp = tw.p`text-xs bg-gray-100 py-1 px-2 rounded-lg`
-
-export const HotelRoom = tw.div`flex h-12 border-t`
+export const HotelRoom = tw.div``
 
 export const HotelServWrap = tw.div`flex flex-col py-1 peer/serv`
 export const HotelServList = tw.div`flex pt-1 space-x-2 truncate`
@@ -39,3 +38,9 @@ peer-hover/facil:opacity-100 peer-hover/facil:scale-100
 transition-opacity duration-300`
 
 export const ToolTipText = tw.li`px-3 text-white text-sm font-bold`
+
+export const LowerWrap = tw.div`flex h-14 border-t`
+export const LowerPic = tw.div`flex w-1/3 px-5 py-2 items-center`
+export const LowerRoom = tw.div`flex w-2/3 px-5 py-2 items-center`
+export const TotalLabel = tw.p`3`
+export const TotalPrice = tw.p``
