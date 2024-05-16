@@ -1,7 +1,7 @@
 import { RowDataPacket } from "mysql2/promise";
 
 export interface getSearchRows extends RowDataPacket {
-    hotel_id: number;
+    hotel_id: string;
     name: string;
     postcode: number;
     address: string;
@@ -36,7 +36,7 @@ export interface getSearchRows extends RowDataPacket {
 }
 
 export interface getSearchData{
-    hotel_id: number
+    hotel_id: string
     name: string
     postcode: number
     address: string

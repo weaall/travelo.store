@@ -26,7 +26,7 @@ const roomController = {
         try {
             const key: string = "bedTypes";
             const redisData = await getRedis(key);
-    
+
             if (redisData === null) {
                 const data = await roomService.getBedType();
 
@@ -37,7 +37,7 @@ const roomController = {
                     data: data,
                 });
             } else {
-                console.log(JSON.parse(redisData).length)
+                console.log(JSON.parse(redisData).length);
 
                 res.status(200).json({
                     error: null,
@@ -46,7 +46,7 @@ const roomController = {
             }
         } catch (error) {
             const data = await roomService.getBedType();
-    
+
             res.status(200).json({
                 error: null,
                 data: data,
@@ -58,12 +58,12 @@ const roomController = {
         try {
             const key: string = "viewTypes";
             const redisData = await getRedis(key);
-    
+
             if (redisData === null) {
                 const data = await roomService.getViewType();
-    
+
                 setRedis(key, data);
-    
+
                 res.status(200).json({
                     error: null,
                     data: data,
@@ -76,7 +76,7 @@ const roomController = {
             }
         } catch (error) {
             const data = await roomService.getViewType();
-    
+
             res.status(200).json({
                 error: null,
                 data: data,
@@ -129,10 +129,21 @@ const roomController = {
     async insertPriceByMonth(req: JWTCheck, res: Response) {
         const data = await roomService.insertPriceByMonth(req.user.id, req.body);
 
+        try {
+            const redisData = await roomService.getPriceByRoomId(req.body.room_id);
+            const key: string = `/room/price/${req.body.room_id}`;
+            setRedis(key, redisData);
+        } catch (error) {
+            res.status(200).json({
+                error: null,
+                data: data,
+            });
+        }
+
         res.status(201).json({
             error: null,
             data: data,
         });
     },
 };
-export default roomController
+export default roomController;

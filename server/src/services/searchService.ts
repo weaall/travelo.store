@@ -1,5 +1,4 @@
 import pool from "../config/db";
-import dayjs from "dayjs";
 import { getSearchParams } from "../interface/params.interface";
 import { getSearchRows } from "../interface/mysql.interface";
 import { FieldPacket } from "mysql2";
