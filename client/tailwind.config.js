@@ -24,6 +24,9 @@ module.exports = {
             zIndex: {
                 100: "100",
             },
+            fontFamily: {
+                sans: ['"Noto Sans KR"', 'sans-serif'],
+            },
         },
     },
     plugins: [],

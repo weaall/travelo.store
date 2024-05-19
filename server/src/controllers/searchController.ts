@@ -34,12 +34,37 @@ export const searchController = {
             return resultData;
         };
 
-        const filterByData = (priceData: RoomPriceRows[]) => {
+        const filterByDate = (priceData: RoomPriceRows[]) => {
             return priceData.filter((price) => {
                 return (
                     dayjs(price.date).isAfter(dayjs(startDate).subtract(1, "day")) && dayjs(price.date).isBefore(endDate, "day")
                 );
             });
+        };
+
+        const addImageData = async (data: getSearchRows[]) => {
+            for (const hotel of data) {
+                const hotelImages = await searchService.getHotelImgUrl(hotel.hotel_id);
+                hotel.hotel_img = hotelImages;
+            }
+            return data;
+        };
+
+        const addImageDataRedis = async (data: getSearchRows[]) => {
+            for (const hotel of data) {
+                const imgKey = `/hotel/img/${hotel.hotel_id}`
+                const redisImages = JSON.parse(await getRedis(imgKey));
+
+                if (redisImages === null){
+                    const hotelImages = await searchService.getHotelImgUrl(hotel.hotel_id);
+                    setRedis(imgKey, hotelImages);
+                    hotel.hotel_img = hotelImages;
+
+                }else{
+                    hotel.hotel_img = redisImages;
+                }
+            }
+            return data;
         };
 
         try {
@@ -60,13 +85,15 @@ export const searchController = {
 
                         setRedis(priceKey, sqlPriceData);
 
-                        data[i].room_price = filterByData(sqlPriceData);
+                        data[i].room_price = filterByDate(sqlPriceData);
                     } else {
-                        data[i].room_price = filterByData(redisPriceData);
+                        data[i].room_price = filterByDate(redisPriceData);
 
                     }
                 }
-                const resultData = filterByHotelId(data);
+                let resultData = filterByHotelId(data);
+
+                resultData = await addImageDataRedis(resultData);
 
                 res.status(200).json({
                     error: null,
@@ -84,12 +111,14 @@ export const searchController = {
 
                         setRedis(priceKey, sqlPriceData);
 
-                        data[i].room_price = filterByData(sqlPriceData);
+                        data[i].room_price = filterByDate(sqlPriceData);
                     } else {
-                        data[i].room_price = filterByData(redisPriceData);
+                        data[i].room_price = filterByDate(redisPriceData);
                     }
                 }
-                const resultData = filterByHotelId(data);
+                let resultData = filterByHotelId(data);
+
+                resultData = await addImageDataRedis(resultData);
 
                 res.status(200).json({
                     error: null,
@@ -102,10 +131,12 @@ export const searchController = {
             for (let i = 0; i < data.length; i++) {
                 const sqlPriceData = await searchService.getPriceByRoomId(data[i].room_id);
 
-                data[i].room_price = filterByData(sqlPriceData);
+                data[i].room_price = filterByDate(sqlPriceData);
             }
 
-            const resultData = filterByHotelId(data);
+            let resultData = filterByHotelId(data);
+
+            resultData = await addImageData(resultData);
 
             res.status(200).json({
                 error: null,

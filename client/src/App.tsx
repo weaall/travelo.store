@@ -14,6 +14,8 @@ import HotelMgmt from "./pages/hotel-mgmt/HotelMgmt"
 import Search from "./pages/search/Search"
 import SearchResult from "./pages/search-reuslt/SearchResult"
 
+import "@fontsource/noto-sans-kr";
+
 function App() {
     return (
         <BrowserRouter>

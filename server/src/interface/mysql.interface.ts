@@ -8,6 +8,10 @@ export interface getSearchRows extends RowDataPacket {
     address_detail: string;
     description: string;
 
+    hotel_img: {
+        url: string;
+    }[]
+
     wifi: number;
     always_check_in: number;
     breakfast: number;

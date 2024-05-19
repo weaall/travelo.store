@@ -2,7 +2,7 @@ import pool from "../config/db";
 import { getSearchParams } from "../interface/params.interface";
 import { getSearchRows } from "../interface/mysql.interface";
 import { FieldPacket } from "mysql2";
-import { RoomPriceRows } from "../interface/interfaces";
+import { RoomPriceRows, urlRows } from "../interface/interfaces";
 
 const searchService = {
     async getSearch({searchValue, personNum} : getSearchParams) {
@@ -49,6 +49,25 @@ const searchService = {
             );
 
             return getPriceResult;
+        } catch (error) {
+            throw error;
+        } finally {
+            connection.release();
+        }
+    },
+
+    async getHotelImgUrl(id: string) {
+        const getHotelImgSql = "SELECT url FROM hotel_img where hotel_id = ?";
+        const getHotelImgValues = [id];
+
+        const connection = await pool.getConnection();
+        try {
+            const [checkHotelImgResult]: [urlRows[], FieldPacket[]] = await connection.execute(
+            getHotelImgSql,
+            getHotelImgValues,
+            );
+
+            return checkHotelImgResult;
         } catch (error) {
             throw error;
         } finally {
