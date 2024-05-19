@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 import * as tw from "./SearchResultstyles";
 import Loading from "../../components/loading/Loading";
 import { facilItems, servItems } from "../../data/hotelData";
+import ImgSlider from "../../components/imgslider/imgslider";
 
 export default function SearchResult() {
     const navigate = useNavigate();
@@ -99,7 +100,9 @@ export default function SearchResult() {
                     {hotelList.map((hotel) => (
                         <tw.HotelWrap key={hotel.hotel_id}>
                             <tw.ContentsFlex>
-                                <tw.HotelPic></tw.HotelPic>
+                                <tw.HotelPic>
+                                    <ImgSlider images={hotel.hotel_img} />
+                                </tw.HotelPic>
                                 <tw.HotelInfoWrap>
                                     <tw.HotelInfo>
                                         <tw.HotelName>{hotel.name}</tw.HotelName>
