@@ -116,13 +116,13 @@ export default function SearchDateModal({ onClose, startDate, endDate}: ModalPro
                         </tw.YearWrap>
                         <tw.NavWrap>
                             <tw.NavBtn onClick={prevMonth}>
-                                <tw.NavSvg alt="" src={require("../../../assets/svg/left_arrow_icon.svg").default} />
+                                <tw.NavSvg alt="" src={require("../../../assets/svg/calendar_minus_icon.svg").default} />
                             </tw.NavBtn>
                             <tw.NavBtn onClick={goToday}>
-                                <tw.NavSvg alt="" src={require("../../../assets/svg/today_icon.svg").default} />
+                                <tw.NavSvg alt="" src={require("../../../assets/svg/calendar_today_icon.svg").default} />
                             </tw.NavBtn>
                             <tw.NavBtn onClick={nextMonth}>
-                                <tw.NavSvg alt="" src={require("../../../assets/svg/right_arrow_icon.svg").default} />
+                                <tw.NavSvg alt="" src={require("../../../assets/svg/calendar_plus_icon.svg").default} />
                             </tw.NavBtn>
                         </tw.NavWrap>
                     </tw.CalTitleWrap>
@@ -143,7 +143,8 @@ export default function SearchDateModal({ onClose, startDate, endDate}: ModalPro
                             const isPastDate = dayjs(formattedDate).isBefore(today, "day");
 
                             const getDateStyle = () => {
-                                if (formattedDate === dateValue.startDate || formattedDate === dateValue.endDate) return "selectedDate";
+                                if (formattedDate === dateValue.startDate) return "startDate";
+                                if (formattedDate === dateValue.endDate) return "endDate";
                                 if (
                                     dayjs(dateValue.startDate) &&
                                     dayjs(dateValue.endDate) &&
@@ -156,21 +157,21 @@ export default function SearchDateModal({ onClose, startDate, endDate}: ModalPro
 
                             if (condition === "other") {
                                 return (
-                                    <tw.DateWrap $date={"other"} key={i} onClick={() => navMonth(date)}>
-                                        <tw.DateLabel $date={condition}>{date}</tw.DateLabel>
-                                    </tw.DateWrap>
+                                        <tw.DateWrap $date={"other"} key={i} onClick={() => navMonth(date)}>
+                                            <tw.DateLabel $date={condition}>{date}</tw.DateLabel>
+                                        </tw.DateWrap>
                                 );
                             } else if (formattedDate === today) {
                                 return (
-                                    <tw.DateWrap
-                                        $date={getDateStyle()}
-                                        key={i}
-                                        onClick={() => {
-                                            selectDate(formattedDate);
-                                        }}
-                                    >
-                                        <tw.DateLabel $date={"today"}>{date}</tw.DateLabel>
-                                    </tw.DateWrap>
+                                        <tw.DateWrap
+                                            $date={getDateStyle()}
+                                            key={i}
+                                            onClick={() => {
+                                                selectDate(formattedDate);
+                                            }}
+                                        >
+                                            <tw.DateLabel $date={"today"}>{date}</tw.DateLabel>
+                                        </tw.DateWrap>
                                 );
                             } else if (isPastDate) {
                                 return (
@@ -180,15 +181,15 @@ export default function SearchDateModal({ onClose, startDate, endDate}: ModalPro
                                 );
                             } else {
                                 return (
-                                    <tw.DateWrap
-                                        $date={getDateStyle()}
-                                        key={i}
-                                        onClick={() => {
-                                            selectDate(formattedDate);
-                                        }}
-                                    >
-                                        <tw.DateLabel $date={condition}>{date}</tw.DateLabel>
-                                    </tw.DateWrap>
+                                        <tw.DateWrap
+                                            $date={getDateStyle()}
+                                            key={i}
+                                            onClick={() => {
+                                                selectDate(formattedDate);
+                                            }}
+                                        >
+                                            <tw.DateLabel $date={condition}>{date}</tw.DateLabel>
+                                        </tw.DateWrap>
                                 );
                             }
                         })}

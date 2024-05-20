@@ -2,12 +2,20 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 
-import * as tw from "./Search.styles"
+import * as tw from "./SearchBox.styles"
 import { ModalPortal } from "../../hook/modal/ModalPortal";
 import SearchDateModal from "../../hook/modal/search_date/SearchDate.modal";
 import SearchPersonModal from "../../hook/modal/search_person/SearchPerson.modal";
 
-export default function Search() {
+interface SearchBoxProps {
+    defaultSearchValue?: string;
+    defaultStartDate?: string;
+    defaultEndDate?: string;
+    defaultAdult: number;
+    defaultChild: number;
+}
+
+export default function SearchBox({ defaultSearchValue, defaultStartDate, defaultEndDate, defaultAdult, defaultChild}: SearchBoxProps) {
     const navigate = useNavigate();
 
     const [isSearchDateModalOpen, setIsSearchDateModalOpen] = useState(false);
@@ -30,15 +38,15 @@ export default function Search() {
         setIsSearchPersonModalOpen(false);
     };
 
-    const [searchValue, setSearchValue] = useState("");
+    const [searchValue, setSearchValue] = useState(defaultSearchValue || "");
     const [dateValue, setDateValue] = useState({
-        startDate: dayjs().format("YYYY-MM-DD"),
-        endDate: dayjs().add(1, "day").format("YYYY-MM-DD"),
-        diffDate: 1
+        startDate: defaultStartDate || dayjs().format("YYYY-MM-DD"),
+        endDate: defaultEndDate || dayjs().add(1, "day").format("YYYY-MM-DD"),
+        diffDate: dayjs(defaultEndDate).diff(dayjs(defaultStartDate), "day") || 1,
     });
     const [personValue, setPersonValue] = useState({
-        adult: 2,
-        child: 0,
+        adult: defaultAdult,
+        child: defaultChild
     });
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,40 +56,40 @@ export default function Search() {
     const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === "Enter" && searchValue.trim() !== "") {
             handleSearchSubmit();
-        }else if(event.key === "Enter" && searchValue.trim() === ""){
-            window.alert("검색어를 입력해주세요")
+        } else if (event.key === "Enter" && searchValue.trim() === "") {
+            window.alert("검색어를 입력해주세요");
         }
     };
 
     const handleOnClick = () => {
         if (searchValue.trim() !== "") {
             handleSearchSubmit();
-        }else if(searchValue.trim() === ""){
-            window.alert("검색어를 입력해주세요")
+        } else if (searchValue.trim() === "") {
+            window.alert("검색어를 입력해주세요");
         }
     };
 
     const handleSearchSubmit = () => {
-            navigate(`/search/${searchValue}/${dateValue.startDate}/${dateValue.endDate}/${personValue.adult}/${personValue.child}`);
+        navigate(`/search/${searchValue}/${dateValue.startDate}/${dateValue.endDate}/${personValue.adult}/${personValue.child}`);
     };
 
-    const handleSearchDateSelect = (selectedDates: { startDate: string, endDate: string }) => {
+    const handleSearchDateSelect = (selectedDates: { startDate: string; endDate: string }) => {
         setDateValue({
             ...dateValue,
             startDate: selectedDates.startDate,
-            endDate: selectedDates.endDate
+            endDate: selectedDates.endDate,
         });
-    
+
         closeSearchDateModal();
     };
 
-    const handleSearchPersonSelect = (selectedPerson: { adult: number, child : number }) => {
+    const handleSearchPersonSelect = (selectedPerson: { adult: number; child: number }) => {
         setPersonValue({
             ...personValue,
             adult: selectedPerson.adult,
-            child: selectedPerson.child
+            child: selectedPerson.child,
         });
-    
+
         closeSearchPersonModal();
     };
 

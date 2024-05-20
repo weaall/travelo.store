@@ -3,7 +3,7 @@ import { sendJWT } from "../../../utils/jwtUtils";
 import { axios, axiosInstance } from "../../../utils/axios.utils";
 import { useNavigate } from "react-router-dom";
 
-import * as tw from "./SetPrice.modal.styles"
+import * as tw from "./SetMonthPrice.modal.styles"
 
 interface ModalProps {
     onClose: () => void;

@@ -62,7 +62,8 @@ ${(p) => (p.$day === 0 ? "text-red-500" : p.$day === 6 ? "text-blue-500" : "")}`
 export const DatesWrap = tw.div`flex flex-wrap w-full h-[60%] my-3`
 export const DateWrap = tw.div<StartDateProps>`w-[14%] p-2 text-center flex flex-col justify-center
 hover:bg-gray-100 cursor-pointer
-${(p) => (p.$date === "selectedDate" ? "bg-main/[.3]" : p.$date === "betweenDate" ? "bg-main/[.15]" : "")}`
+${(p) => (p.$date === "startDate" ? "bg-main/[.3] rounded-l-xl" :  p.$date === "endDate" ? "bg-main/[.3] rounded-r-xl"  :
+p.$date === "betweenDate" ? "bg-main/[.15]" : "")}`
 export const PastWrap = tw.div`w-[14%] py-4 p-2 text-center flex flex-col rounded-lg text-gray-300`
 export const DateLabel = tw.p<DateProps>`
 ${(p) => (p.$date === "today" ? "text-green-500 font-bold" : p.$date === "other" ? "text-gray-300" : "")}`

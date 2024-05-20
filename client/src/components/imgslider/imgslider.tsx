@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import * as tw from "./imgslider.styles";
+import * as tw from "./imgSlider.styles";
 
 interface Image {
     url: string;
@@ -28,9 +28,8 @@ export default function ImgSlider({ images }: CustomImageSliderProps) {
                 {"<"}
             </tw.ImgButton>
             {images[currentIndex]?.url ? (
-                <img
+                <tw.Img
                     src={images[currentIndex].url}
-                    className="w-full h-full object-cover"
                     alt={`Slide ${currentIndex}`}
                     loading="lazy"
                 />

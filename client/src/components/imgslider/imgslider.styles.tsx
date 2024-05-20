@@ -2,9 +2,9 @@ import tw from "tailwind-styled-components"
 
 
 export const ImgContainer = tw.div`relative w-full h-full flex items-center justify-center overflow-hidden rounded-l-2xl`;
+export const Img = tw.img`w-full h-full object-cover`
 
-export const ImgButton = tw.button`absolute top-1/2 transform -translate-y-1/2 bg-white bg-opacity-50 text-white px-1 py-2 rounded-2xl z-10`;
-
+export const ImgButton = tw.button`absolute top-1/2 transform -translate-y-1/2 bg-white bg-opacity-50 text-white px-1 py-2 rounded-2xl`;
 export const BtnSvg = tw.img``;
 
 export const ImgSlide = tw.div`w-full h-full bg-cover bg-center transition-transform duration-500`;
