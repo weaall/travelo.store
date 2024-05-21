@@ -22,17 +22,17 @@ export default function ImgSlider({ images }: CustomImageSliderProps) {
         setCurrentIndex(newIndex);
     };
 
+    if (!images || images.length === 0) {
+        return <tw.UnRegWrap>미등록</tw.UnRegWrap>;
+    }
+
     return (
         <tw.ImgContainer>
             <tw.ImgButton onClick={prevSlide} className="left-2">
                 {"<"}
             </tw.ImgButton>
             {images[currentIndex]?.url ? (
-                <tw.Img
-                    src={images[currentIndex].url}
-                    alt={`Slide ${currentIndex}`}
-                    loading="lazy"
-                />
+                <tw.Img src={images[currentIndex].url} alt={`Slide ${currentIndex}`} loading="lazy" />
             ) : (
                 <tw.UnRegWrap>미등록</tw.UnRegWrap>
             )}

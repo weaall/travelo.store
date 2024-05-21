@@ -3,7 +3,7 @@ import { axios, axiosInstance } from "../../utils/axios.utils";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 
-import * as tw from "./SearchResultstyles";
+import * as tw from "./SearchResult.styles";
 import Loading from "../../components/loading/Loading";
 import { facilItems, servItems } from "../../data/hotelData";
 import ImgSlider from "../../components/imgSlider/imgSlider";

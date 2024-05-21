@@ -1,5 +1,5 @@
 export const servItems = [
-    { comp: "wifi", label: "Wifi"},
+    { comp: "wifi", label: "무료 Wi-Fi"},
     { comp: "always_check_in", label: "24시 체크인"},
     { comp: "breakfast", label: "조식"},
     { comp: "barbecue", label: "바베큐"},

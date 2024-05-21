@@ -1,7 +1,8 @@
 import { Response, Request } from "express"
 import { JWTCheck } from "../interface/interfaces"
 import hotelService from "../services/hotelService"
-import client from "../config/redis";
+import { getRedis, setRedis } from "../utils/redisUtils";
+import { getHotelRows, getSearchRows } from "../interface/mysql.interface";
 
 const hotelController = {
     async getHotel(req: Request, res: Response) {
@@ -13,36 +14,44 @@ const hotelController = {
         });
     },
     async getHotelById(req: Request, res: Response) {
-        const key : string = req.params.hotel_id;
-        const redisData = await client.get(key);
+        try {
+            const key: string = `/hotel/${req.params.id}`;
+            const redisData = JSON.parse(await getRedis(key));
 
-        if(redisData === null){
-            const data = await hotelService.getHotelById(req.params.hotel_id);
+            if (redisData === null) {
+                const data = await hotelService.getHotelById(req.params.id);
 
-            console.log(data)
+                setRedis(key, data);
 
-            await client.set(key, data)
+                res.status(200).json({
+                    error: null,
+                    data: data,
+                });
+            } else {
+                res.status(200).json({
+                    error: null,
+                    data: redisData,
+                });
+            }
+        } catch (error) {
+            const data = await hotelService.getHotelById(req.params.id);
 
             res.status(200).json({
                 error: null,
                 data: data,
-            })
+            });
         }
-
-        res.status(200).json({
-            error: null,
-            data: redisData,
-        })
     },
-    async regHotel(req: JWTCheck, res: Response) {
-        const urls = (req.files as any[]).map((file) => file.location)
 
-        const data = await hotelService.regHotel(req.user.id, JSON.parse(req.body.data), urls)
+    async regHotel(req: JWTCheck, res: Response) {
+        const urls = (req.files as any[]).map((file) => file.location);
+
+        const data = await hotelService.regHotel(req.user.id, JSON.parse(req.body.data), urls);
 
         res.status(201).json({
             error: null,
             data: data,
-        })
+        });
     },
 
     async myHotel(req: JWTCheck, res: Response) {
@@ -51,7 +60,7 @@ const hotelController = {
         res.status(200).json({
             error: null,
             data: data,
-        })
+        });
     },
 
     async checkHotelById(req: JWTCheck, res: Response) {
@@ -60,7 +69,7 @@ const hotelController = {
         res.status(200).json({
             error: null,
             data: data,
-        })
+        });
     },
 
     async getHotelInfoById(req: JWTCheck, res: Response) {
@@ -69,10 +78,10 @@ const hotelController = {
         res.status(200).json({
             error: null,
             data: data,
-        })
+        });
     },
 
-    async getHotelImgUrl(req: Request, res: Response){
+    async getHotelImgUrl(req: Request, res: Response) {
         const data = await hotelService.getHotelImgUrl(req.params.id);
 
         res.status(200).json({
@@ -82,14 +91,14 @@ const hotelController = {
     },
 
     async putHotelInfo(req: JWTCheck, res: Response) {
-        const urls = (req.files as any[]).map((file) => file.location)
+        const urls = (req.files as any[]).map((file) => file.location);
 
-        const data = await hotelService.putHotelInfo(req.user.id, JSON.parse(req.body.data), urls)
+        const data = await hotelService.putHotelInfo(req.user.id, JSON.parse(req.body.data), urls);
 
         res.status(201).json({
             error: null,
             data: data,
-        })
+        });
     },
 
     async putHotelServ(req: JWTCheck, res: Response) {
@@ -98,7 +107,7 @@ const hotelController = {
         res.status(201).json({
             error: null,
             data: data,
-        })
+        });
     },
 
     async putHotelFacil(req: JWTCheck, res: Response) {
@@ -107,8 +116,8 @@ const hotelController = {
         res.status(201).json({
             error: null,
             data: data,
-        })
+        });
     },
-}
+};
 
 export default hotelController

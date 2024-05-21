@@ -85,6 +85,7 @@ export interface RoomRows extends RowDataPacket {
 }
 
 export interface HotelInfoRows extends RowDataPacket {
+    id: number;
     name: string;
     postcode: number;
     address: string;

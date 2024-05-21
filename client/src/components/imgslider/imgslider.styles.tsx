@@ -8,7 +8,7 @@ export const ImgButton = tw.button`absolute top-1/2 transform -translate-y-1/2 b
 export const BtnSvg = tw.img``;
 
 export const ImgSlide = tw.div`w-full h-full bg-cover bg-center transition-transform duration-500`;
-export const UnRegWrap = tw.div`justify-center text-3xl font-bold`
+export const UnRegWrap = tw.div`flex h-full justify-center items-center text-3xl font-bold`
 
 export const DotsContainer = tw.div`absolute bottom-4 w-full flex justify-center gap-2`;
 

@@ -1,47 +1,55 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { axios, axiosInstance } from "../../utils/axios.utils";
 import { useEffect, useState } from "react";
-import dayjs from "dayjs";
 
-import * as tw from "./Hotelstyles";
+import * as tw from "./Hotel.styles";
 import Loading from "../../components/loading/Loading";
-import { facilItems, servItems } from "../../data/hotelData";
 import ImgSlider from "../../components/imgSlider/imgSlider";
-import SearchBox from "../../components/searchBox/SearchBox";
+import { facilItems, servItems } from "../../data/hotelData";
+import { decrypt } from "../../utils/cryptoJs";
 
-export default function SearchResult() {
+export default function Hotel() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
-    const { searchValue, startDate, endDate, adult, child } = useParams();
+    const { params } = useParams();
+    const id = decrypt(params || "")
 
-    const [hotelList, setHotelList] = useState([
+    const [hotelData, setHotelData] = useState({
+        id: id,
+        name: "",
+        address: "",
+        address_detail: "",
+        description: "",
+
+        wifi: 0,
+        always_check_in: 0,
+        breakfast: 0,
+        barbecue: 0,
+
+        carpark: 0,
+        restaurnat: 0,
+        cafe: 0,
+        swimming_pool: 0,
+        spa: 0,
+        fitness: 0,
+        convenience_store: 0,
+
+        img: [
+            {
+                url: "",
+            },
+        ],
+    });
+
+    const [roomList, setRoomList] = useState([
         {
-            hotel_id: 0,
+            id: 0,
             name: "",
-            address: "",
-            address_detail: "",
-
-            wifi: 0,
-            always_check_in: 0,
-            breakfast: 0,
-            barbecue: 0,
-
-            carpark: 0,
-            restaurnat: 0,
-            cafe: 0,
-            swimming_pool: 0,
-            spa: 0,
-            fitness: 0,
-            convenience_store: 0,
-
-            room_id: 0,
-            room_name: "",
-            room_num: 0,
+            num: 0,
             discount: 0,
 
             room_price: [
                 {
-                    room_id: 0,
                     date: "",
                     price: 0,
                     room_current: 0,
@@ -49,7 +57,7 @@ export default function SearchResult() {
                 },
             ],
 
-            hotel_img: [
+            img: [
                 {
                     url: "",
                 },
@@ -57,23 +65,17 @@ export default function SearchResult() {
         },
     ]);
 
-    const fetchSearch = async () => {
+    const fetchHotel = async () => {
         try {
-            const response = await axiosInstance.get("/search", {
-                params: {
-                    searchValue: encodeURIComponent(`${searchValue}`),
-                    startDate: startDate,
-                    endDate: endDate,
-                    adult: adult,
-                    child: child,
-                },
-            });
-            setHotelList(response.data.data);
+            const response = await axiosInstance.get("/hotel/" + id);
+            setHotelData(response.data.data[0]);
+            fetchHotelImg();
+            fetchRoom();
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 if (error.response.status === 401) {
                     window.alert("올바른 접근이 아닙니다.");
-                    navigate("/main");
+                    navigate("/");
                 }
             }
         } finally {
@@ -81,9 +83,48 @@ export default function SearchResult() {
         }
     };
 
+    const fetchHotelImg = async () => {
+        try {
+            const response = await axiosInstance.get("/hotel/img/" + id);
+            setHotelData((prevState) => ({
+                ...prevState,
+                img: response.data.data,
+            }));
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                if (error.response.status === 401) {
+                    window.alert("올바른 접근이 아닙니다.");
+                    navigate("/");
+                }
+            }
+        }
+    };
+
+    const fetchRoom = async () => {
+        try {
+            const response = await axiosInstance.get("/room/hotel/" + id);
+            const rooms = response.data.data;
+
+            for (let room of rooms) {
+                const roomImgResponse = await axiosInstance.get(`/room/img/${room.id}`);
+                room.img = roomImgResponse.data.data;
+            }
+
+            setRoomList(rooms);
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                if (error.response.status === 401) {
+                    window.alert("올바른 접근이 아닙니다.");
+                    navigate("/");
+                }
+            }
+        }
+    };
+
+
     useEffect(() => {
-        fetchSearch();
-    }, [searchValue, startDate, endDate, adult, child]);
+        fetchHotel();
+    }, []);
 
     if (loading) {
         return <Loading />;
@@ -92,82 +133,62 @@ export default function SearchResult() {
     return (
         <tw.Container>
             <tw.MainContainer>
-                <SearchBox defaultSearchValue={searchValue}
-                    defaultStartDate={startDate}
-                    defaultEndDate={endDate}
-                    defaultAdult={parseInt(adult || "2")}
-                    defaultChild={parseInt(child || "0")}/>
-
-                <tw.HotelList>
-                    {hotelList.map((hotel) => (
-                        <tw.HotelWrap key={hotel.hotel_id}>
+                <tw.HotelWrap>
+                    <tw.HotelPic>
+                        <ImgSlider images={hotelData.img} />
+                    </tw.HotelPic>
+                    <tw.HotelInfoWrap>
+                        <tw.HotelFlexWrap>
+                            <tw.HotelTitle>{hotelData.name}</tw.HotelTitle>
                             <tw.ContentsFlex>
-                                <tw.HotelPic>
-                                    <ImgSlider images={hotel.hotel_img} />
-                                </tw.HotelPic>
-                                <tw.HotelInfoWrap>
-                                    <tw.HotelInfo>
-                                        <tw.HotelName>{hotel.name}</tw.HotelName>
-                                        <tw.ContentsFlex>
-                                            <tw.AddressSVG
-                                                alt=""
-                                                src={require("../../assets/svg/location_icon.svg").default}
-                                            ></tw.AddressSVG>
-                                            <tw.HotelAddress>
-                                                {hotel.address} {hotel.address_detail}
-                                            </tw.HotelAddress>
-                                        </tw.ContentsFlex>
-
-                                        <tw.HotelServWrap>
-                                            <tw.HotelP>서비스</tw.HotelP>
-                                            <tw.HotelServList>
-                                                {servItems.map((item) =>
-                                                    (hotel as any)[item.comp] === 1 ? (
-                                                        <tw.HotelComp key={item.comp}>{item.label}</tw.HotelComp>
-                                                    ) : null,
-                                                )}
-                                            </tw.HotelServList>
-                                        </tw.HotelServWrap>
-
-                                        <tw.HotelFacilWrap>
-                                            <tw.HotelP>편의시설</tw.HotelP>
-                                            <tw.HotelFacilList>
-                                                {facilItems.map((item) =>
-                                                    (hotel as any)[item.comp] === 1 ? (
-                                                        <tw.HotelComp key={item.comp}>{item.label}</tw.HotelComp>
-                                                    ) : null,
-                                                )}
-                                            </tw.HotelFacilList>
-                                        </tw.HotelFacilWrap>
-
-                                        <tw.TooltipServ>
-                                            {servItems.map((item) =>
-                                                (hotel as any)[item.comp] === 1 ? (
-                                                    <tw.ToolTipText key={item.comp}>{item.label}</tw.ToolTipText>
-                                                ) : null,
-                                            )}
-                                        </tw.TooltipServ>
-                                        <tw.TooltipFacil>
-                                            {facilItems.map((item) =>
-                                                (hotel as any)[item.comp] === 1 ? (
-                                                    <tw.ToolTipText key={item.comp}>{item.label}</tw.ToolTipText>
-                                                ) : null,
-                                            )}
-                                        </tw.TooltipFacil>
-
-                                        <tw.PriceWrap>
-                                            <tw.TotalLabel>{dayjs(endDate).diff(dayjs(startDate), "day")}박 총 요금</tw.TotalLabel>
-                                            <tw.TotalPrice>
-                                                {hotel.room_price.reduce((total, room) => total + room.price, 0).toLocaleString()}원~
-                                            </tw.TotalPrice>
-                                        </tw.PriceWrap>
-
-                                    </tw.HotelInfo>
-                                </tw.HotelInfoWrap>
+                                <tw.AddressSVG alt="" src={require("../../assets/svg/location_icon.svg").default} />
+                                <tw.HotelAddress>
+                                    {hotelData.address} {hotelData.address_detail}
+                                </tw.HotelAddress>
                             </tw.ContentsFlex>
-                        </tw.HotelWrap>
+                            <tw.HotelDesc>{hotelData.description}</tw.HotelDesc>
+                        </tw.HotelFlexWrap>
+                        <tw.HotelFlexWrap>
+                            <tw.Label>서비스 / 편의시설</tw.Label>
+                            <tw.HotelServ>
+                                {servItems.map((item) =>
+                                    (hotelData as any)[item.comp] === 1 ? (
+                                        <tw.HotelTextWrap>
+                                            <tw.HotelSvg alt="" src={require("../../assets/svg/check_icon.svg").default} />
+                                            <tw.HotelText key={item.comp}>{item.label}</tw.HotelText>
+                                        </tw.HotelTextWrap>
+                                    ) : null,
+                                )}
+                                {facilItems.map((item) =>
+                                    (hotelData as any)[item.comp] === 1 ? (
+                                        <tw.HotelTextWrap>
+                                            <tw.HotelSvg alt="" src={require("../../assets/svg/check_icon.svg").default} />
+                                            <tw.HotelText key={item.comp}>{item.label}</tw.HotelText>
+                                        </tw.HotelTextWrap>
+                                    ) : null,
+                                )}
+                            </tw.HotelServ>
+                        </tw.HotelFlexWrap>
+                    </tw.HotelInfoWrap>
+                </tw.HotelWrap>
+
+                <tw.RoomList>
+                    <tw.Label>객실정보</tw.Label>
+                    {roomList.map((room) => (
+                        <tw.RoomWrap key={room.id}>
+                            <tw.ContentsFlex>
+                                <tw.RoomPic>
+                                    <ImgSlider images={room.img} />
+                                </tw.RoomPic>
+                                <tw.RoomInfoWrap>
+                                    <tw.HotelInfo>
+                                        <tw.RoomName>{room.name}</tw.RoomName>
+                                    </tw.HotelInfo>
+                                </tw.RoomInfoWrap>
+                            </tw.ContentsFlex>
+                        </tw.RoomWrap>
                     ))}
-                </tw.HotelList>
+                </tw.RoomList>
             </tw.MainContainer>
         </tw.Container>
     );

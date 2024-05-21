@@ -28,10 +28,8 @@ export default function HotelMgmt() {
             if (axios.isAxiosError(error) && error.response) {
                 if (error.response.status === 409) {
                     window.alert("올바른 접근이 아닙니다.")
-                    navigate("/")
                 } else if (error.response.status === 401) {
                     window.alert("올바른 접근이 아닙니다.")
-                    navigate("/main")
                 }
             }
         }

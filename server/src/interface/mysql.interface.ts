@@ -81,3 +81,49 @@ export interface priceFilter{
         room_limit: number;
     }[];
 }
+
+export interface getHotelRows extends RowDataPacket {
+    id: string;
+    name: string;
+    postcode: number;
+    address: string;
+    address_detail: string;
+    description: string;
+
+    hotel_img: {
+        url: string;
+    }[];
+
+    wifi: number;
+    always_check_in: number;
+    breakfast: number;
+    barbecue: number;
+
+    carpark: number;
+    restaurant: number;
+    cafe: number;
+    swimming_pool: number;
+    spa: number;
+    fitness: number;
+    convenience_store: number;
+
+    room: {
+        id: string;
+        name: string;
+        bed_type: number;
+        room_type: number;
+
+        img: {
+            url: string;
+        }[]
+
+        price:{
+            room_id: number;
+            date: string;
+            price: number;
+            room_current: number;
+            room_limit: number;
+        }[]
+    }[];
+
+}

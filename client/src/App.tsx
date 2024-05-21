@@ -15,6 +15,7 @@ import Search from "./pages/search/Search"
 import SearchResult from "./pages/search-reuslt/SearchResult"
 
 import "@fontsource/noto-sans-kr";
+import Hotel from "./pages/hotel/Hotel"
 
 function App() {
     return (
@@ -27,7 +28,7 @@ function App() {
                         <Route path="/search" element={<Search />} />
                         <Route path="/signin" element={<SignIn />} />
                         <Route path="/signup" element={<SignUp />} />
-                        <Route path="/me" element={<Me />} />
+                        <Route path="/hotel/:id" element={<Hotel/>}/>
                         <Route path="/hotelreg" element={<HotelReg />} />
                         <Route path="/hotel/me" element={<HotelMe />} />
                         <Route path="/hotel/mgmt/">

@@ -27,16 +27,19 @@ const hotelService = {
             connection.release();
         }
     },
-    async getHotelById(hotel_id : string) {
+    async getHotelById(id : string) {
         const connection = await pool.getConnection();
 
         const getHotelSql =
-            `SELECT * FROM hotel AS H 
+            `SELECT H.id, H.name, H.postcode, H.address, H.address_detail, H.description, 
+            S.wifi, S.always_check_in, S.breakfast, S.barbecue,
+            F.carpark, F.restaurant, F.cafe, F.swimming_pool, F.spa, F.fitness, F.convenience_store
+            FROM hotel AS H 
             left join hotel_service as S on H.id = S.hotel_id 
             left join hotel_facility as F using (hotel_id)
-            WHERE H.permission = 1 and H.id = ?`;
+            WHERE H.id = ?`;
 
-        const getHotelValues = [hotel_id];
+        const getHotelValues = [id];
 
         try {
             const [rows, fields]: [HotelInfoRows[], FieldPacket[]] = await connection.execute(
