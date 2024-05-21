@@ -6,13 +6,14 @@ import * as tw from "./Hotel.styles";
 import Loading from "../../components/loading/Loading";
 import ImgSlider from "../../components/imgSlider/imgSlider";
 import { facilItems, servItems } from "../../data/hotelData";
-import { decrypt } from "../../utils/cryptoJs";
+import { decrypt, encrypt } from "../../utils/cryptoJs";
 
 export default function Hotel() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
-    const { params } = useParams();
-    const id = decrypt(params || "")
+    const { encryptedId } = useParams();
+
+    const id = decrypt(encryptedId || "");
 
     const [hotelData, setHotelData] = useState({
         id: id,

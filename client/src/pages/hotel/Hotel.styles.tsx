@@ -6,17 +6,17 @@ export const ContentsFlex = tw.div`h-auto w-auto flex flex-wrap items-center`
 
 export const MainContainer = tw.div`w-full h-full py-10`
 
-export const HotelWrap = tw.div`flex flex-col items-center space-y-6 my-6`
+export const HotelWrap = tw.div`flex flex-col items-center space-y-6 my-2`
 export const HotelPic = tw.div`px-6 w-full h-96 rounded-2xl`
 
 export const HotelInfoWrap = tw.div`w-full space-y-2`
 export const HotelFlexWrap = tw.div`flex flex-col w-auto mx-6 p-4 border space-y-2`
-export const HotelTitle = tw.p`text-2xl font-medium truncate`
+export const HotelTitle = tw.p`text-2xl font-semibold truncate`
 export const HotelAddress = tw.p`text-main text-sm pl-1 truncate`
 export const AddressSVG = tw.img`w-3`
 export const HotelDesc = tw.p`border-t mt-2 pt-2 text-sm text-gray-400`
 
-export const Label = tw.p`text-lg font-medium`
+export const Label = tw.p`text-xl font-semibold`
 export const HotelServ = tw.div`flex flex-wrap`
 export const HotelTextWrap = tw.div`flex items-center h-auto w-1/5`
 export const HotelText = tw.p`text-xs`

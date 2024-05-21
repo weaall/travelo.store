@@ -12,7 +12,7 @@ export const HotelList = tw.div`flex flex-col gap-6`
 export const HotelWrap = tw.div`w-auto mx-10 rounded-2xl bg-white shadow-md hover:shadow-xl`
 export const HotelPic = tw.div`w-4/12 h-60 bg-gray-30`
 
-export const HotelInfoWrap = tw.div`flex flex-col w-8/12 py-2`
+export const HotelInfoWrap = tw.div`flex flex-col w-8/12 py-2 hover:cursor-pointer`
 export const HotelInfo = tw.div`relative px-5 py-2 space-y-1`
 export const UpperInfo = tw.div`flex flex-col`
 export const HotelName = tw.h2`text-xl font-bold`

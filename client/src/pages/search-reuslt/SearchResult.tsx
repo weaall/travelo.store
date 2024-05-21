@@ -8,6 +8,7 @@ import Loading from "../../components/loading/Loading";
 import { facilItems, servItems } from "../../data/hotelData";
 import ImgSlider from "../../components/imgSlider/imgSlider";
 import SearchBox from "../../components/searchBox/SearchBox";
+import { encrypt } from "../../utils/cryptoJs";
 
 export default function SearchResult() {
     const navigate = useNavigate();
@@ -81,6 +82,11 @@ export default function SearchResult() {
         }
     };
 
+    const clickHotel = (hotelId : number) =>{
+        const encryptedId = encrypt(`${hotelId}`);
+        navigate("/hotel/" + encryptedId);
+    }
+
     useEffect(() => {
         fetchSearch();
     }, [searchValue, startDate, endDate, adult, child]);
@@ -105,7 +111,7 @@ export default function SearchResult() {
                                 <tw.HotelPic>
                                     <ImgSlider images={hotel.hotel_img} />
                                 </tw.HotelPic>
-                                <tw.HotelInfoWrap>
+                                <tw.HotelInfoWrap onClick={()=>clickHotel(hotel.hotel_id)}>
                                     <tw.HotelInfo>
                                         <tw.HotelName>{hotel.name}</tw.HotelName>
                                         <tw.ContentsFlex>

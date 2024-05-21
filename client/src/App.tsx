@@ -28,7 +28,7 @@ function App() {
                         <Route path="/search" element={<Search />} />
                         <Route path="/signin" element={<SignIn />} />
                         <Route path="/signup" element={<SignUp />} />
-                        <Route path="/hotel/:id" element={<Hotel/>}/>
+                        <Route path="/hotel/:encryptedId" element={<Hotel/>}/>
                         <Route path="/hotelreg" element={<HotelReg />} />
                         <Route path="/hotel/me" element={<HotelMe />} />
                         <Route path="/hotel/mgmt/">
