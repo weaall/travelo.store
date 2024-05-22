@@ -25,7 +25,7 @@ function App() {
                 <tw.ContentsWrap>
                     <Routes>
                         <Route path="/main" element={<Main />} />
-                        <Route path="/search" element={<Search />} />
+                        <Route path="/" element={<Search />} />
                         <Route path="/signin" element={<SignIn />} />
                         <Route path="/signup" element={<SignUp />} />
                         <Route path="/hotel/:encryptedId" element={<Hotel/>}/>

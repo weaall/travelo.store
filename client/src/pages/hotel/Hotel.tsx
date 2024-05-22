@@ -7,6 +7,10 @@ import Loading from "../../components/loading/Loading";
 import ImgSlider from "../../components/imgSlider/imgSlider";
 import { facilItems, servItems } from "../../data/hotelData";
 import { decrypt, encrypt } from "../../utils/cryptoJs";
+import SearchBoxSlim from "../../components/searchBoxSlim/SearchBoxSlim";
+import SearchBox from "../../components/searchBox/SearchBox";
+import ImgSliderMain from "../../components/imgSliderMain/imgSliderMain";
+import dayjs from "dayjs";
 
 export default function Hotel() {
     const navigate = useNavigate();
@@ -14,6 +18,9 @@ export default function Hotel() {
     const { encryptedId } = useParams();
 
     const id = decrypt(encryptedId || "");
+
+    const startDate = "2024-05-25";
+    const endDate = "2024-05-26";
 
     const [hotelData, setHotelData] = useState({
         id: id,
@@ -47,6 +54,8 @@ export default function Hotel() {
             id: 0,
             name: "",
             num: 0,
+            view_type: "",
+            bed_type: "",
             discount: 0,
 
             room_price: [
@@ -109,6 +118,14 @@ export default function Hotel() {
             for (let room of rooms) {
                 const roomImgResponse = await axiosInstance.get(`/room/img/${room.id}`);
                 room.img = roomImgResponse.data.data;
+
+                const roomPriceresponse = await axiosInstance.get(`/room/price/${room.id}`, {
+                    params: {
+                        startDate: startDate,
+                        endDate: endDate,
+                    },
+                });
+                room.room_price = roomPriceresponse.data.data;
             }
 
             setRoomList(rooms);
@@ -122,7 +139,6 @@ export default function Hotel() {
         }
     };
 
-
     useEffect(() => {
         fetchHotel();
     }, []);
@@ -134,9 +150,15 @@ export default function Hotel() {
     return (
         <tw.Container>
             <tw.MainContainer>
+                <div className="mobile:hidden">
+                    <SearchBoxSlim />
+                </div>
+                <div className="hidden mobile:block">
+                    <SearchBox />
+                </div>
                 <tw.HotelWrap>
                     <tw.HotelPic>
-                        <ImgSlider images={hotelData.img} />
+                        <ImgSliderMain images={hotelData.img} />
                     </tw.HotelPic>
                     <tw.HotelInfoWrap>
                         <tw.HotelFlexWrap>
@@ -154,7 +176,7 @@ export default function Hotel() {
                             <tw.HotelServ>
                                 {servItems.map((item) =>
                                     (hotelData as any)[item.comp] === 1 ? (
-                                        <tw.HotelTextWrap>
+                                        <tw.HotelTextWrap key={item.comp}>
                                             <tw.HotelSvg alt="" src={require("../../assets/svg/check_icon.svg").default} />
                                             <tw.HotelText key={item.comp}>{item.label}</tw.HotelText>
                                         </tw.HotelTextWrap>
@@ -162,7 +184,7 @@ export default function Hotel() {
                                 )}
                                 {facilItems.map((item) =>
                                     (hotelData as any)[item.comp] === 1 ? (
-                                        <tw.HotelTextWrap>
+                                        <tw.HotelTextWrap key={item.comp}>
                                             <tw.HotelSvg alt="" src={require("../../assets/svg/check_icon.svg").default} />
                                             <tw.HotelText key={item.comp}>{item.label}</tw.HotelText>
                                         </tw.HotelTextWrap>
@@ -184,6 +206,15 @@ export default function Hotel() {
                                 <tw.RoomInfoWrap>
                                     <tw.HotelInfo>
                                         <tw.RoomName>{room.name}</tw.RoomName>
+                                        <tw.RoomText>{room.view_type}</tw.RoomText>
+                                        <tw.RoomText>{room.bed_type} / {room.num}인</tw.RoomText>
+                                        <tw.RoomText></tw.RoomText>
+                                        <tw.PriceWrap>
+                                            <tw.TotalLabel>{dayjs (endDate).diff(dayjs(startDate), "day")}박 총 요금</tw.TotalLabel>
+                                            <tw.TotalPrice>
+                                                {room.room_price.reduce((total, room) => total + room.price, 0).toLocaleString()}원
+                                            </tw.TotalPrice>
+                                        </tw.PriceWrap>
                                     </tw.HotelInfo>
                                 </tw.RoomInfoWrap>
                             </tw.ContentsFlex>

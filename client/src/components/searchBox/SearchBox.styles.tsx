@@ -1,13 +1,13 @@
 import tw from "tailwind-styled-components"
 
-export const Container = tw.div`flex flex-col items-center pb-10`
+export const Container = tw.div`flex flex-col items-center pb-4`
 
 export const MainContainer = tw.div`w-full`
 
-export const SearchContainer = tw.div`mx-10 rounded-md h-28 bg-white shadow-md border`
+export const SearchContainer = tw.div`rounded-md h-24 bg-white shadow-md border`
 
-export const UpperWrap = tw.div`flex h-14 items-center border-b border-gray-300`
-export const BottomWrap = tw.div`flex h-14 items-center`
+export const UpperWrap = tw.div`flex h-12 items-center border-b border-gray-300`
+export const BottomWrap = tw.div`flex h-12 items-center`
 
 export const SearchWrap = tw.div`w-full h-full flex items-center justify-between p-1`
 export const SearchInput = tw.input`text-sm px-2 flex-1 font-bold outline-none`

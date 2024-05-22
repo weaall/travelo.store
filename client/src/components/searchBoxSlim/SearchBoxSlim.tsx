@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 
-import * as tw from "./SearchBox.styles"
+import * as tw from "./SearchBoxSlim.styles"
 import { ModalPortal } from "../../hook/modal/ModalPortal";
 import SearchDateModal from "../../hook/modal/search_date/SearchDate.modal";
 import SearchPersonModal from "../../hook/modal/search_person/SearchPerson.modal";
@@ -15,7 +15,7 @@ interface SearchBoxProps {
     defaultChild?: number;
 }
 
-export default function SearchBox({ defaultSearchValue, defaultStartDate, defaultEndDate, defaultAdult, defaultChild}: SearchBoxProps) {
+export default function SearchBoxSlim({ defaultSearchValue, defaultStartDate, defaultEndDate, defaultAdult, defaultChild}: SearchBoxProps) {
     const navigate = useNavigate();
 
     const [isSearchDateModalOpen, setIsSearchDateModalOpen] = useState(false);
@@ -46,7 +46,7 @@ export default function SearchBox({ defaultSearchValue, defaultStartDate, defaul
     });
     const [personValue, setPersonValue] = useState({
         adult: defaultAdult || 2,
-        child: defaultChild || 0
+        child: defaultChild || 0,
     });
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -102,44 +102,40 @@ export default function SearchBox({ defaultSearchValue, defaultStartDate, defaul
         <tw.Container>
             <tw.MainContainer>
                 <tw.SearchContainer>
-                    <tw.UpperWrap>
-                        <tw.SearchWrap>
-                            <tw.SvgWrap>
-                                <tw.Svg alt="" src={require("../../assets/svg/search_icon.svg").default} />
-                            </tw.SvgWrap>
-                            <tw.SearchInput
-                                placeholder="지역, 숙소명으로 찾아보세요"
-                                maxLength={30}
-                                value={searchValue}
-                                onChange={handleSearchChange}
-                                onKeyPress={handleKeyPress}
-                            />
-                            <tw.RemoveBtn onClick={() => setSearchValue("")}>
-                                <tw.Svg alt="" src={require("../../assets/svg/close_svg.svg").default} />
-                            </tw.RemoveBtn>
-                            <tw.SearchBtn onClick={handleOnClick}>
-                                <tw.Svg alt="" src={require("../../assets/svg/search_white_icon.svg").default} />
-                            </tw.SearchBtn>
-                        </tw.SearchWrap>
-                    </tw.UpperWrap>
-                    <tw.BottomWrap>
-                        <tw.CalendarWrap>
+                    <tw.SearchWrap>
+                        <tw.SvgWrap>
+                            <tw.Svg alt="" src={require("../../assets/svg/search_icon.svg").default} />
+                        </tw.SvgWrap>
+                        <tw.SearchInput
+                            placeholder="지역, 숙소명으로 찾아보세요"
+                            maxLength={30}
+                            value={searchValue}
+                            onChange={handleSearchChange}
+                            onKeyPress={handleKeyPress}
+                        />
+                        <tw.RemoveBtn onClick={() => setSearchValue("")}>
+                            <tw.Svg alt="" src={require("../../assets/svg/close_svg.svg").default} />
+                        </tw.RemoveBtn>
+                    </tw.SearchWrap>
+                    <tw.CalendarWrap>
+                        <tw.CalendarBtn onClick={openSearchDateModal}>
                             <tw.SvgWrap>
                                 <tw.Svg alt="" src={require("../../assets/svg/calendar_icon.svg").default} />
                             </tw.SvgWrap>
-                            <tw.CalendarBtn onClick={openSearchDateModal}>
-                                {dateValue.startDate} / {dateValue.diffDate}박
-                            </tw.CalendarBtn>
-                        </tw.CalendarWrap>
-                        <tw.PersonWrap>
+                            {dateValue.startDate} / {dateValue.diffDate}박
+                        </tw.CalendarBtn>
+                    </tw.CalendarWrap>
+                    <tw.PersonWrap>
+                        <tw.PersonBtn onClick={openSearchPersonModal}>
                             <tw.SvgWrap>
                                 <tw.Svg alt="" src={require("../../assets/svg/person_icon.svg").default} />
                             </tw.SvgWrap>
-                            <tw.PersonBtn onClick={openSearchPersonModal}>
-                                성인 {personValue.adult}, 아동 {personValue.child}
-                            </tw.PersonBtn>
-                        </tw.PersonWrap>
-                    </tw.BottomWrap>
+                            성인 {personValue.adult}, 아동 {personValue.child}
+                        </tw.PersonBtn>
+                    </tw.PersonWrap>
+                    <tw.SearchBtn onClick={handleOnClick}>
+                        <tw.Svg alt="" src={require("../../assets/svg/search_white_icon.svg").default} />
+                    </tw.SearchBtn>
                 </tw.SearchContainer>
             </tw.MainContainer>
 

@@ -1,6 +1,10 @@
 import tw from "tailwind-styled-components"
 
 
+interface DotActiveProps {
+    $active: boolean
+}
+
 export const ImgContainer = tw.div`relative w-full h-full flex items-center justify-center overflow-hidden rounded-l-2xl`;
 export const Img = tw.img`w-full h-full object-cover`
 
@@ -12,4 +16,4 @@ export const UnRegWrap = tw.div`flex h-full justify-center items-center text-3xl
 
 export const DotsContainer = tw.div`absolute bottom-4 w-full flex justify-center gap-2`;
 
-export const Dot = tw.div<{ active: boolean }>`w-3.5 h-3.5 rounded-full cursor-pointer ${p => (p.active ? "bg-main" : "bg-white")}`;
+export const Dot = tw.div<DotActiveProps>`w-1 h-1 rounded-full cursor-pointer ${p => (p.$active ? "bg-main" : "bg-white")}`;

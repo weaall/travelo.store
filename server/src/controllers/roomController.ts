@@ -1,7 +1,8 @@
 import { Response, Request } from "express"
-import { JWTCheck } from "../interface/interfaces"
+import { JWTCheck, RoomPriceRows } from "../interface/interfaces"
 import roomService from "../services/roomService";
 import { getRedis, setRedis } from "../utils/redisUtils";
+import dayjs from "dayjs";
 
 const roomController = {
     async getRoomByHotel(req: Request, res: Response) {
@@ -110,16 +111,60 @@ const roomController = {
             data: data,
         });
     },
-    async getPriceByRoomId(req: Request, res: Response) {
-        const data = await roomService.getPriceByRoomId(req.params.id);
 
-        res.status(200).json({
-            error: null,
-            data: data,
-        });
+    async getPriceByRoomId(req: Request, res: Response) {
+        const roomId: string = req.params.id;
+        const startDate = dayjs(req.query.startDate as string).format("YYYY-MM-DD");
+        const endDate = dayjs(req.query.endDate as string).format("YYYY-MM-DD");
+
+        const filterByDate = (priceData: RoomPriceRows[]) => {
+            return priceData.filter((price) => {
+                return dayjs(price.date).isAfter(dayjs(startDate).subtract(1, "day")) && dayjs(price.date).isBefore(endDate, "day");
+            });
+        };
+
+        try {
+            const key: string = `/room/price/${roomId}`;
+            const redisData = JSON.parse(await getRedis(key));
+
+            if (redisData === null) {
+                const data = await roomService.getPriceByRoomId(roomId);
+
+                setRedis(key, data);
+
+                res.status(200).json({
+                    error: null,
+                    data: filterByDate(data),
+                });
+            } else {
+                res.status(200).json({
+                    error: null,
+                    data: filterByDate(redisData),
+                });
+            }
+        } catch (error) {
+            const data = await roomService.getPriceByRoomId(roomId);
+
+            res.status(200).json({
+                error: null,
+                data: filterByDate(data),
+            });
+        }
     },
+
     async insertPriceByDate(req: JWTCheck, res: Response) {
         const data = await roomService.insertPriceByDate(req.user.id, req.body);
+
+        try {
+            const redisData = await roomService.getPriceByRoomId(req.body.room_id);
+            const key: string = `/room/price/${req.body.room_id}`;
+            setRedis(key, redisData);
+        } catch (error) {
+            res.status(200).json({
+                error: null,
+                data: data,
+            });
+        }
 
         res.status(201).json({
             error: null,
