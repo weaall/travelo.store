@@ -74,7 +74,7 @@ export default function SearchResult() {
             if (axios.isAxiosError(error) && error.response) {
                 if (error.response.status === 401) {
                     window.alert("올바른 접근이 아닙니다.");
-                    navigate("/main");
+                    navigate("/");
                 }
             }
         } finally {
@@ -84,7 +84,7 @@ export default function SearchResult() {
 
     const clickHotel = (hotelId : number) =>{
         const encryptedId = encrypt(`${hotelId}`);
-        navigate("/hotel/" + encryptedId);
+        navigate(`/hotel/${encryptedId}/${startDate}/${endDate}/${adult}/${child}`);
     }
 
     useEffect(() => {
@@ -107,7 +107,6 @@ export default function SearchResult() {
                 <tw.HotelList>
                     {hotelList.map((hotel) => (
                         <tw.HotelWrap key={hotel.hotel_id}>
-                            <tw.ContentsFlex>
                                 <tw.HotelPic>
                                     <ImgSlider images={hotel.hotel_img} />
                                 </tw.HotelPic>
@@ -170,7 +169,6 @@ export default function SearchResult() {
 
                                     </tw.HotelInfo>
                                 </tw.HotelInfoWrap>
-                            </tw.ContentsFlex>
                         </tw.HotelWrap>
                     ))}
                 </tw.HotelList>

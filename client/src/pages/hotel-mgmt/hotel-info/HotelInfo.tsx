@@ -66,6 +66,8 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
         try {
             const urlResponse = await axiosInstance.get("/hotel/img/" + hotel_id);
 
+            console.log(urlResponse.data.data)
+
             const imagesData = urlResponse.data.data;
 
             const newFiles = [];
@@ -90,7 +92,6 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
             setImagePreviews(imagePreviews);
         } catch (error) {
             window.alert("올바른 접근이 아닙니다.");
-            navigate("/main");
         }
     };
 

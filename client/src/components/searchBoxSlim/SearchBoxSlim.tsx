@@ -6,6 +6,7 @@ import * as tw from "./SearchBoxSlim.styles"
 import { ModalPortal } from "../../hook/modal/ModalPortal";
 import SearchDateModal from "../../hook/modal/search_date/SearchDate.modal";
 import SearchPersonModal from "../../hook/modal/search_person/SearchPerson.modal";
+import { encrypt } from "../../utils/cryptoJs";
 
 interface SearchBoxProps {
     defaultSearchValue?: string;
@@ -13,9 +14,11 @@ interface SearchBoxProps {
     defaultEndDate?: string;
     defaultAdult?: number;
     defaultChild?: number;
+    currentHotelId?: string;
+    currentHotelName? : string;
 }
 
-export default function SearchBoxSlim({ defaultSearchValue, defaultStartDate, defaultEndDate, defaultAdult, defaultChild}: SearchBoxProps) {
+export default function SearchBoxSlim({ defaultSearchValue, defaultStartDate, defaultEndDate, defaultAdult, defaultChild, currentHotelId, currentHotelName}: SearchBoxProps) {
     const navigate = useNavigate();
 
     const [isSearchDateModalOpen, setIsSearchDateModalOpen] = useState(false);
@@ -70,7 +73,11 @@ export default function SearchBoxSlim({ defaultSearchValue, defaultStartDate, de
     };
 
     const handleSearchSubmit = () => {
-        navigate(`/search/${searchValue}/${dateValue.startDate}/${dateValue.endDate}/${personValue.adult}/${personValue.child}`);
+        if(currentHotelId !== undefined && currentHotelName === searchValue){
+            navigate(`/hotel/${encrypt(currentHotelId || "")}/${dateValue.startDate}/${dateValue.endDate}/${personValue.adult}/${personValue.child}`);
+        }else{
+            navigate(`/search/${searchValue}/${dateValue.startDate}/${dateValue.endDate}/${personValue.adult}/${personValue.child}`);
+        }
     };
 
     const handleSearchDateSelect = (selectedDates: { startDate: string; endDate: string }) => {

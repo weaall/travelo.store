@@ -15,12 +15,9 @@ import dayjs from "dayjs";
 export default function Hotel() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
-    const { encryptedId } = useParams();
+    const { encryptedId, startDate, endDate, adult, child } = useParams();
 
     const id = decrypt(encryptedId || "");
-
-    const startDate = "2024-05-25";
-    const endDate = "2024-05-26";
 
     const [hotelData, setHotelData] = useState({
         id: id,
@@ -141,7 +138,7 @@ export default function Hotel() {
 
     useEffect(() => {
         fetchHotel();
-    }, []);
+    }, [startDate,endDate]);
 
     if (loading) {
         return <Loading />;
@@ -150,12 +147,28 @@ export default function Hotel() {
     return (
         <tw.Container>
             <tw.MainContainer>
-                <div className="mobile:hidden">
-                    <SearchBoxSlim />
-                </div>
-                <div className="hidden mobile:block">
-                    <SearchBox />
-                </div>
+                <tw.SearchWrap>
+                    <SearchBoxSlim
+                        defaultSearchValue={hotelData.name}
+                        defaultStartDate={startDate}
+                        defaultEndDate={endDate}
+                        defaultAdult={parseInt(adult || "2")}
+                        defaultChild={parseInt(child || "0")}
+                        currentHotelId={id}
+                        currentHotelName={hotelData.name}
+                    />
+                </tw.SearchWrap>
+                <tw.SearchWrapMobile>
+                    <SearchBox
+                        defaultSearchValue={hotelData.name}
+                        defaultStartDate={startDate}
+                        defaultEndDate={endDate}
+                        defaultAdult={parseInt(adult || "2")}
+                        defaultChild={parseInt(child || "0")}
+                        currentHotelId={id}
+                        currentHotelName={hotelData.name}
+                    />
+                </tw.SearchWrapMobile>
                 <tw.HotelWrap>
                     <tw.HotelPic>
                         <ImgSliderMain images={hotelData.img} />
@@ -205,15 +218,22 @@ export default function Hotel() {
                                 </tw.RoomPic>
                                 <tw.RoomInfoWrap>
                                     <tw.HotelInfo>
-                                        <tw.RoomName>{room.name}</tw.RoomName>
-                                        <tw.RoomText>{room.view_type}</tw.RoomText>
-                                        <tw.RoomText>{room.bed_type} / {room.num}인</tw.RoomText>
-                                        <tw.RoomText></tw.RoomText>
+                                        <tw.InfoWrap>
+                                            <tw.RoomName>{room.name}</tw.RoomName>
+                                            <tw.RoomText>{room.view_type}</tw.RoomText>
+                                            <tw.RoomText>
+                                                {room.bed_type} / {room.num}인
+                                            </tw.RoomText>
+                                        </tw.InfoWrap>
                                         <tw.PriceWrap>
-                                            <tw.TotalLabel>{dayjs (endDate).diff(dayjs(startDate), "day")}박 총 요금</tw.TotalLabel>
+                                            <tw.TotalLabel>{startDate}~</tw.TotalLabel>
+                                            <tw.TotalLabel>{dayjs(endDate).diff(dayjs(startDate), "day")}박 총 요금</tw.TotalLabel>
                                             <tw.TotalPrice>
                                                 {room.room_price.reduce((total, room) => total + room.price, 0).toLocaleString()}원
                                             </tw.TotalPrice>
+                                            <tw.BookBtnWrap>
+                                                <tw.BookBtn>예약하기</tw.BookBtn>
+                                            </tw.BookBtnWrap>
                                         </tw.PriceWrap>
                                     </tw.HotelInfo>
                                 </tw.RoomInfoWrap>

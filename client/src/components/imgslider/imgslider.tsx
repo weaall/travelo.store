@@ -9,7 +9,7 @@ interface CustomImageSliderProps {
     images: Image[];
 }
 
-export default function ImgSlider({ images }: CustomImageSliderProps) {
+export default function ImgSliderMain({ images }: CustomImageSliderProps) {
     const [currentIndex, setCurrentIndex] = useState(0);
 
     const prevSlide = () => {
@@ -39,11 +39,9 @@ export default function ImgSlider({ images }: CustomImageSliderProps) {
             <tw.ImgButton onClick={nextSlide} className="right-2">
                 {">"}
             </tw.ImgButton>
-            <tw.DotsContainer>
-                {images.map((_, index) => (
-                    <tw.Dot key={index} $active={index === currentIndex} onClick={() => setCurrentIndex(index)} />
-                ))}
-            </tw.DotsContainer>
+            <tw.IndexWrap>
+                {currentIndex + 1} / {images.length}
+            </tw.IndexWrap>
         </tw.ImgContainer>
     );
 }

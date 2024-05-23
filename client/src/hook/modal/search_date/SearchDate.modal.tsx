@@ -208,7 +208,7 @@ export default function SearchDateModal({ onClose, startDate, endDate}: ModalPro
                 </tw.CalendarWrap>
 
                 <tw.RegWrap>
-                    <tw.RegBtn onClick={() => onClose(dateValue)} $validator={validator()}>
+                    <tw.RegBtn onClick={() => onClose(dateValue)} $validator={validator()} disabled={!validator()}>
                         확인
                     </tw.RegBtn>
                 </tw.RegWrap>

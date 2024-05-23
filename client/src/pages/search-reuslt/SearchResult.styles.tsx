@@ -1,19 +1,23 @@
 import tw from "tailwind-styled-components"
 
-export const Container = tw.div`flex flex-col items-center bg-gray-100`
+export const Container = tw.div`flex flex-col items-center`
 
-export const ContentsWrap = tw.div`w-full flex flex-col space-y-2 px-6 py-6 border-b`
 export const ContentsFlex = tw.div`h-auto w-auto flex items-center`
 
-export const MainContainer = tw.div`w-full h-full py-10`
+export const MainContainer = tw.div`w-full h-full pb-10`
 
-export const HotelList = tw.div`flex flex-col gap-6`
+export const HotelList = tw.div`flex flex-col gap-6
+mobile:px-4`
 
-export const HotelWrap = tw.div`w-auto mx-10 rounded-2xl bg-white shadow-md hover:shadow-xl`
-export const HotelPic = tw.div`w-4/12 h-60 bg-gray-30`
+export const HotelWrap = tw.div`w-auto rounded-2xl bg-white shadow-md hover:shadow-xl
+mobile:flex mobile:flex-col mobile:h-auto`
+export const HotelPic = tw.div`w-4/12 h-60 bg-gray-30
+mobile:h-40 mobile:w-full`
 
-export const HotelInfoWrap = tw.div`flex flex-col w-8/12 py-2 hover:cursor-pointer`
-export const HotelInfo = tw.div`relative px-5 py-2 space-y-1`
+export const HotelInfoWrap = tw.div`flex flex-col w-8/12 py-2 hover:cursor-pointer
+mobile:w-full`
+export const HotelInfo = tw.div`relative px-5 py-2 space-y-1
+mobile:flex-row`
 export const UpperInfo = tw.div`flex flex-col`
 export const HotelName = tw.h2`text-xl font-bold`
 export const HotelAddress = tw.p`text-xs font-bold text-main pl-1 truncate`

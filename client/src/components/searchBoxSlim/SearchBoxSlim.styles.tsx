@@ -1,6 +1,6 @@
 import tw from "tailwind-styled-components"
 
-export const Container = tw.div`w-full flex flex-col items-center py-4 sticky top-0 z-50 max-w-[840px]`
+export const Container = tw.div`w-full flex flex-col items-center py-4`
 
 export const MainContainer = tw.div`w-full`
 
