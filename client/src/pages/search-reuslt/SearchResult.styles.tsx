@@ -9,8 +9,8 @@ export const MainContainer = tw.div`w-full h-full pb-10`
 export const HotelList = tw.div`flex flex-col gap-6
 mobile:px-4`
 
-export const HotelWrap = tw.div`w-auto rounded-2xl bg-white shadow-md hover:shadow-xl
-mobile:flex mobile:flex-col mobile:h-auto`
+export const HotelWrap = tw.div`flex w-auto rounded-2xl bg-white shadow-md hover:shadow-xl
+mobile:flex-col mobile:h-auto`
 export const HotelPic = tw.div`w-4/12 h-60 bg-gray-30
 mobile:h-40 mobile:w-full`
 

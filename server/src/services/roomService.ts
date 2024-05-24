@@ -145,8 +145,7 @@ const roomService = {
     },
     async putRoomInfo(
         user_id: string,
-        { hotel_id, room_id, name, num, bed_type_id, view_type_id }: RoomInfoProps,
-        urls: string[],
+        { hotel_id, room_id, name, num, bed_type_id, view_type_id, urls }: RoomInfoProps,
     ) {
         const checkAuthSql = "SELECT name FROM hotel WHERE id = ? and user_id = ?";
         const checkAuthValues = [hotel_id, user_id];
@@ -171,7 +170,6 @@ const roomService = {
                 checkAuthSql,
                 checkAuthValues,
             );
-
             if (checkAuthResult.length === 0) {
                 throw new CustomError("UNAUTHORIZED", 401);
             }
@@ -185,7 +183,7 @@ const roomService = {
 
             await deleteRoomImg(imageUrls);
 
-            const [deleteHotelImgResult] = await connection.execute(deleteRoomImgSql, deleteRoomImgValues);
+            const [deleteRoomImgResult] = await connection.execute(deleteRoomImgSql, deleteRoomImgValues);
 
             if (addRoomImgValues.length > 0) {
                 for (const imageUrl of urls) {

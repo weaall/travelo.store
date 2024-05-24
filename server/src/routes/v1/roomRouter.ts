@@ -26,9 +26,8 @@ roomRouter.post(
 roomRouter.put(
     "/info",
     isAuthenticated,
-    uploadRoomImg.array("images", 6),
     asyncHandler((req: Request, res: Response) => roomController.putRoomInfo(req as JWTCheck, res)),
-)
+);
 
 roomRouter.post(
     "/price/date",

@@ -6,7 +6,6 @@ import CustomError from "./utils/customError"
 import dayjs from 'dayjs';
 import isLeapYear from 'dayjs/plugin/isLeapYear';
 import 'dayjs/locale/ko'; 
-import { main } from "./config/presignedUrl";
 dayjs.extend(isLeapYear);
 dayjs.locale('ko')
 

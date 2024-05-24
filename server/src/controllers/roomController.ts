@@ -38,8 +38,6 @@ const roomController = {
                     data: data,
                 });
             } else {
-                console.log(JSON.parse(redisData).length);
-
                 res.status(200).json({
                     error: null,
                     data: JSON.parse(redisData),
@@ -101,16 +99,16 @@ const roomController = {
             data: data,
         });
     },
-    async putRoomInfo(req: JWTCheck, res: Response) {
-        const urls = (req.files as any[]).map((file) => file.location);
 
-        const data = await roomService.putRoomInfo(req.user.id, JSON.parse(req.body.data), urls);
+    async putRoomInfo(req: JWTCheck, res: Response) {
+        const data = await roomService.putRoomInfo(req.user.id, req.body);
 
         res.status(201).json({
             error: null,
             data: data,
         });
     },
+
 
     async getPriceByRoomId(req: Request, res: Response) {
         const roomId: string = req.params.id;

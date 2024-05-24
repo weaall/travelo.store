@@ -164,6 +164,7 @@ export interface RoomInfoProps {
     num: number;
     bed_type_id: number;
     view_type_id: number;
+    urls: string[];
 }
 
 export interface RoomServProps {

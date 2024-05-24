@@ -1,8 +1,7 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
-export const main = async () => {
-    
+export const presignedUrl = async (key: string, contentType: string): Promise<string | undefined> => {
     const s3Client = new S3Client({
         region: process.env.AWS_S3_REGION as string,
         credentials: {
@@ -13,15 +12,17 @@ export const main = async () => {
 
     const command = new PutObjectCommand({
         Bucket: process.env.AWS_S3_BUCKET_NAME as string,
-        Key: "your-key",
-        ContentType: "text/plain",
+        Key: key,
+        ContentType: contentType,
+        ACL: "public-read"
     });
 
     try {
         // @ts-ignore
         const signedUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
-        console.log(signedUrl);
+        return signedUrl;
     } catch (error) {
         console.error("Error generating signed URL:", error);
+        return undefined;
     }
 };

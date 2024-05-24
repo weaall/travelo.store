@@ -153,24 +153,54 @@ export default function SetRoomModal({ onClose, hotel_id, room_id }: ModalProps)
         }
     };
 
-    const clickInfoSave = async () => {
+    const uploadFilesToS3 = async () => {
+        const uploadedKeys = [];
+        
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const key = `room_img/${hotel_id}/${room_id}/${file.name}`;
+            const contentType = file.type;
+    
+                const presignedUrlsResponse = await axiosInstance.post("/auth/presignedUrl", {
+                    key: key,
+                    contentType: contentType
+                });
+
+                const  presignedUrl  = presignedUrlsResponse.data.data;
+    
+                const response = await fetch(presignedUrl, {
+                    method: "PUT",
+                    body: file,
+                    headers: {
+                        "Content-Type": contentType,
+                    },
+                });
+
+                const imageUrl = presignedUrl.split("?")[0];
+                uploadedKeys.push(imageUrl);
+        }
+        return uploadedKeys;
+    };
+    
+    const clickInfoSavePre = async () => {
         try {
-            const allInfoData = new FormData();
-
-            for (let i = 0; i < files.length; i++) {
-                allInfoData.append("images", files[i]);
-            }
-
-            allInfoData.append("data", JSON.stringify(roomData));
+            const uploadedKeys = await uploadFilesToS3();
+    
+            const updatedRoomData = {
+                ...roomData,
+                urls: uploadedKeys,
+            };
+            console.log(updatedRoomData)
+    
             const config = await sendJWT({
                 headers: {
-                    "Content-Type": "multipart/form-data",
+                    "Content-Type": "application/json",
                 },
                 method: "put",
                 url: "/room/info",
-                data: allInfoData,
+                data: updatedRoomData,
             });
-
+    
             const response = await axiosInstance.request(config);
             fetchRoomInfo();
             window.alert("저장완료");
@@ -181,9 +211,13 @@ export default function SetRoomModal({ onClose, hotel_id, room_id }: ModalProps)
                 } else {
                     window.alert("올바른 접근이 아닙니다.");
                 }
+            } else {
+                console.error("Error saving room info:", error);
+                window.alert("Error saving room info");
             }
         }
     };
+
 
     useEffect(() => {
         fetchRoomInfo();
@@ -207,7 +241,7 @@ export default function SetRoomModal({ onClose, hotel_id, room_id }: ModalProps)
                             <tw.ResetBtn>되돌리기</tw.ResetBtn>
                             <tw.SetBtn
                                 onClick={() => {
-                                    clickInfoSave();
+                                    clickInfoSavePre();
                                     onClose();
                                 }}
                             >
