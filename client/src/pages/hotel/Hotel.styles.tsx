@@ -25,7 +25,8 @@ export const Label = tw.p`text-xl font-semibold`
 export const HotelServ = tw.div`flex flex-wrap`
 export const HotelTextWrap = tw.div`flex items-center h-auto w-1/5
 mobile:w-1/3`
-export const HotelText = tw.p`text-xs`
+export const HotelText = tw.p`text-sm
+mobile:text-xs`
 export const HotelSvg = tw.img`w-4 mr-1`
 
 export const RoomList = tw.div`flex flex-col gap-6 mx-6 px-4 py-6 border

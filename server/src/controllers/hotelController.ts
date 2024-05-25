@@ -44,9 +44,7 @@ const hotelController = {
     },
 
     async regHotel(req: JWTCheck, res: Response) {
-        const urls = (req.files as any[]).map((file) => file.location);
-
-        const data = await hotelService.regHotel(req.user.id, JSON.parse(req.body.data), urls);
+        const data = await hotelService.regHotel(req.user.id, req.body);
 
         res.status(201).json({
             error: null,
@@ -91,9 +89,7 @@ const hotelController = {
     },
 
     async putHotelInfo(req: JWTCheck, res: Response) {
-        const urls = (req.files as any[]).map((file) => file.location);
-
-        const data = await hotelService.putHotelInfo(req.user.id, JSON.parse(req.body.data), urls);
+        const data = await hotelService.putHotelInfo(req.user.id,(req.body));
 
         res.status(201).json({
             error: null,

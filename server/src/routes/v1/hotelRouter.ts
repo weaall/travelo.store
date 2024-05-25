@@ -14,7 +14,6 @@ hotelRouter.get("/img/:id", asyncHandler(hotelController.getHotelImgUrl));
 hotelRouter.post(
     "/reg",
     isAuthenticated,
-    uploadRegDoc.array("images", 3),
     asyncHandler((req: Request, res: Response) => hotelController.regHotel(req as JWTCheck, res)),
 )
 
@@ -41,7 +40,6 @@ hotelRouter.get(
 hotelRouter.put(
     "/mgmt/info",
     isAuthenticated,
-    uploadHotelImg.array("images", 10),
     asyncHandler((req: Request, res: Response) => hotelController.putHotelInfo(req as JWTCheck, res)),
 )
 

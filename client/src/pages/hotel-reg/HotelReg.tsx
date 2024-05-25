@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react"
-import * as tw from "./HotelReg.styles"
-import { sendJWT } from "../../utils/jwtUtils"
-import { axios, axiosInstance } from "../../utils/axios.utils"
-import { useNavigate } from "react-router-dom"
-import { RegHotelProps } from "../../interface/interfaces"
+import React, { DragEvent, useEffect, useState } from "react";
+import * as tw from "./HotelReg.styles";
+import { sendJWT } from "../../utils/jwtUtils";
+import { axios, axiosInstance } from "../../utils/axios.utils";
+import { useNavigate } from "react-router-dom";
+import { RegHotelProps } from "../../interface/interfaces";
 
 export default function HotelReg() {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
     const [formData, setFormData] = useState<RegHotelProps>({
         name: "",
@@ -17,78 +17,139 @@ export default function HotelReg() {
         bank: "",
         account: 0,
         owner: "",
-    })
+    });
 
-    const [file, setFile] = useState<File>();
+    const [files, setFiles] = useState<File[]>([]);
+    const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+
+    const onDragOver = (e: DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+    };
+
+    const onDrop = (e: DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+
+        const droppedFiles = e.dataTransfer.files;
+        const newFiles = Array.from(droppedFiles).slice(0, 6 - files.length);
+        setFiles((prevFiles) => [...prevFiles, ...newFiles]);
+
+        const previews = [...files, ...newFiles].map((file) => URL.createObjectURL(file));
+        setImagePreviews(previews);
+    };
+
+    const removeFile = (index: number) => {
+        const newFiles = [...files];
+        newFiles.splice(index, 1);
+        setFiles(newFiles);
+
+        const previews = newFiles.map((file) => URL.createObjectURL(file));
+        setImagePreviews(previews);
+    };
 
     const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target
-        setFormData({ ...formData, [name]: value })
-    }
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+    };
 
-    const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const selectedFile = e.target.files?.[0];
-        setFile(selectedFile);
-      };
+    const uploadFilesToS3 = async () => {
+        const uploadedKeys = [];
 
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const key = `reg_docs/${formData.name}/${file.name}`;
+            const contentType = file.type;
+
+            const presignedUrlsResponse = await axiosInstance.post("/auth/presignedUrl", {
+                key: key,
+                contentType: contentType,
+            });
+
+            const presignedUrl = presignedUrlsResponse.data.data;
+
+            const response = await fetch(presignedUrl, {
+                method: "PUT",
+                body: file,
+                headers: {
+                    "Content-Type": contentType,
+                },
+            });
+
+            const imageUrl = presignedUrl.split("?")[0];
+            uploadedKeys.push(imageUrl);
+        }
+        return uploadedKeys;
+    };
 
     const onClickRegister = async () => {
         try {
+            const uploadedKeys = await uploadFilesToS3();
 
-            const regData = new FormData()
-            regData.append("images", file as Blob)
-            regData.append("data", JSON.stringify(formData))
+            const updatedRoomData = {
+                ...formData,
+                urls: uploadedKeys,
+            };
 
             const config = await sendJWT({
                 headers: {
-                    "Content-Type": "multipart/form-data",
-                  },
+                    "Content-Type": "application/json",
+                },
                 method: "post",
                 url: "/hotel/reg",
-                data: regData
-            })
+                data: updatedRoomData,
+            });
 
-
-            const response = await axiosInstance.request(config)
-            window.alert("등록되었습니다.")
-            navigate("/")
+            await axiosInstance.request(config);
+            window.alert("저장완료");
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 if (error.response.status === 409) {
-                    window.alert("올바른 접근이 아닙니다.")
+                    window.alert("올바른 접근이 아닙니다.");
                 } else {
-                    window.alert("올바른 접근이 아닙니다.")
+                    window.alert("올바른 접근이 아닙니다.");
+                    navigate("/");
                 }
+            } else {
+                window.alert("올바른 접근이 아닙니다.");
+                navigate("/");
             }
         }
-    }
+    };
 
-    useEffect(() => {
-    }, [])
+    useEffect(() => {}, []);
     return (
         <tw.Container>
             <tw.InputWrap>
                 <tw.UpperTag>호텔이름</tw.UpperTag>
-                <tw.Input onChange={onChangeInput} value={formData.name} name="name"/>
+                <tw.Input onChange={onChangeInput} value={formData.name} name="name" />
                 <tw.UpperTag>주소</tw.UpperTag>
-                <tw.Input onChange={onChangeInput} value={formData.address} name="address"/>
+                <tw.Input onChange={onChangeInput} value={formData.address} name="address" />
                 <tw.UpperTag>상세주소</tw.UpperTag>
-                <tw.Input onChange={onChangeInput} value={formData.address_detail} name="address_detail"/>
+                <tw.Input onChange={onChangeInput} value={formData.address_detail} name="address_detail" />
                 <tw.UpperTag>우편번호</tw.UpperTag>
-                <tw.Input onChange={onChangeInput} value={formData.postcode} name="postcode"/>
+                <tw.Input onChange={onChangeInput} value={formData.postcode} name="postcode" />
                 <tw.UpperTag>사업자등록번호</tw.UpperTag>
-                <tw.Input onChange={onChangeInput} value={formData.reg_num} name="reg_num"/>
+                <tw.Input onChange={onChangeInput} value={formData.reg_num} name="reg_num" />
                 <tw.UpperTag>은행</tw.UpperTag>
-                <tw.Input onChange={onChangeInput} value={formData.bank} name="bank"/>
+                <tw.Input onChange={onChangeInput} value={formData.bank} name="bank" />
                 <tw.UpperTag>계좌주</tw.UpperTag>
-                <tw.Input onChange={onChangeInput} value={formData.owner} name="owner"/>
+                <tw.Input onChange={onChangeInput} value={formData.owner} name="owner" />
                 <tw.UpperTag>계좌번호</tw.UpperTag>
-                <tw.Input onChange={onChangeInput} value={formData.account} name="account"/>
-                <input type="file" accept="image/*" onChange={onFileChange} />
+                <tw.Input onChange={onChangeInput} value={formData.account} name="account" />
+                <tw.UploadWrap onDragOver={onDragOver} onDrop={onDrop}>
+                    <tw.ImgLabel>이미지를 드래그 앤 드롭하세요.</tw.ImgLabel>
+                    <tw.ImgContainer>
+                        {imagePreviews.map((preview, index) => (
+                            <tw.ImgWrap key={index}>
+                                <tw.RemoveBtn onClick={() => removeFile(index)}>삭제</tw.RemoveBtn>
+                                <tw.Img src={preview} alt={`이미지 미리보기 ${index + 1}`} draggable={false} />
+                            </tw.ImgWrap>
+                        ))}
+                    </tw.ImgContainer>
+                </tw.UploadWrap>
                 <tw.RegBtn onClick={onClickRegister} $validator={true} disabled={false}>
                     호텔등록
                 </tw.RegBtn>
             </tw.InputWrap>
         </tw.Container>
-    )
+    );
 }

@@ -55,8 +55,7 @@ const hotelService = {
     },
     async regHotel(
         user_id: string,
-        { name, address, address_detail, postcode, reg_num, bank, account, owner }: RegHotelParams,
-        urls: string[],
+        { name, address, address_detail, postcode, reg_num, bank, account, owner, urls }: RegHotelParams,
     ) {
         console.log(user_id, name, address, address_detail, postcode, reg_num, bank, account, owner)
         const addHotelSql =
@@ -173,8 +172,7 @@ const hotelService = {
 
     async putHotelInfo(
         user_id: string,
-        { hotel_id, description, check_in, check_out, tel_num }: HotelInfoProps,
-        urls: string[],
+        { hotel_id, description, check_in, check_out, tel_num, urls }: HotelInfoProps,
     ) {
         const connection = await pool.getConnection();
 

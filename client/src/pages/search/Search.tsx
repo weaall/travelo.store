@@ -6,8 +6,19 @@ import * as tw from "./Search.styles"
 import { ModalPortal } from "../../hook/modal/ModalPortal";
 import SearchDateModal from "../../hook/modal/search_date/SearchDate.modal";
 import SearchPersonModal from "../../hook/modal/search_person/SearchPerson.modal";
+import { encrypt } from "../../utils/cryptoJs";
 
-export default function Search() {
+interface SearchBoxProps {
+    defaultSearchValue?: string;
+    defaultStartDate?: string;
+    defaultEndDate?: string;
+    defaultAdult?: number;
+    defaultChild?: number;
+    currentHotelId?: string;
+    currentHotelName? : string;
+}
+
+export default function SearchBox({ defaultSearchValue, defaultStartDate, defaultEndDate, defaultAdult, defaultChild, currentHotelId, currentHotelName}: SearchBoxProps) {
     const navigate = useNavigate();
 
     const [isSearchDateModalOpen, setIsSearchDateModalOpen] = useState(false);
@@ -30,15 +41,15 @@ export default function Search() {
         setIsSearchPersonModalOpen(false);
     };
 
-    const [searchValue, setSearchValue] = useState("");
+    const [searchValue, setSearchValue] = useState(defaultSearchValue || "");
     const [dateValue, setDateValue] = useState({
-        startDate: dayjs().format("YYYY-MM-DD"),
-        endDate: dayjs().add(1, "day").format("YYYY-MM-DD"),
-        diffDate: 1
+        startDate: defaultStartDate || dayjs().format("YYYY-MM-DD"),
+        endDate: defaultEndDate || dayjs().add(1, "day").format("YYYY-MM-DD"),
+        diffDate: dayjs(defaultEndDate).diff(dayjs(defaultStartDate), "day") || 1,
     });
     const [personValue, setPersonValue] = useState({
-        adult: 2,
-        child: 0,
+        adult: defaultAdult || 2,
+        child: defaultChild || 0
     });
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,40 +59,44 @@ export default function Search() {
     const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === "Enter" && searchValue.trim() !== "") {
             handleSearchSubmit();
-        }else if(event.key === "Enter" && searchValue.trim() === ""){
-            window.alert("검색어를 입력해주세요")
+        } else if (event.key === "Enter" && searchValue.trim() === "") {
+            window.alert("검색어를 입력해주세요");
         }
     };
 
     const handleOnClick = () => {
         if (searchValue.trim() !== "") {
             handleSearchSubmit();
-        }else if(searchValue.trim() === ""){
-            window.alert("검색어를 입력해주세요")
+        } else if (searchValue.trim() === "") {
+            window.alert("검색어를 입력해주세요");
         }
     };
 
     const handleSearchSubmit = () => {
+        if(currentHotelId !== undefined && currentHotelName === searchValue){
+            navigate(`/hotel/${encrypt(currentHotelId || "")}/${dateValue.startDate}/${dateValue.endDate}/${personValue.adult}/${personValue.child}`);
+        }else{
             navigate(`/search/${searchValue}/${dateValue.startDate}/${dateValue.endDate}/${personValue.adult}/${personValue.child}`);
+        }
     };
 
-    const handleSearchDateSelect = (selectedDates: { startDate: string, endDate: string }) => {
+    const handleSearchDateSelect = (selectedDates: { startDate: string; endDate: string }) => {
         setDateValue({
             ...dateValue,
             startDate: selectedDates.startDate,
-            endDate: selectedDates.endDate
+            endDate: selectedDates.endDate,
         });
-    
+
         closeSearchDateModal();
     };
 
-    const handleSearchPersonSelect = (selectedPerson: { adult: number, child : number }) => {
+    const handleSearchPersonSelect = (selectedPerson: { adult: number; child: number }) => {
         setPersonValue({
             ...personValue,
             adult: selectedPerson.adult,
-            child: selectedPerson.child
+            child: selectedPerson.child,
         });
-    
+
         closeSearchPersonModal();
     };
 
@@ -94,44 +109,44 @@ export default function Search() {
         <tw.Container>
             <tw.MainContainer>
                 <tw.SearchContainer>
-                    <tw.UpperWrap>
-                        <tw.SearchWrap>
-                            <tw.SvgWrap>
-                                <tw.Svg alt="" src={require("../../assets/svg/search_icon.svg").default} />
-                            </tw.SvgWrap>
-                            <tw.SearchInput
-                                placeholder="지역, 숙소명으로 찾아보세요"
-                                maxLength={30}
-                                value={searchValue}
-                                onChange={handleSearchChange}
-                                onKeyPress={handleKeyPress}
-                            />
-                            <tw.RemoveBtn onClick={() => setSearchValue("")}>
-                                <tw.Svg alt="" src={require("../../assets/svg/close_svg.svg").default} />
-                            </tw.RemoveBtn>
-                            <tw.SearchBtn onClick={handleOnClick}>
-                                <tw.Svg alt="" src={require("../../assets/svg/search_white_icon.svg").default} />
-                            </tw.SearchBtn>
-                        </tw.SearchWrap>
-                    </tw.UpperWrap>
-                    <tw.BottomWrap>
-                        <tw.CalendarWrap>
-                            <tw.SvgWrap>
-                                <tw.Svg alt="" src={require("../../assets/svg/calendar_icon.svg").default} />
-                            </tw.SvgWrap>
-                            <tw.CalendarBtn onClick={openSearchDateModal}>
-                                {dateValue.startDate} / {dateValue.diffDate}박
-                            </tw.CalendarBtn>
-                        </tw.CalendarWrap>
-                        <tw.PersonWrap>
-                            <tw.SvgWrap>
-                                <tw.Svg alt="" src={require("../../assets/svg/person_icon.svg").default} />
-                            </tw.SvgWrap>
-                            <tw.PersonBtn onClick={openSearchPersonModal}>
-                                성인 {personValue.adult}, 아동 {personValue.child}
-                            </tw.PersonBtn>
-                        </tw.PersonWrap>
-                    </tw.BottomWrap>
+
+                    <tw.SearchWrap>
+                        <tw.SvgWrap>
+                            <tw.Svg alt="" src={require("../../assets/svg/search_icon.svg").default} />
+                        </tw.SvgWrap>
+                        <tw.SearchInput
+                            placeholder="지역, 숙소명으로 찾아보세요"
+                            maxLength={30}
+                            value={searchValue}
+                            onChange={handleSearchChange}
+                            onKeyPress={handleKeyPress}
+                        />
+                        <tw.RemoveBtn onClick={() => setSearchValue("")}>
+                            <tw.Svg alt="" src={require("../../assets/svg/close_svg.svg").default} />
+                        </tw.RemoveBtn>
+                    </tw.SearchWrap>
+
+                    <tw.CalendarWrap>
+                        <tw.SvgWrap>
+                            <tw.Svg alt="" src={require("../../assets/svg/calendar_icon.svg").default} />
+                        </tw.SvgWrap>
+                        <tw.CalendarBtn onClick={openSearchDateModal}>
+                            {dateValue.startDate} / {dateValue.diffDate}박
+                        </tw.CalendarBtn>
+                    </tw.CalendarWrap>
+
+                    <tw.PersonWrap>
+                        <tw.SvgWrap>
+                            <tw.Svg alt="" src={require("../../assets/svg/person_icon.svg").default} />
+                        </tw.SvgWrap>
+                        <tw.PersonBtn onClick={openSearchPersonModal}>
+                            성인 {personValue.adult}, 아동 {personValue.child}
+                        </tw.PersonBtn>
+                    </tw.PersonWrap>
+                    
+                    <tw.SearchBtn onClick={handleOnClick}>
+                        <tw.Svg alt="" src={require("../../assets/svg/search_white_icon.svg").default} />
+                    </tw.SearchBtn>
                 </tw.SearchContainer>
             </tw.MainContainer>
 

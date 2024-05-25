@@ -119,6 +119,7 @@ export interface RegHotelParams {
     bank: string;
     account: number;
     owner: string;
+    urls: string[];
 }
 
 export interface HotelInfoProps {
@@ -127,6 +128,7 @@ export interface HotelInfoProps {
     check_in: number;
     check_out: number;
     tel_num: number;
+    urls: string[];
 }
 
 export interface HotelServProps {

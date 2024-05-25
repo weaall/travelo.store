@@ -41,4 +41,4 @@ export const ToolTipText = tw.li`px-3 text-white text-sm font-bold`
 
 export const PriceWrap = tw.div`flex flex-col text-end`
 export const TotalLabel = tw.p`text-xs text-gray-400`
-export const TotalPrice = tw.p`text-lg font-bold`
+export const TotalPrice = tw.p`text-xl font-bold`

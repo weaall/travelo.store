@@ -190,7 +190,6 @@ export default function SetRoomModal({ onClose, hotel_id, room_id }: ModalProps)
                 ...roomData,
                 urls: uploadedKeys,
             };
-            console.log(updatedRoomData)
     
             const config = await sendJWT({
                 headers: {
@@ -210,10 +209,11 @@ export default function SetRoomModal({ onClose, hotel_id, room_id }: ModalProps)
                     window.alert("올바른 접근이 아닙니다.");
                 } else {
                     window.alert("올바른 접근이 아닙니다.");
+                    navigate("/")
                 }
             } else {
-                console.error("Error saving room info:", error);
-                window.alert("Error saving room info");
+                window.alert("올바른 접근이 아닙니다.");
+                navigate("/")
             }
         }
     };

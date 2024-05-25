@@ -1,4 +1,4 @@
-import React, { ChangeEvent, DragEvent, useEffect, useState } from "react";
+import React, { DragEvent, useEffect, useState } from "react";
 import { sendJWT } from "../../../utils/jwtUtils";
 import { axios, axiosInstance } from "../../../utils/axios.utils";
 import { useNavigate } from "react-router-dom";
@@ -183,25 +183,55 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
         }
     };
 
+    const uploadFilesToS3 = async () => {
+        const uploadedKeys = [];
+        
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const key = `hotel_img/${hotel_id}/${file.name}`;
+            const contentType = file.type;
+    
+                const presignedUrlsResponse = await axiosInstance.post("/auth/presignedUrl", {
+                    key: key,
+                    contentType: contentType
+                });
+
+                const  presignedUrl  = presignedUrlsResponse.data.data;
+    
+                await fetch(presignedUrl, {
+                    method: "PUT",
+                    body: file,
+                    headers: {
+                        "Content-Type": contentType,
+                    },
+                });
+
+                const imageUrl = presignedUrl.split("?")[0];
+                uploadedKeys.push(imageUrl);
+        }
+        return uploadedKeys;
+    };
+
     const clickInfoSave = async () => {
         try {
-            const allInfoData = new FormData();
-
-            for (let i = 0; i < files.length; i++) {
-                allInfoData.append("images", files[i]);
-            }
-
-            allInfoData.append("data", JSON.stringify(infoData));
+            const uploadedKeys = await uploadFilesToS3();
+    
+            const updatedHotelData = {
+                ...infoData,
+                urls: uploadedKeys,
+            };
+            console.log(updatedHotelData)
+    
             const config = await sendJWT({
                 headers: {
-                    "Content-Type": "multipart/form-data",
+                    "Content-Type": "application/json",
                 },
                 method: "put",
                 url: "/hotel/mgmt/info",
-                data: allInfoData,
+                data: updatedHotelData,
             });
-
-            const response = await axiosInstance.request(config);
+    
+            await axiosInstance.request(config);
             fetchHotelData();
             window.alert("저장완료");
         } catch (error) {
@@ -210,7 +240,11 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
                     window.alert("올바른 접근이 아닙니다.");
                 } else {
                     window.alert("올바른 접근이 아닙니다.");
+                    navigate("/")
                 }
+            } else {
+                window.alert("올바른 접근이 아닙니다.");
+                navigate("/")
             }
         }
     };
@@ -232,7 +266,7 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
                     url: "/hotel/mgmt/serv",
                     data: servData,
                 });
-                const response = await axiosInstance.request(config);
+                await axiosInstance.request(config);
                 window.alert("저장완료");
                 fetchHotelData();
             } catch (error) {
@@ -266,7 +300,7 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
                     url: "/hotel/mgmt/facil",
                     data: facilData,
                 });
-                const response = await axiosInstance.request(config);
+                await axiosInstance.request(config);
                 window.alert("저장완료");
                 fetchHotelData();
             } catch (error) {
