@@ -4,7 +4,7 @@ export const Container = tw.div`flex flex-col items-center pb-4`
 
 export const MainContainer = tw.div`w-full bg-gray-200 py-20`
 
-export const SearchContainer = tw.div`h-24 bg-white shadow-md flex rounded-2xl px-6 py-6`
+export const SearchContainer = tw.div`h-20 bg-white shadow-md flex rounded-2xl px-6 py-4`
 
 export const SearchWrap = tw.div`w-5/12 h-full flex items-center justify-between p-1`
 export const SearchInput = tw.input`text-sm px-2 flex-1 font-bold outline-none`

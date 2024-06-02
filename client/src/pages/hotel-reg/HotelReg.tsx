@@ -4,15 +4,27 @@ import { sendJWT } from "../../utils/jwtUtils";
 import { axios, axiosInstance } from "../../utils/axios.utils";
 import { useNavigate } from "react-router-dom";
 import { RegHotelProps } from "../../interface/interfaces";
+import { ModalPortal } from "../../hook/modal/ModalPortal";
+import DaumPostcodeModal from "../../hook/modal/daum-postcode/DaumPostcode.modal";
 
 export default function HotelReg() {
     const navigate = useNavigate();
 
-    const [formData, setFormData] = useState<RegHotelProps>({
+    const [isDaumAddressModalOpen, setIsSearchDateModalOpen] = useState(false);
+
+    const openDaumAddressModal = () => {
+        setIsSearchDateModalOpen(true);
+    };
+
+    const closeDaumAddressModal = () => {
+        setIsSearchDateModalOpen(false);
+    };
+
+    const [formData, setFormData] = useState({
         name: "",
         address: "",
         address_detail: "",
-        postcode: 0,
+        postcode: "",
         reg_num: 0,
         bank: "",
         account: 0,
@@ -30,7 +42,7 @@ export default function HotelReg() {
         e.preventDefault();
 
         const droppedFiles = e.dataTransfer.files;
-        const newFiles = Array.from(droppedFiles).slice(0, 6 - files.length);
+        const newFiles = Array.from(droppedFiles).slice(0, 2 - files.length);
         setFiles((prevFiles) => [...prevFiles, ...newFiles]);
 
         const previews = [...files, ...newFiles].map((file) => URL.createObjectURL(file));
@@ -118,38 +130,60 @@ export default function HotelReg() {
     useEffect(() => {}, []);
     return (
         <tw.Container>
+            <tw.Title>숙소등록</tw.Title>
             <tw.InputWrap>
-                <tw.UpperTag>호텔이름</tw.UpperTag>
-                <tw.Input onChange={onChangeInput} value={formData.name} name="name" />
-                <tw.UpperTag>주소</tw.UpperTag>
-                <tw.Input onChange={onChangeInput} value={formData.address} name="address" />
-                <tw.UpperTag>상세주소</tw.UpperTag>
-                <tw.Input onChange={onChangeInput} value={formData.address_detail} name="address_detail" />
-                <tw.UpperTag>우편번호</tw.UpperTag>
-                <tw.Input onChange={onChangeInput} value={formData.postcode} name="postcode" />
-                <tw.UpperTag>사업자등록번호</tw.UpperTag>
-                <tw.Input onChange={onChangeInput} value={formData.reg_num} name="reg_num" />
-                <tw.UpperTag>은행</tw.UpperTag>
-                <tw.Input onChange={onChangeInput} value={formData.bank} name="bank" />
-                <tw.UpperTag>계좌주</tw.UpperTag>
-                <tw.Input onChange={onChangeInput} value={formData.owner} name="owner" />
-                <tw.UpperTag>계좌번호</tw.UpperTag>
-                <tw.Input onChange={onChangeInput} value={formData.account} name="account" />
-                <tw.UploadWrap onDragOver={onDragOver} onDrop={onDrop}>
-                    <tw.ImgLabel>이미지를 드래그 앤 드롭하세요.</tw.ImgLabel>
-                    <tw.ImgContainer>
-                        {imagePreviews.map((preview, index) => (
-                            <tw.ImgWrap key={index}>
-                                <tw.RemoveBtn onClick={() => removeFile(index)}>삭제</tw.RemoveBtn>
-                                <tw.Img src={preview} alt={`이미지 미리보기 ${index + 1}`} draggable={false} />
-                            </tw.ImgWrap>
-                        ))}
-                    </tw.ImgContainer>
-                </tw.UploadWrap>
-                <tw.RegBtn onClick={onClickRegister} $validator={true} disabled={false}>
-                    호텔등록
-                </tw.RegBtn>
+                <tw.MobileWrap>
+                    <tw.UpperTag>호텔이름</tw.UpperTag>
+                    <tw.Input onChange={onChangeInput} value={formData.name} name="name" />
+                    <tw.UpperTag>우편번호</tw.UpperTag>
+                    <tw.FlexWrap>
+                        <tw.Input onChange={onChangeInput} value={formData.postcode} name="postcode" disabled />
+                        <tw.SearchBtn onClick={openDaumAddressModal}>주소검색</tw.SearchBtn>
+                    </tw.FlexWrap>
+                    <tw.UpperTag>주소</tw.UpperTag>
+                    <tw.Input onChange={onChangeInput} value={formData.address} name="address" disabled />
+                    <tw.UpperTag>상세주소</tw.UpperTag>
+                    <tw.Input onChange={onChangeInput} value={formData.address_detail} name="address_detail" />
+                    <tw.UpperTag>사업자등록번호</tw.UpperTag>
+                    <tw.Input onChange={onChangeInput} value={formData.reg_num} name="reg_num" />
+                </tw.MobileWrap>
+                <tw.MobileWrap>
+                    <tw.UpperTag>은행</tw.UpperTag>
+                    <tw.Input onChange={onChangeInput} value={formData.bank} name="bank" />
+                    <tw.UpperTag>계좌주</tw.UpperTag>
+                    <tw.Input onChange={onChangeInput} value={formData.owner} name="owner" />
+                    <tw.UpperTag>계좌번호</tw.UpperTag>
+                    <tw.Input onChange={onChangeInput} value={formData.account} name="account" />
+                    <tw.UploadWrap onDragOver={onDragOver} onDrop={onDrop}>
+                        <tw.ImgLabel>이미지를 드래그 앤 드롭하세요.</tw.ImgLabel>
+                        <tw.ImgContainer>
+                            {imagePreviews.map((preview, index) => (
+                                <tw.ImgWrap key={index}>
+                                    <tw.RemoveBtn onClick={() => removeFile(index)}>삭제</tw.RemoveBtn>
+                                    <tw.Img src={preview} alt={`이미지 미리보기 ${index + 1}`} draggable={false} />
+                                </tw.ImgWrap>
+                            ))}
+                        </tw.ImgContainer>
+                    </tw.UploadWrap>
+                    <tw.RegBtn onClick={onClickRegister} $validator={true} disabled={false}>
+                        호텔등록
+                    </tw.RegBtn>
+                </tw.MobileWrap>
             </tw.InputWrap>
+
+            {isDaumAddressModalOpen && (
+                <ModalPortal>
+                    <DaumPostcodeModal
+                        onChangeAddress={(newAddress) => {
+                            setFormData((prevData) => ({ ...prevData, address: newAddress }));
+                        }}
+                        onChangePostcode={(newPostcode) => {
+                            setFormData((prevData) => ({ ...prevData, postcode: newPostcode }));
+                        }}
+                        onClose={closeDaumAddressModal}
+                    />
+                </ModalPortal>
+            )}
         </tw.Container>
     );
 }

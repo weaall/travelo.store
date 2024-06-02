@@ -116,9 +116,13 @@ const roomController = {
         const endDate = dayjs(req.query.endDate as string).format("YYYY-MM-DD");
 
         const filterByDate = (priceData: RoomPriceRows[]) => {
-            return priceData.filter((price) => {
-                return dayjs(price.date).isAfter(dayjs(startDate).subtract(1, "day")) && dayjs(price.date).isBefore(endDate, "day");
-            });
+            if (startDate === endDate) {
+                return priceData;
+            } else {
+                return priceData.filter((price) => {
+                    return dayjs(price.date).isAfter(dayjs(startDate).subtract(1, "day")) && dayjs(price.date).isBefore(endDate, "day");
+                });
+            }
         };
 
         try {
