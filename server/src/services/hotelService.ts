@@ -31,7 +31,7 @@ const hotelService = {
         const connection = await pool.getConnection();
 
         const getHotelSql =
-            `SELECT H.id, H.name, H.postcode, H.address, H.address_detail, H.description, 
+            `SELECT H.id, H.name, H.postcode, H.address, H.address_detail, H.description, H.check_in, H.check_out,
             S.wifi, S.always_check_in, S.breakfast, S.barbecue,
             F.carpark, F.restaurant, F.cafe, F.swimming_pool, F.spa, F.fitness, F.convenience_store
             FROM hotel AS H 

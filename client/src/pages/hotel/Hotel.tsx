@@ -11,10 +11,23 @@ import SearchBoxSlim from "../../components/searchBoxSlim/SearchBoxSlim";
 import SearchBox from "../../components/searchBox/SearchBox";
 import ImgSliderMain from "../../components/imgSliderMain/imgSliderMain";
 import dayjs from "dayjs";
+import { ModalPortal } from "../../hook/modal/ModalPortal";
+import KakaoMapModal from "../../hook/modal/kakao-map/KakaMap.modal";
 
 export default function Hotel() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
+
+    const [isKakaoMapModalOpen, setIsKakaoMapModalOpen] = useState(false);
+
+    const openKakaoMapModal = () => {
+        setIsKakaoMapModalOpen(true);
+    };
+
+    const closeKakaoMapModal = () => {
+        setIsKakaoMapModalOpen(false);
+    };
+
     const { encryptedId, startDate, endDate, adult, child } = useParams();
 
     const id = decrypt(encryptedId || "");
@@ -136,6 +149,12 @@ export default function Hotel() {
         }
     };
 
+    const clickRoom = (hotelId : number, roomId : number) =>{
+        const encryptedHotelId = encrypt(`${hotelId}`);
+        const encryptedRoomId = encrypt(`${roomId}`);
+        navigate(`/payment/${encryptedHotelId}/${encryptedRoomId}/${startDate}/${endDate}`);
+    }
+
     useEffect(() => {
         fetchHotel();
     }, [startDate,endDate]);
@@ -178,7 +197,7 @@ export default function Hotel() {
                             <tw.HotelTitle>{hotelData.name}</tw.HotelTitle>
                             <tw.ContentsFlex>
                                 <tw.AddressSVG alt="" src={require("../../assets/svg/location_icon.svg").default} />
-                                <tw.HotelAddress>
+                                <tw.HotelAddress onClick={openKakaoMapModal}>
                                     {hotelData.address} {hotelData.address_detail}
                                 </tw.HotelAddress>
                             </tw.ContentsFlex>
@@ -232,7 +251,7 @@ export default function Hotel() {
                                                 {room.room_price.reduce((total, room) => total + room.price, 0).toLocaleString()}원
                                             </tw.TotalPrice>
                                             <tw.BookBtnWrap>
-                                                <tw.BookBtn>예약하기</tw.BookBtn>
+                                                <tw.BookBtn onClick={()=>clickRoom(parseInt(hotelData.id), room.id)}>예약하기</tw.BookBtn>
                                             </tw.BookBtnWrap>
                                         </tw.PriceWrap>
                                     </tw.HotelInfo>
@@ -242,6 +261,18 @@ export default function Hotel() {
                     ))}
                 </tw.RoomList>
             </tw.MainContainer>
+
+            {isKakaoMapModalOpen && (
+                <ModalPortal>
+                    <KakaoMapModal
+                        hotelName={hotelData.name}
+                        address={`${hotelData.address} ${hotelData.address_detail}`}
+                        imgUrl={hotelData.img[0].url}
+                        onClose={closeKakaoMapModal}
+                    />
+                </ModalPortal>
+            )}
+
         </tw.Container>
     );
 }

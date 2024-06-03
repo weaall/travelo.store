@@ -3,7 +3,6 @@ import * as tw from "./HotelReg.styles";
 import { sendJWT } from "../../utils/jwtUtils";
 import { axios, axiosInstance } from "../../utils/axios.utils";
 import { useNavigate } from "react-router-dom";
-import { RegHotelProps } from "../../interface/interfaces";
 import { ModalPortal } from "../../hook/modal/ModalPortal";
 import DaumPostcodeModal from "../../hook/modal/daum-postcode/DaumPostcode.modal";
 
@@ -154,8 +153,9 @@ export default function HotelReg() {
                     <tw.Input onChange={onChangeInput} value={formData.owner} name="owner" />
                     <tw.UpperTag>계좌번호</tw.UpperTag>
                     <tw.Input onChange={onChangeInput} value={formData.account} name="account" />
+                    <tw.UpperTag>사업자등록증 및 통장사본</tw.UpperTag>
                     <tw.UploadWrap onDragOver={onDragOver} onDrop={onDrop}>
-                        <tw.ImgLabel>이미지를 드래그 앤 드롭하세요.</tw.ImgLabel>
+                        {imagePreviews.length === 0 && <tw.ImgLabel>이미지를 드래그 앤 드롭하세요.</tw.ImgLabel>}
                         <tw.ImgContainer>
                             {imagePreviews.map((preview, index) => (
                                 <tw.ImgWrap key={index}>

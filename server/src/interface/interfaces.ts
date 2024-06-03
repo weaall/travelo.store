@@ -91,8 +91,8 @@ export interface HotelInfoRows extends RowDataPacket {
     address: string;
     address_detail: string;
     description: string;
-    check_in: string;
-    check_out: string;
+    check_in: number;
+    check_out: number;
     tel_num: number;
     permission: number;
     wifi: number;

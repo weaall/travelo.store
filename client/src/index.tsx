@@ -12,7 +12,9 @@ dayjs.locale('ko')
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement)
 root.render(
-    <RecoilRoot>
+    <React.StrictMode>
+        <RecoilRoot>
             <App />
-    </RecoilRoot>,
+        </RecoilRoot>
+    </React.StrictMode>,
 )

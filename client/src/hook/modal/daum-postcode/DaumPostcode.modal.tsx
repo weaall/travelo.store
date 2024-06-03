@@ -13,6 +13,8 @@ export default function DaumPostcodeModal({ onClose, onChangePostcode, onChangeA
         const openKaKao = () => {
             const script = document.createElement("script");
             script.src = "https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js";
+            script.async = true;
+            document.head.appendChild(script);
 
             script.onload = () => {
                 new (window as any).daum.Postcode({
@@ -66,7 +68,7 @@ export default function DaumPostcodeModal({ onClose, onChangePostcode, onChangeA
                     </tw.CloseBtn>
                     <tw.Title>주소 검색</tw.Title>
                 </tw.TitleWrap>
-                <div id="postcode-container"></div>
+                <div id="postcode-container" style={{ width: "100%", height: "100%" }}></div>
             </tw.ModalWrap>
         </tw.Container>
     );

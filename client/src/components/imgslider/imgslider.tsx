@@ -29,7 +29,7 @@ export default function ImgSliderMain({ images }: CustomImageSliderProps) {
     return (
         <tw.ImgContainer>
             <tw.ImgButton onClick={prevSlide} className="left-2">
-                {"<"}
+                <tw.Svg alt="" src={require("../../assets/svg/left_icon.svg").default} />
             </tw.ImgButton>
             {images[currentIndex]?.url ? (
                 <tw.Img src={images[currentIndex].url} alt={`Slide ${currentIndex}`} loading="lazy" />
@@ -37,7 +37,7 @@ export default function ImgSliderMain({ images }: CustomImageSliderProps) {
                 <tw.UnRegWrap>미등록</tw.UnRegWrap>
             )}
             <tw.ImgButton onClick={nextSlide} className="right-2">
-                {">"}
+                <tw.Svg alt="" src={require("../../assets/svg/right_icon.svg").default} />
             </tw.ImgButton>
             <tw.IndexWrap>
                 {currentIndex + 1} / {images.length}

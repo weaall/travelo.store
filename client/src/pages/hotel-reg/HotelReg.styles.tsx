@@ -25,8 +25,8 @@ export const RegBtn = tw.button<RegBtnProps>`
 w-full h-10 font-medium text-white rounded-lg my-2 text-base
 ${(p) => (p.$validator ? "bg-black" : "bg-gray-200")}`
 
-export const UploadWrap = tw.div`p-6 text-center bg-gray-100 rounded-2xl my-4`
-export const ImgLabel = tw.p`my-4 font-bold`
+export const UploadWrap = tw.div`p-6 text-center bg-gray-100 rounded-2xl my-1`
+export const ImgLabel = tw.p`my-2 font-bold`
 
 export const ImgContainer = tw.div`grid grid-cols-2 justify-centers`
 export const ImgWrap = tw.div`w-full h-auto relative`
