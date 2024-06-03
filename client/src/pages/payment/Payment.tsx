@@ -158,8 +158,27 @@ export default function Payment() {
         <tw.Container>
             <tw.MainContainer>
                 <tw.LeftWrap>
+                    <tw.UserWrap>
+                        <tw.Label>예약자 정보</tw.Label>
+                        <tw.UserLabel>이름</tw.UserLabel>
+                        <tw.UserInput />
+                        <tw.UserLabel>전화번호</tw.UserLabel>
+                        <tw.UserInput />
+                    </tw.UserWrap>
+                    <tw.PolicyWrap>
+                        <tw.Label>개인정보보호</tw.Label>
+                        <tw.ContentsFlex>
+                            <tw.PolicyCheck type="checkbox" />
+                            <tw.PolicyTextMain>다음의 모든 항목에 동의합니다.</tw.PolicyTextMain>
+                        </tw.ContentsFlex>
+                        <tw.PolicyText>[필수입니다]본인은 이용약관에동의하며 18세 이상임을 확인합니다.</tw.PolicyText>
+                        <tw.PolicyText>
+                            [필수입니다]개인정보 처리방침에 따라 본인의 개인 정보를 사용하고 수집하는 것에 동의 합니다.
+                        </tw.PolicyText>
+                    </tw.PolicyWrap>
                 </tw.LeftWrap>
                 <tw.RightWrap>
+                    <tw.OuterWrap>
                     <tw.RoomWrap>
                         <tw.ContentsFlex>
                             <tw.RoomPic>
@@ -199,17 +218,18 @@ export default function Payment() {
                                             {roomData.bed_type} / 최대인원: {roomData.num}명
                                         </tw.RoomText>
                                     </tw.InfoWrap>
-                                    {/* <tw.PriceWrap>
-                                        <tw.TotalLabel>{startDate}~</tw.TotalLabel>
-                                        <tw.TotalLabel>{dayjs(endDate).diff(dayjs(startDate), "day")}박 총 요금</tw.TotalLabel>
-                                        <tw.TotalPrice>
-                                            {roomData.room_price.reduce((total, room) => total + room.price, 0).toLocaleString()}원
-                                        </tw.TotalPrice>
-                                    </tw.PriceWrap> */}
                                 </tw.RoomInfo>
                             </tw.RoomInfoWrap>
                         </tw.ContentsFlex>
                     </tw.RoomWrap>
+                    <tw.PriceWrap>
+                        <tw.TotalLabel>{startDate}~</tw.TotalLabel>
+                        <tw.TotalLabel>{dayjs(endDate).diff(dayjs(startDate), "day")}박 총 요금</tw.TotalLabel>
+                        <tw.TotalPrice>
+                            {roomData.room_price.reduce((total, room) => total + room.price, 0).toLocaleString()}원
+                        </tw.TotalPrice>
+                    </tw.PriceWrap>
+                    </tw.OuterWrap>
                 </tw.RightWrap>
             </tw.MainContainer>
 
