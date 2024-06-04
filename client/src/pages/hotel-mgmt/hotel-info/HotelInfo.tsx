@@ -177,7 +177,7 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
                     navigate("/");
                 } else if (error.response.status === 401) {
                     window.alert("올바른 접근이 아닙니다.");
-                    navigate("/main");
+                    navigate("/");
                 }
             }
         }
