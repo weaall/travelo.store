@@ -250,9 +250,17 @@ export default function Hotel() {
                                             <tw.TotalPrice>
                                                 {room.room_price.reduce((total, room) => total + room.price, 0).toLocaleString()}원
                                             </tw.TotalPrice>
-                                            <tw.BookBtnWrap>
-                                                <tw.BookBtn onClick={()=>clickRoom(parseInt(hotelData.id), room.id)}>예약하기</tw.BookBtn>
-                                            </tw.BookBtnWrap>
+                                            {room.room_price.some((priceData) => priceData.room_limit === priceData.room_current) ? (
+                                                <tw.BookBtnWrap>
+                                                    <tw.BookBtn>객실이 모두 소진되었습니다.</tw.BookBtn>
+                                                </tw.BookBtnWrap>
+                                            ) : (
+                                                <tw.BookBtnWrap>
+                                                    <tw.BookBtn onClick={() => clickRoom(parseInt(hotelData.id), room.id)}>
+                                                        예약하기
+                                                    </tw.BookBtn>
+                                                </tw.BookBtnWrap>
+                                            )}
                                         </tw.PriceWrap>
                                     </tw.HotelInfo>
                                 </tw.RoomInfoWrap>
@@ -272,7 +280,6 @@ export default function Hotel() {
                     />
                 </ModalPortal>
             )}
-
         </tw.Container>
     );
 }

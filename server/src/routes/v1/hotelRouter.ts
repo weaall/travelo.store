@@ -1,7 +1,6 @@
 import { Router, Request, Response } from "express"
 import asyncHandler from "../../utils/asyncHandler"
 import hotelController from "../../controllers/hotelController"
-import { uploadRegDoc, uploadHotelImg } from "../../config/multer"
 import { JWTCheck } from "../../interface/interfaces"
 import isAuthenticated from "../../middlewares/isAuthenticated"
 

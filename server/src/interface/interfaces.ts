@@ -204,3 +204,23 @@ export interface DatePriceProps {
     price: number;
     room_limit: number;
 }
+
+export interface BookingRefProps{
+    booking_id: string, 
+    room_id: string, 
+    total_price: string, 
+    check_in: string, 
+    check_out: string
+}
+
+export interface BookingProps{
+    booking_id: string,
+    hotel_id: string,
+    room_id: string, 
+    total_price: string, 
+    check_in: string, 
+    check_out: string,
+    name: string,
+    phone_num: number,
+    email: string,
+}

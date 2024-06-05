@@ -350,7 +350,8 @@ export default function Payment() {
                 <ModalPortal>
                     <CheckoutModal
                         checkInDate={startDate || ""}
-                        checkOutDate={startDate || ""}
+                        checkOutDate={endDate || ""}
+                        hotelId={hotelData.id}
                         roomId={roomId}
                         totalPrice={roomData.room_price.reduce((total, room) => total + room.price, 0)}
                         orderName={`${hotelData.name} ${roomData.name}`}

@@ -13,6 +13,7 @@ interface ModalProps {
     checkInDate: string;
     checkOutDate: string;
 
+    hotelId: string;
     roomId: string;
     totalPrice: number;
 
@@ -29,6 +30,8 @@ const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
 const customerKey = nanoid(12);
 
 export function CheckoutModal( props : ModalProps) {
+    const navigate = useNavigate();
+
     const { data: paymentWidget } = usePaymentWidget(clientKey, customerKey);
     const paymentMethodsWidgetRef = useRef<ReturnType<PaymentWidgetInstance["renderPaymentMethods"]> | null>(null);
     const [price, setPrice] = useState(props.totalPrice);
@@ -62,32 +65,95 @@ export function CheckoutModal( props : ModalProps) {
         paymentMethodsWidget.updateAmount(price);
     }, [price]);
 
+    const [bookingRef, setBookingRef] = useState({
+        booking_id: customerKey,
+        room_id: props.roomId,
+        total_price: props.totalPrice,
+        check_in: props.checkInDate,
+        check_out: props.checkOutDate
+    })
 
-    const navigate = useNavigate();
-
-    const updateBookingRep = async () => {
+    const updateBookingRef = async () => {
         try {
             const config = await sendJWT({
                 method: "post",
-                url: "/booking/repo",
-                data: props,
+                url: "/booking/ref",
+                data: bookingRef,
             });
 
-            const response = await axiosInstance .request(config);
-            const fetchedData = response.data.data[0];
+            await axiosInstance.request(config);
 
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 409) {
-                    window.alert("올바른 접근이 아닙니다.");
+                if (error.response.status === 401) {
+                    window.alert("로그인해주세요");
                     navigate("/");
-                } else if (error.response.status === 401) {
-                    window.alert("올바른 접근이 아닙니다.");
+                } else if (error.response.status === 400) {
+                    window.alert("해당객실이 모두 소진되었습니다.");
                     navigate("/");
                 }
             }
         }
     };
+
+    const [booking, setBooking] = useState({
+        booking_id: customerKey,
+        hotel_id: props.hotelId,
+        room_id: props.roomId,
+        total_price: props.totalPrice,
+        check_in: props.checkInDate,
+        check_out: props.checkOutDate,
+        name: props.customerName,
+        phone_num: props.customerMobilePhone,
+        email: props.customerEmail,
+    });
+
+    const updateBooking = async () => {
+        try {
+            const config = await sendJWT({
+                method: "post",
+                url: "/booking",
+                data: booking,
+            });
+
+            await axiosInstance.request(config);
+
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                if (error.response.status === 401) {
+                    window.alert("로그인해주세요");
+                    navigate("/");
+                } else if (error.response.status === 400) {
+                    window.alert("해당객실이 모두 소진되었습니다.");
+                    navigate("/");
+                }
+            }
+        }
+    };
+
+    const rollbackBookingRef = async () => {
+        try {
+            const config = await sendJWT({
+                method: "post",
+                url: "/booking",
+                data: props.roomId
+            });
+
+            await axiosInstance.request(config);
+
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                if (error.response.status === 401) {
+                    window.alert("로그인해주세요");
+                    navigate("/");
+                } else if (error.response.status === 400) {
+                    window.alert("해당객실이 모두 소진되었습니다.");
+                    navigate("/");
+                }
+            }
+        }
+    };
+
     return (
         <tw.Container>
             <tw.ModalWrap>
@@ -110,18 +176,25 @@ export function CheckoutModal( props : ModalProps) {
                         className="button"
                         disabled={!paymentMethodsWidgetReady}
                         onClick={async () => {
-                            // TODO: 결제를 요청하기 전에 orderId, amount를 서버에 저장하세요.
-                            // 결제 과정에서 악의적으로 결제 금액이 바뀌는 것을 확인하는 용도입니다.
                             try {
-                                await paymentWidget?.requestPayment({
-                                    orderId: nanoid(),
-                                    orderName: props.orderName,
-                                    customerName: props.customerName,
-                                    customerEmail: props.customerEmail,
-                                    customerMobilePhone: props.customerMobilePhone,
-                                    successUrl: `${window.location.origin}/success`,
-                                    failUrl: `${window.location.origin}/fail`,
-                                });
+                                await updateBookingRef();
+                    
+                                try {
+                                    await paymentWidget?.requestPayment({
+                                        orderId: customerKey,
+                                        orderName: props.orderName,
+                                        customerName: props.customerName,
+                                        customerEmail: props.customerEmail,
+                                        customerMobilePhone: props.customerMobilePhone,
+                                        successUrl: `${window.location.origin}/success`,
+                                        failUrl: `${window.location.origin}/fail`,
+                                    });
+                    
+                                    await updateBooking();
+                                } catch (paymentError) {
+                                    await rollbackBookingRef();
+                                    throw paymentError;
+                                }
                             } catch (error) {
                                 console.error(error);
                             }
