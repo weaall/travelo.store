@@ -33,7 +33,7 @@ mobile:text-main`
 
 export const RoomWrap = tw.div`w-full rounded-2xl bg-white shadow-md h-36
 mobile:flex mobile:flex-col mobile:h-auto`
-export const RoomPic = tw.div`w-4/12 h-36 bg-gray-30
+export const Pic = tw.div`w-4/12 h-36 bg-gray-30
 mobile:h-40 mobile:w-full`
 export const RoomInfoWrap = tw.div`flex flex-col w-8/12 py-2 
 mobile:w-full`

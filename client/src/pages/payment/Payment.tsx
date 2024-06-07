@@ -10,6 +10,7 @@ import { ModalPortal } from "../../hook/modal/ModalPortal";
 import KakaoMapModal from "../../hook/modal/kakao-map/KakaMap.modal";
 import { CheckoutModal } from "../../hook/modal/checkout/Checkout.modal";
 import { checkValidEmail, checkValidPhoneNumber, checkValidUserName } from "../../utils/regExp.utils";
+import ImgLoader from "../../utils/imgLoader";
 
 export default function Payment() {
     const navigate = useNavigate();
@@ -192,6 +193,7 @@ export default function Payment() {
         fetchHotel();
     }, [startDate, endDate]);
 
+
     if (loading) {
         return <Loading />;
     }
@@ -269,13 +271,13 @@ export default function Payment() {
                     <tw.OuterWrap>
                         <tw.RoomWrap>
                             <tw.ContentsFlex>
-                                <tw.RoomPic>
+                                <tw.Pic>
                                     {hotelData?.img?.[0]?.url ? (
-                                        <tw.Img src={hotelData.img[0].url} alt="Hotel Image" loading="lazy" />
+                                        <ImgLoader imageUrl={hotelData.img[0].url} altText="" rounded="l-xl mobile:rounded-none mobile:rounded-t-xl"/>
                                     ) : (
                                         <tw.UnRegWrap>미등록</tw.UnRegWrap>
                                     )}
-                                </tw.RoomPic>
+                                </tw.Pic>
                                 <tw.RoomInfoWrap>
                                     <tw.RoomInfo>
                                         <tw.HotelInfoWrap>
@@ -290,13 +292,13 @@ export default function Payment() {
                         </tw.RoomWrap>
                         <tw.RoomWrap>
                             <tw.ContentsFlex>
-                                <tw.RoomPic>
+                                <tw.Pic>
                                     {hotelData?.img?.[0]?.url ? (
-                                        <tw.Img src={roomData.img[0].url} alt="Hotel Image" loading="lazy" />
+                                        <ImgLoader imageUrl={roomData.img[0].url} altText="" rounded="l-xl mobile:rounded-none mobile:rounded-t-xl"/>
                                     ) : (
                                         <tw.UnRegWrap>미등록</tw.UnRegWrap>
                                     )}
-                                </tw.RoomPic>
+                                </tw.Pic>
                                 <tw.RoomInfoWrap>
                                     <tw.RoomInfo>
                                         <tw.InfoWrap>

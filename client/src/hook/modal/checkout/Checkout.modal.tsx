@@ -4,9 +4,10 @@ import { nanoid } from "nanoid";
 import { useQuery } from "@tanstack/react-query";
 
 import * as tw from "./Checkout.modal.styles";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { sendJWT } from "../../../utils/jwtUtils";
 import { axios, axiosInstance } from "../../../utils/axios.utils";
+import Cookies from "js-cookie";
 
 interface ModalProps {
     onClose: () => void;
@@ -29,13 +30,17 @@ const selector = "#payment-widget";
 const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
 const customerKey = nanoid(12);
 
+const allowedUrls = [`${window.location.origin}/success`, `${window.location.origin}/fail`];
+
 export function CheckoutModal( props : ModalProps) {
     const navigate = useNavigate();
+    const location = useLocation();
 
     const { data: paymentWidget } = usePaymentWidget(clientKey, customerKey);
     const paymentMethodsWidgetRef = useRef<ReturnType<PaymentWidgetInstance["renderPaymentMethods"]> | null>(null);
     const [price, setPrice] = useState(props.totalPrice);
     const [paymentMethodsWidgetReady, isPaymentMethodsWidgetReady] = useState(false);
+    const previousLocationRef = useRef(location.pathname);
 
     useEffect(() => {
         if (paymentWidget == null) {
@@ -65,59 +70,33 @@ export function CheckoutModal( props : ModalProps) {
         paymentMethodsWidget.updateAmount(price);
     }, [price]);
 
-    const [bookingRef, setBookingRef] = useState({
-        booking_id: customerKey,
-        room_id: props.roomId,
-        total_price: props.totalPrice,
-        check_in: props.checkInDate,
-        check_out: props.checkOutDate
-    })
+    const bookingData = [
+        customerKey,
+        props.hotelId,
+        props.roomId,
+        props.totalPrice.toString(),
+        props.checkInDate,
+        props.checkOutDate,
+        props.customerName,
+        props.customerMobilePhone,
+        props.customerEmail,
+    ];
 
     const updateBookingRef = async () => {
         try {
             const config = await sendJWT({
                 method: "post",
                 url: "/booking/ref",
-                data: bookingRef,
+                data: {
+                    booking_id: customerKey,
+                    room_id: props.roomId,
+                    total_price: props.totalPrice,
+                    check_in: props.checkInDate,
+                    check_out: props.checkOutDate,
+                },
             });
 
             await axiosInstance.request(config);
-
-        } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 401) {
-                    window.alert("로그인해주세요");
-                    navigate("/");
-                } else if (error.response.status === 400) {
-                    window.alert("해당객실이 모두 소진되었습니다.");
-                    navigate("/");
-                }
-            }
-        }
-    };
-
-    const [booking, setBooking] = useState({
-        booking_id: customerKey,
-        hotel_id: props.hotelId,
-        room_id: props.roomId,
-        total_price: props.totalPrice,
-        check_in: props.checkInDate,
-        check_out: props.checkOutDate,
-        name: props.customerName,
-        phone_num: props.customerMobilePhone,
-        email: props.customerEmail,
-    });
-
-    const updateBooking = async () => {
-        try {
-            const config = await sendJWT({
-                method: "post",
-                url: "/booking",
-                data: booking,
-            });
-
-            await axiosInstance.request(config);
-
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 if (error.response.status === 401) {
@@ -133,10 +112,16 @@ export function CheckoutModal( props : ModalProps) {
 
     const rollbackBookingRef = async () => {
         try {
+            Cookies.remove("bookingData")
             const config = await sendJWT({
                 method: "post",
-                url: "/booking",
-                data: props.roomId
+                url: "/booking/rollback",
+                data: {
+                    booking_id: customerKey,
+                    room_id: props.roomId,
+                    check_in: props.checkInDate,
+                    check_out: props.checkOutDate,
+                },
             });
 
             await axiosInstance.request(config);
@@ -154,6 +139,21 @@ export function CheckoutModal( props : ModalProps) {
         }
     };
 
+    const handleUnload = async () => {
+        const currentUrl = window.location.href;
+        if (!allowedUrls.includes(currentUrl)) {
+            await rollbackBookingRef();
+        }
+    };
+    
+    useEffect(() => {
+        previousLocationRef.current = location.pathname;
+        window.addEventListener('unload', handleUnload);
+        return () => {
+            window.removeEventListener('unload', handleUnload);
+        };
+    }, [location.pathname]);
+    
     return (
         <tw.Container>
             <tw.ModalWrap>
@@ -178,7 +178,7 @@ export function CheckoutModal( props : ModalProps) {
                         onClick={async () => {
                             try {
                                 await updateBookingRef();
-                    
+                                Cookies.set('bookingData', JSON.stringify(bookingData), { expires: 10 / (24 * 60) });
                                 try {
                                     await paymentWidget?.requestPayment({
                                         orderId: customerKey,
@@ -189,14 +189,14 @@ export function CheckoutModal( props : ModalProps) {
                                         successUrl: `${window.location.origin}/success`,
                                         failUrl: `${window.location.origin}/fail`,
                                     });
-                    
-                                    await updateBooking();
+
                                 } catch (paymentError) {
                                     await rollbackBookingRef();
                                     throw paymentError;
                                 }
                             } catch (error) {
-                                console.error(error);
+                                window.alert("결제에 실패하였습니다.");
+                                props.onClose();
                             }
                         }}
                     >

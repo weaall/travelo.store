@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import * as tw from "./imgSliderMain.styles";
+import ImgLoader from "../../utils/imgLoader";
 
 interface Image {
     url: string;
@@ -32,7 +33,7 @@ export default function ImgSliderMain({ images }: CustomImageSliderProps) {
                 <tw.Svg alt="" src={require("../../assets/svg/left_icon.svg").default} />
             </tw.ImgButton>
             {images[currentIndex]?.url ? (
-                <tw.Img src={images[currentIndex].url} alt={`Slide ${currentIndex}`} loading="lazy" />
+                <ImgLoader imageUrl={images[currentIndex].url} altText={`Slide ${currentIndex}`} />
             ) : (
                 <tw.UnRegWrap>미등록</tw.UnRegWrap>
             )}

@@ -40,7 +40,7 @@ const bookingService = {
         }
     },
 
-    async restoreBookingRef(user_id: string, { booking_id, room_id, check_in, check_out }: BookingRefProps) {
+    async rollbackBookingRef(user_id: string, { booking_id, room_id, check_in, check_out }: BookingRefProps) {
         const connection = await pool.getConnection();
 
         const removeBookingRefSql = `DELETE FROM booking_ref WHERE booking_id = ? AND user_id = ?`;
@@ -79,7 +79,6 @@ const bookingService = {
         const connection = await pool.getConnection();
 
         const getBookingRefSql = `SELECT * FROM booking_ref WHERE booking_id = ? and user_id = ?`;
-
         const getBookingRefValue = [booking_id, user_id];
 
         try {
@@ -87,6 +86,7 @@ const bookingService = {
 
             return rows;
         } catch (error) {
+            await connection.rollback();
             throw error;
         } finally {
             connection.release();
@@ -100,10 +100,19 @@ const bookingService = {
         const connection = await pool.getConnection();
 
         const addBookingSql = `INSERT INTO booking (user_id, booking_id, hotel_id, room_id, total_price, check_in, check_out, name, phone_num, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-
         const addBookingValue = [user_id, booking_id, hotel_id, room_id, total_price, check_in, check_out, name, phone_num, email];
+
+        const removeBookingRefSql = `DELETE FROM booking_ref WHERE booking_id = ? AND user_id = ?`;
+        const removeBookingRefValue = [booking_id, user_id];
+        
+        
         try {
             const [rows, fields]: [ResultSetHeader[], FieldPacket[]] = await connection.execute(addBookingSql, addBookingValue);
+            
+            const [removeBookingRefResult, field]: [ResultSetHeader, FieldPacket[]] = await connection.execute(
+                removeBookingRefSql,
+                removeBookingRefValue,
+            );
 
             return rows;
         } catch (error) {

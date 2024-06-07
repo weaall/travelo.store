@@ -1,11 +1,82 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Link } from "react-router-dom";
+import Cookies from "js-cookie";
+import { sendJWT } from "../../../utils/jwtUtils";
+import { axios, axiosInstance } from "../../../utils/axios.utils";
 
 export function SuccessPage() {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const [responseData, setResponseData] = useState(null);
+
+    const bookingDataString = Cookies.get("bookingData");
+
+    const bookingData = JSON.parse(bookingDataString || "");
+
+    const [customerKey, hotelId, roomId, totalPrice, checkInDate, checkOutDate, customerName, customerMobilePhone, customerEmail] =
+        bookingData;
+
+    const rollbackBookingRef = async () => {
+        try {
+            Cookies.remove("bookingData")
+            const config = await sendJWT({
+                method: "post",
+                url: "/booking/rollback",
+                data: {
+                    booking_id: customerKey,
+                    room_id: roomId,
+                    check_in: checkInDate,
+                    check_out: checkOutDate,
+                },
+            });
+
+            await axiosInstance.request(config);
+
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                if (error.response.status === 401) {
+                    window.alert("로그인해주세요");
+                    navigate("/");
+                } else if (error.response.status === 400) {
+                    window.alert("해당객실이 모두 소진되었습니다.");
+                    navigate("/");
+                }
+            }
+        }
+    };
+
+    const updateBooking = async () => {
+        try {
+            const config = await sendJWT({
+                method: "post",
+                url: "/booking",
+                data: {
+                    booking_id: customerKey,
+                    hotel_id: hotelId,
+                    room_id: roomId,
+                    total_price: totalPrice,
+                    check_in: checkInDate,
+                    check_out: checkOutDate,
+                    name: customerName,
+                    phone_num: customerMobilePhone,
+                    email: customerEmail,
+                },
+            });
+
+            await axiosInstance.request(config);
+            Cookies.remove("bookingData")
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                if (error.response.status === 401) {
+                    window.alert("로그인해주세요");
+                    navigate("/");
+                } else if (error.response.status === 400) {
+                    navigate("/");
+                }
+            }
+        }
+    };
 
     useEffect(() => {
         const requestData = {
@@ -17,10 +88,6 @@ export function SuccessPage() {
         // TODO: 개발자센터에 로그인해서 내 결제위젯 연동 키 > 시크릿 키를 입력하세요. 시크릿 키는 외부에 공개되면 안돼요.
         // @docs https://docs.tosspayments.com/reference/using-api/api-keys
         const secretKey = "test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6";
-
-        // 토스페이먼츠 API는 시크릿 키를 사용자 ID로 사용하고, 비밀번호는 사용하지 않습니다.
-        // 비밀번호가 없다는 것을 알리기 위해 시크릿 키 뒤에 콜론을 추가합니다.
-        // @docs https://docs.tosspayments.com/reference/using-api/authorization#%EC%9D%B8%EC%A6%9D
         const encryptedSecretKey = `Basic ${btoa(secretKey + ":")}`;
 
         async function confirm() {
@@ -36,14 +103,12 @@ export function SuccessPage() {
             const json = await response.json();
 
             if (!response.ok) {
-                // TODO: 구매 실패 비즈니스 로직 구현
-                console.log(json);
+                rollbackBookingRef();
                 navigate(`/fail?code=${json.code}&message=${json.message}`);
                 return;
             }
 
-            // TODO: 결제 성공 비즈니스 로직을 구현하세요.
-            // console.log(json);
+            updateBooking();
             return json;
         }
         confirm().then((data) => {
