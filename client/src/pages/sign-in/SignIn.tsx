@@ -65,29 +65,36 @@ export default function SignIn() {
         setHeaderRender((prevCount) => prevCount + 1);
       };
 
-    const onClickSignIn = async () => {
+      const onClickSignIn = async () => {
         try {
-            const response = await axiosInstance.post("/auth/sign-in", formData)
-            const receivedToken = response.data.data
+            const response = await axiosInstance.post("/auth/sign-in", formData);
+            const receivedToken = response.data.data;
             if (response.status === 201) {
-                Cookies.set("jwt", receivedToken, { expires: 1 })
-                window.alert("성공적으로 로그인되었습니다.")
+                Cookies.set("jwt", receivedToken, { expires: 1 });
+                window.alert("성공적으로 로그인되었습니다.");
                 headerRender();
-                navigate("/main")
+                navigate("/");
             }
-            
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 401) {
-                    window.alert("이메일과 패스워드를 확인해주세요.")
+            if (axios.isAxiosError(error)) {
+                if (error.code === 'ECONNABORTED') {
+                    window.alert("요청 시간이 초과되었습니다. 다시 시도해주세요.");
+                } else if (error.response && error.response.status === 401) {
+                    window.alert("이메일과 패스워드를 확인해주세요.");
+                } else if (error.response && error.response.status === 503) {
+                    window.alert("서버가 일시적으로 사용 불가능합니다. 잠시 후 다시 시도해주세요.");
                 } else {
-                    window.alert("알수없는 오류")
+                    window.alert("알 수 없는 오류");
                 }
+            } else {
+                window.alert("서버에 연결할 수 없습니다. 나중에 다시 시도해주세요.");
             }
         }
-    }
+    };
 
-    useEffect(() => {checkSignInState()}, [])
+    useEffect(() => {
+        checkSignInState();
+    }, []);
 
     return (
         <tw.Container>

@@ -5,6 +5,7 @@ import roomService from "../services/roomService";
 import { getRedis, setRedis } from "../utils/redisUtils";
 import dayjs from "dayjs";
 import CustomError from "../utils/customError";
+const got = require('got');
 
 const bookingController = {
     async addBookingRef(req: JWTCheck, res: Response) {
@@ -16,16 +17,16 @@ const bookingController = {
         const filterByDate = (priceData: RoomPriceRows[]) => {
             const filteredData = priceData.filter((price) => {
                 const dateInRange =
-                dayjs(price.date).isAfter(dayjs(checkIn).subtract(1, "day")) && dayjs(price.date).isBefore(checkOut, "day");
+                    dayjs(price.date).isAfter(dayjs(checkIn).subtract(1, "day")) && dayjs(price.date).isBefore(checkOut, "day");
                 const isAvailable = price.room_limit > price.room_current;
                 return dateInRange && isAvailable;
             });
-        
+
             const totalFilteredPrice = filteredData.reduce((sum, price) => sum + price.price, 0);
             const isTotalPriceMatch = totalFilteredPrice === totalPrice;
-        
-            const isAllFilteredDataIncluded = filteredData.every(item => priceData.includes(item));
-        
+
+            const isAllFilteredDataIncluded = filteredData.every((item) => priceData.includes(item));
+
             return isTotalPriceMatch && isAllFilteredDataIncluded;
         };
         try {
@@ -67,6 +68,34 @@ const bookingController = {
             });
         } catch (error) {
             throw error;
+        }
+    },
+
+    async confirm(req: Request, res: Response) {
+        const { paymentType, orderId, paymentKey, amount } = req.query;
+
+        const widgetSecretKey = "test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6";
+        const encryptedSecretKey = "Basic " + Buffer.from(widgetSecretKey + ":").toString("base64");
+
+        try {
+            const response = await got.post("https://api.tosspayments.com/v1/payments/confirm", {
+                headers: {
+                    Authorization: encryptedSecretKey,
+                    "Content-Type": "application/json",
+                },
+                json: {
+                    orderId: orderId,
+                    amount: amount,
+                    paymentKey: paymentKey,
+                },
+                responseType: "json",
+            });
+    
+            // 결제 승인 요청이 성공적으로 처리된 경우에만 이동합니다.
+            res.redirect("http://localhost:3000/main");
+        } catch (error) {
+            // 오류가 발생한 경우에는 실패 페이지로 이동합니다.
+            res.redirect("http://localhost:3000/failll");
         }
     },
 };

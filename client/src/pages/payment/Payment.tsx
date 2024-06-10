@@ -197,6 +197,7 @@ export default function Payment() {
     if (loading) {
         return <Loading />;
     }
+    
 
     return (
         <tw.Container>
@@ -357,9 +358,9 @@ export default function Payment() {
                         roomId={roomId}
                         totalPrice={roomData.room_price.reduce((total, room) => total + room.price, 0)}
                         orderName={`${hotelData.name} ${roomData.name}`}
-                        customerName={"위동현"}
-                        customerEmail={"weaall@naver.com"}
-                        customerMobilePhone={"01020503202"}
+                        customerName={formData.name}
+                        customerEmail={formData.email}
+                        customerMobilePhone={formData.phoneNum}
                         onClose={closeCheckoutModal}
                     />
                 </ModalPortal>

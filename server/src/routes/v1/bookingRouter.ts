@@ -25,4 +25,6 @@ bookingRouter.post(
     asyncHandler((req: Request, res: Response) =>  bookingController.rollBackBookingRef(req as JWTCheck, res)),
 )
 
-export default bookingRouter
+bookingRouter.get("/confirm", asyncHandler(bookingController.confirm));
+
+export default bookingRouter;

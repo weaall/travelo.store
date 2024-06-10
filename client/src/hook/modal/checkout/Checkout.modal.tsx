@@ -4,10 +4,12 @@ import { nanoid } from "nanoid";
 import { useQuery } from "@tanstack/react-query";
 
 import * as tw from "./Checkout.modal.styles";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useBeforeUnload, useNavigate } from "react-router-dom";
 import { sendJWT } from "../../../utils/jwtUtils";
 import { axios, axiosInstance } from "../../../utils/axios.utils";
 import Cookies from "js-cookie";
+import { useCallbackPrompt } from "../../../utils/useCallbackPrompt";
+
 
 interface ModalProps {
     onClose: () => void;
@@ -25,22 +27,21 @@ interface ModalProps {
     customerMobilePhone: string;
 }
 
+const URL = process.env.REACT_APP_BASE_URL
+
 const selector = "#payment-widget";
 
 const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
 const customerKey = nanoid(12);
 
-const allowedUrls = [`${window.location.origin}/success`, `${window.location.origin}/fail`];
 
 export function CheckoutModal( props : ModalProps) {
     const navigate = useNavigate();
-    const location = useLocation();
 
     const { data: paymentWidget } = usePaymentWidget(clientKey, customerKey);
     const paymentMethodsWidgetRef = useRef<ReturnType<PaymentWidgetInstance["renderPaymentMethods"]> | null>(null);
     const [price, setPrice] = useState(props.totalPrice);
     const [paymentMethodsWidgetReady, isPaymentMethodsWidgetReady] = useState(false);
-    const previousLocationRef = useRef(location.pathname);
 
     useEffect(() => {
         if (paymentWidget == null) {
@@ -112,7 +113,7 @@ export function CheckoutModal( props : ModalProps) {
 
     const rollbackBookingRef = async () => {
         try {
-            Cookies.remove("bookingData")
+            Cookies.remove("bookingData");
             const config = await sendJWT({
                 method: "post",
                 url: "/booking/rollback",
@@ -125,7 +126,6 @@ export function CheckoutModal( props : ModalProps) {
             });
 
             await axiosInstance.request(config);
-
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 if (error.response.status === 401) {
@@ -139,21 +139,32 @@ export function CheckoutModal( props : ModalProps) {
         }
     };
 
-    const handleUnload = async () => {
-        const currentUrl = window.location.href;
-        if (!allowedUrls.includes(currentUrl)) {
-            await rollbackBookingRef();
+    // const [showDialog, setShowDialog] = useState<boolean>(false)
+    // const [showPrompt, confirmNavigation, cancelNavigatrion] = useCallbackPrompt(showDialog)
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+        const regex = /\/main$/;
+        if (!regex.test(window.location.pathname)) {
+            const confirmationMessage = "이 페이지를 나가시겠습니까? 변경사항이 저장되지 않을 수 있습니다.";
+            rollbackBookingRef();
+            e.returnValue = confirmationMessage;
+            updateBookingRef();
+            return confirmationMessage;
         }
     };
     
     useEffect(() => {
-        previousLocationRef.current = location.pathname;
-        window.addEventListener('unload', handleUnload);
-        return () => {
-            window.removeEventListener('unload', handleUnload);
+        const beforeUnloadListener = (e: BeforeUnloadEvent) => {
+            handleBeforeUnload(e);
         };
-    }, [location.pathname]);
     
+        window.addEventListener("beforeunload", beforeUnloadListener);
+    
+        return () => {
+            window.removeEventListener("beforeunload", beforeUnloadListener);
+        };
+    }, []);
+
     return (
         <tw.Container>
             <tw.ModalWrap>
@@ -178,7 +189,7 @@ export function CheckoutModal( props : ModalProps) {
                         onClick={async () => {
                             try {
                                 await updateBookingRef();
-                                Cookies.set('bookingData', JSON.stringify(bookingData), { expires: 10 / (24 * 60) });
+                                Cookies.set("bookingData", JSON.stringify(bookingData), { expires: 10 / (24 * 60) });
                                 try {
                                     await paymentWidget?.requestPayment({
                                         orderId: customerKey,
@@ -186,10 +197,9 @@ export function CheckoutModal( props : ModalProps) {
                                         customerName: props.customerName,
                                         customerEmail: props.customerEmail,
                                         customerMobilePhone: props.customerMobilePhone,
-                                        successUrl: `${window.location.origin}/success`,
-                                        failUrl: `${window.location.origin}/fail`,
+                                        successUrl: URL + "/booking/confirm",
+                                        failUrl: window.location.origin + "/fail",
                                     });
-
                                 } catch (paymentError) {
                                     await rollbackBookingRef();
                                     throw paymentError;
