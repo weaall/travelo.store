@@ -217,10 +217,10 @@ export interface BookingProps{
     booking_id: string,
     hotel_id: string,
     room_id: string, 
-    total_price: string, 
+    total_price: number, 
     check_in: string, 
     check_out: string,
     name: string,
-    phone_num: number,
+    phone_num: string,
     email: string,
 }

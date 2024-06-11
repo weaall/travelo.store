@@ -4,11 +4,9 @@ import { nanoid } from "nanoid";
 import { useQuery } from "@tanstack/react-query";
 
 import * as tw from "./Checkout.modal.styles";
-import { useBeforeUnload, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { sendJWT } from "../../../utils/jwtUtils";
 import { axios, axiosInstance } from "../../../utils/axios.utils";
-import Cookies from "js-cookie";
-import { useCallbackPrompt } from "../../../utils/useCallbackPrompt";
 
 
 interface ModalProps {
@@ -90,6 +88,7 @@ export function CheckoutModal( props : ModalProps) {
                 url: "/booking/ref",
                 data: {
                     booking_id: customerKey,
+                    hotel_id: props.hotelId,
                     room_id: props.roomId,
                     total_price: props.totalPrice,
                     check_in: props.checkInDate,
@@ -113,15 +112,14 @@ export function CheckoutModal( props : ModalProps) {
 
     const rollbackBookingRef = async () => {
         try {
-            Cookies.remove("bookingData");
             const config = await sendJWT({
                 method: "post",
                 url: "/booking/rollback",
                 data: {
                     booking_id: customerKey,
-                    room_id: props.roomId,
-                    check_in: props.checkInDate,
-                    check_out: props.checkOutDate,
+                room_id: props.roomId,
+                check_in: props.checkInDate,
+                check_out: props.checkOutDate,
                 },
             });
 
@@ -139,31 +137,14 @@ export function CheckoutModal( props : ModalProps) {
         }
     };
 
-    // const [showDialog, setShowDialog] = useState<boolean>(false)
-    // const [showPrompt, confirmNavigation, cancelNavigatrion] = useCallbackPrompt(showDialog)
-
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-        const regex = /\/main$/;
-        if (!regex.test(window.location.pathname)) {
-            const confirmationMessage = "이 페이지를 나가시겠습니까? 변경사항이 저장되지 않을 수 있습니다.";
-            rollbackBookingRef();
-            e.returnValue = confirmationMessage;
-            updateBookingRef();
-            return confirmationMessage;
-        }
+    const buildSuccessUrl = () => {
+        const params = new URLSearchParams();
+        params.append("hotel_id", props.hotelId);
+        params.append("name", props.customerName);
+        params.append("email", props.customerEmail);
+        params.append("phone_num", props.customerMobilePhone);
+        return `${URL}/booking/confirm?${params.toString()}`;
     };
-    
-    useEffect(() => {
-        const beforeUnloadListener = (e: BeforeUnloadEvent) => {
-            handleBeforeUnload(e);
-        };
-    
-        window.addEventListener("beforeunload", beforeUnloadListener);
-    
-        return () => {
-            window.removeEventListener("beforeunload", beforeUnloadListener);
-        };
-    }, []);
 
     return (
         <tw.Container>
@@ -189,7 +170,6 @@ export function CheckoutModal( props : ModalProps) {
                         onClick={async () => {
                             try {
                                 await updateBookingRef();
-                                Cookies.set("bookingData", JSON.stringify(bookingData), { expires: 10 / (24 * 60) });
                                 try {
                                     await paymentWidget?.requestPayment({
                                         orderId: customerKey,
@@ -197,7 +177,7 @@ export function CheckoutModal( props : ModalProps) {
                                         customerName: props.customerName,
                                         customerEmail: props.customerEmail,
                                         customerMobilePhone: props.customerMobilePhone,
-                                        successUrl: URL + "/booking/confirm",
+                                        successUrl: buildSuccessUrl(),
                                         failUrl: window.location.origin + "/fail",
                                     });
                                 } catch (paymentError) {
