@@ -5,7 +5,7 @@ import Cookies from "js-cookie";
 import { sendJWT } from "../../../utils/jwtUtils";
 import { axios, axiosInstance } from "../../../utils/axios.utils";
 
-export function SuccessPage() {
+export function Success() {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const [responseData, setResponseData] = useState(null);

@@ -129,9 +129,14 @@ export default function Payment() {
 
     const fetchHotel = async () => {
         try {
-            const response = await axiosInstance.get("/hotel/" + hotelId);
-            setHotelData(response.data.data[0]);
-            fetchHotelImg();
+            const hotelResponse = await axiosInstance.get("/hotel/" + hotelId);
+            let hotelData = hotelResponse.data.data[0];
+    
+            const hotelImgResponse = await axiosInstance.get("/hotel/img/" + hotelId);
+            hotelData.img = hotelImgResponse.data.data;
+    
+            setHotelData(hotelData);
+
             fetchRoom();
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
@@ -144,32 +149,15 @@ export default function Payment() {
             setLoading(false);
         }
     };
-
-    const fetchHotelImg = async () => {
-        try {
-            const response = await axiosInstance.get("/hotel/img/" + hotelId);
-            setHotelData((prevState) => ({
-                ...prevState,
-                img: response.data.data,
-            }));
-        } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 401) {
-                    window.alert("올바른 접근이 아닙니다.");
-                    navigate("/");
-                }
-            }
-        }
-    };
-
+    
     const fetchRoom = async () => {
         try {
-            const response = await axiosInstance.get("/room/" + roomId);
-            const room = response.data.data[0];
+            const roomResponse = await axiosInstance.get("/room/" + roomId);
+            const room = roomResponse.data.data[0];
 
             const roomImgResponse = await axiosInstance.get("/room/img/" + roomId);
             room.img = roomImgResponse.data.data;
-
+    
             const roomPriceResponse = await axiosInstance.get("/room/price/" + roomId, {
                 params: {
                     startDate: startDate,
@@ -177,7 +165,7 @@ export default function Payment() {
                 },
             });
             room.room_price = roomPriceResponse.data.data;
-
+    
             setRoomData(room);
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
@@ -294,7 +282,7 @@ export default function Payment() {
                         <tw.RoomWrap>
                             <tw.ContentsFlex>
                                 <tw.Pic>
-                                    {hotelData?.img?.[0]?.url ? (
+                                    {roomData?.img?.[0]?.url ? (
                                         <ImgLoader imageUrl={roomData.img[0].url} altText="" rounded="l-xl mobile:rounded-none mobile:rounded-t-xl"/>
                                     ) : (
                                         <tw.UnRegWrap>미등록</tw.UnRegWrap>

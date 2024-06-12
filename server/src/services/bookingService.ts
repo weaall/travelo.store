@@ -3,7 +3,7 @@ import pool from "../config/db";
 import CustomError from "../utils/customError";
 import { BookingProps, BookingRefProps } from "../interface/interfaces";
 import dayjs from "dayjs";
-import { BookingRefRows } from "../interface/mysql.interface";
+import { BookingRefRows, BookingRows } from "../interface/mysql.interface";
 
 const bookingService = {
     async addBookingRef(user_id: string, { booking_id, room_id, total_price, check_in, check_out }: BookingRefProps) {
@@ -86,6 +86,23 @@ const bookingService = {
 
         try {
             const [rows, field]: [BookingRefRows[], FieldPacket[]] = await connection.execute(getBookingRefSql, getBookingRefValue);
+
+            return rows;
+        } catch (error) {
+            throw error;
+        } finally {
+            connection.release();
+        }
+    },
+
+    async getBookingById(user_id: string, booking_id: string) {
+        const connection = await pool.getConnection();
+
+        const getBookingSql = `SELECT * FROM booking WHERE booking_id = ? and user_id = ?`;
+        const getBookingValue = [booking_id, user_id];
+
+        try {
+            const [rows, field]: [BookingRows[], FieldPacket[]] = await connection.execute(getBookingSql, getBookingValue);
 
             return rows;
         } catch (error) {

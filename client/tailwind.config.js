@@ -25,7 +25,7 @@ module.exports = {
                 100: "100",
             },
             fontFamily: {
-                sans: ['"Noto Sans KR"', 'sans-serif'],
+                sans: ['"Noto Sans KR"', "sans-serif"],
             },
         },
     },

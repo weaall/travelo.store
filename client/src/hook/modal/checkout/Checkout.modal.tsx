@@ -69,18 +69,6 @@ export function CheckoutModal( props : ModalProps) {
         paymentMethodsWidget.updateAmount(price);
     }, [price]);
 
-    const bookingData = [
-        customerKey,
-        props.hotelId,
-        props.roomId,
-        props.totalPrice.toString(),
-        props.checkInDate,
-        props.checkOutDate,
-        props.customerName,
-        props.customerMobilePhone,
-        props.customerEmail,
-    ];
-
     const addBookingRef = async () => {
         try {
             const config = await sendJWT({
@@ -191,7 +179,7 @@ export function CheckoutModal( props : ModalProps) {
                             try {
                                 await addBookingRef();
                                 try {
-                                    await paymentWidget?.requestPayment({
+                                    const response = await paymentWidget?.requestPayment({
                                         orderId: customerKey,
                                         orderName: props.orderName,
                                         customerName: props.customerName,

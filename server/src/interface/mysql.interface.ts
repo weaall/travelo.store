@@ -138,3 +138,13 @@ export interface BookingRefRows extends RowDataPacket {
     check_out: string,
     date: string,
 }
+
+export interface BookingRows extends RowDataPacket {
+    booking_id: string,
+    hotel_id: string,
+    room_id: string,
+    total_price: number,
+    check_in: string,
+    check_out: string,
+    date: string,
+}

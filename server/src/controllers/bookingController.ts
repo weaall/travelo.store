@@ -67,6 +67,36 @@ const bookingController = {
         }
     },
 
+    async getBookingById(req: JWTCheck, res: Response) {
+        try {
+            const key: string = `/booking/${req.params.id}`;
+            const redisData = JSON.parse(await getRedis(key));
+
+            if (redisData === null) {
+                const data = await bookingService.getBookingById(req.user.id, req.params.id);
+
+                setRedis(key, data);
+
+                res.status(200).json({
+                    error: null,
+                    data: data,
+                });
+            } else {
+                res.status(200).json({
+                    error: null,
+                    data: redisData,
+                });
+            }
+        } catch (error) {
+            const data = await bookingService.getBookingById(req.user.id, req.params.id);
+
+            res.status(200).json({
+                error: null,
+                data: data,
+            });
+        }
+    },
+
     async confirm(req: Request, res: Response) {
         const { hotel_id, name, email, phone_num, paymentType, orderId, paymentKey, amount } = req.query;
 
@@ -107,7 +137,7 @@ const bookingController = {
                     });
 
                     // 결제 승인 요청이 성공적으로 처리된 경우에만 이동합니다.
-                    res.redirect("http://localhost:3000/main");
+                    res.redirect(`http://localhost:3000/success/${orderId}`);
                 } catch (paymentError) {
                     // 결제 승인 요청이 실패한 경우 롤백
                     await bookingService.rollbackBookingRef(bookingRefData[0].user_id, {

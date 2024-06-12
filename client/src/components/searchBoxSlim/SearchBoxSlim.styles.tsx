@@ -12,7 +12,7 @@ export const SearchInput = tw.input`text-sm px-2 flex-1 font-bold outline-none`
 export const CalendarWrap = tw.div`w-3/12 h-full border-r border-gray-300 flex items-center py-1`
 export const CalendarBtn = tw.button`flex text-sm items-center flex-1 font-bold text-left gap-2`
 
-export const PersonWrap = tw.div`w-3/12 h-full border-r border-gray-300 flex items-center py-1`
+export const PersonWrap = tw.div`w-3/12 h-full border-gray-300 flex items-center py-1`
 export const PersonBtn = tw.button`flex text-sm items-center flex-1 font-bold text-left gap-2`
 
 export const SvgWrap = tw.div`ml-4 w-6`

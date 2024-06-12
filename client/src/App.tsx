@@ -16,8 +16,8 @@ import "@fontsource/noto-sans-kr";
 import Hotel from "./pages/hotel/Hotel"
 import Payment from "./pages/payment/Payment";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { SuccessPage } from "./pages/payment/success/success";
 import { FailPage } from "./pages/payment/fail/Fail";
+import { SuccessPage } from "./pages/payment/payment-result/Success";
 
 const queryClient = new QueryClient();
 
@@ -41,7 +41,7 @@ function App() {
                             </Route>
                             <Route path="/auth/kakao" element={<AuthKaKao />} />
                             <Route path="/search/:searchValue/:startDate/:endDate/:adult/:child" element={<SearchResult />} />
-                            <Route path="/success" element={<SuccessPage />} />
+                            <Route path="/success/:id" element={<SuccessPage />} />
                             <Route path="/fail" element={<FailPage />} />
                         </Routes>
                     </tw.ContentsWrap>
