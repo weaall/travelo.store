@@ -8,25 +8,14 @@ import bookingController from "../../controllers/bookingController"
 const bookingRouter = Router();
 
 bookingRouter.post(
-    "/",
-    isAuthenticated,
-    asyncHandler((req: Request, res: Response) => bookingController.addBooking(req as JWTCheck, res)),
-);
-
-bookingRouter.post(
     "/ref",
     isAuthenticated,
     asyncHandler((req: Request, res: Response) => bookingController.addBookingRef(req as JWTCheck, res)),
 );
 
-bookingRouter.post(
-    "/rollback",
-    isAuthenticated,
-    asyncHandler((req: Request, res: Response) => bookingController.rollBackBookingRef(req as JWTCheck, res)),
-);
-
-bookingRouter.post("/rollback/beacon", asyncHandler(bookingController.rollBackBookingRefBeacon));
 
 bookingRouter.get("/confirm", asyncHandler(bookingController.confirm));
+
+bookingRouter.post("/remove", asyncHandler(bookingController.removeBookingRef));
 
 export default bookingRouter;

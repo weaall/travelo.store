@@ -81,7 +81,7 @@ export function CheckoutModal( props : ModalProps) {
         props.customerEmail,
     ];
 
-    const updateBookingRef = async () => {
+    const addBookingRef = async () => {
         try {
             const config = await sendJWT({
                 method: "post",
@@ -110,20 +110,9 @@ export function CheckoutModal( props : ModalProps) {
         }
     };
 
-    const rollbackBookingRef = async () => {
+    const removeBookingRef = async () => {
         try {
-            const config = await sendJWT({
-                method: "post",
-                url: "/booking/rollback",
-                data: {
-                    booking_id: customerKey,
-                room_id: props.roomId,
-                check_in: props.checkInDate,
-                check_out: props.checkOutDate,
-                },
-            });
-
-            await axiosInstance.request(config);
+            const response = await axiosInstance.post("/booking/remove", { booking_id: customerKey });
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 if (error.response.status === 401) {
@@ -145,6 +134,37 @@ export function CheckoutModal( props : ModalProps) {
         params.append("phone_num", props.customerMobilePhone);
         return `${URL}/booking/confirm?${params.toString()}`;
     };
+
+    // const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+    //     const params = new URLSearchParams();
+    //     params.append("booking_id", customerKey);
+
+    //     const url = `${URL}/booking/remove?${params.toString()}`;
+
+    //     if (navigator.sendBeacon) {
+    //         navigator.sendBeacon(url);
+    //     } else {
+    //         fetch(URL + "/booking/remove", {
+    //             method: "POST",
+    //             body: JSON.stringify({
+    //                 booking_id: customerKey,
+    //             }),
+    //             headers: {
+    //                 "Content-Type": "application/json",
+    //             },
+    //             keepalive: true,
+    //         });
+    //     }
+    // };
+
+    // useEffect(() => {
+    //     window.addEventListener("beforeunload", handleBeforeUnload);
+
+    //     return () => {
+    //         window.removeEventListener("beforeunload", handleBeforeUnload);
+    //     };
+    // }, [customerKey, props.roomId, props.checkInDate, props.checkOutDate]);
+
 
     return (
         <tw.Container>
@@ -169,7 +189,7 @@ export function CheckoutModal( props : ModalProps) {
                         disabled={!paymentMethodsWidgetReady}
                         onClick={async () => {
                             try {
-                                await updateBookingRef();
+                                await addBookingRef();
                                 try {
                                     await paymentWidget?.requestPayment({
                                         orderId: customerKey,
@@ -181,7 +201,7 @@ export function CheckoutModal( props : ModalProps) {
                                         failUrl: window.location.origin + "/fail",
                                     });
                                 } catch (paymentError) {
-                                    await rollbackBookingRef();
+                                    await removeBookingRef();
                                     throw paymentError;
                                 }
                             } catch (error) {
