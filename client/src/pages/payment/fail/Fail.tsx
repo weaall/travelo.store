@@ -1,37 +1,26 @@
-import { useSearchParams } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import * as tw from "./Fail.styles";
 
 export function FailPage() {
-    const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
 
     return (
-        <div id="info" className="box_section" style={{ width: "600px" }}>
-            <img width="100px" src="https://static.toss.im/lotties/error-spot-no-loop-space-apng.png" alt="에러 이미지" />
-            <h2>결제를 실패했어요</h2>
-
-            <div className="p-grid typography--p" style={{ marginTop: "50px" }}>
-                <div className="p-grid-col text--left">
-                    <b>에러메시지</b>
-                </div>
-                <div className="p-grid-col text--right" id="message">{`${searchParams.get("message")}`}</div>
-            </div>
-            <div className="p-grid typography--p" style={{ marginTop: "10px" }}>
-                <div className="p-grid-col text--left">
-                    <b>에러코드</b>
-                </div>
-                <div className="p-grid-col text--right" id="code">{`${searchParams.get("code")}`}</div>
-            </div>
-
-            <div className="p-grid-col">
-                <Link to="https://docs.tosspayments.com/guides/payment-widget/integration">
-                    <button className="button p-grid-col5">연동 문서</button>
-                </Link>
-                <Link to="https://discord.gg/A4fRFXQhRu">
-                    <button className="button p-grid-col5" style={{ backgroundColor: "#e8f3ff", color: "#1b64da" }}>
-                        실시간 문의
-                    </button>
-                </Link>
-            </div>
-        </div>
+        <tw.Container>
+            <tw.ContentsWrap>
+                <tw.ImgWrap>
+                    <tw.Img alt="닫기 버튼" src={require("../../../assets/webp/fail.svg").default} />
+                </tw.ImgWrap>
+                <tw.LabelWrap>
+                    <tw.Label>결제에 실패했습니다.</tw.Label>
+                    <tw.ExpWrap>
+                        <tw.ExpLabel>다음과 같은경우에 결제가 정상적으로 진행되지 않을 수 있어요!</tw.ExpLabel>
+                        <tw.Text>- 결제중 서버와의 연결이 끊긴 경우</tw.Text>
+                        <tw.Text>- 결제중 객실의 가격이 변경된 경우</tw.Text>
+                        <tw.Text>- 결제중 객실이 소진된 경우</tw.Text>
+                    </tw.ExpWrap>
+                </tw.LabelWrap>
+                <tw.ReturnBtn onClick={()=>navigate("/")}>되돌아가기</tw.ReturnBtn>
+            </tw.ContentsWrap>
+        </tw.Container>
     );
 }

@@ -1,77 +1,145 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { Link } from "react-router-dom";
-import Cookies from "js-cookie";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { sendJWT } from "../../../utils/jwtUtils";
 import { axios, axiosInstance } from "../../../utils/axios.utils";
+import Loading from "../../../components/loading/Loading";
 
-export function Success() {
+import ImgLoader from "../../../utils/imgLoader";
+
+import * as tw from "./Success.styles";
+import { ModalPortal } from "../../../hook/modal/ModalPortal";
+import KakaoMapModal from "../../../hook/modal/kakao-map/KakaMap.modal";
+import dayjs from "dayjs";
+
+export function SuccessPage() {
     const navigate = useNavigate();
-    const [searchParams] = useSearchParams();
-    const [responseData, setResponseData] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    const bookingDataString = Cookies.get("bookingData");
+    const { id } = useParams();
 
-    const bookingData = JSON.parse(bookingDataString || "");
+    const [isKakaoMapModalOpen, setIsKakaoMapModalOpen] = useState(false);
 
-    const [customerKey, hotelId, roomId, totalPrice, checkInDate, checkOutDate, customerName, customerMobilePhone, customerEmail] =
-        bookingData;
+    const openKakaoMapModal = () => {
+        setIsKakaoMapModalOpen(true);
+    };
 
-    const rollbackBookingRef = async () => {
+    const closeKakaoMapModal = () => {
+        setIsKakaoMapModalOpen(false);
+    };
+
+    const [bookingData, setBookingData] = useState({
+        booking_id: "",
+        hotel_id: 0,
+        room_id: 0,
+        total_price: 0,
+        check_in: "",
+        check_out: "",
+        name: "",
+        phone_num: 0,
+        emial: "",
+    });
+
+    const [hotelData, setHotelData] = useState({
+        id: "",
+        name: "",
+        address: "",
+        address_detail: "",
+        postcode: "",
+        description: "",
+        check_in: 0,
+        check_out: 0,
+
+        wifi: 0,
+        always_check_in: 0,
+        breakfast: 0,
+        barbecue: 0,
+
+        carpark: 0,
+        restaurnat: 0,
+        cafe: 0,
+        swimming_pool: 0,
+        spa: 0,
+        fitness: 0,
+        convenience_store: 0,
+
+        img: [
+            {
+                url: "",
+            },
+        ],
+    });
+
+    const [roomData, setRoomData] = useState({
+        id: 0,
+        name: "",
+        num: 0,
+        view_type: "",
+        bed_type: "",
+        discount: 0,
+
+        img: [
+            {
+                url: "",
+            },
+        ],
+    });
+
+    const fetchBooking = async () => {
         try {
-            Cookies.remove("bookingData")
             const config = await sendJWT({
-                method: "post",
-                url: "/booking/rollback",
-                data: {
-                    booking_id: customerKey,
-                    room_id: roomId,
-                    check_in: checkInDate,
-                    check_out: checkOutDate,
-                },
+                method: "GET",
+                url: "/booking/" + id,
             });
 
-            await axiosInstance.request(config);
-
+            const response = await axiosInstance.request(config);
+            const bookingData = response.data.data[0];
+            setBookingData(bookingData);
+            fetchHotel(bookingData.hotel_id);
+            fetchRoom(bookingData.room_id);
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 if (error.response.status === 401) {
-                    window.alert("로그인해주세요");
+                    window.alert("올바른 접근이 아닙니다.");
                     navigate("/");
-                } else if (error.response.status === 400) {
-                    window.alert("해당객실이 모두 소진되었습니다.");
+                }
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchHotel = async (hotelId: number) => {
+        try {
+            const hotelResponse = await axiosInstance.get("/hotel/" + hotelId);
+            let hotelData = hotelResponse.data.data[0];
+
+            const hotelImgResponse = await axiosInstance.get("/hotel/img/" + hotelId);
+            hotelData.img = hotelImgResponse.data.data;
+
+            setHotelData(hotelData);
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                if (error.response.status === 401) {
+                    window.alert("올바른 접근이 아닙니다.");
                     navigate("/");
                 }
             }
         }
     };
 
-    const updateBooking = async () => {
+    const fetchRoom = async (roomId: number) => {
         try {
-            const config = await sendJWT({
-                method: "post",
-                url: "/booking",
-                data: {
-                    booking_id: customerKey,
-                    hotel_id: hotelId,
-                    room_id: roomId,
-                    total_price: totalPrice,
-                    check_in: checkInDate,
-                    check_out: checkOutDate,
-                    name: customerName,
-                    phone_num: customerMobilePhone,
-                    email: customerEmail,
-                },
-            });
+            const roomResponse = await axiosInstance.get("/room/" + roomId);
+            const room = roomResponse.data.data[0];
 
-            await axiosInstance.request(config);
-            Cookies.remove("bookingData")
+            const roomImgResponse = await axiosInstance.get("/room/img/" + roomId);
+            room.img = roomImgResponse.data.data;
+
+            setRoomData(room);
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 if (error.response.status === 401) {
-                    window.alert("로그인해주세요");
-                    navigate("/");
-                } else if (error.response.status === 400) {
+                    window.alert("올바른 접근이 아닙니다.");
                     navigate("/");
                 }
             }
@@ -79,89 +147,140 @@ export function Success() {
     };
 
     useEffect(() => {
-        const requestData = {
-            orderId: searchParams.get("orderId"),
-            amount: searchParams.get("amount"),
-            paymentKey: searchParams.get("paymentKey"),
-        };
+        fetchBooking();
+    }, []);
 
-        // TODO: 개발자센터에 로그인해서 내 결제위젯 연동 키 > 시크릿 키를 입력하세요. 시크릿 키는 외부에 공개되면 안돼요.
-        // @docs https://docs.tosspayments.com/reference/using-api/api-keys
-        const secretKey = "test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6";
-        const encryptedSecretKey = `Basic ${btoa(secretKey + ":")}`;
-
-        async function confirm() {
-            const response = await fetch("https://api.tosspayments.com/v1/payments/confirm", {
-                method: "POST",
-                headers: {
-                    Authorization: encryptedSecretKey,
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(requestData),
-            });
-
-            const json = await response.json();
-
-            if (!response.ok) {
-                rollbackBookingRef();
-                navigate(`/fail?code=${json.code}&message=${json.message}`);
-                return;
-            }
-
-            updateBooking();
-            return json;
-        }
-        confirm().then((data) => {
-            setResponseData(data);
-        });
-    }, [searchParams]);
+    if (loading) {
+        return <Loading />;
+    }
 
     return (
-        <>
-            <div className="box_section" style={{ width: "600px" }}>
-                <img width="100px" src="https://static.toss.im/illusts/check-blue-spot-ending-frame.png" />
-                <h2>결제를 완료했어요</h2>
-                <div className="p-grid typography--p" style={{ marginTop: "50px" }}>
-                    <div className="p-grid-col text--left">
-                        <b>결제금액</b>
-                    </div>
-                    <div className="p-grid-col text--right" id="amount">
-                        {`${Number(searchParams.get("amount")).toLocaleString()}원`}
-                    </div>
-                </div>
-                <div className="p-grid typography--p" style={{ marginTop: "10px" }}>
-                    <div className="p-grid-col text--left">
-                        <b>주문번호</b>
-                    </div>
-                    <div className="p-grid-col text--right" id="orderId">
-                        {`${searchParams.get("orderId")}`}
-                    </div>
-                </div>
-                <div className="p-grid typography--p" style={{ marginTop: "10px" }}>
-                    <div className="p-grid-col text--left">
-                        <b>paymentKey</b>
-                    </div>
-                    <div className="p-grid-col text--right" id="paymentKey" style={{ whiteSpace: "initial", width: "250px" }}>
-                        {`${searchParams.get("paymentKey")}`}
-                    </div>
-                </div>
-                <div className="p-grid-col">
-                    <Link to="https://docs.tosspayments.com/guides/payment-widget/integration">
-                        <button className="button p-grid-col5">연동 문서</button>
-                    </Link>
-                    <Link to="https://discord.gg/A4fRFXQhRu">
-                        <button className="button p-grid-col5" style={{ backgroundColor: "#e8f3ff", color: "#1b64da" }}>
-                            실시간 문의
-                        </button>
-                    </Link>
-                </div>
-            </div>
-            <div className="box_section" style={{ width: "600px", textAlign: "left" }}>
-                <b>Response Data :</b>
-                <div id="response" style={{ whiteSpace: "initial" }}>
-                    {responseData && <pre>{JSON.stringify(responseData, null, 4)}</pre>}
-                </div>
-            </div>
-        </>
+        <tw.Container>
+            <tw.BookingWrap>
+                <tw.BookingLabel>고객님의 예약이 확정되었습니다.</tw.BookingLabel>
+                <tw.BookingText>
+                    고객님, 안녕하세요.
+                    <br />
+                    <br />
+                    예약 번호는 <tw.BookingSpan>{bookingData.booking_id}</tw.BookingSpan>이며, 아래 버튼으로 연결되는 셀프서비스 예약 관리 기능을 이용해 예약
+                    정보 확인, 예약 취소, 예약 변경을 하실 수 있습니다.
+                </tw.BookingText>
+                <tw.BookingBtn>예약 관리하기</tw.BookingBtn>
+            </tw.BookingWrap>
+            <tw.OuterWrap>
+                <tw.RoomWrap>
+                    <tw.ContentsFlex>
+                        <tw.Pic>
+                            {hotelData?.img?.[0]?.url ? (
+                                <ImgLoader imageUrl={hotelData.img[0].url} altText="" rounded="xl mobile:rounded-none mobile:rounded-xl" />
+                            ) : (
+                                <tw.UnRegWrap>미등록</tw.UnRegWrap>
+                            )}
+                        </tw.Pic>
+                        <tw.OuterInfoWrap>
+                            <tw.RoomInfo>
+                                <tw.InfoWrap>
+                                    <tw.HotelTitle>{hotelData.name}</tw.HotelTitle>
+                                    <tw.HotelAddress onClick={openKakaoMapModal}>
+                                        {hotelData.address} {hotelData.address_detail}, {hotelData.postcode}
+                                    </tw.HotelAddress>
+                                </tw.InfoWrap>
+                            </tw.RoomInfo>
+                        </tw.OuterInfoWrap>
+                    </tw.ContentsFlex>
+                </tw.RoomWrap>
+                <tw.RoomWrap>
+                    <tw.ContentsFlex>
+                        <tw.Pic>
+                            {roomData?.img?.[0]?.url ? (
+                                <ImgLoader imageUrl={roomData.img[0].url} altText="" rounded="l-xl mobile:rounded-none mobile:rounded-t-xl" />
+                            ) : (
+                                <tw.UnRegWrap>미등록</tw.UnRegWrap>
+                            )}
+                        </tw.Pic>
+                        <tw.OuterInfoWrap>
+                            <tw.RoomInfo>
+                                <tw.InfoWrap>
+                                    <tw.RoomName>{roomData.name}</tw.RoomName>
+                                    <tw.RoomText>{roomData.view_type}</tw.RoomText>
+                                    <tw.RoomText>
+                                        {roomData.bed_type} / 최대인원: {roomData.num}명
+                                    </tw.RoomText>
+                                </tw.InfoWrap>
+                            </tw.RoomInfo>
+                        </tw.OuterInfoWrap>
+                    </tw.ContentsFlex>
+                </tw.RoomWrap>
+                <tw.CheckWrap>
+                    <tw.CheckInWrap>
+                        <tw.CheckLabel>체크인</tw.CheckLabel>
+                        <tw.CheckText>{dayjs(bookingData.check_in).format("YYYY. MM. DD (dddd)")}</tw.CheckText>
+                        <tw.CheckText>({hotelData.check_in}:00 시 이후)</tw.CheckText>
+                    </tw.CheckInWrap>
+                    <tw.CheckOutWrap>
+                        <tw.CheckLabel>체크아웃</tw.CheckLabel>
+                        <tw.CheckText>{dayjs(bookingData.check_out).format("YYYY. MM. DD (dddd)")}</tw.CheckText>
+                        <tw.CheckText>({hotelData.check_out}:00 시 이전)</tw.CheckText>
+                    </tw.CheckOutWrap>
+                </tw.CheckWrap>
+                <tw.GuideText>예약 관리하기 페이지에서 숙소 정책과 편의 시설/서비스에 관해서도 쉽게 확인할 수 있습니다.</tw.GuideText>
+            </tw.OuterWrap>
+            <tw.DetailWrap>
+                <tw.Label>예약 세부 사항</tw.Label>
+                <tw.DetailRow>
+                    <tw.DetailLabelWrap>
+                        <tw.DetailLabel>객실 수 및 숙박 수</tw.DetailLabel>
+                    </tw.DetailLabelWrap>
+                    <tw.DetailTextWrap>
+                        <tw.DetailText>객실 1개 / {dayjs(bookingData.check_out).diff(dayjs(bookingData.check_in), "day")}박</tw.DetailText>
+                    </tw.DetailTextWrap>
+                </tw.DetailRow>
+                <tw.DetailRow>
+                    <tw.DetailLabelWrap>
+                        <tw.DetailLabel>객실종류</tw.DetailLabel>
+                    </tw.DetailLabelWrap>
+                    <tw.DetailTextWrap>
+                        <tw.DetailText>
+                            {roomData.name}({roomData.view_type}) / {roomData.bed_type}
+                        </tw.DetailText>
+                    </tw.DetailTextWrap>
+                </tw.DetailRow>
+                <tw.DetailRow>
+                    <tw.DetailLabelWrap>
+                        <tw.DetailLabel>대표 투숙객</tw.DetailLabel>
+                    </tw.DetailLabelWrap>
+                    <tw.DetailTextWrap>
+                        <tw.DetailText>{bookingData.name}</tw.DetailText>
+                    </tw.DetailTextWrap>
+                </tw.DetailRow>
+                <tw.DetailRow>
+                    <tw.DetailLabelWrap>
+                        <tw.DetailLabel>대표 전화번호</tw.DetailLabel>
+                    </tw.DetailLabelWrap>
+                    <tw.DetailTextWrap>
+                        <tw.DetailText>{bookingData.phone_num}</tw.DetailText>
+                    </tw.DetailTextWrap>
+                </tw.DetailRow>
+                <tw.DetailRow>
+                    <tw.DetailLabelWrap>
+                        <tw.DetailLabel>결제금액</tw.DetailLabel>
+                    </tw.DetailLabelWrap>
+                    <tw.DetailTextWrap>
+                        <tw.DetailText>{bookingData.total_price.toLocaleString()}원</tw.DetailText>
+                    </tw.DetailTextWrap>
+                </tw.DetailRow>
+            </tw.DetailWrap>
+
+            {isKakaoMapModalOpen && (
+                <ModalPortal>
+                    <KakaoMapModal
+                        hotelName={hotelData.name}
+                        address={`${hotelData.address} ${hotelData.address_detail}`}
+                        imgUrl={hotelData.img[0].url}
+                        onClose={closeKakaoMapModal}
+                    />
+                </ModalPortal>
+            )}
+        </tw.Container>
     );
 }

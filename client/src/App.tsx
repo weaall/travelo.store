@@ -16,8 +16,8 @@ import "@fontsource/noto-sans-kr";
 import Hotel from "./pages/hotel/Hotel"
 import Payment from "./pages/payment/Payment";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { SuccessPage } from "./pages/payment/success/Success";
 import { FailPage } from "./pages/payment/fail/Fail";
-import { SuccessPage } from "./pages/payment/payment-result/Success";
 
 const queryClient = new QueryClient();
 
