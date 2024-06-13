@@ -4,7 +4,7 @@ interface MenuOpenProps {
     $validator: boolean
 }
 
-export const MenuWrap = tw.div<MenuOpenProps>`max-w-[420px] absolute top-16 ml-[420px] w-[50%] h-auto z-50 
+export const MenuWrap = tw.div<MenuOpenProps>`max-w-[420px] absolute top-[4.04rem] ml-[420px] w-[50%] h-auto z-50 
 bg-white/[0.95] flex flex-col rounded-3xl border-b shadow-lg
 transition ease-in duration-200 overflow-hidden
 mobile:w-[100%] mobile:ml-[0%]

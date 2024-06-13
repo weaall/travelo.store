@@ -59,7 +59,7 @@ export default function Header() {
                     <tw.ActiveBtn>
                         <tw.GnbSvg alt="" src={require("../../assets/svg/spinner.svg").default}></tw.GnbSvg>
                     </tw.ActiveBtn>
-                    <tw.NavHome onClick={() => navigateClick("/")}>weaall Dev</tw.NavHome>
+                    <tw.NavHome onClick={() => navigateClick("/")}>Travel.io</tw.NavHome>
                     {isSignIn === false ? (
                         <>
                             <tw.SignInBtn onClick={() => navigateClick("/signin")}>로그인</tw.SignInBtn>

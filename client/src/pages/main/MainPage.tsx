@@ -2,13 +2,13 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 
-import * as tw from "./Search.styles"
+import * as tw from "./MainPage.styles"
 import { ModalPortal } from "../../hook/modal/ModalPortal";
 import SearchDateModal from "../../hook/modal/search_date/SearchDate.modal";
 import SearchPersonModal from "../../hook/modal/search_person/SearchPerson.modal";
 import { encrypt } from "../../utils/cryptoJs";
 
-interface SearchBoxProps {
+interface MainPageProps {
     defaultSearchValue?: string;
     defaultStartDate?: string;
     defaultEndDate?: string;
@@ -18,7 +18,7 @@ interface SearchBoxProps {
     currentHotelName? : string;
 }
 
-export default function SearchBox({ defaultSearchValue, defaultStartDate, defaultEndDate, defaultAdult, defaultChild, currentHotelId, currentHotelName}: SearchBoxProps) {
+export default function MainPage({ defaultSearchValue, defaultStartDate, defaultEndDate, defaultAdult, defaultChild, currentHotelId, currentHotelName}: MainPageProps) {
     const navigate = useNavigate();
 
     const [isSearchDateModalOpen, setIsSearchDateModalOpen] = useState(false);

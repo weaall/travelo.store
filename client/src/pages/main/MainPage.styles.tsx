@@ -19,12 +19,12 @@ export const PersonWrap = tw.div`w-3/12 h-full flex items-center p-1 py-4 border
 mobile:w-auto mobile:border mobile:rounded-xl mobile:bg-white`
 export const PersonBtn = tw.button`text-sm items-center flex-1 font-bold text-left px-2`
 
-export const SvgWrap = tw.div`ml-4 w-6`
-export const Svg = tw.img`w-6`
+export const SvgWrap = tw.div`ml-4 w-6 h-full`
+export const Svg = tw.img`w-6 h-full`
 
 export const RemoveBtn = tw.button`mr-4 w-6`
 
-export const SearchBtn = tw.button`w-1/12 h-full rounded-md bg-black flex items-center justify-center
+export const SearchBtn = tw.button`w-1/12 h-full rounded-md bg-black flex items-center justify-center py-4
 mobile:hidden`
 
 export const SearchBtnMobile = tw.button`mx-1 text-lg font-medium px-5 py-3 rounded-xl bg-black text-white hidden

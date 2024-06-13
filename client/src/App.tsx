@@ -9,7 +9,7 @@ import SignUp from "./pages/sign-up/SignUp";
 import HotelReg from "./pages/hotel-reg/HotelReg";
 import HotelMe from "./pages/hotel-me/HotelMe";
 import HotelMgmt from "./pages/hotel-mgmt/HotelMgmt";
-import Search from "./pages/search/Search";
+import Search from "./pages/main/MainPage";
 import SearchResult from "./pages/search-reuslt/SearchResult";
 
 import "@fontsource/noto-sans-kr";
