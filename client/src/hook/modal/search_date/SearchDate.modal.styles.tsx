@@ -46,10 +46,12 @@ export const CalendarWrap = tw.div`h-[80%]`
 export const CalTitleWrap = tw.div`flex items-center justify-between mb-3`
 
 export const YearWrap = tw.div`w-full flex justify-start px-4`
-export const YearMonth = tw.h2`text-lg font-bold`
+export const YearMonth = tw.h2`text-lg font-bold
+mobile:text-base`
 
 export const NavWrap = tw.nav`w-full flex justify-end px-4 space-x-2`
-export const NavBtn = tw.button`w-7`
+export const NavBtn = tw.button`w-7
+mobile:w-6`
 export const NavSvg = tw.img``
 
 export const AddBtn = tw.button`font-bold hover:text-main`
@@ -70,7 +72,8 @@ ${(p) => (p.$date === "today" ? "text-green-500 font-bold" : p.$date === "other"
 
 export const SelectWrap = tw.div`flex border-t`
 export const UpperTag = tw.p`text-xs`
-export const SelectLabel = tw.p`text-center text-xl font-bold`
+export const SelectLabel = tw.p`text-center text-xl font-bold
+mobile:text-base`
 export const StartWrap = tw.div`w-1/2 p-2 border-r`
 export const EndWrap = tw.div`w-1/2 p-2`
 

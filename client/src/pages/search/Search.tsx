@@ -109,7 +109,7 @@ export default function SearchBox({ defaultSearchValue, defaultStartDate, defaul
         <tw.Container>
             <tw.MainContainer>
                 <tw.SearchContainer>
-
+                    
                     <tw.SearchWrap>
                         <tw.SvgWrap>
                             <tw.Svg alt="" src={require("../../assets/svg/search_icon.svg").default} />
@@ -147,6 +147,8 @@ export default function SearchBox({ defaultSearchValue, defaultStartDate, defaul
                     <tw.SearchBtn onClick={handleOnClick}>
                         <tw.Svg alt="" src={require("../../assets/svg/search_white_icon.svg").default} />
                     </tw.SearchBtn>
+
+                    <tw.SearchBtnMobile onClick={handleOnClick}>검색하기</tw.SearchBtnMobile>
                 </tw.SearchContainer>
             </tw.MainContainer>
 

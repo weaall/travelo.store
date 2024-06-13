@@ -1,18 +1,22 @@
 import tw from "tailwind-styled-components"
 
-export const Container = tw.div`flex flex-col items-center pb-4`
+export const Container = tw.div`flex flex-col items-center min-h-screen-16`
 
-export const MainContainer = tw.div`w-full bg-gray-200 py-20`
+export const MainContainer = tw.div`flex flex-col w-full min-h-screen-16 justify-center bg-main/[0.2]`
 
-export const SearchContainer = tw.div`h-20 bg-white shadow-md flex rounded-2xl px-6 py-4`
+export const SearchContainer = tw.div`flex bg-white shadow-md flex rounded-2xl px-4 py-4 mx-3
+mobile:flex-col mobile:space-y-3 mobile:bg-gray-100`
 
-export const SearchWrap = tw.div`w-5/12 h-full flex items-center justify-between p-1`
+export const SearchWrap = tw.div`w-5/12 h-full flex items-center justify-between p-1 py-4 border-transparent
+mobile:w-full mobile:border mobile:rounded-xl mobile:bg-white`
 export const SearchInput = tw.input`text-sm px-2 flex-1 font-bold outline-none`
-
-export const CalendarWrap = tw.div`w-3/12 h-full border-gray-300 flex items-center p-1`
+ 
+export const CalendarWrap = tw.div`w-3/12 h-full border-gray-300 flex items-center p-1 py-4 border-transparent
+mobile:w-auto mobile:border mobile:rounded-xl mobile:bg-white`
 export const CalendarBtn = tw.button`text-sm items-center flex-1 font-bold text-left px-2`
 
-export const PersonWrap = tw.div`w-3/12 h-full flex items-center p-1`
+export const PersonWrap = tw.div`w-3/12 h-full flex items-center p-1 py-4 border-transparent
+mobile:w-auto mobile:border mobile:rounded-xl mobile:bg-white`
 export const PersonBtn = tw.button`text-sm items-center flex-1 font-bold text-left px-2`
 
 export const SvgWrap = tw.div`ml-4 w-6`
@@ -20,5 +24,9 @@ export const Svg = tw.img`w-6`
 
 export const RemoveBtn = tw.button`mr-4 w-6`
 
-export const SearchBtn = tw.button`w-1/12 h-full rounded-md bg-black flex items-center justify-center`
+export const SearchBtn = tw.button`w-1/12 h-full rounded-md bg-black flex items-center justify-center
+mobile:hidden`
+
+export const SearchBtnMobile = tw.button`mx-1 text-lg font-medium px-5 py-3 rounded-xl bg-black text-white hidden
+mobile:block`
 
