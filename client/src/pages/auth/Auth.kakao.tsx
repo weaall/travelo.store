@@ -78,7 +78,7 @@ function AuthKaKao() {
                 Cookies.set("jwt", receivedToken, { expires: 1 })
                 window.alert("성공적으로 로그인되었습니다.")
                 headerRender();
-                navigate("/main")
+                navigate("/")
             }
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {

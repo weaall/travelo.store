@@ -10,7 +10,7 @@ interface CustomImageSliderProps {
     images: Image[];
 }
 
-export default function ImgSliderMain({ images }: CustomImageSliderProps) {
+export default function ImgSlider({ images }: CustomImageSliderProps) {
     const [currentIndex, setCurrentIndex] = useState(0);
 
     const prevSlide = () => {

@@ -66,7 +66,9 @@ export default function Header() {
                         </>
                     ) : (
                         <>
-                            <tw.SignInBtn onClick={changeMenuState}>메뉴</tw.SignInBtn>
+                            <tw.SignInBtn onClick={changeMenuState}>
+                                <tw.Svg alt="" src={require("../../assets/svg/list_icon.svg").default} />
+                            </tw.SignInBtn>
                         </>
                     )}
                 </tw.NavWrap>

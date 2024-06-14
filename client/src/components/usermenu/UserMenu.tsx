@@ -1,33 +1,34 @@
-import { useNavigate } from "react-router-dom"
-import { useRecoilState } from "recoil"
-import Cookies from "js-cookie"
+import { useNavigate } from "react-router-dom";
+import { useRecoilState } from "recoil";
+import Cookies from "js-cookie";
 
-import { HeaderRenderAtom } from "../../recoil/HeaderRender.Atom"
-import * as tw from "./UserMenu.styles"
+import { HeaderRenderAtom } from "../../recoil/HeaderRender.Atom";
+import * as tw from "./UserMenu.styles";
 
 interface UserMenuProps {
-    isMenuOpen: boolean
+    isMenuOpen: boolean;
 }
 
 export default function UserMenu({ isMenuOpen }: UserMenuProps) {
-    const [headerRender, setHeaderRender] = useRecoilState(HeaderRenderAtom)
-    const navigate = useNavigate()
+    const [headerRender, setHeaderRender] = useRecoilState(HeaderRenderAtom);
+    const navigate = useNavigate();
 
     const logoutClick = () => {
         if (window.confirm("로그아웃 하시겠습니까?")) {
-            Cookies.remove("jwt")
-            setHeaderRender((prevCount) => prevCount + 1)
-            navigate("/main")
+            Cookies.remove("jwt");
+            setHeaderRender((prevCount) => prevCount + 1);
+            navigate("/main");
         } else {
         }
-    }
+    };
 
-    const navigateClick = (url : string) =>{
-        setHeaderRender((prevCount) => prevCount + 1)
-        navigate(`/${url}`)
-    }
+    const navigateClick = (url: string) => {
+        setHeaderRender((prevCount) => prevCount + 1);
+        navigate(`/${url}`);
+    };
 
     return (
+        <tw.Container>
             <tw.MenuWrap $validator={isMenuOpen}>
                 <tw.MenuNav>
                     <tw.MenuLabelWrap>
@@ -56,5 +57,6 @@ export default function UserMenu({ isMenuOpen }: UserMenuProps) {
                     </tw.MenuUl>
                 </tw.MenuNav>
             </tw.MenuWrap>
+        </tw.Container>
     );
 }
