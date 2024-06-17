@@ -5,7 +5,7 @@ import { axios, axiosInstance } from "../../utils/axios.utils"
 import { useNavigate } from "react-router-dom"
 import { userDataProps } from "../../interface/interfaces"
 
-export default function Me() {
+export default function MyPage() {
     const navigate = useNavigate()
 
     const [userInfo, setUserInfo] = useState<userDataProps>({

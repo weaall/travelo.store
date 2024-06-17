@@ -37,7 +37,7 @@ export default function UserMenu({ isMenuOpen }: UserMenuProps) {
                     </tw.MenuLabelWrap>
                     <tw.MenuUl>
                         <tw.MenuLi>
-                            <tw.MenuA>내정보</tw.MenuA>
+                            <tw.MenuA onClick={()=>navigate("/mypage")}>내정보</tw.MenuA>
                         </tw.MenuLi>
                         <tw.MenuLi>
                             <tw.MenuA>예약확인</tw.MenuA>
