@@ -18,7 +18,7 @@ import Payment from "./pages/payment/Payment";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SuccessPage } from "./pages/payment/success/Success";
 import { FailPage } from "./pages/payment/fail/Fail";
-import MyPage from "./pages/me/Me";
+import MyPage from "./pages/mypage/Mypage";
 
 const queryClient = new QueryClient();
 
@@ -31,17 +31,22 @@ function App() {
                     <tw.ContentsWrap>
                         <Routes>
                             <Route path="/" element={<Search />} />
-                            <Route path="/mypage" element={<MyPage/>} />
+                            <Route path="/me/*" element={<MyPage/>} />
+
                             <Route path="/signin" element={<SignIn />} />
                             <Route path="/signup" element={<SignUp />} />
+
                             <Route path="/hotel/:encryptedId/:startDate/:endDate/:adult/:child" element={<Hotel />} />
                             <Route path="/payment/:encryptedHotelId/:encryptedRoomId/:startDate/:endDate" element={<Payment />} />
+                            
                             <Route path="/hotelreg" element={<HotelReg />} />
                             <Route path="/hotel/me" element={<HotelMe />} />
+
                             <Route path="/hotel/mgmt/">
                                 <Route path=":hotelId/*" element={<HotelMgmt />} />
                             </Route>
                             <Route path="/auth/kakao" element={<AuthKaKao />} />
+
                             <Route path="/search/:searchValue/:startDate/:endDate/:adult/:child" element={<SearchResult />} />
                             <Route path="/success/:id" element={<SuccessPage />} />
                             <Route path="/fail" element={<FailPage />} />

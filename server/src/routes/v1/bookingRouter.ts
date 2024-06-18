@@ -24,5 +24,11 @@ bookingRouter.get(
     asyncHandler((req: Request, res: Response) => bookingController.getBookingById(req as JWTCheck, res)),
 );
 
+bookingRouter.get(
+    "/user",
+    isAuthenticated,
+    asyncHandler((req: Request, res: Response) => bookingController.getBookingByUserId(req as JWTCheck, res)),
+);
+
 
 export default bookingRouter;

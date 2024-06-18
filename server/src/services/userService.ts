@@ -5,24 +5,24 @@ import { userRowsProps } from "../interface/interfaces"
 
 const userService = {
     async me(id: string) {
-        const checkIdSql = "SELECT * FROM user WHERE id = ?"
-        const checkIdParams = [id]
-        const connection = await pool.getConnection()
+        const checkIdSql = "SELECT * FROM user WHERE id = ?";
+        const checkIdParams = [id];
+        const connection = await pool.getConnection();
 
         try {
-            const [rows, fields]: [userRowsProps[], FieldPacket[]] = await connection.execute(checkIdSql, checkIdParams)
+            const [rows, fields]: [userRowsProps[], FieldPacket[]] = await connection.execute(checkIdSql, checkIdParams);
 
             if (rows.length === 0) {
-                throw new CustomError("해당유저가 존재하지 않습니다.", 404)
+                throw new CustomError("해당유저가 존재하지 않습니다.", 404);
             }
 
-            return rows
+            return rows;
         } catch (error) {
-            throw error
+            throw error;
         } finally {
-            connection.release()
+            connection.release();
         }
     },
-}
+};
 
 export default userService

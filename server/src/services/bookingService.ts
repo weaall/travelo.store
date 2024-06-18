@@ -112,6 +112,23 @@ const bookingService = {
         }
     },
 
+    async getBookingByUserId(user_id: string) {
+        const connection = await pool.getConnection();
+
+        const getBookingSql = `SELECT * FROM booking WHERE user_id = ?`;
+        const getBookingValue = [user_id];
+
+        try {
+            const [rows, field]: [BookingRows[], FieldPacket[]] = await connection.execute(getBookingSql, getBookingValue);
+
+            return rows;
+        } catch (error) {
+            throw error;
+        } finally {
+            connection.release();
+        }
+    },
+
     async addBooking(user_id: string, { booking_id, hotel_id, room_id, total_price, check_in, check_out, name, phone_num, email }: BookingProps) {
         const connection = await pool.getConnection();
 

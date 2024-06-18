@@ -97,6 +97,36 @@ const bookingController = {
         }
     },
 
+    async getBookingByUserId(req: JWTCheck, res: Response) {
+        try {
+            const key: string = `/booking/user/${req.user.id}`;
+            const redisData = JSON.parse(await getRedis(key));
+
+            if (redisData === null) {
+                const data = await bookingService.getBookingByUserId(req.user.id);
+
+                setRedis(key, data);
+
+                res.status(200).json({
+                    error: null,
+                    data: data,
+                });
+            } else {
+                res.status(200).json({
+                    error: null,
+                    data: redisData,
+                });
+            }
+        } catch (error) {
+            const data = await bookingService.getBookingByUserId(req.user.id);
+
+            res.status(200).json({
+                error: null,
+                data: data,
+            });
+        }
+    },
+
     async confirm(req: Request, res: Response) {
         const { hotel_id, name, email, phone_num, paymentType, orderId, paymentKey, amount } = req.query;
 

@@ -7,6 +7,8 @@ module.exports = {
             colors: {
                 main: "#6666ff",
                 tomain: "#9999ff",
+                kakao: "#FAE100",
+                "kakao-text": "#371D1E"
             },
             screens: {
                 mobile: { max: "640px" },
