@@ -115,8 +115,10 @@ const bookingService = {
     async getBookingByUserId(user_id: string) {
         const connection = await pool.getConnection();
 
-        const getBookingSql = `SELECT * FROM booking WHERE user_id = ?`;
-        const getBookingValue = [user_id];
+        const today = dayjs().format('YYYY-MM-DD');
+
+        const getBookingSql = `SELECT * FROM booking WHERE user_id = ? AND check_out >= ?`;
+        const getBookingValue = [user_id, today];
 
         try {
             const [rows, field]: [BookingRows[], FieldPacket[]] = await connection.execute(getBookingSql, getBookingValue);

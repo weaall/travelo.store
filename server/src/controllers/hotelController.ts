@@ -13,6 +13,7 @@ const hotelController = {
             data: data,
         });
     },
+
     async getHotelById(req: Request, res: Response) {
         try {
             const key: string = `/hotel/${req.params.id}`;

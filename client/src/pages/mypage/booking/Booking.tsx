@@ -1,66 +1,85 @@
-import { useEffect, useState } from "react"
-import * as tw from "./Booking.styles"
-import { sendJWT } from "../../../utils/jwtUtils"
-import { axios, axiosInstance } from "../../../utils/axios.utils"
-import { useNavigate } from "react-router-dom"
-import { userDataProps } from "../../../interface/interfaces"
-import Loading from "../../../components/loading/Loading"
+import { useEffect, useState } from "react";
+import * as tw from "./Booking.styles";
+import { sendJWT } from "../../../utils/jwtUtils";
+import { axios, axiosInstance } from "../../../utils/axios.utils";
+import { useNavigate } from "react-router-dom";
+import Loading from "../../../components/loading/Loading";
+import ImgLoader from "../../../utils/imgLoader";
+import { ModalPortal } from "../../../hook/modal/ModalPortal";
+import KakaoMapModal from "../../../hook/modal/kakao-map/KakaMap.modal";
+import dayjs from "dayjs";
+
+interface Booking {
+    booking_id: string;
+    hotel_id: number;
+    room_id: number;
+    total_price: number;
+    check_in: string;
+    check_out: string;
+    name: string;
+    phone_num: number;
+    email: string;
+    hotelData: HotelData;
+}
+
+interface HotelData {
+    name: string;
+    address: string;
+    address_detail: string;
+    postcode: string;
+    always_check_in: number;
+    img: Image[];
+}
+
+interface Image {
+    url: string;
+}
 
 export default function BookingPage() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
 
     const [isKakaoMapModalOpen, setIsKakaoMapModalOpen] = useState(false);
+    const [selectedHotel, setSelectedHotel] = useState<any>(null);
 
-    const openKakaoMapModal = () => {
+    const openKakaoMapModal = (hotelData: HotelData) => {
+        setSelectedHotel(hotelData);
         setIsKakaoMapModalOpen(true);
     };
 
     const closeKakaoMapModal = () => {
         setIsKakaoMapModalOpen(false);
+        setSelectedHotel(null);
     };
 
-    const [bookingData, setBookingData] = useState([{
-        booking_id: "",
-        hotel_id: 0,
-        room_id: 0,
-        total_price: 0,
-        check_in: "",
-        check_out: "",
-        name: "",
-        phone_num: 0,
-        emial: "",
-    }]);
+    const [bookingData, setBookingData] = useState([
+        {
+            booking_id: "",
+            hotel_id: 0,
+            room_id: 0,
+            total_price: 0,
+            check_in: "",
+            check_out: "",
+            name: "",
+            phone_num: 0,
+            email: "",
 
-    const [hotelList, setHotelList] = useState([{
-        id: "",
-        name: "",
-        address: "",
-        address_detail: "",
-        postcode: "",
-        description: "",
-        check_in: 0,
-        check_out: 0,
+            hotelData: {
+                name: "",
+                address: "",
+                address_detail: "",
+                postcode: "",
 
-        wifi: 0,
-        always_check_in: 0,
-        breakfast: 0,
-        barbecue: 0,
+                always_check_in: 0,
 
-        carpark: 0,
-        restaurnat: 0,
-        cafe: 0,
-        swimming_pool: 0,
-        spa: 0,
-        fitness: 0,
-        convenience_store: 0,
-
-        img: [
-            {
-                url: "",
+                img: [
+                    {
+                        url: "",
+                    },
+                ],
             },
-        ],
-    }]);
+        },
+    ]);
 
     const fetchBooking = async () => {
         try {
@@ -70,9 +89,27 @@ export default function BookingPage() {
             });
 
             const response = await axiosInstance.request(config);
-            const bookingData = response.data.data;
-            setBookingData(response.data.data);
-            fetchHotelList(bookingData.hotel_id);
+            const bookings = response.data.data;
+
+            for (let booking of bookings) {
+                try {
+                    const hotelResponse = await axiosInstance.get("/hotel/" + booking.hotel_id);
+                    let hotelData = hotelResponse.data.data[0];
+
+                    const hotelImgResponse = await axiosInstance.get(`/hotel/img/${booking.hotel_id}`);
+                    hotelData.img = hotelImgResponse.data.data;
+
+                    booking.hotelData = hotelData;
+                } catch (error) {
+                    if (axios.isAxiosError(error) && error.response) {
+                        if (error.response.status === 401) {
+                            window.alert("올바른 접근이 아닙니다.");
+                            navigate("/");
+                        }
+                    }
+                }
+            }
+            setBookingData(bookings);
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 if (error.response.status === 401) {
@@ -85,41 +122,92 @@ export default function BookingPage() {
         }
     };
 
-    const fetchHotelList = async (hotelId: number) => {
-        try {
-            const hotelResponse = await axiosInstance.get("/hotel/" + hotelId);
-            let hotelData = hotelResponse.data.data[0];
-
-            const hotelImgResponse = await axiosInstance.get("/hotel/img/" + hotelId);
-            hotelData.img = hotelImgResponse.data.data;
-
-            setHotelList(hotelData);
-        } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 401) {
-                    window.alert("올바른 접근이 아닙니다.");
-                    navigate("/");
-                }
-            }
-        }
-    };
-
     useEffect(() => {
         fetchBooking();
     }, []);
+
     if (loading) {
         return <Loading />;
     }
 
+    const groupByCheckInDate = (data: Booking[]) => {
+        return data.reduce((acc, booking) => {
+            const checkInDate = dayjs(booking.check_in).format("MM월 DD일 (ddd)");
+            if (!acc[checkInDate]) {
+                acc[checkInDate] = [];
+            }
+            acc[checkInDate].push(booking);
+            return acc;
+        }, {} as { [key: string]: Booking[] });
+    };
+
+    const sortedBookingData = [...bookingData].sort((a, b) => {
+        return new Date(a.check_in).getTime() - new Date(b.check_in).getTime();
+    });
+
+    const groupedBookings = groupByCheckInDate(sortedBookingData);
+
     return (
         <tw.Container>
-                <tw.MobileWrap>
-                    <tw.TitleWrap>
-                        <tw.Title>예약확인</tw.Title>
-                    </tw.TitleWrap>
-                    <tw.InputWrap>
-                    </tw.InputWrap>
-                </tw.MobileWrap>
+            <tw.MobileWrap>
+                <tw.TitleWrap>
+                    <tw.Title>예약확인</tw.Title>
+                </tw.TitleWrap>
+                <tw.ContentsWrap>
+                    {Object.keys(groupedBookings).map((date) => (
+                        <tw.BookingOuterWrap key={date}>
+                            <tw.DateTitle>{date}</tw.DateTitle>
+                            {groupedBookings[date].map((booking: Booking) => (
+                                <tw.BookingWrap key={booking.booking_id}>
+                                    <tw.BookingIdWrap>
+                                        <tw.BookingId>ID {booking.booking_id}</tw.BookingId>
+                                        <tw.BookingStatus>확정됨</tw.BookingStatus>
+                                    </tw.BookingIdWrap>
+                                    <tw.FlexWrap>
+                                        <tw.Pic>
+                                            {booking.hotelData?.img?.[0]?.url ? (
+                                                <ImgLoader imageUrl={booking.hotelData.img[0].url} altText="" rounded="es-xl" />
+                                            ) : (
+                                                <tw.UnRegWrap>미등록</tw.UnRegWrap>
+                                            )}
+                                        </tw.Pic>
+                                        <tw.HotelInfo>
+                                            <tw.HotelTitle>{booking.hotelData.name}</tw.HotelTitle>
+                                            <tw.HotelAddress onClick={() => openKakaoMapModal(booking.hotelData)}>
+                                                {booking.hotelData.address} {booking.hotelData.address_detail}, {booking.hotelData.postcode}
+                                            </tw.HotelAddress>
+                                            <tw.CheckWrap>
+                                                <tw.CheckInWrap>
+                                                    <tw.CheckLabel>체크인</tw.CheckLabel>
+                                                    <tw.CheckText>{dayjs(booking.check_in).format("YYYY. MM. DD (dddd)")}</tw.CheckText>
+                                                </tw.CheckInWrap>
+                                                <tw.CheckOutWrap>
+                                                    <tw.CheckLabel>체크아웃</tw.CheckLabel>
+                                                    <tw.CheckText>{dayjs(booking.check_out).format("YYYY. MM. DD (dddd)")}</tw.CheckText>
+                                                </tw.CheckOutWrap>
+                                            </tw.CheckWrap>
+                                        </tw.HotelInfo>
+                                    </tw.FlexWrap>
+                                    <tw.MgmtBtnWrap>
+                                        <tw.MgmtBtn>예약 관리하기</tw.MgmtBtn>
+                                    </tw.MgmtBtnWrap>
+                                </tw.BookingWrap>
+                            ))}
+                        </tw.BookingOuterWrap>
+                    ))}
+                </tw.ContentsWrap>
+            </tw.MobileWrap>
+
+            {isKakaoMapModalOpen && selectedHotel && (
+                <ModalPortal>
+                    <KakaoMapModal
+                        hotelName={selectedHotel.name}
+                        address={`${selectedHotel.address} ${selectedHotel.address_detail}`}
+                        imgUrl={selectedHotel.img[0].url}
+                        onClose={closeKakaoMapModal}
+                    />
+                </ModalPortal>
+            )}
         </tw.Container>
     );
 }

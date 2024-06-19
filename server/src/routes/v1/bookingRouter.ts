@@ -19,16 +19,16 @@ bookingRouter.get("/confirm", asyncHandler(bookingController.confirm));
 bookingRouter.post("/remove", asyncHandler(bookingController.removeBookingRef));
 
 bookingRouter.get(
-    "/:id",
-    isAuthenticated,
-    asyncHandler((req: Request, res: Response) => bookingController.getBookingById(req as JWTCheck, res)),
-);
-
-bookingRouter.get(
     "/user",
     isAuthenticated,
     asyncHandler((req: Request, res: Response) => bookingController.getBookingByUserId(req as JWTCheck, res)),
 );
 
+
+bookingRouter.get(
+    "/:id",
+    isAuthenticated,
+    asyncHandler((req: Request, res: Response) => bookingController.getBookingById(req as JWTCheck, res)),
+);
 
 export default bookingRouter;

@@ -5,15 +5,48 @@ interface ColorProps{
 }
 
 export const Container = tw.div`mt-12 w-full h-full flex flex-col items-center`
+export const FlexWrap = tw.div`flex
+mobile:flex-col`
 
 export const TitleWrap = tw.div`flex items-center`
 export const Title = tw.h3`my-4 text-2xl font-bold`
 
-export const MobileWrap = tw.div`flex flex-col w-full px-10
-mobile:w-full`
+export const ContentsWrap = tw.div`flex flex-col w-full space-y-3`
 
-export const InputWrap = tw.div`flex flex-col text-left w-full py-6 px-12`
-export const UpperTag = tw.label`text-base font-bold py-0 my-0
-after:content-['*'] after:text-red-500 after:px-1`
-export const Input = tw.input`font-medium outline-none
-w-full h-10 px-6 rounded-lg bg-gray-100 my-1`;
+export const MobileWrap = tw.div`flex flex-col w-full px-10
+mobile:w-full mobile:px-2`
+
+export const DateTitle = tw.p`text-sm font-medium text-gray-400 pt-4
+mobile:ml-4`
+
+export const ContentsFlex = tw.div`h-auto w-auto flex flex-wrap items-center content-center`
+
+export const BookingOuterWrap =tw.div`space-y-3`
+
+export const BookingWrap = tw.div`flex flex-col w-full rounded-2xl bg-white h-auto shadow-md border
+mobile:flex mobile:flex-col mobile:h-auto`
+
+export const BookingIdWrap = tw.div`flex mx-4 my-4 justify-between`
+export const BookingId = tw.p`text-sm font-semibold`
+export const BookingStatus = tw.p`text-xs font-medium bg-green-200 text-lime-950 py-1 px-2 rounded-lg`
+
+export const Pic = tw.div`w-4/12 h-36 bg-gray-30
+mobile:h-40 mobile:w-full`
+export const UnRegWrap = tw.div`flex h-full justify-center items-center text-2xl font-bold`
+
+export const HotelInfo = tw.div`flex flex-col relative px-5 py-2 space-y-1 w-8/12
+mobile:w-full`
+export const HotelTitle = tw.p`text-base font-semibold truncate
+mobile:text-lg`
+export const HotelAddress = tw.p`text-gray-400 text-xs hover:cursor-pointer text-main pb-3`
+
+export const MgmtBtnWrap = tw.div`text-end px-4 pt-2 pb-4`
+export const MgmtBtn = tw.button`mt-2 text-base font-medium px-5 py-2 rounded-xl bg-black text-white hover:bg-black/[0.8]
+mobile:hover:bg-black`
+
+export const CheckWrap = tw.div`flex w-full border-y`
+export const CheckInWrap = tw.div`flex flex-col w-[50%] my-3 border-r text-left space-y-1`
+export const CheckOutWrap = tw.div`flex flex-col w-[50%] my-3 text-right space-y-1`
+export const CheckLabel = tw.label`text-sm text-gray-400 text-xs
+mobile:text-xs`
+export const CheckText = tw.p`text-xs`

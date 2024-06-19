@@ -9,7 +9,9 @@ export default function MyPage() {
     return (
         <tw.Container>
             <tw.FlexWrap>
-                <Drawer />
+                <tw.DrawerWrap>
+                    <Drawer />
+                </tw.DrawerWrap>
                 <tw.ContentsWrap>
                     <Routes>
                         <Route path="" element={<MyInfoPage />} />
