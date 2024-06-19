@@ -52,20 +52,20 @@ export default function MyInfoPage() {
 
     return (
         <tw.Container>
-                <tw.MobileWrap>
-                    <tw.TitleWrap>
-                        <tw.Title>내정보</tw.Title>
-                        <tw.Social $color={userInfo.social}>{userInfo.social}</tw.Social>
-                    </tw.TitleWrap>
-                    <tw.InputWrap>
-                        <tw.UpperTag>이름</tw.UpperTag>
-                        <tw.Input />
-                        <tw.UpperTag>이메일</tw.UpperTag>
-                        <tw.Input />
-                        <tw.UpperTag>전화번호</tw.UpperTag>
-                        <tw.Input />
-                    </tw.InputWrap>
-                </tw.MobileWrap>
+            <tw.MobileWrap>
+                <tw.TitleWrap>
+                    <tw.Title>내정보</tw.Title>
+                    <tw.Social $color={userInfo.social}>{userInfo.social}</tw.Social>
+                </tw.TitleWrap>
+                <tw.InputWrap>
+                    <tw.UpperTag>이름</tw.UpperTag>
+                    <tw.Input />
+                    <tw.UpperTag>이메일</tw.UpperTag>
+                    <tw.Input />
+                    <tw.UpperTag>전화번호</tw.UpperTag>
+                    <tw.Input />
+                </tw.InputWrap>
+            </tw.MobileWrap>
         </tw.Container>
     );
 }

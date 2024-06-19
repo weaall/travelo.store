@@ -1,9 +1,11 @@
 import { Route, Routes } from "react-router-dom";
-import Drawer from "../../components/drawer/Drawer";
+import Drawer from "./sidebar/SideBar";
 import * as tw from "./Mypage.styles";
 
-import MyInfoPage from "./myinfo/MyInfoPage";
+import MyInfoPage from "./my-info/MyInfoPage";
 import BookingPage from "./booking/Booking";
+import HotelRegPage from "./hotel-reg/HotelRegPage";
+import MyHotelPage from "./my-hotel/MyHotelPage";
 
 export default function MyPage() {
     return (
@@ -16,6 +18,8 @@ export default function MyPage() {
                     <Routes>
                         <Route path="" element={<MyInfoPage />} />
                         <Route path="/booking" element={<BookingPage />} />
+                        <Route path="/hotelreg" element={<HotelRegPage />} />
+                        <Route path="/hotel" element={<MyHotelPage />} />
                     </Routes>
                 </tw.ContentsWrap>
             </tw.FlexWrap>

@@ -6,8 +6,6 @@ import Header from "./components/header/Header";
 import SignIn from "./pages/sign-in/SignIn";
 import AuthKaKao from "./pages/auth/Auth.kakao";
 import SignUp from "./pages/sign-up/SignUp";
-import HotelReg from "./pages/hotel-reg/HotelReg";
-import HotelMe from "./pages/hotel-me/HotelMe";
 import HotelMgmt from "./pages/hotel-mgmt/HotelMgmt";
 import Search from "./pages/main/MainPage";
 import SearchResult from "./pages/search-reuslt/SearchResult";
@@ -38,9 +36,6 @@ function App() {
 
                             <Route path="/hotel/:encryptedId/:startDate/:endDate/:adult/:child" element={<Hotel />} />
                             <Route path="/payment/:encryptedHotelId/:encryptedRoomId/:startDate/:endDate" element={<Payment />} />
-                            
-                            <Route path="/hotelreg" element={<HotelReg />} />
-                            <Route path="/hotel/me" element={<HotelMe />} />
 
                             <Route path="/hotel/mgmt/">
                                 <Route path=":hotelId/*" element={<HotelMgmt />} />

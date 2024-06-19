@@ -1,20 +1,20 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import * as tw from "./Drawer.styles";
+import * as tw from "./SideBar.styles";
 
-export default function Drawer() {
+export default function SideBar() {
     const navigate = useNavigate();
     const location = useLocation();
 
     const myPageList = [
-        { src: require("../../assets/drawer/mypage.svg").default, label: "내정보", nav: "" },
-        { src: require("../../assets/drawer/booking.svg").default, label: "예약확인", nav: "/booking" },
-        { src: require("../../assets/drawer/review.svg").default, label: "이용후기", nav: "/review" },
-        { src: require("../../assets/drawer/message.svg").default, label: "메세지", nav: "/message" }
+        { src: require("../../../assets/drawer/mypage.svg").default, label: "내정보", nav: "" },
+        { src: require("../../../assets/drawer/booking.svg").default, label: "예약확인", nav: "/booking" },
+        { src: require("../../../assets/drawer/review.svg").default, label: "이용후기", nav: "/review" },
+        { src: require("../../../assets/drawer/message.svg").default, label: "메세지", nav: "/message" }
     ];
 
     const hotelMgmtList = [
-        { src: require("../../assets/drawer/hotel_add.svg").default, label: "숙소등록", nav: "/hotel_add" },
-        { src: require("../../assets/drawer/hotel_mgmt.svg").default, label: "숙소관리", nav: "/hotel_mgmt" },
+        { src: require("../../../assets/drawer/hotel_add.svg").default, label: "숙소등록", nav: "/hotelreg" },
+        { src: require("../../../assets/drawer/hotel_mgmt.svg").default, label: "숙소관리", nav: "/hotel" },
     ];
 
     const isActive = (nav: string) => location.pathname === `/me${nav}`;

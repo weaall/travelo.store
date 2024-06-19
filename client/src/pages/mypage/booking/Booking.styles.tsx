@@ -4,12 +4,13 @@ interface ColorProps{
     $color: string
 }
 
-export const Container = tw.div`mt-12 w-full h-full flex flex-col items-center`
+export const Container = tw.div`w-full h-full flex flex-col items-center`
 export const FlexWrap = tw.div`flex
 mobile:flex-col`
 
 export const TitleWrap = tw.div`flex items-center`
-export const Title = tw.h3`my-4 text-2xl font-bold`
+export const Title = tw.h3`my-4 text-2xl font-bold 
+mobile:ml-4`
 
 export const ContentsWrap = tw.div`flex flex-col w-full space-y-3`
 

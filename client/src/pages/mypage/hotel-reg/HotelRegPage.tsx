@@ -1,12 +1,12 @@
 import React, { DragEvent, useEffect, useState } from "react";
-import * as tw from "./HotelReg.styles";
-import { sendJWT } from "../../utils/jwtUtils";
-import { axios, axiosInstance } from "../../utils/axios.utils";
+import * as tw from "./HotelRegPage.styles";
+import { sendJWT } from "../../../utils/jwtUtils";
+import { axios, axiosInstance } from "../../../utils/axios.utils";
 import { useNavigate } from "react-router-dom";
-import { ModalPortal } from "../../hook/modal/ModalPortal";
-import DaumPostcodeModal from "../../hook/modal/daum-postcode/DaumPostcode.modal";
+import { ModalPortal } from "../../../hook/modal/ModalPortal";
+import DaumPostcodeModal from "../../../hook/modal/daum-postcode/DaumPostcode.modal";
 
-export default function HotelReg() {
+export default function HotelRegPage() {
     const navigate = useNavigate();
 
     const [isDaumAddressModalOpen, setIsSearchDateModalOpen] = useState(false);
@@ -127,11 +127,15 @@ export default function HotelReg() {
     };
 
     useEffect(() => {}, []);
+
     return (
         <tw.Container>
-            <tw.Title>숙소등록</tw.Title>
-            <tw.InputWrap>
-                <tw.MobileWrap>
+            <tw.MobileWrap>
+                <tw.TitleWrap>
+                    <tw.Title>내정보</tw.Title>
+                </tw.TitleWrap>
+
+                <tw.InputWrap>
                     <tw.UpperTag>호텔이름</tw.UpperTag>
                     <tw.Input onChange={onChangeInput} value={formData.name} name="name" />
                     <tw.UpperTag>우편번호</tw.UpperTag>
@@ -145,8 +149,7 @@ export default function HotelReg() {
                     <tw.Input onChange={onChangeInput} value={formData.address_detail} name="address_detail" />
                     <tw.UpperTag>사업자등록번호</tw.UpperTag>
                     <tw.Input onChange={onChangeInput} value={formData.reg_num} name="reg_num" />
-                </tw.MobileWrap>
-                <tw.MobileWrap>
+
                     <tw.UpperTag>은행</tw.UpperTag>
                     <tw.Input onChange={onChangeInput} value={formData.bank} name="bank" />
                     <tw.UpperTag>계좌주</tw.UpperTag>
@@ -168,8 +171,8 @@ export default function HotelReg() {
                     <tw.RegBtn onClick={onClickRegister} $validator={true} disabled={false}>
                         호텔등록
                     </tw.RegBtn>
-                </tw.MobileWrap>
-            </tw.InputWrap>
+                </tw.InputWrap>
+            </tw.MobileWrap>
 
             {isDaumAddressModalOpen && (
                 <ModalPortal>

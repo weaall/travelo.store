@@ -40,7 +40,7 @@ export default function UserMenu({ isMenuOpen }: UserMenuProps) {
                             <tw.MenuA onClick={()=>navigate("/me")}>내정보</tw.MenuA>
                         </tw.MenuLi>
                         <tw.MenuLi>
-                            <tw.MenuA>예약확인</tw.MenuA>
+                            <tw.MenuA onClick={()=>navigate("/me/booking")}>예약확인</tw.MenuA>
                         </tw.MenuLi>
                         <tw.MenuLi>
                             <tw.MenuA>이용후기</tw.MenuA>
@@ -49,10 +49,10 @@ export default function UserMenu({ isMenuOpen }: UserMenuProps) {
                     <tw.MenuLabel>숙소관리</tw.MenuLabel>
                     <tw.MenuUl>
                         <tw.MenuLi>
-                            <tw.MenuA onClick={() => navigateClick("hotelreg")}>숙소등록</tw.MenuA>
+                            <tw.MenuA onClick={() => navigateClick("me/hotelreg")}>숙소등록</tw.MenuA>
                         </tw.MenuLi>
                         <tw.MenuLi>
-                            <tw.MenuA onClick={() => navigateClick("hotel/me")}>숙소관리</tw.MenuA>
+                            <tw.MenuA onClick={() => navigateClick("me/hotel")}>숙소관리</tw.MenuA>
                         </tw.MenuLi>
                     </tw.MenuUl>
                 </tw.MenuNav>
