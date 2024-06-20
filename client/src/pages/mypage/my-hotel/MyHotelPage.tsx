@@ -79,7 +79,7 @@ export default function MyHotelPage() {
                         <tw.BookingWrap key={index}>
                             <tw.UpperWrap>
                                 <tw.HotelName>{hotel.name}</tw.HotelName>
-                                <tw.HotelStatus>{hotel.permission === 0 ? "심사중" : "판매가능"}</tw.HotelStatus>
+                                <tw.HotelStatus>{hotel.permission === 0 ? "심사중" : "판매중"}</tw.HotelStatus>
                             </tw.UpperWrap>
                             <tw.MiddleWrap>
                                 <tw.Pic>
