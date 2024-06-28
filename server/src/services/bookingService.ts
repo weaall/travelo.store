@@ -131,6 +131,25 @@ const bookingService = {
         }
     },
 
+    async getReviewByUserId(user_id: string) {
+        const connection = await pool.getConnection();
+
+        const today = dayjs().format('YYYY-MM-DD');
+
+        const getBookingSql = `SELECT * FROM booking WHERE user_id = ? AND check_out < ? ORDER BY check_in DESC;`;
+        const getBookingValue = [user_id, today];
+
+        try {
+            const [rows, field]: [BookingRows[], FieldPacket[]] = await connection.execute(getBookingSql, getBookingValue);
+
+            return rows;
+        } catch (error) {
+            throw error;
+        } finally {
+            connection.release();
+        }
+    },
+
     async addBooking(user_id: string, { booking_id, hotel_id, room_id, total_price, check_in, check_out, name, phone_num, email }: BookingProps) {
         const connection = await pool.getConnection();
 

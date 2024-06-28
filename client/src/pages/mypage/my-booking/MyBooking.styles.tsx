@@ -22,6 +22,11 @@ mobile:ml-4`
 
 export const ContentsFlex = tw.div`h-auto w-auto flex flex-wrap items-center content-center`
 
+export const NoBookingWrap = tw.div`w-full flex flex-col justify-center items-center space-y-10 py-16`
+export const NoBookingText = tw.p`text-lg font-medium`
+export const GoTripBtn = tw.button`mt-2 text-base font-medium px-5 py-2 rounded-xl bg-black text-white hover:bg-black/[0.8]
+mobile:hover:bg-black`
+
 export const BookingOuterWrap =tw.div`space-y-3`
 
 export const BookingWrap = tw.div`flex flex-col w-full rounded-2xl bg-white h-auto shadow-md border

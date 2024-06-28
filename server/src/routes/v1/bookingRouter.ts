@@ -24,6 +24,12 @@ bookingRouter.get(
     asyncHandler((req: Request, res: Response) => bookingController.getBookingByUserId(req as JWTCheck, res)),
 );
 
+bookingRouter.get(
+    "/review",
+    isAuthenticated,
+    asyncHandler((req: Request, res: Response) => bookingController.getReviewByUserId(req as JWTCheck, res)),
+);
+
 
 bookingRouter.get(
     "/:id",

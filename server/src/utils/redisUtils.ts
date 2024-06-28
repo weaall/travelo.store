@@ -13,9 +13,13 @@ export function setRedis(key : string, data: Object) {
    client.set(key, JSON.stringify(data));
 }
 
-export function setRedis1H(key : string, data: Object, ttl = 3600000) {
+export function setRedis1H(key: string, data: Object, ttl = 3600) {
     client.set(key, JSON.stringify(data), "EX", ttl);
- }
+}
+
+export function setRedis1D(key: string, data: Object, ttl = 86400) {
+    client.set(key, JSON.stringify(data), "EX", ttl);
+}
 
 export function delRedis(key: string) {
     client.del(key);
