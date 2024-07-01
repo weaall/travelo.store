@@ -109,19 +109,18 @@ export default function MainPage({ defaultSearchValue, defaultStartDate, default
         <tw.Container>
             <tw.MainContainer>
                 <tw.SearchContainer>
-                    
                     <tw.SearchWrap>
                         <tw.SvgWrap>
                             <tw.Svg alt="" src={require("../../assets/svg/search_icon.svg").default} />
                         </tw.SvgWrap>
                         <tw.SearchInput
                             placeholder="지역, 숙소명으로 찾아보세요"
-                            maxLength={30}
+                            maxLength={20}
                             value={searchValue}
                             onChange={handleSearchChange}
                             onKeyPress={handleKeyPress}
                         />
-                        <tw.RemoveBtn onClick={() => setSearchValue("")}>
+                        <tw.RemoveBtn $value={searchValue} onClick={() => setSearchValue("")}>
                             <tw.Svg alt="" src={require("../../assets/svg/close_svg.svg").default} />
                         </tw.RemoveBtn>
                     </tw.SearchWrap>
