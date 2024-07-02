@@ -33,7 +33,7 @@ module.exports = {
                 "screen-16": "calc(100vh - 4.1rem)",
             },
             backgroundImage: {
-                "main-img": "url('/src/assets/main.png')",
+                "main-img": "url('/src/assets/main.jpg')",
                 "main-img-mobile": "url('/src/assets/main_mobile.png')",
             }
         },

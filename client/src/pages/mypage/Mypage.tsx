@@ -3,10 +3,12 @@ import Drawer from "./sidebar/SideBar";
 import * as tw from "./Mypage.styles";
 
 import MyInfoPage from "./my-info/MyInfoPage";
+import MyBookingPage from "./my-booking/MyBooking";
+import MyReviewPage from "./my-review/MyReview";
+import MyMsgPage from "./my-msg/MyMsg";
+
 import HotelRegPage from "./hotel-reg/HotelRegPage";
 import MyHotelPage from "./my-hotel/MyHotelPage";
-import MyReviewPage from "./my-review/MyReview";
-import MyBookingPage from "./my-booking/MyBooking";
 
 export default function MyPage() {
     return (
@@ -20,6 +22,8 @@ export default function MyPage() {
                         <Route path="" element={<MyInfoPage />} />
                         <Route path="/booking" element={<MyBookingPage />} />
                         <Route path="/review" element={<MyReviewPage />} />
+                        <Route path="/message" element={<MyMsgPage />} />
+
                         <Route path="/hotelreg" element={<HotelRegPage />} />
                         <Route path="/hotel" element={<MyHotelPage />} />
                     </Routes>

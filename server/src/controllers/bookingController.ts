@@ -5,6 +5,7 @@ import roomService from "../services/roomService";
 import { getRedis, setRedis, setRedis1D } from "../utils/redisUtils";
 import dayjs from "dayjs";
 import CustomError from "../utils/customError";
+import msgService from "../services/msgService";
 const got = require("got");
 
 const filterByDate = (priceData: RoomPriceRows[], checkIn: string, checkOut: string, totalPrice: number) => {
@@ -170,17 +171,6 @@ const bookingController = {
             const parsedOrderId = orderId as string;
 
             if (bookingRefData[0].total_price === parsedAmount && bookingRefData[0].booking_id === parsedOrderId) {
-                await bookingService.addBooking(bookingRefData[0].user_id, {
-                    booking_id: parsedOrderId,
-                    hotel_id: hotel_id as string,
-                    room_id: bookingRefData[0].room_id,
-                    total_price: parsedAmount,
-                    check_in: bookingRefData[0].check_in,
-                    check_out: bookingRefData[0].check_out,
-                    name: name as string,
-                    phone_num: phone_num as string,
-                    email: email as string,
-                });
 
                 try {
                     const response = await got.post("https://api.tosspayments.com/v1/payments/confirm", {
@@ -196,17 +186,35 @@ const bookingController = {
                         responseType: "json",
                     });
 
+                    await bookingService.addBooking(bookingRefData[0].user_id, {
+                        booking_id: parsedOrderId,
+                        hotel_id: hotel_id as string,
+                        room_id: bookingRefData[0].room_id,
+                        total_price: parsedAmount,
+                        check_in: bookingRefData[0].check_in,
+                        check_out: bookingRefData[0].check_out,
+                        name: name as string,
+                        phone_num: phone_num as string,
+                        email: email as string,
+                    });
+
+                    const successMsg = `예약이 성공적으로 완료되었습니다.\n\n
+                            예약 번호: ${orderId}\n
+                            호텔 이름: ${hotel_id}\n
+                            체크인 날짜: ${bookingRefData[0].check_in}\n
+                            체크아웃 날짜: ${bookingRefData[0].check_out}\n
+                            총 금액: ${parsedAmount}\n
+                            예약자 이름: ${name}\n
+                            예약자 연락처: ${phone_num}\n
+                            예약자 이메일: ${email}`;
+
+                    await msgService.addMsgFromHotel(bookingRefData[0].user_id, hotel_id as string, successMsg);
+
                     // 결제 승인 요청이 성공적으로 처리된 경우에만 이동합니다.
                     res.redirect(`http://localhost:3000/success/${orderId}`);
                 } catch (paymentError) {
                     // 결제 승인 요청이 실패한 경우 롤백
-                    await bookingService.rollbackBookingRef(bookingRefData[0].user_id, {
-                        booking_id: parsedOrderId,
-                        total_price: amount as string,
-                        room_id: bookingRefData[0].room_id,
-                        check_in: bookingRefData[0].check_in,
-                        check_out: bookingRefData[0].check_out,
-                    });
+                    await bookingService.rollbackBookingRef(bookingRefData[0].user_id, parsedOrderId);
                     throw paymentError;
                 }
             } else {

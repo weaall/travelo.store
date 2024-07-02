@@ -186,7 +186,7 @@ export default function MyReviewPage() {
                                     <tw.BookingWrap key={booking.booking_id}>
                                         <tw.BookingIdWrap>
                                             <tw.BookingId>ID {booking.booking_id}</tw.BookingId>
-                                            <tw.BookingStatus>확정됨</tw.BookingStatus>
+                                            <tw.ReviewStatus>확정됨</tw.ReviewStatus>
                                         </tw.BookingIdWrap>
                                         <tw.FlexWrap>
                                             <tw.Pic>

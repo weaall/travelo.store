@@ -41,37 +41,17 @@ const bookingService = {
         }
     },
 
-    async rollbackBookingRef(user_id: string, { booking_id, room_id, check_in, check_out }: BookingRefProps) {
+    async rollbackBookingRef(user_id: string, booking_id: string) {
         const connection = await pool.getConnection();
-
-        const removeBookingSql = `DELETE FROM booking WHERE booking_id = ? AND user_id = ?`;
-        const removeBookingValue = [booking_id, user_id];
 
         const removeBookingRefSql = `DELETE FROM booking_ref WHERE booking_id = ? AND user_id = ?`;
         const removeBookingRefValue = [booking_id, user_id];
 
         try {
-            await connection.beginTransaction();
-
-            const [removeBookingResult,]: [ResultSetHeader, FieldPacket[]] = await connection.execute(removeBookingSql, removeBookingValue);
-
-            const [removeBookingRefResult,]: [ResultSetHeader, FieldPacket[]] = await connection.execute(removeBookingRefSql, removeBookingRefValue);
-
-            let currentDate = dayjs(check_in);
-            const endDate = dayjs(check_out);
-
-            while (currentDate.isBefore(endDate)) {
-                const minusRoomCurrentSql = `UPDATE room_date SET room_current = room_current - 1 WHERE room_id = ? AND date = ?`;
-                const minusRoomCurrentValue = [room_id, currentDate.format("YYYY-MM-DD")];
-                await connection.execute(minusRoomCurrentSql, minusRoomCurrentValue);
-                currentDate = currentDate.add(1, "day");
-            }
-
-            await connection.commit();
+            const [removeBookingRefResult, fields]: [ResultSetHeader, FieldPacket[]] = await connection.execute(removeBookingRefSql, removeBookingRefValue);
 
             return;
         } catch (error) {
-            await connection.rollback();
             throw error;
         } finally {
             connection.release();
