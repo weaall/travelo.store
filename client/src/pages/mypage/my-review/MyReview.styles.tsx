@@ -56,3 +56,8 @@ export const CheckOutWrap = tw.div`flex flex-col w-[50%] my-3 text-right space-y
 export const CheckLabel = tw.label`text-sm text-gray-400 text-xs
 mobile:text-xs`
 export const CheckText = tw.p`text-xs`
+
+
+export const ShowMoreWrap = tw.div`w-full flex justify-center my-4`
+export const ShowMoreBtn = tw.button`mt-2 text-base font-medium px-5 py-2 rounded-xl bg-black text-white hover:bg-black/[0.8]
+mobile:hover:bg-black`

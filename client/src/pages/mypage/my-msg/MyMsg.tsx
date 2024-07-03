@@ -9,13 +9,25 @@ export default function MyMsgPage() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
 
-    const [bookingData, setBookingData] = useState([
+    const [msgList, setMsgList] = useState([
         {
             hotel_id: 0,
+            user_id: "",
+            text: "",
+            created_at: "",
+            checked: 0,
+            by_user: 0,
         },
     ]);
-    const fetchBooking = async () => {
+    const fetchMsg = async () => {
         try {
+            const config = await sendJWT({
+                method: "GET",
+                url: "/msg/me",
+            });
+
+            const response = await axiosInstance.request(config);
+            setMsgList(response.data.data)
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 if (error.response.status === 401) {
@@ -29,7 +41,7 @@ export default function MyMsgPage() {
     };
 
     useEffect(() => {
-        fetchBooking();
+        fetchMsg();
     }, []);
 
     if (loading) {
@@ -43,6 +55,9 @@ export default function MyMsgPage() {
                     <tw.Title>메세지</tw.Title>
                 </tw.TitleWrap>
                 <tw.ContentsWrap>
+                    {msgList.map((msg)=>(
+                        <tw.MsgWrap>{msg.text}</tw.MsgWrap>
+                    ))}
                 </tw.ContentsWrap>
             </tw.MobileWrap>
         </tw.Container>

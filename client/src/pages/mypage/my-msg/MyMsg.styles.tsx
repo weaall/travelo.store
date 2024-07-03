@@ -18,3 +18,6 @@ export const MobileWrap = tw.div`flex flex-col w-full px-10
 mobile:w-full mobile:px-2`
 
 export const ContentsFlex = tw.div`h-auto w-auto flex flex-wrap items-center content-center`
+
+export const MsgWrap = tw.div`flex w-full rounded-2xl bg-white h-auto shadow-md border
+mobile:flex mobile:flex-col mobile:h-auto`

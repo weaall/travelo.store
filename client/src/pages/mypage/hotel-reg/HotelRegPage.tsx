@@ -30,6 +30,13 @@ export default function HotelRegPage() {
         owner: "",
     });
 
+    const [formValid, setFormValid] = useState({
+        isEmail: false,
+        isPassword: false,
+        isUserName: false,
+        isPhoneNumber: false,
+    })
+
     const [files, setFiles] = useState<File[]>([]);
     const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
@@ -148,7 +155,7 @@ export default function HotelRegPage() {
                     <tw.UpperTag>상세주소</tw.UpperTag>
                     <tw.Input onChange={onChangeInput} value={formData.address_detail} name="address_detail" />
                     <tw.UpperTag>사업자등록번호</tw.UpperTag>
-                    <tw.Input onChange={onChangeInput} value={formData.reg_num} name="reg_num" />
+                    <tw.Input onChange={onChangeInput} value={formData.reg_num} name="reg_num" maxLength={10} type="number"/>
 
                     <tw.UpperTag>은행</tw.UpperTag>
                     <tw.Input onChange={onChangeInput} value={formData.bank} name="bank" />

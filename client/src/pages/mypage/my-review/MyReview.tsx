@@ -38,9 +38,12 @@ interface Image {
 export default function MyReviewPage() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
-
     const [isKakaoMapModalOpen, setIsKakaoMapModalOpen] = useState(false);
     const [selectedHotel, setSelectedHotel] = useState<any>(null);
+    const [bookingData, setBookingData] = useState<Booking[]>([]);
+    const [hotelDataCache, setHotelDataCache] = useState<{ [hotelId: number]: HotelData }>({});
+    const [imageDataCache, setImageDataCache] = useState<{ [hotelId: number]: Image[] }>({});
+    const [displayCount, setDisplayCount] = useState(5);
 
     const openKakaoMapModal = (hotelData: HotelData) => {
         setSelectedHotel(hotelData);
@@ -51,38 +54,6 @@ export default function MyReviewPage() {
         setIsKakaoMapModalOpen(false);
         setSelectedHotel(null);
     };
-
-    const [bookingData, setBookingData] = useState([
-        {
-            booking_id: "",
-            hotel_id: 0,
-            room_id: 0,
-            total_price: 0,
-            check_in: "",
-            check_out: "",
-            name: "",
-            phone_num: 0,
-            email: "",
-
-            hotelData: {
-                name: "",
-                address: "",
-                address_detail: "",
-                postcode: "",
-
-                always_check_in: 0,
-
-                img: [
-                    {
-                        url: "",
-                    },
-                ],
-            },
-        },
-    ]);
-
-    const [hotelDataCache, setHotelDataCache] = useState<{ [hotelId: number]: HotelData }>({});
-    const [imageDataCache, setImageDataCache] = useState<{ [hotelId: number]: Image[] }>({});
 
     const fetchBooking = async () => {
         try {
@@ -164,7 +135,11 @@ export default function MyReviewPage() {
         return new Date(b.check_in).getTime() - new Date(a.check_in).getTime();
     });
 
-    const groupedBookings = groupByCheckInDate(sortedBookingData);
+    const groupedBookings = groupByCheckInDate(sortedBookingData.slice(0, displayCount));
+
+    const handleShowMore = () => {
+        setDisplayCount((prevCount) => prevCount + 5);
+    };
 
     return (
         <tw.Container>
@@ -222,6 +197,11 @@ export default function MyReviewPage() {
                         ))
                     )}
                 </tw.ContentsWrap>
+                {displayCount < sortedBookingData.length && (
+                    <tw.ShowMoreWrap>
+                        <tw.ShowMoreBtn onClick={handleShowMore}>더 보기</tw.ShowMoreBtn>
+                    </tw.ShowMoreWrap>
+                )}
             </tw.MobileWrap>
 
             {isKakaoMapModalOpen && selectedHotel && (

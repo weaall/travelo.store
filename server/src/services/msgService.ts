@@ -27,7 +27,7 @@ const msgService = {
 
     async getMsgByUserId(user_id: string) {
         const getMsg = `
-            SELECT m.text, m.created_at, m.checked, m.user
+            SELECT m.text, m.created_at, m.checked, m.by_user
             FROM message m
                 JOIN (
                     SELECT hotel_id, MAX(created_at) AS latest_created_at
@@ -35,15 +35,15 @@ const msgService = {
                     WHERE user_id = ?
                     GROUP BY hotel_id
             ) AS latest_messages
-        ON m.hotel_id = latest_messages.hotel_id AND m.created_at = latest_messages.latest_created_at
-        WHERE m.user_id = ?
-        ORDER BY m.created_at DESC;`;
-        const getMsgValues = [user_id];
+            ON m.hotel_id = latest_messages.hotel_id AND m.created_at = latest_messages.latest_created_at
+            WHERE m.user_id = ?
+            ORDER BY m.created_at DESC;`;
+        const getMsgValues = [user_id, user_id];
 
         const connection = await pool.getConnection();
 
         try {
-            const [getMsgResult, field]: [RowDataPacket[], FieldPacket[]] = await connection.execute(getMsg, getMsgValues);
+            const [getMsgResult]: [RowDataPacket[], FieldPacket[]] = await connection.execute(getMsg, getMsgValues);
 
             return getMsgResult;
         } catch (error) {
