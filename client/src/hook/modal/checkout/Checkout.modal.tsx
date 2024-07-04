@@ -123,36 +123,6 @@ export function CheckoutModal( props : ModalProps) {
         return `${URL}/booking/confirm?${params.toString()}`;
     };
 
-    // const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-    //     const params = new URLSearchParams();
-    //     params.append("booking_id", customerKey);
-
-    //     const url = `${URL}/booking/remove?${params.toString()}`;
-
-    //     if (navigator.sendBeacon) {
-    //         navigator.sendBeacon(url);
-    //     } else {
-    //         fetch(URL + "/booking/remove", {
-    //             method: "POST",
-    //             body: JSON.stringify({
-    //                 booking_id: customerKey,
-    //             }),
-    //             headers: {
-    //                 "Content-Type": "application/json",
-    //             },
-    //             keepalive: true,
-    //         });
-    //     }
-    // };
-
-    // useEffect(() => {
-    //     window.addEventListener("beforeunload", handleBeforeUnload);
-
-    //     return () => {
-    //         window.removeEventListener("beforeunload", handleBeforeUnload);
-    //     };
-    // }, [customerKey, props.roomId, props.checkInDate, props.checkOutDate]);
-
 
     return (
         <tw.Container>

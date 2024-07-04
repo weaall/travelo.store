@@ -27,7 +27,7 @@ const msgService = {
 
     async getMsgByUserId(user_id: string) {
         const getMsg = `
-            SELECT m.text, m.created_at, m.checked, m.by_user
+            SELECT m.text, m.created_at, m.checked, m.by_user, m.hotel_id
             FROM message m
                 JOIN (
                     SELECT hotel_id, MAX(created_at) AS latest_created_at
@@ -57,8 +57,8 @@ const msgService = {
         const checkAuthSql = "SELECT * FROM hotel WHERE id = ? and user_id = ?";
         const checkAuthParams = [hotel_id, user_id];
 
-        const addMsg = "INSERT INTO message (user_id, hotel_id, text) VALUES (? , ? , ?)";
-        const addMsgValues = [user_id, hotel_id, text];
+        const addMsg = "INSERT INTO message (user_id, hotel_id, text, checked) VALUES (? , ? , ?, ?)";
+        const addMsgValues = [user_id, hotel_id, text, 0];
 
         const connection = await pool.getConnection();
 
