@@ -159,7 +159,7 @@ const bookingController = {
     },
 
     async confirm(req: Request, res: Response) {
-        const { hotel_id, name, email, phone_num, paymentType, orderId, paymentKey, amount } = req.query;
+        const { hotelName, hotel_id, name, email, phone_num, paymentType, orderId, paymentKey, amount } = req.query;
 
         const widgetSecretKey = "test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6";
         const encryptedSecretKey = "Basic " + Buffer.from(widgetSecretKey + ":").toString("base64");
@@ -198,14 +198,16 @@ const bookingController = {
                         email: email as string,
                     });
 
-                    const successMsg = `예약이 성공적으로 완료되었습니다.\n\n
-                            예약 번호: ${orderId}\n
-                            호텔 이름: ${hotel_id}\n
-                            체크인 날짜: ${bookingRefData[0].check_in}\n
-                            체크아웃 날짜: ${bookingRefData[0].check_out}\n
-                            총 금액: ${parsedAmount}\n
-                            예약자 이름: ${name}\n
-                            예약자 연락처: ${phone_num}\n
+                    const successMsg = 
+                            `예약이 성공적으로 완료되었습니다.
+
+                            예약 번호: ${orderId}
+                            이름 : ${hotelName}
+                            체크인 날짜: ${bookingRefData[0].check_in}
+                            체크아웃 날짜: ${bookingRefData[0].check_out}
+                            총 결제 금액: ${parsedAmount.toLocaleString()}원
+                            예약자 이름: ${name}
+                            예약자 연락처: ${phone_num}
                             예약자 이메일: ${email}`;
 
                     await msgService.addMsgFromHotel(bookingRefData[0].user_id, hotel_id as string, successMsg);

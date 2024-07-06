@@ -9,6 +9,7 @@ import MyMsgPage from "./my-msg/MyMsg";
 
 import HotelRegPage from "./hotel-reg/HotelRegPage";
 import MyHotelPage from "./my-hotel/MyHotelPage";
+import MyChatPage from "./my-chat/MyChat";
 
 export default function MyPage() {
     return (
@@ -26,6 +27,8 @@ export default function MyPage() {
 
                         <Route path="/hotelreg" element={<HotelRegPage />} />
                         <Route path="/hotel" element={<MyHotelPage />} />
+
+                        <Route path="/chat" element={<MyChatPage />} />
                     </Routes>
                 </tw.ContentsWrap>
             </tw.FlexWrap>

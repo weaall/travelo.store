@@ -13,6 +13,15 @@ const msgController = {
         });
     },
 
+    async getMsgByBothId(req: JWTCheck, res: Response) {
+        const data = await msgService.getMsgByBothId(req.user.id, req.params.id);
+
+        res.status(200).json({
+            error: null,
+            data: data,
+        });
+    },
+
     async getMsgByUserId(req: JWTCheck, res: Response) {
         try {
             const key: string = `/msg/${req.user.id}`;

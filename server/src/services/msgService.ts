@@ -53,12 +53,42 @@ const msgService = {
         }
     },
 
+    async getMsgByBothId(user_id: string, hotel_id: string) {
+        const getMsg = `
+            SELECT text, created_at, checked, by_user
+            FROM message 
+            WHERE user_id = ? AND hotel_id = ?
+            ORDER BY created_at ASC;`;
+        const getMsgValues = [user_id, hotel_id];
+
+        const updateChecked = `
+            UPDATE message
+            SET checked = 1
+            WHERE user_id = ? AND hotel_id = ? AND checked = 0;`;
+        const updateCheckedValues = [user_id, hotel_id];
+
+
+        const connection = await pool.getConnection();
+
+        try {
+            const [getMsgResult]: [RowDataPacket[], FieldPacket[]] = await connection.execute(getMsg, getMsgValues);
+
+            await connection.execute(updateChecked, updateCheckedValues);
+            
+            return getMsgResult;
+        } catch (error) {
+            throw error;
+        } finally {
+            connection.release();
+        }
+    },
+
     async addMsgFromHotel(user_id: string, hotel_id: string, text: string) {
         const checkAuthSql = "SELECT * FROM hotel WHERE id = ? and user_id = ?";
         const checkAuthParams = [hotel_id, user_id];
 
-        const addMsg = "INSERT INTO message (user_id, hotel_id, text, checked) VALUES (? , ? , ?, ?)";
-        const addMsgValues = [user_id, hotel_id, text, 0];
+        const addMsg = "INSERT INTO message (user_id, hotel_id, text, checked, by_user) VALUES (?, ?, ?, ?, ?)";
+        const addMsgValues = [user_id, hotel_id, text, 0, 0];
 
         const connection = await pool.getConnection();
 

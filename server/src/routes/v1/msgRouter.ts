@@ -13,6 +13,12 @@ msgRouter.post(
 )
 
 msgRouter.get(
+    "/chat/:id",
+    isAuthenticated,
+    asyncHandler((req: Request, res: Response) =>  msgController.getMsgByBothId(req as JWTCheck, res)),
+)
+
+msgRouter.get(
     "/me",
     isAuthenticated,
     asyncHandler((req: Request, res: Response) =>  msgController.getMsgByUserId(req as JWTCheck, res)),

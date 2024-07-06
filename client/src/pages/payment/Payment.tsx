@@ -343,6 +343,7 @@ export default function Payment() {
                         checkInDate={startDate || ""}
                         checkOutDate={endDate || ""}
                         hotelId={hotelData.id}
+                        hotelName={hotelData.name}
                         roomId={roomId}
                         totalPrice={roomData.room_price.reduce((total, room) => total + room.price, 0)}
                         orderName={`${hotelData.name} ${roomData.name}`}

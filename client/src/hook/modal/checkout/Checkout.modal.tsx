@@ -15,6 +15,7 @@ interface ModalProps {
     checkOutDate: string;
 
     hotelId: string;
+    hotelName: string;
     roomId: string;
     totalPrice: number;
 
@@ -117,6 +118,7 @@ export function CheckoutModal( props : ModalProps) {
     const buildSuccessUrl = () => {
         const params = new URLSearchParams();
         params.append("hotel_id", props.hotelId);
+        params.append("hotelName", props.hotelName);
         params.append("name", props.customerName);
         params.append("email", props.customerEmail);
         params.append("phone_num", props.customerMobilePhone);
