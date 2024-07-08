@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import * as tw from "./MyChat.styles";
+import * as tw from "./HotelChat.styles";
 import { sendJWT } from "../../../utils/jwtUtils";
 import { axios, axiosInstance } from "../../../utils/axios.utils";
 import { useNavigate, useParams } from "react-router-dom";
@@ -25,7 +25,7 @@ interface Image {
     url: string;
 }
 
-export default function MyChatPage() {
+export default function HotelChatPage() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [msgList, setMsgList] = useState<MsgList[]>([]);

@@ -51,6 +51,36 @@ const msgController = {
             });
         }
     },
+
+    async getMsgByHotelId(req: JWTCheck, res: Response) {
+        try {
+            const key: string = `/msg/hotel/${req.user.id}`;
+            const redisData = JSON.parse(await getRedis(key));
+
+            if (redisData === null) {
+                const data = await msgService.getMsgByHotelId(req.user.id,req.params.id);
+
+                setRedis(key, data);
+
+                res.status(200).json({
+                    error: null,
+                    data: data,
+                });
+            } else {
+                res.status(200).json({
+                    error: null,
+                    data: redisData,
+                });
+            }
+        } catch (error) {
+            const data = await msgService.getMsgByHotelId(req.user.id,req.params.id);
+
+            res.status(200).json({
+                error: null,
+                data: data,
+            });
+        }
+    },
 };
 
 export default msgController;

@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import * as tw from "./MyMsg.styles";
+import * as tw from "./HotelMsg.styles";
 import { sendJWT } from "../../../utils/jwtUtils";
 import { axios, axiosInstance } from "../../../utils/axios.utils";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../../components/loading/Loading";
-import ImgLoader from "../../../utils/imgLoader";
 import { msgDateFormat } from "../../../utils/msg.utils";
 import { encrypt } from "../../../utils/cryptoJs";
 
@@ -15,31 +14,25 @@ interface MsgList {
     created_at: string;
     checked: number;
     by_user: number;
-    hotelData: HotelData;
+    userData: UserData;
 }
 
-interface HotelData {
+interface UserData {
     name: string;
-    img: Image[];
 }
 
-interface Image {
-    url: string;
-}
-
-export default function MyMsgPage() {
+export default function HotelMsgPage({ hotel_id }: { hotel_id: string | undefined }) {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
 
     const [msgList, setMsgList] = useState<MsgList[]>([]);
-    const [hotelDataCache, setHotelDataCache] = useState<{ [hotelId: number]: HotelData }>({});
-    const [imageDataCache, setImageDataCache] = useState<{ [hotelId: number]: Image[] }>({});
+    const [userDataCache, setUserDataCache] = useState<{ [userId: number]: UserData }>({});
 
     const fetchMsg = async () => {
         try {
             const config = await sendJWT({
                 method: "GET",
-                url: "/msg/me",
+                url: "/msg/hotel/"+ hotel_id,
             });
 
             const response = await axiosInstance.request(config);
@@ -47,29 +40,19 @@ export default function MyMsgPage() {
 
             for (let msg of msgList) {
                 try {
-                    let hotelData = hotelDataCache[msg.hotel_id];
-                    let hotelImg = imageDataCache[msg.hotel_id];
+                    let userData = userDataCache[msg.user_id];
 
-                    if (!hotelData) {
-                        const hotelResponse = await axiosInstance.get("/hotel/" + msg.hotel_id);
-                        hotelData = hotelResponse.data.data[0];
-                        setHotelDataCache((prevCache) => ({
+                    if (!userData) {
+                        const hotelResponse = await axiosInstance.get("/user/name/" + msg.user_id);
+                        userData = hotelResponse.data.data[0];
+                        setUserDataCache((prevCache) => ({
                             ...prevCache,
-                            [msg.hotel_id]: hotelData,
+                            [msg.user_id]: userData,
                         }));
                     }
 
-                    if (!hotelImg) {
-                        const hotelImgResponse = await axiosInstance.get(`/hotel/img/${msg.hotel_id}`);
-                        hotelImg = hotelImgResponse.data.data;
-                        setImageDataCache((prevCache) => ({
-                            ...prevCache,
-                            [msg.hotel_id]: hotelImg,
-                        }));
-                    }
-
-                    msg.hotelData = hotelData;
-                    msg.hotelData.img = hotelImg;
+                    msg.userData = userData;
+                    console.log(msg.userData)
                 } catch (error) {
                     if (axios.isAxiosError(error) && error.response) {
                         if (error.response.status === 401) {
@@ -116,16 +99,12 @@ export default function MyMsgPage() {
                         <tw.MsgWrap key={msg.created_at} onClick={()=>clickChat(msg.hotel_id)}>
                             <tw.PicWrap>
                                 <tw.Pic>
-                                    {msg.hotelData?.img?.[0]?.url ? (
-                                        <ImgLoader imageUrl={msg.hotelData.img[0].url} altText="" rounded="full" />
-                                    ) : (
-                                        <tw.UnRegWrap>미등록</tw.UnRegWrap>
-                                    )}
+                                    <tw.Svg alt="" src={require("../../../assets/svg/user_icon.svg").default} />
                                 </tw.Pic>
                             </tw.PicWrap>
                             <tw.MsgInfoWrap>
                                 <tw.UpperWrap>
-                                    <tw.Name>{msg.hotelData.name}</tw.Name>
+                                    <tw.Name>{msg.userData?.name ==  null ? "미정": msg.userData?.name}</tw.Name>
                                     <tw.Time>{msgDateFormat(msg.created_at)}</tw.Time>
                                 </tw.UpperWrap>
                                 <tw.LowerWrap>

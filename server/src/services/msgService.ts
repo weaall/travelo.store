@@ -53,6 +53,43 @@ const msgService = {
         }
     },
 
+    async getMsgByHotelId(user_id: string, hotel_id: string) {
+        const checkAuthSql = "SELECT * FROM hotel WHERE id = ? and user_id = ?";
+        const checkAuthParams = [hotel_id, user_id];
+        
+        const getMsg = `
+            SELECT m.text, m.created_at, m.checked, m.by_user, m.user_id
+            FROM message m
+                JOIN (
+                    SELECT user_id, MAX(created_at) AS latest_created_at
+                    FROM message
+                    WHERE hotel_id = ?
+                    GROUP BY user_id
+            ) AS latest_messages
+            ON m.user_id = latest_messages.user_id AND m.created_at = latest_messages.latest_created_at
+            WHERE m.hotel_id = ?
+            ORDER BY m.created_at DESC;`;
+        const getMsgValues = [hotel_id, hotel_id];
+
+        const connection = await pool.getConnection();
+
+        try {
+            const [rows, fields]: [ResultSetHeader[], FieldPacket[]] = await connection.execute(checkAuthSql, checkAuthParams);
+
+            if (rows.length === 0) {
+                throw new CustomError("UNAUTHORIZED", 401);
+            }
+
+            const [getMsgResult]: [RowDataPacket[], FieldPacket[]] = await connection.execute(getMsg, getMsgValues);
+
+            return getMsgResult;
+        } catch (error) {
+            throw error;
+        } finally {
+            connection.release();
+        }
+    },
+
     async getMsgByBothId(user_id: string, hotel_id: string) {
         const getMsg = `
             SELECT text, created_at, checked, by_user

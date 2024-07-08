@@ -31,6 +31,12 @@ module.exports = {
             },
             minHeight: {
                 "screen-16": "calc(100vh - 4.1rem)",
+                "screen-32": "calc(100vh - 8.1rem)",
+            },
+            maxHeight: {
+                "screen-16": "calc(100vh - 4.1rem)",
+                "screen-32": "calc(100vh - 8.5rem)",
+                "screen-36": "calc(100vh - 9rem)",
             },
             backgroundImage: {
                 "main-img": "url('/src/assets/main.jpg')",

@@ -24,4 +24,10 @@ msgRouter.get(
     asyncHandler((req: Request, res: Response) =>  msgController.getMsgByUserId(req as JWTCheck, res)),
 )
 
+msgRouter.get(
+    "/hotel/:id",
+    isAuthenticated,
+    asyncHandler((req: Request, res: Response) =>  msgController.getMsgByHotelId(req as JWTCheck, res)),
+)
+
 export default msgRouter

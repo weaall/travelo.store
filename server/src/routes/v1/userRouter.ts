@@ -12,5 +12,7 @@ userRouter.get(
     asyncHandler((req: Request, res: Response) => userController.me(req as JWTCheck, res)),
 );
 
+userRouter.get("/name/:id", asyncHandler(userController.getNameByUserId));
+
 
 export default userRouter;

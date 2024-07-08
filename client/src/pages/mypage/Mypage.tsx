@@ -28,7 +28,7 @@ export default function MyPage() {
                         <Route path="/hotelreg" element={<HotelRegPage />} />
                         <Route path="/hotel" element={<MyHotelPage />} />
 
-                        <Route path="/chat" element={<MyChatPage />} />
+                        <Route path="/chat/:encryptedId" element={<MyChatPage />} />
                     </Routes>
                 </tw.ContentsWrap>
             </tw.FlexWrap>
