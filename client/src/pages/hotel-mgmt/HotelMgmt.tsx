@@ -68,8 +68,8 @@ export default function HotelMgmt() {
                     <Route path="/cal" element={<PriceCalendar hotel_id={hotelId}/>}>
                         <Route path=":room_id/*" element={<HotelMgmt />} />
                     </Route>
-                    <Route path="/msg" element={<HotelMsgPage hotel_id={hotelId}/>} />
-                    <Route path="/chat/:id" element={<HotelChatPage/>} />
+                    <Route path="/msg" element={<HotelMsgPage hotel_id={hotelId}/>} />\
+                    <Route path="/msg/chat/:encryptedHotelId/:encryptedUserId" element={<HotelChatPage/>} />
                 </Routes>
             </tw.ContentsWrap>
         </tw.Container>

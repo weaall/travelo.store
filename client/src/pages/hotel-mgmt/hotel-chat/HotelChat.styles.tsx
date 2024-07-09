@@ -14,7 +14,7 @@ export const MsgWrap = tw.div`flex flex-col w-full rounded-2xl bg-white h-auto s
 mobile:flex mobile:border-none mobile:shadow-none`
 
 export const ChatWrap = tw.div<UserProps>`flex my-4
-${(p) => (p.$byUser === 1 ? "flex-row-reverse" : "w-fit")}`
+${(p) => (p.$byUser === 0 ? "flex-row-reverse" : "w-fit")}`
 
 export const Pic = tw.div`w-10 h-10 bg-gray-30 mx-4 mobile:w-12 mobile:h-12`
 export const UnRegWrap = tw.div`flex h-full justify-center items-center text-2xl font-bold`
@@ -22,11 +22,11 @@ export const UnRegWrap = tw.div`flex h-full justify-center items-center text-2xl
 export const MsgInfoWrap = tw.div`flex flex-col max-w-[55%] `
 
 export const Name = tw.p<UserProps>`font-medium text-sm
-${(p) => (p.$byUser === 1 ? "text-end" : "")}
+${(p) => (p.$byUser === 0 ? "text-end" : "")}
 mobile:text-xs`
 
 export const TextWrap = tw.div<UserProps>`bg-main/[0.9] mt-2 p-4 rounded-xl whitespace-pre-line w-fit inline-block
-${(p) => (p.$byUser === 1 ? "bg-gray-100 " : "text-white")}`
+${(p) => (p.$byUser === 0 ? "bg-gray-100 " : "text-white")}`
 export const Text = tw.p`text-sm
 mobile:text-sm`
 

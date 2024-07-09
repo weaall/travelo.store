@@ -6,7 +6,11 @@ const authRouter = Router();
 
 authRouter.post("/sign-up", asyncHandler(authController.signUp));
 authRouter.post("/sign-in", asyncHandler(authController.signIn));
+
 authRouter.post("/kakao", asyncHandler(authController.signInKakao));
+authRouter.post("/naver", asyncHandler(authController.signInByNaver));
+
+authRouter.post("/naver/callback", asyncHandler(authController.signInByNaverCallback));
 
 authRouter.post("/presignedUrl", asyncHandler(authController.presignedUrl));
 

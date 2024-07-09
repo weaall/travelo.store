@@ -210,12 +210,9 @@ const bookingController = {
                             예약자 연락처: ${phone_num}
                             예약자 이메일: ${email}`;
 
-                    await msgService.addMsgFromHotel(bookingRefData[0].user_id, hotel_id as string, successMsg);
-
-                    // 결제 승인 요청이 성공적으로 처리된 경우에만 이동합니다.
+                    await msgService.sendBookingMsgFromHotel(bookingRefData[0].user_id, hotel_id as string, successMsg);
                     res.redirect(`http://localhost:3000/success/${orderId}`);
                 } catch (paymentError) {
-                    // 결제 승인 요청이 실패한 경우 롤백
                     await bookingService.rollbackBookingRef(bookingRefData[0].user_id, parsedOrderId);
                     throw paymentError;
                 }
@@ -223,7 +220,6 @@ const bookingController = {
                 throw new CustomError("UNAUTHORIZED", 401);
             }
         } catch (error) {
-            // 오류가 발생한 경우에는 실패 페이지로 이동합니다.
             res.redirect("http://localhost:3000/fail");
         }
     },

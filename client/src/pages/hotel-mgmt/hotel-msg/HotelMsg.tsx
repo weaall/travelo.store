@@ -43,8 +43,8 @@ export default function HotelMsgPage({ hotel_id }: { hotel_id: string | undefine
                     let userData = userDataCache[msg.user_id];
 
                     if (!userData) {
-                        const hotelResponse = await axiosInstance.get("/user/name/" + msg.user_id);
-                        userData = hotelResponse.data.data[0];
+                        const userResponse = await axiosInstance.get("/user/name/" + msg.user_id);
+                        userData = userResponse.data.data[0];
                         setUserDataCache((prevCache) => ({
                             ...prevCache,
                             [msg.user_id]: userData,
@@ -75,9 +75,10 @@ export default function HotelMsgPage({ hotel_id }: { hotel_id: string | undefine
         }
     };
 
-    const clickChat = (hotelId : number) =>{
-        const encryptedId = encrypt(`${hotelId}`);
-        navigate(`../chat/${encryptedId}`);
+    const clickChat = (hotelId : number, userId: number) =>{
+        const encryptedHotelId = encrypt(`${hotelId}`);
+        const encryptedUserId = encrypt(`${userId}`);
+        navigate(`../msg/chat/${encryptedHotelId}/${encryptedUserId}`);
     }
 
     useEffect(() => {
@@ -96,7 +97,7 @@ export default function HotelMsgPage({ hotel_id }: { hotel_id: string | undefine
                 </tw.TitleWrap>
                 <tw.ContentsWrap>
                     {msgList.map((msg) => (
-                        <tw.MsgWrap key={msg.created_at} onClick={()=>clickChat(msg.hotel_id)}>
+                        <tw.MsgWrap key={msg.created_at} onClick={()=>clickChat(msg.hotel_id,msg.user_id)}>
                             <tw.PicWrap>
                                 <tw.Pic>
                                     <tw.Svg alt="" src={require("../../../assets/svg/user_icon.svg").default} />

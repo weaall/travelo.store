@@ -12,6 +12,12 @@ msgRouter.post(
     asyncHandler((req: Request, res: Response) =>  msgController.addMsg(req as JWTCheck, res)),
 )
 
+msgRouter.post(
+    "/hotel/send",
+    isAuthenticated,
+    asyncHandler((req: Request, res: Response) =>  msgController.sendMsgFromHotel(req as JWTCheck, res)),
+)
+
 msgRouter.get(
     "/chat/:id",
     isAuthenticated,
@@ -28,6 +34,12 @@ msgRouter.get(
     "/hotel/:id",
     isAuthenticated,
     asyncHandler((req: Request, res: Response) =>  msgController.getMsgByHotelId(req as JWTCheck, res)),
+)
+
+msgRouter.get(
+    "/hotel/chat/:hotel_id/:user_id",
+    isAuthenticated,
+    asyncHandler((req: Request, res: Response) =>  msgController.getMsgFromHotel(req as JWTCheck, res)),
 )
 
 export default msgRouter

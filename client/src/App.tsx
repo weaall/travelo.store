@@ -17,6 +17,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SuccessPage } from "./pages/payment/success/Success";
 import { FailPage } from "./pages/payment/fail/Fail";
 import MyPage from "./pages/mypage/Mypage";
+import AuthNaver from "./pages/auth/Auth.naver";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,7 @@ function App() {
                                 <Route path=":hotelId/*" element={<HotelMgmt />} />
                             </Route>
                             <Route path="/auth/kakao" element={<AuthKaKao />} />
+                            <Route path="/auth/naver" element={<AuthNaver />} />
 
                             <Route path="/search/:searchValue/:startDate/:endDate/:adult/:child" element={<SearchResult />} />
                             <Route path="/success/:id" element={<SuccessPage />} />

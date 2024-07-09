@@ -32,9 +32,10 @@ export default function HotelChatPage() {
     const [hotelData, setHotelData] = useState<HotelData>();
     const [text, setText] = useState("");
 
-    const { encryptedId } = useParams();
+    const { encryptedHotelId, encryptedUserId } = useParams();
 
-    const id = decrypt(encryptedId || "");
+    const id = decrypt(encryptedHotelId || "");
+    const userId = decrypt(encryptedUserId || "");
 
     const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const newText = e.target.value;
@@ -54,7 +55,7 @@ export default function HotelChatPage() {
         try {
             const config = await sendJWT({
                 method: "GET",
-                url: "/msg/chat/" + id,
+                url: `/msg/hotel/chat/${id}/${userId}`,
             });
 
             const response = await axiosInstance.request(config);
@@ -73,7 +74,7 @@ export default function HotelChatPage() {
         try {
             const config = await sendJWT({
                 method: "GET",
-                url: "/msg/chat/" + id,
+                url: "/msg/hotel/chat/" + id + "/" + userId,
             });
 
             const response = await axiosInstance.request(config);
@@ -127,8 +128,9 @@ export default function HotelChatPage() {
         try {
             const config = await sendJWT({
                 method: "post",
-                url: "/msg/send",
+                url: "/msg/hotel/send",
                 data: {
+                    user_id: msgList[0].user_id,
                     hotel_id: id,
                     text: text,
                 },
@@ -188,7 +190,7 @@ export default function HotelChatPage() {
                                     )}
                                 </tw.Pic>
                                 <tw.MsgInfoWrap>
-                                    <tw.Name $byUser={msg.by_user}>{msg.by_user === 1 ? "나" : hotelData?.name}</tw.Name>
+                                    <tw.Name $byUser={msg.by_user}>{msg.by_user === 1 ? "고객" : hotelData?.name}</tw.Name>
                                     <tw.TextWrap $byUser={msg.by_user}>
                                         <tw.Text>{msg.text}</tw.Text>
                                     </tw.TextWrap>

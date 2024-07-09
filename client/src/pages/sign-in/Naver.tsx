@@ -1,8 +1,9 @@
 import * as tw from "./SignIn.styles"
 
 export default function Naver() {
-    const NAVER_CLIENT_ID = "P2SRmpj6A3GaN4uPcTzE"
-    const REDIRECT_URI = "http://localhost:3000/main"
+    
+    const NAVER_CLIENT_ID = process.env.REACT_APP_NAVER_CLIENT_ID
+    const REDIRECT_URI = process.env.REACT_APP_NAVER_REDIRECT_URI
     const STATE = "false"
     const NAVER_AUTH_URL = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${NAVER_CLIENT_ID}&state=${STATE}&redirect_uri=${REDIRECT_URI}`
 

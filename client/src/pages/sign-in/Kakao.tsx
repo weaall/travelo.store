@@ -1,8 +1,8 @@
 import * as tw from "./SignIn.styles"
 
 export default function KaKao() {
-    const REST_API_KEY = process.env.REACT_APP_REST_API_KEY
-    const REDIRECT_URI = process.env.REACT_APP_REDIRECT_URI
+    const REST_API_KEY = process.env.REACT_APP_KAKAO_REST_API_KEY
+    const REDIRECT_URI = process.env.REACT_APP_KAKAO_REDIRECT_URI
     const link = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`
 
     const loginHandler = () => {

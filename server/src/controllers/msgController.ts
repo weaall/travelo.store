@@ -13,8 +13,30 @@ const msgController = {
         });
     },
 
+    async sendMsgFromHotel(req: JWTCheck, res: Response) {
+        console.log(req.body)
+        const data = await msgService.sendMsgFromHotel(req.user.id, 
+            req.body.user_id,req.body.hotel_id,req.body.text);
+
+        res.status(201).json({
+            error: null,
+            data: data,
+        });
+    },
+
     async getMsgByBothId(req: JWTCheck, res: Response) {
         const data = await msgService.getMsgByBothId(req.user.id, req.params.id);
+
+        res.status(200).json({
+            error: null,
+            data: data,
+        });
+    },
+
+    async getMsgFromHotel(req: JWTCheck, res: Response) {
+        const hotel_id = req.params.hotel_id;
+        const user_id = req.params.user_id;
+        const data = await msgService.getMsgFromHotel(req.user.id, hotel_id,user_id);
 
         res.status(200).json({
             error: null,

@@ -7,6 +7,12 @@ interface AddMsgProps {
     text: string;
 }
 
+interface AddMsgByHotelId {
+    hotel_id: string;
+    text: string;
+    user_id: string;
+}
+
 const msgService = {
     async addMsg(user_id: string, { hotel_id, text }: AddMsgProps) {
         const addMsg = "INSERT INTO message (user_id, hotel_id, text) VALUES (? , ? , ?)";
@@ -58,7 +64,7 @@ const msgService = {
         const checkAuthParams = [hotel_id, user_id];
         
         const getMsg = `
-            SELECT m.text, m.created_at, m.checked, m.by_user, m.user_id
+            SELECT m.text, m.created_at, m.checked, m.by_user, m.user_id, m.hotel_id
             FROM message m
                 JOIN (
                     SELECT user_id, MAX(created_at) AS latest_created_at
@@ -120,7 +126,66 @@ const msgService = {
         }
     },
 
-    async addMsgFromHotel(user_id: string, hotel_id: string, text: string) {
+    async getMsgFromHotel(jwt_id: string, hotel_id: string, user_id:string) {
+        const checkAuthSql = "SELECT * FROM hotel WHERE id = ? and user_id = ?";
+        const checkAuthParams = [hotel_id, user_id];
+
+        const getMsg = `
+            SELECT text, created_at, checked, by_user, user_id
+            FROM message 
+            WHERE user_id = ? AND hotel_id = ?
+            ORDER BY created_at ASC;`;
+        const getMsgValues = [user_id, hotel_id];
+
+        const updateChecked = `
+            UPDATE message
+            SET checked = 1
+            WHERE user_id = ? AND hotel_id = ? AND checked = 0;`;
+        const updateCheckedValues = [user_id, hotel_id];
+
+
+        const connection = await pool.getConnection();
+
+        try {
+            const [rows, fields]: [RowDataPacket[], FieldPacket[]] = await connection.execute(
+                checkAuthSql,
+                checkAuthParams,
+            );
+
+            if (rows.length === 0) {
+                throw new CustomError("UNAUTHORIZED", 401);
+            }
+
+            const [getMsgResult]: [RowDataPacket[], FieldPacket[]] = await connection.execute(getMsg, getMsgValues);
+
+            await connection.execute(updateChecked, updateCheckedValues);
+            
+            return getMsgResult;
+        } catch (error) {
+            throw error;
+        } finally {
+            connection.release();
+        }
+    },
+
+    async sendBookingMsgFromHotel(user_id: string, hotel_id: string, text: string) {
+        const addMsg = "INSERT INTO message (user_id, hotel_id, text, checked, by_user) VALUES (?, ?, ?, ?, ?)";
+        const addMsgValues = [user_id, hotel_id, text, 0, 0];
+
+        const connection = await pool.getConnection();
+
+        try {
+            const [addMsgResult, field]: [ResultSetHeader[], FieldPacket[]] = await connection.execute(addMsg, addMsgValues);
+
+            return addMsgResult;
+        } catch (error) {
+            throw error;
+        } finally {
+            connection.release();
+        }
+    },
+
+    async sendMsgFromHotel(jwt_id: string, user_id: string, hotel_id: string, text: string) {
         const checkAuthSql = "SELECT * FROM hotel WHERE id = ? and user_id = ?";
         const checkAuthParams = [hotel_id, user_id];
 
