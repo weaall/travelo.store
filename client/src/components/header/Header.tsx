@@ -1,27 +1,20 @@
-import { useEffect, useState } from "react"
-import { useLocation, useNavigate } from "react-router-dom"
-import { useRecoilState } from "recoil"
-import Cookies from "js-cookie"
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useRecoilState } from "recoil";
+import Cookies from "js-cookie";
 
-import { HeaderRenderAtom } from "../../recoil/HeaderRender.Atom"
-import UserMenu from "../usermenu/UserMenu"
-import * as tw from "./Header.styles"
+import { HeaderRenderAtom } from "../../recoil/HeaderRender.Atom";
+import UserMenu from "../usermenu/UserMenu";
+import * as tw from "./Header.styles";
 
 export default function Header() {
     const navigate = useNavigate();
     const location = useLocation();
 
     const [headerRender, setHeaderRender] = useRecoilState(HeaderRenderAtom);
-
-    const [isModalOpen, setIsModalOpen] = useState(false);
-
     const [isSignIn, setIsSignIn] = useState(false);
-
     const [isRoot, setIsRoot] = useState(false);
-
-    useEffect(() => {
-        setIsRoot(location.pathname === "/");
-    }, [location.pathname]);
+    const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
     const handleBackClick = () => {
         if (!isRoot) {
@@ -31,21 +24,11 @@ export default function Header() {
 
     const checkSignInState = () => {
         const jwtToken = Cookies.get("jwt");
-        if (jwtToken) {
-            setIsSignIn(true);
-        } else {
-            setIsSignIn(false);
-        }
+        setIsSignIn(!!jwtToken);
     };
 
-    const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-
     const changeMenuState = () => {
-        if (!isMenuOpen) {
-            setIsMenuOpen(true);
-        } else {
-            setIsMenuOpen(false);
-        }
+        setIsMenuOpen((prev) => !prev);
     };
 
     const navigateClick = (url: string) => {
@@ -54,14 +37,13 @@ export default function Header() {
     };
 
     useEffect(() => {
-        checkSignInState();
-        setIsMenuOpen(false);
-    }, [headerRender]);
+        setIsRoot(location.pathname === "/");
+    }, [location.pathname]);
 
     useEffect(() => {
         checkSignInState();
         setIsMenuOpen(false);
-    }, [location]);
+    }, [headerRender, location]);
 
     return (
         <tw.Container>
@@ -77,15 +59,11 @@ export default function Header() {
                     </tw.ActiveBtn>
                     <tw.NavHome onClick={() => navigateClick("/")}>Travel.io</tw.NavHome>
                     {isSignIn === false ? (
-                        <>
-                            <tw.SignInBtn onClick={() => navigateClick("/signin")}>로그인</tw.SignInBtn>
-                        </>
+                        <tw.SignInBtn onClick={() => navigateClick("/signin")}>로그인</tw.SignInBtn>
                     ) : (
-                        <>
-                            <tw.SignInBtn onClick={changeMenuState}>
-                                <tw.Svg alt="" src={require("../../assets/svg/list_icon.svg").default} />
-                            </tw.SignInBtn>
-                        </>
+                        <tw.SignInBtn onClick={changeMenuState}>
+                            <tw.Svg alt="" src={require("../../assets/svg/list_icon.svg").default} />
+                        </tw.SignInBtn>
                     )}
                 </tw.NavWrap>
             </tw.ContentsWrap>

@@ -1,14 +1,14 @@
 import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import axios from "axios"
-import { axiosInstance } from "../../utils/axios.utils"
+import { axiosInstance, handleAxiosError } from "../../utils/axios.utils"
 import Cookies from "js-cookie"
 
 import * as styled from "./Auth.styles"
 import { useSetRecoilState } from "recoil"
 import { HeaderRenderAtom } from "../../recoil/HeaderRender.Atom"
 
-function AuthKaKao() {
+export default function AuthKaKao() {
     const navigate = useNavigate()
 
     const setHeaderRender = useSetRecoilState(HeaderRenderAtom);
@@ -41,9 +41,7 @@ function AuthKaKao() {
             getKaKaoUserData(token)
         } catch (error) {
             if (axios.isAxiosError(error)) {
-                if (error.response && error.response.status === 500) {
-                    window.alert("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.")
-                }
+                handleAxiosError(error, navigate);
             }
         }
     }
@@ -97,5 +95,3 @@ function AuthKaKao() {
         </styled.Container>
     )
 }
-
-export default AuthKaKao

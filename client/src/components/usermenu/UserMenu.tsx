@@ -17,7 +17,7 @@ export default function UserMenu({ isMenuOpen }: UserMenuProps) {
         if (window.confirm("로그아웃 하시겠습니까?")) {
             Cookies.remove("jwt");
             setHeaderRender((prevCount) => prevCount + 1);
-            navigate("/main");
+            navigate("/");
         } else {
         }
     };
@@ -41,6 +41,9 @@ export default function UserMenu({ isMenuOpen }: UserMenuProps) {
                         </tw.MenuLi>
                         <tw.MenuLi>
                             <tw.MenuA onClick={()=>navigate("/me/booking")}>예약확인</tw.MenuA>
+                        </tw.MenuLi>
+                        <tw.MenuLi>
+                            <tw.MenuA onClick={()=>navigate("/me/msg")}>메세지</tw.MenuA>
                         </tw.MenuLi>
                         <tw.MenuLi>
                             <tw.MenuA>이용후기</tw.MenuA>
