@@ -17,18 +17,17 @@ export const CloseBtn = tw.button`w-8 absolute top-4 right-4 group`
 export const CloseSVG = tw.img`h-full w-full group-hover-scale-105`
 
 export const ContentsFlex = tw.div`w-full flex`
-export const HalfFlex = tw.div`w-[50%] flex justify-end `
+export const HalfFlex = tw.div`w-[50%] flex justify-end mobile:w-[70%]`
 
-export const SubTitle = tw.h3`w-[50%] py-4 text-2xl font-bold`
+export const SubTitle = tw.h3`w-[50%] py-4 text-2xl font-bold mobile:w-[30%] mobile:text-xl`
 
 export const SetBtn = tw.button`p-3 font-bold hover:text-main`
 export const ResetBtn = tw.button`p-3 font-bold hover:text-main`
 
 export const InputWrap = tw.div`flex flex-col text-left h-[90%] px-4 overflow-y-auto`
 export const UpperTag = tw.label`text-ms font-bold py-0 my-2`
-export const Input = tw.input`font-medium outline-none
-w-full min-h-12 ps-6 pe-6 rounded-[16px] bg-main/[0.1] font-3xl my-1`;
-export const Select = tw.select`my-1 p-1 ps-2 border-2 border-main outline-main rounded-xl`
+export const Input = tw.input`w-auto text-sm py-1 px-2 border border-black outline-main rounded-lg`;
+export const Select = tw.select`w-auto text-sm py-1 px-2 border border-black outline-main rounded-lg cursor-pointer`
 
 export const RegBtn = tw.button<RegBtnProps>` 
 w-full h-14 font-bold text-white rounded-[16px] my-2
@@ -37,7 +36,9 @@ ${(p) => (p.$validator ? "bg-gradient-to-r from-main to-tomain" : "bg-gray-200")
 export const UploadWrap = tw.div`p-6 text-center bg-gray-100 rounded-2xl my-4`
 export const ImgLabel = tw.p`my-4 font-bold`
 
-export const ImgContainer = tw.div`grid grid-cols-2 justify-centers`
-export const ImgWrap = tw.div`w-full h-auto relative`
+export const ImgContainer = tw.div`grid grid-cols-2 justify-center`
+export const ImgOutWrap = tw.div`w-full h-auto relative content-center`
+export const ImgWrap = tw.div`m-1`
 export const Img = tw.img`rounded-lg`
-export const RemoveBtn = tw.button`py-2 hover:text-main hover:font-bold`
+export const RemoveBtn = tw.button`bg-gray-100/[0.9] py-1 px-2 rounded-lg text-semibold 
+hover:text-main hover:font-bold absolute bottom-2 right-2 hover:scale-105`

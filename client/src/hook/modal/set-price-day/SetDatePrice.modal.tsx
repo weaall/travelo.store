@@ -1,6 +1,6 @@
-import React, { DragEvent, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { sendJWT } from "../../../utils/jwtUtils";
-import { axios, axiosInstance } from "../../../utils/axios.utils";
+import { axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
 import { useNavigate } from "react-router-dom";
 
 import * as tw from "./SetDatePrice.modal.styles"
@@ -18,10 +18,6 @@ interface ModalProps {
 export default function SetPriceByDateModal({ onClose, hotel_id, room_id, year, month, date }: ModalProps) {
     const navigate = useNavigate();
 
-    const [roomData, setRoomData] = useState({
-        room_id: room_id,
-    });
-
     const [priceData, setPriceData] = useState({
         hotel_id: hotel_id,
         room_id: room_id,
@@ -36,6 +32,10 @@ export default function SetPriceByDateModal({ onClose, hotel_id, room_id, year, 
         const { name, value } = e.target;
         setPriceData({ ...priceData, [name]: value.replace(/[^0-9]/g, "") });
     };
+
+    const isFormValid = () => {
+        return priceData.price.toString().trim() !== "" && priceData.room_limit.toString().trim() !== ""
+    };
     
 
     const onClickSave= async () => {
@@ -46,16 +46,10 @@ export default function SetPriceByDateModal({ onClose, hotel_id, room_id, year, 
                     url: "/room/price/date",
                     data: priceData,
                 });
-                const response = await axiosInstance.request(config);
+                await axiosInstance.request(config);
                 window.alert("저장완료");
             } catch (error) {
-                if (axios.isAxiosError(error) && error.response) {
-                    if (error.response.status === 409) {
-                        window.alert("올바른 접근이 아닙니다.");
-                    } else if (error.response.status === 401) {
-                        window.alert("올바른 접근이 아닙니다.");
-                    } 
-                }
+                handleAxiosError(error, navigate);
             }
         }
     };
@@ -74,16 +68,23 @@ export default function SetPriceByDateModal({ onClose, hotel_id, room_id, year, 
                 </tw.UpperTag>
                 <tw.InputWrap>
                     <tw.UpperTag>금액</tw.UpperTag>
-                    <tw.Input onChange={onChangeInput} value={priceData.price} name="price" maxLength={7} />
+                    <tw.ContentsFlex>
+                        <tw.Input onChange={onChangeInput} value={priceData.price} name="price" maxLength={7} />
+                        <tw.Text>원</tw.Text>
+                    </tw.ContentsFlex>
                     <tw.UpperTag>방갯수</tw.UpperTag>
-                    <tw.Input onChange={onChangeInput} value={priceData.room_limit} name="room_limit" maxLength={2} />
+                    <tw.ContentsFlex>
+                        <tw.Input onChange={onChangeInput} value={priceData.room_limit} name="room_limit" maxLength={2} />
+                        <tw.Text>개</tw.Text>
+                    </tw.ContentsFlex>
                 </tw.InputWrap>
                 <tw.RegBtn
-                    $validator={false}
+                    $validator={isFormValid()}
                     onClick={() => {
                         onClickSave();
                         onClose();
                     }}
+                    disabled={!isFormValid()}
                 >
                     설정
                 </tw.RegBtn>

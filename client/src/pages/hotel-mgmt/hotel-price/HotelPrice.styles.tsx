@@ -4,7 +4,7 @@ interface DayProps {
     $day: number
 }
 
-export const Container = tw.div`w-full`
+export const Container = tw.div`w-full h-full flex flex-col items-center`
 
 export const ContentsWrap = tw.div`w-full flex flex-col space-y-2 px-6 py-6 border-b`
 export const ContentsFlex = tw.div`w-full flex items-center justify-between`

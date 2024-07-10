@@ -40,8 +40,8 @@ export default function MyHotelPage() {
             const hotels = response.data.data;
 
             for (let hotel of hotels) {
-                const roomImgResponse = await axiosInstance.get(`/hotel/img/${hotel.id}`);
-                hotel.img = roomImgResponse.data.data;
+                const hotelImgResponse = await axiosInstance.get(`/hotel/img/${hotel.id}`);
+                hotel.img = hotelImgResponse.data.data;
             }
 
             setHotelList(hotels);

@@ -2,15 +2,18 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { sendJWT } from "../../../utils/jwtUtils";
-import { axios, axiosInstance } from "../../../utils/axios.utils";
+import { axios, axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
 
 import dayjs from 'dayjs'
 
 import * as tw from "./HotelPrice.styles";
 import { ModalPortal } from "../../../hook/modal/ModalPortal";
 import SetRoomModal from "../../../hook/modal/set-room/SetRoom.modal";
+import Loading from "../../../components/loading/Loading";
 
 export default function HotelPrice({ hotel_id }: { hotel_id: string | undefined }) {
+    const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
 
     const [isSetModalOpen, setIsSetModalOpen] = useState(false);
     const [roomId, setRoomId] = useState(0);
@@ -45,22 +48,14 @@ export default function HotelPrice({ hotel_id }: { hotel_id: string | undefined 
         },
     ]);
 
-    const navigate = useNavigate();
-
     const fetchRoom = async () => {
         try {
             const response = await axiosInstance.get("/room/hotel/" + hotel_id);
             setRoomData(response.data.data);
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 409) {
-                    window.alert("올바른 접근이 아닙니다.");
-                    navigate("/");
-                } else if (error.response.status === 401) {
-                    window.alert("올바른 접근이 아닙니다.");
-                    navigate("/main");
-                }
-            }
+            handleAxiosError(error, navigate);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -85,6 +80,10 @@ export default function HotelPrice({ hotel_id }: { hotel_id: string | undefined 
     useEffect(() => {
         fetchRoom();
     }, []);
+
+    if (loading) {
+        return <Loading />;
+    }
 
     return (
         <tw.Container>

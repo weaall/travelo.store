@@ -1,9 +1,9 @@
 import React, { DragEvent, useEffect, useState } from "react";
 import { sendJWT } from "../../../utils/jwtUtils";
-import { axios, axiosInstance } from "../../../utils/axios.utils";
+import { axios, axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
 import { useNavigate } from "react-router-dom";
 
-import * as tw from "./SetRoom.modal.styles"
+import * as tw from "./SetRoom.modal.styles";
 
 interface ModalProps {
     onClose: () => void;
@@ -116,12 +116,7 @@ export default function SetRoomModal({ onClose, hotel_id, room_id }: ModalProps)
             const fetchedData = response.data.data[0];
             setRoomData(fetchedData);
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 401) {
-                    window.alert("올바른 접근이 아닙니다.");
-                    navigate("/main");
-                }
-            }
+            handleAxiosError(error, navigate);
         }
     };
 
@@ -130,12 +125,7 @@ export default function SetRoomModal({ onClose, hotel_id, room_id }: ModalProps)
             const response = await axiosInstance.get("/room/bed");
             setBedList(response.data.data);
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 401) {
-                    window.alert("올바른 접근이 아닙니다.");
-                    navigate("/main");
-                }
-            }
+            handleAxiosError(error, navigate);
         }
     };
 
@@ -144,53 +134,48 @@ export default function SetRoomModal({ onClose, hotel_id, room_id }: ModalProps)
             const response = await axiosInstance.get("/room/view");
             setViewList(response.data.data);
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 401) {
-                    window.alert("올바른 접근이 아닙니다.");
-                    navigate("/main");
-                }
-            }
+            handleAxiosError(error, navigate);
         }
     };
 
     const uploadFilesToS3 = async () => {
         const uploadedKeys = [];
-        
+
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
             const key = `room_img/${hotel_id}/${room_id}/${file.name}`;
             const contentType = file.type;
-    
-                const presignedUrlsResponse = await axiosInstance.post("/auth/presignedUrl", {
-                    key: key,
-                    contentType: contentType
-                });
 
-                const  presignedUrl  = presignedUrlsResponse.data.data;
-    
-                const response = await fetch(presignedUrl, {
-                    method: "PUT",
-                    body: file,
-                    headers: {
-                        "Content-Type": contentType,
-                    },
-                });
+            const presignedUrlsResponse = await axiosInstance.post("/auth/presignedUrl", {
+                key: key,
+                contentType: contentType,
+            });
 
-                const imageUrl = presignedUrl.split("?")[0];
-                uploadedKeys.push(imageUrl);
+            const presignedUrl = presignedUrlsResponse.data.data;
+
+            const response = await fetch(presignedUrl, {
+                method: "PUT",
+                body: file,
+                headers: {
+                    "Content-Type": contentType,
+                },
+            });
+
+            const imageUrl = presignedUrl.split("?")[0];
+            uploadedKeys.push(imageUrl);
         }
         return uploadedKeys;
     };
-    
+
     const clickInfoSavePre = async () => {
         try {
             const uploadedKeys = await uploadFilesToS3();
-    
+
             const updatedRoomData = {
                 ...roomData,
                 urls: uploadedKeys,
             };
-    
+
             const config = await sendJWT({
                 headers: {
                     "Content-Type": "application/json",
@@ -199,25 +184,14 @@ export default function SetRoomModal({ onClose, hotel_id, room_id }: ModalProps)
                 url: "/room/info",
                 data: updatedRoomData,
             });
-    
+
             const response = await axiosInstance.request(config);
             fetchRoomInfo();
             window.alert("저장완료");
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 409) {
-                    window.alert("올바른 접근이 아닙니다.");
-                } else {
-                    window.alert("올바른 접근이 아닙니다.");
-                    navigate("/")
-                }
-            } else {
-                window.alert("올바른 접근이 아닙니다.");
-                navigate("/")
-            }
+            handleAxiosError(error, navigate);
         }
     };
-
 
     useEffect(() => {
         fetchRoomInfo();
@@ -280,10 +254,14 @@ export default function SetRoomModal({ onClose, hotel_id, room_id }: ModalProps)
                         <tw.ImgLabel>이미지를 드래그 앤 드롭하세요.</tw.ImgLabel>
                         <tw.ImgContainer>
                             {imagePreviews.map((preview, index) => (
-                                <tw.ImgWrap key={index}>
-                                    <tw.RemoveBtn onClick={() => removeFile(index)}>삭제</tw.RemoveBtn>
-                                    <tw.Img src={preview} alt={`이미지 미리보기 ${index + 1}`} draggable={false} />
-                                </tw.ImgWrap>
+                                <tw.ImgOutWrap key={index}>
+                                    <tw.RemoveBtn onClick={() => removeFile(index)} style={{ marginLeft: "10px" }}>
+                                        삭제
+                                    </tw.RemoveBtn>
+                                    <tw.ImgWrap>
+                                        <tw.Img src={preview} alt={`이미지 미리보기 ${index + 1}`} draggable={false} />
+                                    </tw.ImgWrap>
+                                </tw.ImgOutWrap>
                             ))}
                         </tw.ImgContainer>
                     </tw.UploadWrap>

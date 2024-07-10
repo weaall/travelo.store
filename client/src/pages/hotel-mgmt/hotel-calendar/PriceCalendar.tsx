@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 
-import * as tw from "./PriceCalendar.styles"
+import * as tw from "./PriceCalendar.styles";
 import { ModalPortal } from "../../../hook/modal/ModalPortal";
-import { axios, axiosInstance } from "../../../utils/axios.utils";
+import { axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
 import { useNavigate, useParams } from "react-router-dom";
 import SetDatePriceModal from "../../../hook/modal/set-price-day/SetDatePrice.modal";
 import SetMonthPriceModal from "../../../hook/modal/set-price-month/SetMonthPrice.modal";
+import Loading from "../../../components/loading/Loading";
 
 export default function PriceCalendar({ hotel_id }: { hotel_id: string | undefined }) {
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
     const { room_id } = useParams();
 
     const [isMonthModalOpen, setIsMonthModalOpen] = useState(false);
@@ -62,12 +64,7 @@ export default function PriceCalendar({ hotel_id }: { hotel_id: string | undefin
             const fetchedData = response.data.data[0];
             setRoomData(fetchedData);
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 401) {
-                    window.alert("올바른 접근이 아닙니다.");
-                    navigate("/main");
-                }
-            }
+            handleAxiosError(error, navigate);
         }
     };
 
@@ -98,14 +95,14 @@ export default function PriceCalendar({ hotel_id }: { hotel_id: string | undefin
     const lastDateIndex = dates.lastIndexOf(TLDate);
 
     const prevMonth = () => {
-        if (date.isAfter(dayjs(), 'month')) {
+        if (date.isAfter(dayjs(), "month")) {
             setDate(date.subtract(1, "month"));
         }
     };
-    
+
     const nextMonth = () => {
-        const nextThreeMonths = dayjs().add(3, 'month');
-        if (date.isBefore(nextThreeMonths, 'month')) {
+        const nextThreeMonths = dayjs().add(3, "month");
+        if (date.isBefore(nextThreeMonths, "month")) {
             setDate(date.add(1, "month"));
         }
     };
@@ -123,139 +120,135 @@ export default function PriceCalendar({ hotel_id }: { hotel_id: string | undefin
     };
 
     const fetchPrice = async () => {
+        setLoading(true);
         try {
             const response = await axiosInstance.get("/room/price/" + room_id);
             setPriceData(response.data.data);
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 401) {
-                    window.alert("올바른 접근이 아닙니다.");
-                    navigate("/main");
-                }
-            }
+            handleAxiosError(error, navigate);
+        } finally {
+            setLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchPrice();
         fetchRoomInfo();
+        fetchPrice();
     }, []);
+
+    if (loading) {
+        return <Loading />;
+    }
 
     return (
         <tw.Container>
-            <tw.ContentsWrap>
-                <tw.ContentsFlex>
-                    <tw.Title>가격설정</tw.Title>
-                </tw.ContentsFlex>
-                <tw.RoomWrap>
+            <tw.MobileWrap>
+                <tw.ContentsWrap>
                     <tw.ContentsFlex>
+                        <tw.TitleWrap>
+                            <tw.Title>가격설정</tw.Title>
+                        </tw.TitleWrap>
+                    </tw.ContentsFlex>
+                    <tw.RoomWrap>
                         <tw.RoomName>{roomData.name}</tw.RoomName>
-                    </tw.ContentsFlex>
-                    <tw.ContentsFlex>
-                        <tw.RoomText>숙박인원 : {roomData.num}인</tw.RoomText>
-                        <tw.RoomText>{roomData.bed_type}</tw.RoomText>
-                        <tw.RoomText>({roomData.view_type})</tw.RoomText>
-                    </tw.ContentsFlex>
-                </tw.RoomWrap>
-                <tw.FlexWrap>
-                    <tw.TitleWrap>
-                        <tw.YearWrap>
-                            <tw.AddBtn onClick={()=>{navigate(-1)}}>뒤로가기</tw.AddBtn>
-                            <tw.YearMonth>
-                                {viewYear}년 {viewMonth + 1}월
-                            </tw.YearMonth>
-                            <tw.AddBtn onClick={openMonthModal}>월별설정</tw.AddBtn>
-                        </tw.YearWrap>
-                        <tw.NavWrap>
-                            <tw.NavBtn onClick={prevMonth}>&lt;</tw.NavBtn>
-                            <tw.NavBtn onClick={goToday}>Today</tw.NavBtn>
-                            <tw.NavBtn onClick={nextMonth}>&gt;</tw.NavBtn>
-                        </tw.NavWrap>
-                    </tw.TitleWrap>
-                </tw.FlexWrap>
-                <tw.DaysWrap>
-                    {["일", "월", "화", "수", "목", "금", "토"].map((day, index) => (
-                        <tw.DayWrap key={index}>
-                            <tw.DayLabel $day={index}>{day}</tw.DayLabel>
-                        </tw.DayWrap>
-                    ))}
-                </tw.DaysWrap>
-                <tw.DatesWrap>
-                    {dates.map((date, i) => {
-                        const condition = i >= firstDateIndex && i < lastDateIndex + 1 ? "this" : "other";
-                        const formattedDate = dayjs(`${viewYear}-${viewMonth + 1}-${date}`).format("YYYY-MM-DD");
-                        const today = dayjs().format("YYYY-MM-DD");
-                        const isPastDate = dayjs(formattedDate).isBefore(today, "day");
-                        const matchedPriceData = priceData.find((item) => item.date === formattedDate);
+                        <tw.RoomText>
+                            {roomData.bed_type} ({roomData.view_type})
+                        </tw.RoomText>
+                    </tw.RoomWrap>
+                    <tw.FlexWrap>
+                        <tw.YearOuterWrap>
+                            <tw.YearWrap>
+                                <tw.AddBtn
+                                    onClick={() => {
+                                        navigate(-1);
+                                    }}
+                                >
+                                    뒤로가기
+                                </tw.AddBtn>
+                                <tw.YearMonth>
+                                    {viewYear}년 {viewMonth + 1}월
+                                </tw.YearMonth>
+                                <tw.AddBtn onClick={openMonthModal}>월별설정</tw.AddBtn>
+                            </tw.YearWrap>
+                            <tw.NavWrap>
+                                <tw.NavBtn onClick={prevMonth}>&lt;</tw.NavBtn>
+                                <tw.NavBtn onClick={goToday}>Today</tw.NavBtn>
+                                <tw.NavBtn onClick={nextMonth}>&gt;</tw.NavBtn>
+                            </tw.NavWrap>
+                        </tw.YearOuterWrap>
+                    </tw.FlexWrap>
+                    <tw.DaysWrap>
+                        {["일", "월", "화", "수", "목", "금", "토"].map((day, index) => (
+                            <tw.DayWrap key={index}>
+                                <tw.DayLabel $day={index}>{day}</tw.DayLabel>
+                            </tw.DayWrap>
+                        ))}
+                    </tw.DaysWrap>
+                    <tw.DatesWrap>
+                        {dates.map((date, i) => {
+                            const condition = i >= firstDateIndex && i < lastDateIndex + 1 ? "this" : "other";
+                            const formattedDate = dayjs(`${viewYear}-${viewMonth + 1}-${date}`).format("YYYY-MM-DD");
+                            const today = dayjs().format("YYYY-MM-DD");
+                            const isPastDate = dayjs(formattedDate).isBefore(today, "day");
+                            const matchedPriceData = priceData.find((item) => item.date === formattedDate);
 
-                        if (condition === "other") {
-                            return (
-                                <tw.DateWrap key={i} onClick={() => navMonth(date)}>
-                                    <tw.DateLabel $date={condition}>{date}</tw.DateLabel>
-                                </tw.DateWrap>
-                            );
-                        } else if (dayjs(formattedDate).format("YYYY-MM-DD") === today) {
-                            return (
-                                <tw.TodayWrap
-                                    key={i}
-                                    onClick={() => {
-                                        setSelectedDate(date);
-                                        openDateModal();
-                                    }}
-                                >
-                                    <tw.DateLabel $date={"today"}>{date}</tw.DateLabel>
-                                    <tw.RoomNum>
-                                        {matchedPriceData
-                                            ? `${matchedPriceData.room_current} / ${matchedPriceData.room_limit}`
-                                            : "0 / 0"}
-                                    </tw.RoomNum>
-                                    <tw.RoomPrice>{matchedPriceData ? matchedPriceData.price : "미정"}</tw.RoomPrice>
-                                </tw.TodayWrap>
-                            );
-                        } else if (isPastDate) {
-                            return (
-                                <tw.PastWrap key={i}>
-                                    <tw.DateLabel $date={condition}>{date}</tw.DateLabel>
-                                    <tw.RoomNum>
-                                        {matchedPriceData
-                                            ? `${matchedPriceData.room_current} / ${matchedPriceData.room_limit}`
-                                            : "0 / 0"}
-                                    </tw.RoomNum>
-                                    <tw.PastPrice>{matchedPriceData ? matchedPriceData.price : "미정"}</tw.PastPrice>
-                                </tw.PastWrap>
-                            );
-                        } else {
-                            return (
-                                <tw.DateWrap
-                                    key={i}
-                                    onClick={() => {
-                                        setSelectedDate(date);
-                                        openDateModal();
-                                    }}
-                                >
-                                    <tw.DateLabel $date={condition}>{date}</tw.DateLabel>
-                                    <tw.RoomNum>
-                                        {matchedPriceData
-                                            ? `${matchedPriceData.room_current} / ${matchedPriceData.room_limit}`
-                                            : "0 / 0"}
-                                    </tw.RoomNum>
-                                    <tw.RoomPrice>{matchedPriceData ? matchedPriceData.price : "미정"}</tw.RoomPrice>
-                                </tw.DateWrap>
-                            );
-                        }
-                    })}
-                </tw.DatesWrap>
-            </tw.ContentsWrap>
+                            if (condition === "other") {
+                                return (
+                                    <tw.DateWrap key={i} onClick={() => navMonth(date)}>
+                                        <tw.DateLabel $date={condition}>{date}</tw.DateLabel>
+                                    </tw.DateWrap>
+                                );
+                            } else if (dayjs(formattedDate).format("YYYY-MM-DD") === today) {
+                                return (
+                                    <tw.TodayWrap
+                                        key={i}
+                                        onClick={() => {
+                                            setSelectedDate(date);
+                                            openDateModal();
+                                        }}
+                                    >
+                                        <tw.DateLabel $date={"today"}>{date}</tw.DateLabel>
+                                        <tw.RoomNum>
+                                            {matchedPriceData ? `${matchedPriceData.room_current} / ${matchedPriceData.room_limit}` : "0 / 0"}
+                                        </tw.RoomNum>
+                                        <tw.RoomPrice>{matchedPriceData ? matchedPriceData.price : "미정"}</tw.RoomPrice>
+                                    </tw.TodayWrap>
+                                );
+                            } else if (isPastDate) {
+                                return (
+                                    <tw.PastWrap key={i}>
+                                        <tw.DateLabel $date={condition}>{date}</tw.DateLabel>
+                                        <tw.RoomNum>
+                                            {matchedPriceData ? `${matchedPriceData.room_current} / ${matchedPriceData.room_limit}` : "0 / 0"}
+                                        </tw.RoomNum>
+                                        <tw.PastPrice>{matchedPriceData ? matchedPriceData.price : "미정"}</tw.PastPrice>
+                                    </tw.PastWrap>
+                                );
+                            } else {
+                                return (
+                                    <tw.DateWrap
+                                        key={i}
+                                        onClick={() => {
+                                            setSelectedDate(date);
+                                            openDateModal();
+                                        }}
+                                    >
+                                        <tw.DateLabel $date={condition}>{date}</tw.DateLabel>
+                                        <tw.RoomNum>
+                                            {matchedPriceData ? `${matchedPriceData.room_current} / ${matchedPriceData.room_limit}` : "0 / 0"}
+                                        </tw.RoomNum>
+                                        <tw.RoomPrice>{matchedPriceData ? matchedPriceData.price : "미정"}</tw.RoomPrice>
+                                    </tw.DateWrap>
+                                );
+                            }
+                        })}
+                    </tw.DatesWrap>
+                </tw.ContentsWrap>
+            </tw.MobileWrap>
 
             {isMonthModalOpen && (
                 <ModalPortal>
-                    <SetMonthPriceModal
-                        onClose={closeMonthModal}
-                        hotel_id={hotel_id}
-                        room_id={room_id}
-                        year={viewYear}
-                        month={viewMonth + 1}
-                    />
+                    <SetMonthPriceModal onClose={closeMonthModal} hotel_id={hotel_id} room_id={room_id} year={viewYear} month={viewMonth + 1} />
                 </ModalPortal>
             )}
 
@@ -274,4 +267,3 @@ export default function PriceCalendar({ hotel_id }: { hotel_id: string | undefin
         </tw.Container>
     );
 }
-

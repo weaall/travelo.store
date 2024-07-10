@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { sendJWT } from "../../utils/jwtUtils"
-import { axios, axiosInstance } from "../../utils/axios.utils"
+import { axios, axiosInstance, handleAxiosError } from "../../utils/axios.utils"
 import { Routes, Route, useParams,  useNavigate, useLocation } from "react-router-dom"
 import { HotelDataProps } from "../../interface/interfaces"
 import * as tw from "./HotelMgmt.styles"
@@ -29,13 +29,7 @@ export default function HotelMgmt() {
             const response = await axiosInstance.request(config);
             setHotelData(response.data.data[0]);
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 409) {
-                    window.alert("올바른 접근이 아닙니다.");
-                } else if (error.response.status === 401) {
-                    window.alert("올바른 접근이 아닙니다.");
-                }
-            }
+            handleAxiosError(error, navigate);
         }
     };
 
