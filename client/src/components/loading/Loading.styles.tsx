@@ -1,4 +1,4 @@
 import tw from "tailwind-styled-components";
 
-export const Container = tw.div`flex justify-center items-center w-full h-auto mt-[25%] z-100`
+export const Container = tw.div`flex items-center justify-center min-h-screen-16 z-100 w-full`
 export const LoadingSvg = tw.img``

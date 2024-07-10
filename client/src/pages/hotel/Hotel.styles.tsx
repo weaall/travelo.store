@@ -30,7 +30,7 @@ mobile:text-xs`
 export const HotelSvg = tw.img`w-4 mr-1`
 
 export const RoomList = tw.div`flex flex-col gap-6 mx-6 px-4 py-6 border
-mobile:mx-0`
+mobile:mx-0 mobile:border-none`
 
 export const RoomWrap = tw.div`w-full rounded-2xl bg-white shadow-md h-60 
 mobile:flex mobile:flex-col mobile:h-auto`
@@ -39,7 +39,7 @@ mobile:h-40 mobile:w-full`
 
 export const RoomInfoWrap = tw.div`flex flex-col w-8/12 py-2 
 mobile:w-full`
-export const HotelInfo = tw.div`flex flex-col relative px-5 py-2 space-y-1
+export const RoomInfo = tw.div`flex flex-col relative px-5 py-2 space-y-1
 mobile:flex-row`
 export const InfoWrap = tw.div`space-y-1
 mobile:w-3/5`

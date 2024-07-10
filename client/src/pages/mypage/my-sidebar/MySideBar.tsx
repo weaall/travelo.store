@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import * as tw from "./SideBar.styles";
+import * as tw from "./MySideBar.styles";
 
-export default function SideBar() {
+export default function MySideBar() {
     const navigate = useNavigate();
     const location = useLocation();
 

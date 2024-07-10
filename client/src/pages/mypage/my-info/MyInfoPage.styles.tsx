@@ -18,5 +18,4 @@ mobile:w-full mobile:px-2`
 export const InputWrap = tw.div`flex flex-col text-left w-full py-6 px-12`
 export const UpperTag = tw.label`text-base font-bold py-0 my-0
 after:content-['*'] after:text-red-500 after:px-1`
-export const Input = tw.input`font-medium outline-none
-w-full h-10 px-6 rounded-lg bg-gray-100 my-1`;
+export const Input = tw.input`font-medium outline-none w-full h-10 px-6 rounded-lg bg-gray-100 my-1`;

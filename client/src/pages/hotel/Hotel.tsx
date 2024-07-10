@@ -1,18 +1,21 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { axios, axiosInstance } from "../../utils/axios.utils";
+import { axiosInstance, handleAxiosError } from "../../utils/axios.utils";
 import { useEffect, useState } from "react";
-
-import * as tw from "./Hotel.styles";
-import Loading from "../../components/loading/Loading";
-import ImgSlider from "../../components/imgSlider/imgSlider";
-import { facilItems, servItems } from "../../data/hotelData";
-import { decrypt, encrypt } from "../../utils/cryptoJs";
-import SearchBoxSlim from "../../components/searchBoxSlim/SearchBoxSlim";
-import SearchBox from "../../components/searchBox/SearchBox";
-import ImgSliderMain from "../../components/imgSliderMain/imgSliderMain";
 import dayjs from "dayjs";
+
+import { decrypt, encrypt } from "../../utils/cryptoJs";
+import { facilItems, servItems } from "../../data/hotelData";
+
+import Loading from "../../components/loading/Loading";
+
+import SearchBox from "../../components/searchBox/SearchBox";
+import SearchBoxSlim from "../../components/searchBoxSlim/SearchBoxSlim";
+import ImgSlider from "../../components/imgSlider/imgSlider";
+import ImgSliderMain from "../../components/imgSliderMain/imgSliderMain";
 import { ModalPortal } from "../../hook/modal/ModalPortal";
 import KakaoMapModal from "../../hook/modal/kakao-map/KakaMap.modal";
+
+import * as tw from "./Hotel.styles";
 
 export default function Hotel() {
     const navigate = useNavigate();
@@ -86,18 +89,14 @@ export default function Hotel() {
     ]);
 
     const fetchHotel = async () => {
+        setLoading(true);
         try {
             const response = await axiosInstance.get("/hotel/" + id);
             setHotelData(response.data.data[0]);
-            fetchHotelImg();
-            fetchRoom();
+            await fetchHotelImg();
+            await fetchRoom();
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 401) {
-                    window.alert("올바른 접근이 아닙니다.");
-                    navigate("/");
-                }
-            }
+            handleAxiosError(error, navigate);
         } finally {
             setLoading(false);
         }
@@ -111,12 +110,7 @@ export default function Hotel() {
                 img: response.data.data,
             }));
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 401) {
-                    window.alert("올바른 접근이 아닙니다.");
-                    navigate("/");
-                }
-            }
+            handleAxiosError(error, navigate);
         }
     };
 
@@ -137,27 +131,34 @@ export default function Hotel() {
                 });
                 room.room_price = roomPriceresponse.data.data;
             }
-
             setRoomList(rooms);
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 401) {
-                    window.alert("올바른 접근이 아닙니다.");
-                    navigate("/");
-                }
-            }
+            handleAxiosError(error, navigate);
         }
     };
 
-    const clickRoom = (hotelId : number, roomId : number) =>{
+    const clickRoom = (hotelId: number, roomId: number) => {
         const encryptedHotelId = encrypt(`${hotelId}`);
         const encryptedRoomId = encrypt(`${roomId}`);
         navigate(`/payment/${encryptedHotelId}/${encryptedRoomId}/${startDate}/${endDate}`);
-    }
+    };
 
     useEffect(() => {
         fetchHotel();
-    }, [startDate,endDate]);
+    }, [startDate, endDate]);
+
+    const sortedRoomList = [...roomList].sort((a, b) => {
+        const totalPriceA = a.room_price.reduce((total, room) => total + room.price, 0);
+        const totalPriceB = b.room_price.reduce((total, room) => total + room.price, 0);
+
+        if (totalPriceA === 0 && totalPriceB !== 0) {
+            return 1;
+        } else if (totalPriceA !== 0 && totalPriceB === 0) {
+            return -1;
+        } else {
+            return totalPriceA - totalPriceB;
+        }
+    });
 
     if (loading) {
         return <Loading />;
@@ -229,14 +230,14 @@ export default function Hotel() {
 
                 <tw.RoomList>
                     <tw.Label>객실정보</tw.Label>
-                    {roomList.map((room) => (
+                    {sortedRoomList.map((room) => (
                         <tw.RoomWrap key={room.id}>
                             <tw.ContentsFlex>
                                 <tw.RoomPic>
                                     <ImgSlider images={room.img} />
                                 </tw.RoomPic>
                                 <tw.RoomInfoWrap>
-                                    <tw.HotelInfo>
+                                    <tw.RoomInfo>
                                         <tw.InfoWrap>
                                             <tw.RoomName>{room.name}</tw.RoomName>
                                             <tw.RoomText>{room.view_type}</tw.RoomText>
@@ -247,22 +248,18 @@ export default function Hotel() {
                                         <tw.PriceWrap>
                                             <tw.TotalLabel>{startDate}~</tw.TotalLabel>
                                             <tw.TotalLabel>{dayjs(endDate).diff(dayjs(startDate), "day")}박 총 요금</tw.TotalLabel>
-                                            <tw.TotalPrice>
-                                                {room.room_price.reduce((total, room) => total + room.price, 0).toLocaleString()}원
-                                            </tw.TotalPrice>
+                                            <tw.TotalPrice>{room.room_price.reduce((total, room) => total + room.price, 0).toLocaleString()}원</tw.TotalPrice>
                                             {room.room_price.some((priceData) => priceData.room_limit === priceData.room_current) ? (
                                                 <tw.BookBtnWrap>
                                                     <tw.BookBtn>객실이 모두 소진되었습니다.</tw.BookBtn>
                                                 </tw.BookBtnWrap>
                                             ) : (
                                                 <tw.BookBtnWrap>
-                                                    <tw.BookBtn onClick={() => clickRoom(parseInt(hotelData.id), room.id)}>
-                                                        예약하기
-                                                    </tw.BookBtn>
+                                                    <tw.BookBtn onClick={() => clickRoom(parseInt(hotelData.id), room.id)}>예약하기</tw.BookBtn>
                                                 </tw.BookBtnWrap>
                                             )}
                                         </tw.PriceWrap>
-                                    </tw.HotelInfo>
+                                    </tw.RoomInfo>
                                 </tw.RoomInfoWrap>
                             </tw.ContentsFlex>
                         </tw.RoomWrap>

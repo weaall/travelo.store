@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import Drawer from "./sidebar/SideBar";
+import MySideBar from "./my-sidebar/MySideBar";
 import * as tw from "./Mypage.styles";
 
 import MyInfoPage from "./my-info/MyInfoPage";
@@ -16,7 +16,7 @@ export default function MyPage() {
         <tw.Container>
             <tw.FlexWrap>
                 <tw.DrawerWrap>
-                    <Drawer />
+                    <MySideBar />
                 </tw.DrawerWrap>
                 <tw.ContentsWrap>
                     <Routes>

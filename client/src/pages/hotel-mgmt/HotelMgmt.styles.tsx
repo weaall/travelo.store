@@ -1,14 +1,19 @@
 import tw from "tailwind-styled-components"
 
-export const Container = tw.div`h-full w-full flex flex-col items-center`
+interface ColorProps{
+    $color: string
+}
 
-export const HotelStateWrap = tw.div`mt-6 w-full h-20 rounded-3xl bg-gray-100 py-3 px-10`
-export const UpperWrap = tw.div`flex justify-between items-center`
-export const LowerWrap = tw.div`flex justify-between items-center`
-export const HotelName = tw.h3`font-bold text-lg`
-export const HotelText = tw.p`text-sm`
+export const Container = tw.div`h-full flex flex-col items-center`
 
-export const NavWrap = tw.nav`flex w-full max-w-[840px] h-10 m-3 px-10 justify-between items-center`
-export const NavBtn = tw.button`w-[25%] py-3 hover:bg-main/[0.1]`
+export const HotelStateWrap = tw.div`flex w-full h-auto border-b py-3 px-4 justify-between space-x-4 content-center mb-2`
+export const HotelName = tw.h3`font-bold text-base
+mobile:text-sm`
+export const HotelAddress = tw.p`flex-1 text-center text-sm truncate
+mobile:text:xs`
+export const HotelStatus = tw.p`text-xs font-medium bg-green-200 text-lime-950 py-1 px-2 rounded-lg`
 
-export const ContentsWrap = tw.div`w-full`
+export const FlexWrap = tw.div`flex w-full h-full`
+
+export const DrawerWrap = tw.div`h-auto`
+export const ContentsWrap = tw.div`flex h-full w-full`
