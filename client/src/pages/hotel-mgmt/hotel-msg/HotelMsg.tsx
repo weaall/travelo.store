@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import * as tw from "./HotelMsg.styles";
 import { sendJWT } from "../../../utils/jwtUtils";
-import { axios, axiosInstance } from "../../../utils/axios.utils";
+import { axios, axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../../components/loading/Loading";
 import { msgDateFormat } from "../../../utils/msg.utils";
@@ -54,22 +54,12 @@ export default function HotelMsgPage({ hotel_id }: { hotel_id: string | undefine
                     msg.userData = userData;
                     console.log(msg.userData)
                 } catch (error) {
-                    if (axios.isAxiosError(error) && error.response) {
-                        if (error.response.status === 401) {
-                            window.alert("올바른 접근이 아닙니다.");
-                            navigate("/");
-                        }
-                    }
+                    handleAxiosError(error, navigate);
                 }
             }
             setMsgList(msgList);
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 401) {
-                    window.alert("올바른 접근이 아닙니다.");
-                    navigate("/");
-                }
-            }
+            handleAxiosError(error, navigate);
         } finally {
             setLoading(false);
         }

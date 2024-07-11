@@ -1,7 +1,7 @@
 import React, { DragEvent, useEffect, useState } from "react";
 import * as tw from "./HotelRegPage.styles";
 import { sendJWT } from "../../../utils/jwtUtils";
-import { axios, axiosInstance } from "../../../utils/axios.utils";
+import { axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
 import { useNavigate } from "react-router-dom";
 import { ModalPortal } from "../../../hook/modal/ModalPortal";
 import DaumPostcodeModal from "../../../hook/modal/daum-postcode/DaumPostcode.modal";
@@ -24,18 +24,43 @@ export default function HotelRegPage() {
         address: "",
         address_detail: "",
         postcode: "",
-        reg_num: 0,
+        reg_num: "",
         bank: "",
-        account: 0,
+        account: "",
         owner: "",
     });
 
     const [formValid, setFormValid] = useState({
-        isEmail: false,
-        isPassword: false,
-        isUserName: false,
-        isPhoneNumber: false,
+        isName: false,
+        isPostcode: false,
+        isRegNum: false,
+        isBank: false,
+        isAccount: false,
+        isOwner: false,
     })
+
+    const isFormValid = () => {
+        return (formValid.isName && 
+            formValid.isPostcode && 
+            formValid.isRegNum && 
+            formValid.isBank && 
+            formValid.isAccount && 
+            formValid.isOwner);
+    };
+
+    const handleInput = (e: React.FormEvent<HTMLInputElement>, validationFunction: (value: string) => boolean, validationKey: string) => {
+        const { value } = (e as React.ChangeEvent<HTMLInputElement>).target;
+        setFormValid({
+            ...formValid,
+            [validationKey]: validationFunction(value),
+        });
+    };
+
+    const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        const sanitizedValue = (name === "reg_num" || name === "account") ? value.replace(/[^0-9]/g, "") : value;
+        setFormData({ ...formData, [name]: sanitizedValue });
+    };
 
     const [files, setFiles] = useState<File[]>([]);
     const [imagePreviews, setImagePreviews] = useState<string[]>([]);
@@ -62,11 +87,6 @@ export default function HotelRegPage() {
 
         const previews = newFiles.map((file) => URL.createObjectURL(file));
         setImagePreviews(previews);
-    };
-
-    const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
     };
 
     const uploadFilesToS3 = async () => {
@@ -119,21 +139,9 @@ export default function HotelRegPage() {
             await axiosInstance.request(config);
             window.alert("저장완료");
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 409) {
-                    window.alert("올바른 접근이 아닙니다.");
-                } else {
-                    window.alert("올바른 접근이 아닙니다.");
-                    navigate("/");
-                }
-            } else {
-                window.alert("올바른 접근이 아닙니다.");
-                navigate("/");
-            }
+            handleAxiosError(error, navigate);
         }
     };
-
-    useEffect(() => {}, []);
 
     return (
         <tw.Container>
@@ -144,7 +152,7 @@ export default function HotelRegPage() {
 
                 <tw.InputWrap>
                     <tw.UpperTag>호텔이름</tw.UpperTag>
-                    <tw.Input onChange={onChangeInput} value={formData.name} name="name" />
+                    <tw.Input onChange={onChangeInput} value={formData.name} name="name" maxLength={25}/>
                     <tw.UpperTag>우편번호</tw.UpperTag>
                     <tw.FlexWrap>
                         <tw.Input onChange={onChangeInput} value={formData.postcode} name="postcode" disabled />
@@ -153,16 +161,16 @@ export default function HotelRegPage() {
                     <tw.UpperTag>주소</tw.UpperTag>
                     <tw.Input onChange={onChangeInput} value={formData.address} name="address" disabled />
                     <tw.UpperTag>상세주소</tw.UpperTag>
-                    <tw.Input onChange={onChangeInput} value={formData.address_detail} name="address_detail" />
+                    <tw.Input onChange={onChangeInput} value={formData.address_detail} name="address_detail" maxLength={30}/>
                     <tw.UpperTag>사업자등록번호</tw.UpperTag>
-                    <tw.Input onChange={onChangeInput} value={formData.reg_num} name="reg_num" maxLength={10} type="number"/>
+                    <tw.Input onChange={onChangeInput} value={formData.reg_num} name="reg_num" maxLength={10}/>
 
                     <tw.UpperTag>은행</tw.UpperTag>
-                    <tw.Input onChange={onChangeInput} value={formData.bank} name="bank" />
+                    <tw.Input onChange={onChangeInput} value={formData.bank} name="bank" maxLength={10}/>
                     <tw.UpperTag>계좌주</tw.UpperTag>
-                    <tw.Input onChange={onChangeInput} value={formData.owner} name="owner" />
+                    <tw.Input onChange={onChangeInput} value={formData.owner} name="owner" maxLength={10}/>
                     <tw.UpperTag>계좌번호</tw.UpperTag>
-                    <tw.Input onChange={onChangeInput} value={formData.account} name="account" />
+                    <tw.Input onChange={onChangeInput} value={formData.account} name="account" maxLength={20}/>
                     <tw.UpperTag>사업자등록증 및 통장사본</tw.UpperTag>
                     <tw.UploadWrap onDragOver={onDragOver} onDrop={onDrop}>
                         {imagePreviews.length === 0 && <tw.ImgLabel>이미지를 드래그 앤 드롭하세요.</tw.ImgLabel>}

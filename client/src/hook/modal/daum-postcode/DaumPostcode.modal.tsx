@@ -17,6 +17,9 @@ export default function DaumPostcodeModal({ onClose, onChangePostcode, onChangeA
             document.head.appendChild(script);
 
             script.onload = () => {
+                const width = window.innerWidth <= 768 ? "100%" : "400px";
+                const height = window.innerWidth <= 768 ? "100%" : "450px";
+
                 new (window as any).daum.Postcode({
                     oncomplete: (data: any) => {
                         let fullAddress = data.address;
@@ -36,8 +39,8 @@ export default function DaumPostcodeModal({ onClose, onChangePostcode, onChangeA
                         onChangePostcode(data.zonecode);
                         onClose();
                     },
-                    width: "400px", 
-                    height: "450px",
+                    width,
+                    height,
                     theme: {
                         bgColor: "#FFFFFF", //바탕 배경색
                         pageBgColor: "#333333", //페이지 배경색
@@ -57,7 +60,7 @@ export default function DaumPostcodeModal({ onClose, onChangePostcode, onChangeA
         };
 
         openKaKao();
-    }, [onClose]);
+    }, [onClose, onChangeAddress, onChangePostcode]);
 
     return (
         <tw.Container>
@@ -68,7 +71,7 @@ export default function DaumPostcodeModal({ onClose, onChangePostcode, onChangeA
                     </tw.CloseBtn>
                     <tw.Title>주소 검색</tw.Title>
                 </tw.TitleWrap>
-                <div id="postcode-container" style={{ width: "100%", height: "100%" }}></div>
+                <tw.ContentsWrap id="postcode-container" style={{ width: "90%", height: "100%" }}></tw.ContentsWrap>
             </tw.ModalWrap>
         </tw.Container>
     );
