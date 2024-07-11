@@ -19,8 +19,9 @@ export const CloseSVG = tw.img`h-full w-full group-hover-scale-105`
 export const RegWrap = tw.div`h-[10%]`
 
 export const RegBtn = tw.button<RegBtnProps>` 
-w-full h-full font-bold text-white rounded-[16px]
-${(p) => (p.$validator ? "bg-gradient-to-r from-main to-tomain" : "bg-gray-200")}`
+w-full mx-1 text-lg font-medium px-5 py-3 rounded-xl bg-black text-white
+mobile:hover:bg-black
+${(p) => (p.$validator ? "bg-black hover:bg-black/[0.8]" : "bg-gray-200")}`
 
 export const InputWrap = tw.div`flex flex-col text-left h-[80%] py-4`
 

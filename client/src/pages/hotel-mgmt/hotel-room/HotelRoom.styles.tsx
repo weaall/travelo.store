@@ -15,6 +15,11 @@ mobile:ml-2`
 
 export const Btn = tw.button`p-2 font-bold text-sm hover:text-main`
 
+export const NoRoomWrap = tw.div`w-full flex flex-col justify-center items-center space-y-10 py-16`
+export const NoRoomText = tw.p`text-lg font-medium`
+export const AddRoomBtn = tw.button`mt-2 text-base font-medium px-5 py-2 rounded-xl bg-black text-white hover:bg-black/[0.8]
+mobile:hover:bg-black`
+
 export const RoomList = tw.div`w-full flex flex-col space-y-3 items-center`
 
 export const RoomWrap = tw.div`flex flex-col w-full rounded-2xl bg-white h-auto shadow-md border

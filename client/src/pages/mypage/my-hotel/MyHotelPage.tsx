@@ -75,7 +75,13 @@ export default function MyHotelPage() {
                     <tw.Title>숙소관리</tw.Title>
                 </tw.TitleWrap>
                 <tw.HotelList>
-                    {hotelList.map((hotel, index) => (
+                    {hotelList.length === 0 ? (
+                            <tw.NoHotelWrap>
+                                <tw.NoHotelText>등록된 숙소가 없어요!</tw.NoHotelText>
+                                <tw.AddHotelBtn onClick={() => navigate("/me/hotelreg")}>숙소추가하기</tw.AddHotelBtn>
+                            </tw.NoHotelWrap>
+                        ) : (
+                    hotelList.map((hotel, index) => (
                         <tw.BookingWrap key={index}>
                             <tw.UpperWrap>
                                 <tw.HotelName>{hotel.name}</tw.HotelName>
@@ -110,7 +116,7 @@ export default function MyHotelPage() {
                                 <tw.MgmtBtn onClick={() => navigate("/hotel/mgmt/" + hotel.id)}>숙소 관리하기</tw.MgmtBtn>
                             </tw.MgmtBtnWrap>
                         </tw.BookingWrap>
-                    ))}
+                    )))}
                 </tw.HotelList>
             </tw.MobileWrap>
         </tw.Container>

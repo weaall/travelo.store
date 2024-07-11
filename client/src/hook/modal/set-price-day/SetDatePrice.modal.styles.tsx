@@ -16,15 +16,13 @@ export const Title = tw.h2`font-bold text-2xl text-center`
 export const CloseBtn = tw.button`w-8 absolute top-4 right-4 group`
 export const CloseSVG = tw.img`h-full w-full group-hover-scale-105`
 
-export const ContentsFlex = tw.div`w-full flex`
-export const HalfFlex = tw.div`w-[50%] flex justify-end`
-export const HalfCol = tw.div`w-[50%] flex flex-col`
+export const ContentsFlex = tw.div`w-full flex items-center`
 
-export const SubTitle = tw.h3`w-[50%] py-4 text-2xl font-bold`
+export const SubTitle = tw.h3`w-full py-4 text-base font-bold`
 
-export const InputWrap = tw.div`flex flex-col text-left h-[90%] mx-16 py-4 overflow-y-auto`
-export const UpperTag = tw.label`text-ms font-bold py-0 my-2`
-export const Input = tw.input`w-full text-sm py-1 px-2 border border-black outline-main rounded-lg`;
+export const InputWrap = tw.div`flex flex-col text-left h-[90%] mx-16 py-4 overflow-y-auto mobile:mx-4`
+export const UpperTag = tw.label`after:content-['*'] after:text-red-500 after:px-1`
+export const Input = tw.input`font-medium outline-none w-full h-10 px-6 rounded-lg bg-gray-100 my-1`;
 export const Text = tw.p`ml-2`
 
 export const RegBtn = tw.button<RegBtnProps>` 

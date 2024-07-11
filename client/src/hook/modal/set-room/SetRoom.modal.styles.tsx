@@ -17,12 +17,12 @@ export const CloseBtn = tw.button`w-8 absolute top-4 right-4 group`
 export const CloseSVG = tw.img`h-full w-full group-hover-scale-105`
 
 export const ContentsFlex = tw.div`w-full flex`
-export const HalfFlex = tw.div`w-[50%] flex justify-end mobile:w-[70%]`
+export const HalfFlex = tw.div`w-[50%] flex justify-end `
 
-export const SubTitle = tw.h3`w-[50%] py-4 text-2xl font-bold mobile:w-[30%] mobile:text-xl`
+export const SubTitle = tw.h3`w-[50%] py-4 text-lg font-bold mobile:text-lg`
 
-export const SetBtn = tw.button`p-3 font-bold hover:text-main`
-export const ResetBtn = tw.button`p-3 font-bold hover:text-main`
+export const SetBtn = tw.button`font-bold hover:text-main mobile:text-sm`
+export const ResetBtn = tw.button`font-bold hover:text-main mobile:text-sm mr-4`
 
 export const InputWrap = tw.div`flex flex-col text-left h-[90%] px-4 overflow-y-auto`
 export const UpperTag = tw.label`text-ms font-bold py-0 my-2`
@@ -34,7 +34,7 @@ w-full h-14 font-bold text-white rounded-[16px] my-2
 ${(p) => (p.$validator ? "bg-gradient-to-r from-main to-tomain" : "bg-gray-200")}`
 
 export const UploadWrap = tw.div`p-6 text-center bg-gray-100 rounded-2xl my-4`
-export const ImgLabel = tw.p`my-4 font-bold`
+export const ImgLabel = tw.p`my-4 font-bold mobile:text-sm`
 
 export const ImgContainer = tw.div`grid grid-cols-2 justify-center`
 export const ImgOutWrap = tw.div`w-full h-auto relative content-center`

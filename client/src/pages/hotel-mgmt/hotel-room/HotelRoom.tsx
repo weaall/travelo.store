@@ -96,31 +96,40 @@ export default function HotelRoom({ hotel_id }: { hotel_id: string | undefined }
                     </tw.ContentsFlex>
 
                     <tw.RoomList>
-                        {roomList.map((room, index) => (
-                            <tw.RoomWrap key={index}>
-                                <tw.UpperWrap>
-                                    <tw.RoomName>{room.name}</tw.RoomName>
-                                    <tw.Btn>삭제</tw.Btn>
-                                </tw.UpperWrap>
-                                <tw.MiddleWrap>
-                                    <tw.Pic>
-                                        {room?.img?.[0]?.url ? (
-                                            <ImgLoader imageUrl={room.img[0].url} altText="" rounded="es-xl" />
-                                        ) : (
-                                            <tw.UnRegWrap>미등록</tw.UnRegWrap>
-                                        )}
-                                    </tw.Pic>
-                                    <tw.HotelInfoWrap>
-                                        <tw.RoomText>{room.bed_type} ({room.view_type})</tw.RoomText>
-                                        <tw.RoomText>기준인원 : {room.num}</tw.RoomText>
-                                    </tw.HotelInfoWrap>
-                                </tw.MiddleWrap>
-                                <tw.MgmtBtnWrap>
-                                    <tw.MgmtBtn onClick={() => navigate("../cal/" + room.id)}>가격설정</tw.MgmtBtn>
-                                    <tw.MgmtBtn onClick={() => openSetModal(room.id)}>정보수정</tw.MgmtBtn>
-                                </tw.MgmtBtnWrap>
-                            </tw.RoomWrap>
-                        ))}
+                        {roomList.length === 0 ? (
+                            <tw.NoRoomWrap>
+                                <tw.NoRoomText>등록된 객실이 없어요!</tw.NoRoomText>
+                                <tw.AddRoomBtn onClick={openRegModal}>객실추가하기</tw.AddRoomBtn>
+                            </tw.NoRoomWrap>
+                        ) : (
+                            roomList.map((room, index) => (
+                                <tw.RoomWrap key={index}>
+                                    <tw.UpperWrap>
+                                        <tw.RoomName>{room.name}</tw.RoomName>
+                                        <tw.Btn>삭제</tw.Btn>
+                                    </tw.UpperWrap>
+                                    <tw.MiddleWrap>
+                                        <tw.Pic>
+                                            {room?.img?.[0]?.url ? (
+                                                <ImgLoader imageUrl={room.img[0].url} altText="" rounded="es-xl" />
+                                            ) : (
+                                                <tw.UnRegWrap>미등록</tw.UnRegWrap>
+                                            )}
+                                        </tw.Pic>
+                                        <tw.HotelInfoWrap>
+                                            <tw.RoomText>
+                                                {room.bed_type} ({room.view_type})
+                                            </tw.RoomText>
+                                            <tw.RoomText>기준인원 : {room.num}</tw.RoomText>
+                                        </tw.HotelInfoWrap>
+                                    </tw.MiddleWrap>
+                                    <tw.MgmtBtnWrap>
+                                        <tw.MgmtBtn onClick={() => navigate("../cal/" + room.id)}>가격설정</tw.MgmtBtn>
+                                        <tw.MgmtBtn onClick={() => openSetModal(room.id)}>정보수정</tw.MgmtBtn>
+                                    </tw.MgmtBtnWrap>
+                                </tw.RoomWrap>
+                            ))
+                        )}
                     </tw.RoomList>
                 </tw.ContentsWrap>
             </tw.MobileWrap>

@@ -10,7 +10,7 @@ mobile:mt-0`
 export const ContentsWrap = tw.div`flex flex-col w-full space-y-3 px-10
 mobile:w-full mobile:px-0`
 
-export const MsgWrap = tw.div`flex flex-col w-full rounded-2xl bg-white h-auto shadow-md border max-h-screen-32
+export const MsgWrap = tw.div`flex flex-col w-full rounded-2xl bg-white h-auto shadow-md border max-h-screen-42
 mobile:flex mobile:border-none mobile:shadow-none`
 
 export const ChatWrap = tw.div<UserProps>`flex my-4
@@ -32,7 +32,7 @@ mobile:text-sm`
 
 export const TimeWrap = tw.div`flex-col text-end mt-auto ml-2 mr-4`
 export const Time = tw.p`text-xs
-mobile:text-xs`
+mobile:text-xxs`
 
 export const AddTextWrap = tw.div`py-3 px-3 border-t bg-white rounded-b-xl
 mobile:fixed mobile:bottom-0 mobile:w-full`
@@ -44,4 +44,4 @@ export const AddTextBtn = tw.button`mt-1.5 py-1.5 px-3 inline-flex flex-shrink-0
 export const AddTextSvg = tw.img`w-6`
 export const AddTextNum = tw.p`text-end px-3 text-xs text-gray-500`
 
-export const ListWrap = tw.div`overflow-y-auto pb-3 min-h-screen-36`
+export const ListWrap = tw.div`overflow-y-auto pb-3 min-h-screen-42`

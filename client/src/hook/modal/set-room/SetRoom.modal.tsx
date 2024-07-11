@@ -68,7 +68,7 @@ export default function SetRoomModal({ onClose, hotel_id, room_id }: ModalProps)
             setImagePreviews(imagePreviews);
         } catch (error) {
             window.alert("올바른 접근이 아닙니다.");
-            navigate("/main");
+            navigate("/");
         }
     };
 

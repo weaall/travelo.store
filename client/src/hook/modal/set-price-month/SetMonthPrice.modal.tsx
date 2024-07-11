@@ -1,6 +1,6 @@
 import React, { DragEvent, useEffect, useState } from "react";
 import { sendJWT } from "../../../utils/jwtUtils";
-import { axios, axiosInstance } from "../../../utils/axios.utils";
+import { axios, axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
 import { useNavigate } from "react-router-dom";
 
 import * as tw from "./SetMonthPrice.modal.styles"
@@ -16,24 +16,30 @@ interface ModalProps {
 export default function SetPriceByMonthModal({ onClose, hotel_id, room_id, year, month }: ModalProps) {
     const navigate = useNavigate();
 
-    const [roomData, setRoomData] = useState({
-        room_id: room_id,
-    });
 
     const [priceData, setPriceData] = useState({
         hotel_id: hotel_id,
         room_id: room_id,
         year: year,
         month: month,
-        days: 0,
-        friday: 0,
-        saturday: 0,
-        room_limit: 0,
+        days: "",
+        friday: "",
+        saturday: "",
+        room_limit: "",
     });
 
     const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setPriceData({ ...priceData, [name]: value.replace(/[^0-9]/g, "") });
+    };
+
+    const isFormValid = () => {
+        return (
+            priceData.days.toString().trim() !== "" &&
+            priceData.friday.toString().trim() !== "" &&
+            priceData.saturday.toString().trim() !== "" &&
+            priceData.room_limit.toString().trim() !== ""
+        );
     };
     
 
@@ -45,16 +51,10 @@ export default function SetPriceByMonthModal({ onClose, hotel_id, room_id, year,
                     url: "/room/price/month",
                     data: priceData,
                 });
-                const response = await axiosInstance.request(config);
+                await axiosInstance.request(config);
                 window.alert("저장완료");
             } catch (error) {
-                if (axios.isAxiosError(error) && error.response) {
-                    if (error.response.status === 409) {
-                        window.alert("올바른 접근이 아닙니다.");
-                    } else if (error.response.status === 401) {
-                        window.alert("올바른 접근이 아닙니다.");
-                    } 
-                }
+                handleAxiosError(error, navigate);
             }
         }
     };
@@ -68,26 +68,44 @@ export default function SetPriceByMonthModal({ onClose, hotel_id, room_id, year,
                     </tw.CloseBtn>
                     <tw.Title>가격설정</tw.Title>
                 </tw.TitleWrap>
-                <tw.UpperTag>
+                <tw.SubTitle>
                     {year}년 {month}월
-                </tw.UpperTag>
+                </tw.SubTitle>
                 <tw.InputWrap>
                     <tw.UpperTag>평일</tw.UpperTag>
-                    <tw.Input onChange={onChangeInput} value={priceData.days} name="days" maxLength={7} />
                     <tw.ContentsFlex>
-                        <tw.HalfCol>
+                    <tw.Input onChange={onChangeInput} value={priceData.days} name="days" maxLength={7} />
+                    <tw.Text>원</tw.Text>
+                            </tw.ContentsFlex>
+
                             <tw.UpperTag>금요일</tw.UpperTag>
-                            <tw.Input onChange={onChangeInput} value={priceData.friday} name="friday" maxLength={7}/>
-                        </tw.HalfCol>
-                        <tw.HalfCol>
+                            <tw.ContentsFlex>
+                            <tw.Input onChange={onChangeInput} value={priceData.friday} name="friday" maxLength={7} />
+                            <tw.Text>원</tw.Text>
+                            </tw.ContentsFlex>
+
                             <tw.UpperTag>토요일</tw.UpperTag>
-                            <tw.Input onChange={onChangeInput} value={priceData.saturday} name="saturday" maxLength={7}/>
-                        </tw.HalfCol>
-                    </tw.ContentsFlex>
+                            <tw.ContentsFlex>
+                            <tw.Input onChange={onChangeInput} value={priceData.saturday} name="saturday" maxLength={7} />
+                            <tw.Text>원</tw.Text>
+                            </tw.ContentsFlex>
+
                     <tw.UpperTag>방갯수</tw.UpperTag>
-                    <tw.Input onChange={onChangeInput} value={priceData.room_limit} name="room_limit" maxLength={2}/>
+                    <tw.ContentsFlex>
+                    <tw.Input onChange={onChangeInput} value={priceData.room_limit} name="room_limit" maxLength={2} />
+                    <tw.Text>개</tw.Text>
+                    </tw.ContentsFlex>
                 </tw.InputWrap>
-                <tw.RegBtn $validator={false} onClick={()=>{onClickSave(); onClose();}}>설정</tw.RegBtn>
+                <tw.RegBtn
+                    $validator={isFormValid()}
+                    onClick={() => {
+                        onClickSave();
+                        onClose();
+                    }}
+                    disabled={!isFormValid()}
+                >
+                    설정하기
+                </tw.RegBtn>
             </tw.ModalWrap>
         </tw.Container>
     );

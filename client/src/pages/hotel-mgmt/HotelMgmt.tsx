@@ -7,7 +7,6 @@ import * as tw from "./HotelMgmt.styles"
 
 import HotelInfo from "./hotel-info/HotelInfo"
 import HotelRoom from "./hotel-room/HotelRoom"
-import HotelPrice from "./hotel-price/HotelPrice"
 import PriceCalendar from "./hotel-calendar/PriceCalendar"
 import HotelMsgPage from "./hotel-msg/HotelMsg"
 import HotelChatPage from "./hotel-chat/HotelChat"
@@ -52,7 +51,6 @@ export default function HotelMgmt() {
                     <Routes>
                         <Route path="" element={<HotelInfo hotel_id={hotelId} />} />
                         <Route path="/room" element={<HotelRoom hotel_id={hotelId} />} />
-                        <Route path="/price" element={<HotelPrice hotel_id={hotelId} />} />
                         <Route path="/cal" element={<PriceCalendar hotel_id={hotelId} />}>
                             <Route path=":room_id/*" element={<HotelMgmt />} />
                         </Route>

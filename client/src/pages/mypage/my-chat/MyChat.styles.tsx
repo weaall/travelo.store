@@ -32,7 +32,7 @@ mobile:text-sm`
 
 export const TimeWrap = tw.div`flex-col text-end mt-auto ml-2 mr-4`
 export const Time = tw.p`text-xs
-mobile:text-xs`
+mobile:text-xxs`
 
 export const AddTextWrap = tw.div`py-3 px-3 border-t bg-white rounded-b-xl
 mobile:fixed mobile:bottom-0 mobile:w-full`

@@ -1,16 +1,14 @@
-import { useState } from "react"
+import { useState } from "react";
 import dayjs from "dayjs";
-
-import * as tw from "./SearchDate.modal.styles"
-
+import * as tw from "./SearchDate.modal.styles";
 
 interface ModalProps {
-    onClose: (selectedDates: { startDate: string, endDate: string }) => void;
+    onClose: (selectedDates: { startDate: string; endDate: string }) => void;
     startDate: string;
     endDate: string;
 }
 
-export default function SearchDateModal({ onClose, startDate, endDate}: ModalProps) {
+export default function SearchDateModal({ onClose, startDate, endDate }: ModalProps) {
     const [date, setDate] = useState(dayjs());
 
     const [dateValue, setDateValue] = useState({
@@ -23,27 +21,30 @@ export default function SearchDateModal({ onClose, startDate, endDate}: ModalPro
         const isBothDatesSet = dateValue.startDate !== "" && dateValue.endDate !== "";
 
         if (isStartDateEmpty || isBothDatesSet) {
-            setDateValue((prevDateValue) => ({
-                ...prevDateValue,
+            setDateValue({
                 startDate: selectedDate,
-                endDate: isBothDatesSet ? "" : prevDateValue.endDate,
-            }));
+                endDate: "",
+            });
         } else {
             const isAfterStartDate = dayjs(selectedDate).isAfter(dateValue.startDate, "day");
-            setDateValue((prevDateValue) => ({
-                ...prevDateValue,
-                endDate: isAfterStartDate ? selectedDate : prevDateValue.endDate,
-                startDate: isAfterStartDate ? prevDateValue.startDate : selectedDate,
-            }));
+            const dateDiff = dayjs(selectedDate).diff(dayjs(dateValue.startDate), "day");
+
+            if (isAfterStartDate && dateDiff <= 8) {
+                setDateValue((prevDateValue) => ({
+                    ...prevDateValue,
+                    endDate: selectedDate,
+                }));
+            } else if (!isAfterStartDate) {
+                setDateValue((prevDateValue) => ({
+                    ...prevDateValue,
+                    startDate: selectedDate,
+                }));
+            }
         }
     };
 
     const validator = () => {
-        if (dateValue.startDate !== "" && dateValue.endDate !== "") {
-            return true;
-        } else {
-            return false;
-        }
+        return dateValue.startDate !== "" && dateValue.endDate !== "";
     };
 
     const viewYear = date.year();
@@ -155,23 +156,25 @@ export default function SearchDateModal({ onClose, startDate, endDate}: ModalPro
                                 return "other";
                             };
 
+                            const isDisabled = dateValue.startDate && dayjs(formattedDate).diff(dayjs(dateValue.startDate), "day") > 8;
+
                             if (condition === "other") {
                                 return (
-                                        <tw.DateWrap $date={"other"} key={i} onClick={() => navMonth(date)}>
-                                            <tw.DateLabel $date={condition}>{date}</tw.DateLabel>
-                                        </tw.DateWrap>
+                                    <tw.DateWrap $date={"other"} key={i} onClick={() => navMonth(date)}>
+                                        <tw.DateLabel $date={condition}>{date}</tw.DateLabel>
+                                    </tw.DateWrap>
                                 );
                             } else if (formattedDate === today) {
                                 return (
-                                        <tw.DateWrap
-                                            $date={getDateStyle()}
-                                            key={i}
-                                            onClick={() => {
-                                                selectDate(formattedDate);
-                                            }}
-                                        >
-                                            <tw.DateLabel $date={"today"}>{date}</tw.DateLabel>
-                                        </tw.DateWrap>
+                                    <tw.DateWrap
+                                        $date={getDateStyle()}
+                                        key={i}
+                                        onClick={() => {
+                                            selectDate(formattedDate);
+                                        }}
+                                    >
+                                        <tw.DateLabel $date={"today"}>{date}</tw.DateLabel>
+                                    </tw.DateWrap>
                                 );
                             } else if (isPastDate) {
                                 return (
@@ -181,15 +184,16 @@ export default function SearchDateModal({ onClose, startDate, endDate}: ModalPro
                                 );
                             } else {
                                 return (
-                                        <tw.DateWrap
-                                            $date={getDateStyle()}
-                                            key={i}
-                                            onClick={() => {
-                                                selectDate(formattedDate);
-                                            }}
-                                        >
-                                            <tw.DateLabel $date={condition}>{date}</tw.DateLabel>
-                                        </tw.DateWrap>
+                                    <tw.DateWrap
+                                        $date={getDateStyle()}
+                                        key={i}
+                                        onClick={() => {
+                                            if (!isDisabled || dateValue.endDate) selectDate(formattedDate);
+                                        }}
+                                        style={isDisabled && !dateValue.endDate ? { pointerEvents: "none", opacity: 0.5 } : {}}
+                                    >
+                                        <tw.DateLabel $date={condition}>{date}</tw.DateLabel>
+                                    </tw.DateWrap>
                                 );
                             }
                         })}

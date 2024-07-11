@@ -24,8 +24,8 @@ export default function SetPriceByDateModal({ onClose, hotel_id, room_id, year, 
         year: year,
         month: month,
         date: date,
-        price: 0,
-        room_limit: 0,
+        price: "",
+        room_limit: "",
     });
 
     const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,9 +63,9 @@ export default function SetPriceByDateModal({ onClose, hotel_id, room_id, year, 
                     </tw.CloseBtn>
                     <tw.Title>가격설정</tw.Title>
                 </tw.TitleWrap>
-                <tw.UpperTag>
+                <tw.SubTitle>
                     {year}년 {month}월 {date}일
-                </tw.UpperTag>
+                </tw.SubTitle>
                 <tw.InputWrap>
                     <tw.UpperTag>금액</tw.UpperTag>
                     <tw.ContentsFlex>
@@ -86,7 +86,7 @@ export default function SetPriceByDateModal({ onClose, hotel_id, room_id, year, 
                     }}
                     disabled={!isFormValid()}
                 >
-                    설정
+                    설정하기
                 </tw.RegBtn>
             </tw.ModalWrap>
         </tw.Container>

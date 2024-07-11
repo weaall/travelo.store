@@ -4,6 +4,9 @@ module.exports = {
     content: ["./src/**/*.{html,js,jsx,ts,tsx}"],
     theme: {
         extend: {
+            fontSize:{
+                "xxs": "0.6rem"
+            },
             colors: {
                 main: "#6666ff",
                 tomain: "#9999ff",
@@ -37,6 +40,7 @@ module.exports = {
                 "screen-16": "calc(100vh - 4.1rem)",
                 "screen-32": "calc(100vh - 8.5rem)",
                 "screen-36": "calc(100vh - 9rem)",
+                "screen-42": "calc(100vh - 12.5rem)",
             },
             backgroundImage: {
                 "main-img": "url('/src/assets/main.jpg')",

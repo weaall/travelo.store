@@ -68,6 +68,23 @@ export default function PriceCalendar({ hotel_id }: { hotel_id: string | undefin
         }
     };
 
+    const fetchPrice = async () => {
+        setLoading(true);
+        try {
+            const response = await axiosInstance.get("/room/price/" + room_id);
+            setPriceData(response.data.data);
+        } catch (error) {
+            handleAxiosError(error, navigate);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchRoomInfo();
+        fetchPrice();
+    }, []);
+
     const viewYear = date.year();
     const viewMonth = date.month();
 
@@ -118,23 +135,6 @@ export default function PriceCalendar({ hotel_id }: { hotel_id: string | undefin
             prevMonth();
         }
     };
-
-    const fetchPrice = async () => {
-        setLoading(true);
-        try {
-            const response = await axiosInstance.get("/room/price/" + room_id);
-            setPriceData(response.data.data);
-        } catch (error) {
-            handleAxiosError(error, navigate);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchRoomInfo();
-        fetchPrice();
-    }, []);
 
     if (loading) {
         return <Loading />;

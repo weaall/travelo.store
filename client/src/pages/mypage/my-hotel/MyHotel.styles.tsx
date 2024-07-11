@@ -9,6 +9,11 @@ export const TitleWrap = tw.div`flex items-center`
 export const Title = tw.h3`my-4 text-2xl font-bold
 mobile:ml-4`
 
+export const NoHotelWrap = tw.div`w-full flex flex-col justify-center items-center space-y-10 py-16`
+export const NoHotelText = tw.p`text-lg font-medium`
+export const AddHotelBtn = tw.button`mt-2 text-base font-medium px-5 py-2 rounded-xl bg-black text-white hover:bg-black/[0.8]
+mobile:hover:bg-black`
+
 export const HotelList = tw.div`w-full flex flex-col space-y-3 items-center`
 
 export const BookingWrap = tw.div`flex flex-col w-full rounded-2xl bg-white h-auto shadow-md border
