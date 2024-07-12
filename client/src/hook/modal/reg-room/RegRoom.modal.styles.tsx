@@ -16,14 +16,14 @@ export const Title = tw.h2`font-bold text-2xl text-center`
 export const CloseBtn = tw.button`w-8 absolute top-4 right-4 group`
 export const CloseSVG = tw.img`h-full w-full group-hover-scale-105`
 
-export const InputWrap = tw.div`flex flex-col text-left h-[75%] px-4 overflow-y-auto`
+export const InputWrap = tw.div`flex flex-col text-left h-[80%] px-4 overflow-y-auto`
 export const UpperTag = tw.label`text-ms font-bold py-0 my-2`
-export const Input = tw.input`font-medium outline-none
-w-full min-h-12 ps-6 pe-6 rounded-[16px] bg-main/[0.1] font-3xl my-1`;
-export const Select = tw.select`my-1 p-1 ps-2 border-2 border-main outline-main rounded-xl`
+export const Input = tw.input`w-auto text-sm py-1 px-2 border border-black outline-main rounded-lg`;
+export const Select = tw.select`w-auto text-sm py-1 px-2 border border-black outline-main rounded-lg cursor-pointer`
 
-export const RegWrap = tw.div`h-[15%]`
+export const RegWrap = tw.div`h-[10%]`
 
 export const RegBtn = tw.button<RegBtnProps>` 
-w-full h-14 font-bold text-white rounded-[16px] my-2
-${(p) => (p.$validator ? "bg-gradient-to-r from-main to-tomain" : "bg-gray-200")}`
+w-full mx-1 text-lg font-medium px-5 py-3 rounded-xl bg-black text-white
+mobile:hover:bg-black
+${(p) => (p.$validator ? "bg-black hover:bg-black/[0.8]" : "bg-gray-200")}`

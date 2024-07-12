@@ -249,7 +249,7 @@ export default function Hotel() {
                                             <tw.TotalLabel>{startDate}~</tw.TotalLabel>
                                             <tw.TotalLabel>{dayjs(endDate).diff(dayjs(startDate), "day")}박 총 요금</tw.TotalLabel>
                                             <tw.TotalPrice>{room.room_price.reduce((total, room) => total + room.price, 0).toLocaleString()}원</tw.TotalPrice>
-                                            {room.room_price.some((priceData) => priceData.room_limit === priceData.room_current) ? (
+                                            {room.room_price.some((priceData) => priceData.room_limit === priceData.room_current || priceData.price ===0) ? (
                                                 <tw.BookBtnWrap>
                                                     <tw.BookBtn>객실이 모두 소진되었습니다.</tw.BookBtn>
                                                 </tw.BookBtnWrap>

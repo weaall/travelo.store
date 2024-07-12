@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
 import { sendJWT } from "../../../utils/jwtUtils";
-import { axios, axiosInstance } from "../../../utils/axios.utils";
+import { axios, axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
 import { useNavigate } from "react-router-dom";
 
-import * as tw from "./RegRoom.modal.styles"
+import * as tw from "./RegRoom.modal.styles";
 
 interface ModalProps {
     onClose: () => void;
@@ -34,14 +34,14 @@ export default function RegRoomModal({ onClose, hotel_id }: ModalProps) {
     ]);
 
     const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target
-        setRoomData({ ...roomData, [name]: value })
-    }
+        const { name, value } = e.target;
+        setRoomData({ ...roomData, [name]: value });
+    };
 
     const onChangeSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const { name, value } = e.target
-        setRoomData({ ...roomData, [name]: value })
-    }
+        const { name, value } = e.target;
+        setRoomData({ ...roomData, [name]: value });
+    };
 
     const onClickRegister = async () => {
         if (window.confirm("저장하시겠습니까?")) {
@@ -51,18 +51,11 @@ export default function RegRoomModal({ onClose, hotel_id }: ModalProps) {
                     url: "/room/reg",
                     data: roomData,
                 });
-                const response = await axiosInstance.request(config);
+                await axiosInstance.request(config)
                 window.alert("저장완료");
+                onClose();
             } catch (error) {
-                if (axios.isAxiosError(error) && error.response) {
-                    if (error.response.status === 409) {
-                        window.alert("올바른 접근이 아닙니다.");
-                        navigate("/");
-                    } else if (error.response.status === 401) {
-                        window.alert("올바른 접근이 아닙니다.");
-                        navigate("/main");
-                    }
-                }
+                handleAxiosError(error, navigate);
             }
         }
     };
@@ -72,12 +65,7 @@ export default function RegRoomModal({ onClose, hotel_id }: ModalProps) {
             const response = await axiosInstance.get("/room/bed");
             setBedList(response.data.data);
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 401) {
-                    window.alert("올바른 접근이 아닙니다.");
-                    navigate("/main");
-                }
-            }
+            handleAxiosError(error, navigate);
         }
     };
 
@@ -86,12 +74,7 @@ export default function RegRoomModal({ onClose, hotel_id }: ModalProps) {
             const response = await axiosInstance.get("/room/view");
             setViewList(response.data.data);
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 401) {
-                    window.alert("올바른 접근이 아닙니다.");
-                    navigate("/main");
-                }
-            }
+            handleAxiosError(error, navigate);
         }
     };
 
@@ -111,10 +94,10 @@ export default function RegRoomModal({ onClose, hotel_id }: ModalProps) {
                 </tw.TitleWrap>
                 <tw.InputWrap>
                     <tw.UpperTag>객실이름</tw.UpperTag>
-                    <tw.Input value={roomData.name} onChange={onChangeInput} name="name" />
+                    <tw.Input value={roomData.name} onChange={onChangeInput} name="name" maxLength={20}/>
                     <tw.UpperTag>인원</tw.UpperTag>
                     <tw.Select value={roomData.num} onChange={onChangeSelect} name="num">
-                        {[1, 2, 3, 4].map((num) => (
+                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((num) => (
                             <option key={num} value={num}>
                                 {num}
                             </option>
@@ -136,10 +119,9 @@ export default function RegRoomModal({ onClose, hotel_id }: ModalProps) {
                             </option>
                         ))}
                     </tw.Select>
-                    
                 </tw.InputWrap>
                 <tw.RegWrap>
-                    <tw.RegBtn onClick={onClickRegister} $validator={true}>
+                    <tw.RegBtn onClick={onClickRegister} $validator={roomData.name.length !== 0} disabled={roomData.name.length === 0}>
                         등록하기
                     </tw.RegBtn>
                 </tw.RegWrap>

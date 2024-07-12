@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { HotelDataInInfo } from "../../../interface/interfaces";
 
 import * as tw from "./HotelInfo.styles";
+import Loading from "../../../components/loading/Loading";
+import { nanoid } from "nanoid";
 
 interface ServData {
     hotel_id: number;
@@ -28,6 +30,7 @@ interface FacilData {
 
 export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }) {
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
 
     const [hotelData, setHotelData] = useState<HotelDataInInfo>();
 
@@ -65,8 +68,6 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
     const fetchImageFile = async () => {
         try {
             const urlResponse = await axiosInstance.get("/hotel/img/" + hotel_id);
-
-            console.log(urlResponse.data.data);
 
             const imagesData = urlResponse.data.data;
 
@@ -175,6 +176,8 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
             setFacilData(fetchedData);
         } catch (error) {
             handleAxiosError(error, navigate);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -183,7 +186,7 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
 
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
-            const key = `hotel_img/${hotel_id}/${file.name}`;
+            const key = `hotel_img/${hotel_id}/${nanoid(12)}`;
             const contentType = file.type;
 
             const presignedUrlsResponse = await axiosInstance.post("/auth/presignedUrl", {
@@ -215,7 +218,6 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
                 ...infoData,
                 urls: uploadedKeys,
             };
-            console.log(updatedHotelData);
 
             const config = await sendJWT({
                 headers: {
@@ -298,6 +300,10 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
     useEffect(() => {
         fetchHotelData();
     }, [hotel_id]);
+
+    if (loading) {
+        return <Loading />;
+    }
 
     return (
         <tw.Container>

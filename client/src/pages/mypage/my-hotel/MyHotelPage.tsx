@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import * as tw from "./MyHotel.styles";
 import { sendJWT } from "../../../utils/jwtUtils";
-import { axios, axiosInstance } from "../../../utils/axios.utils";
+import { axios, axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
 import { useNavigate } from "react-router-dom";
 import ImgLoader from "../../../utils/imgLoader";
 import Loading from "../../../components/loading/Loading";
@@ -46,15 +46,7 @@ export default function MyHotelPage() {
 
             setHotelList(hotels);
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 409) {
-                    window.alert("올바른 접근이 아닙니다.");
-                    navigate("/");
-                } else if (error.response.status === 401) {
-                    window.alert("올바른 접근이 아닙니다.");
-                    navigate("/main");
-                }
-            }
+            handleAxiosError(error, navigate);
         } finally {
             setLoading(false);
         }
@@ -85,7 +77,7 @@ export default function MyHotelPage() {
                         <tw.BookingWrap key={index}>
                             <tw.UpperWrap>
                                 <tw.HotelName>{hotel.name}</tw.HotelName>
-                                <tw.HotelStatus>{hotel.permission === 0 ? "심사중" : "판매중"}</tw.HotelStatus>
+                                <tw.HotelStatus $color={hotel.permission === 0}>{hotel.permission === 0 ? "심사중" : "판매중"}</tw.HotelStatus>
                             </tw.UpperWrap>
                             <tw.MiddleWrap>
                                 <tw.Pic>

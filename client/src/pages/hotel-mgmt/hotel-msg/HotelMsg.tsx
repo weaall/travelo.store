@@ -86,7 +86,12 @@ export default function HotelMsgPage({ hotel_id }: { hotel_id: string | undefine
                     <tw.Title>메세지</tw.Title>
                 </tw.TitleWrap>
                 <tw.ContentsWrap>
-                    {msgList.map((msg) => (
+                {msgList.length === 0 ? (
+                            <tw.NoMsgWrap>
+                                <tw.NoMsgText>메세지가 없어요!</tw.NoMsgText>
+                            </tw.NoMsgWrap>
+                        ) : (
+                    msgList.map((msg) => (
                         <tw.MsgWrap key={msg.created_at} onClick={()=>clickChat(msg.hotel_id,msg.user_id)}>
                             <tw.PicWrap>
                                 <tw.Pic>
@@ -104,7 +109,7 @@ export default function HotelMsgPage({ hotel_id }: { hotel_id: string | undefine
                                 </tw.LowerWrap>
                             </tw.MsgInfoWrap>
                         </tw.MsgWrap>
-                    ))}
+                    )))}
                 </tw.ContentsWrap>
             </tw.MobileWrap>
         </tw.Container>

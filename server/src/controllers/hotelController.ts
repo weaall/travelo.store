@@ -90,7 +90,7 @@ const hotelController = {
     },
 
     async putHotelInfo(req: JWTCheck, res: Response) {
-        const data = await hotelService.putHotelInfo(req.user.id,(req.body));
+        const data = await hotelService.putHotelInfo(req.user.id, req.body);
 
         res.status(201).json({
             error: null,

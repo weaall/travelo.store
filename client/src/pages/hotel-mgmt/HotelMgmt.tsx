@@ -41,7 +41,7 @@ export default function HotelMgmt() {
             <tw.HotelStateWrap>
                     <tw.HotelName>{hotelData?.name}</tw.HotelName>
                     <tw.HotelAddress>{hotelData?.address} {hotelData?.address_detail} ({hotelData?.postcode})</tw.HotelAddress>
-                    <tw.HotelStatus>{hotelData?.permission === 0 ? "심사중" : "활성화"}</tw.HotelStatus>
+                    <tw.HotelStatus $color={hotelData?.permission === 0}>{hotelData?.permission === 0 ? "심사중" : "활성화"}</tw.HotelStatus>
             </tw.HotelStateWrap>
             <tw.FlexWrap>
                 <tw.DrawerWrap>

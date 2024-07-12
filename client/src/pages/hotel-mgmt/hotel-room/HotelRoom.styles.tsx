@@ -13,7 +13,7 @@ export const TitleWrap = tw.div`flex items-center w-[50%]`
 export const Title = tw.h3`text-2xl font-bold my-4
 mobile:ml-2`
 
-export const Btn = tw.button`p-2 font-bold text-sm hover:text-main`
+export const Btn = tw.button`p-3 font-bold hover:text-main`
 
 export const NoRoomWrap = tw.div`w-full flex flex-col justify-center items-center space-y-10 py-16`
 export const NoRoomText = tw.p`text-lg font-medium`

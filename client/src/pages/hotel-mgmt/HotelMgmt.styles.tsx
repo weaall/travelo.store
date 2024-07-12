@@ -1,7 +1,7 @@
 import tw from "tailwind-styled-components"
 
 interface ColorProps{
-    $color: string
+    $color: boolean
 }
 
 export const Container = tw.div`h-full flex flex-col items-center`
@@ -11,7 +11,8 @@ export const HotelName = tw.h3`font-bold text-base
 mobile:text-sm`
 export const HotelAddress = tw.p`flex-1 text-center text-sm truncate
 mobile:text:xs`
-export const HotelStatus = tw.p`text-xs font-medium bg-green-200 text-lime-950 py-1 px-2 rounded-lg`
+export const HotelStatus = tw.p<ColorProps>`text-xs font-medium bg-green-200 text-lime-950 py-1 px-2 rounded-lg
+${(p) => (p.$color ? "text-red-950 bg-red-200" : "")}`
 
 export const FlexWrap = tw.div`flex w-full h-full`
 

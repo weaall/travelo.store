@@ -48,6 +48,7 @@ export default function SetPriceByDateModal({ onClose, hotel_id, room_id, year, 
                 });
                 await axiosInstance.request(config);
                 window.alert("저장완료");
+                onClose();
             } catch (error) {
                 handleAxiosError(error, navigate);
             }
@@ -82,7 +83,6 @@ export default function SetPriceByDateModal({ onClose, hotel_id, room_id, year, 
                     $validator={isFormValid()}
                     onClick={() => {
                         onClickSave();
-                        onClose();
                     }}
                     disabled={!isFormValid()}
                 >

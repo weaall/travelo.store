@@ -21,6 +21,7 @@ export default function HotelRoom({ hotel_id }: { hotel_id: string | undefined }
 
     const closeRegModal = () => {
         setIsRegModalOpen(false);
+        fetchRoom();
     };
 
     const [isSetModalOpen, setIsSetModalOpen] = useState(false);

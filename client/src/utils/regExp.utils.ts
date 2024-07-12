@@ -39,3 +39,27 @@ export const checkValidPhoneNumberNine = (targetPhoneNumber: string): boolean =>
     const phoneNumberRegex = targetPhoneNumber.length > 10;
     return phoneNumberRegex;
 }
+/**
+ * 공란이 아닌지 확인
+ * @param targetInput
+ */
+export const checkValidInput = (targetInput: string): boolean => {
+    const inputRegex = targetInput.length > 1;
+    return inputRegex;
+}
+/**
+ * 사업자등록번호 10자리 이상 함수
+ * @param targetBusinessNum
+ */
+export const checkValidBusinessNum = (targetBusinessNum: string): boolean => {
+    const businessNumRegex = targetBusinessNum.length > 9;
+    return businessNumRegex;
+}
+/**
+ * 계좌번호 10자리 이상
+ * @param targetAccountNum
+ */
+export const checkValidAccountNum = (targetAccountNum: string): boolean => {
+    const accountNumRegex = targetAccountNum.length > 9;
+    return accountNumRegex;
+}

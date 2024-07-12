@@ -1,8 +1,12 @@
 import tw from "tailwind-styled-components"
 
+interface ColorProps{
+    $color: boolean
+}
+
 export const Container = tw.div`w-full h-full flex flex-col items-center`
 
-export const MobileWrap = tw.div`flex flex-col w-full px-10
+export const MobileWrap = tw.div`flex flex-col w-full px-10 mb-10
 mobile:w-full mobile:px-2`
 
 export const TitleWrap = tw.div`flex items-center`
@@ -21,7 +25,8 @@ mobile:flex mobile:flex-col mobile:h-auto`
 
 export const UpperWrap = tw.div`flex mx-4 my-4 justify-between`
 export const HotelName = tw.p`text-base font-semibold`
-export const HotelStatus = tw.p`text-xs font-medium bg-green-200 text-lime-950 py-1 px-2 rounded-lg`
+export const HotelStatus = tw.p<ColorProps>`text-xs font-medium bg-green-200 text-lime-950 py-1 px-2 rounded-lg
+${(p) => (p.$color ? "text-red-950 bg-red-200" : "")}`
 
 export const MiddleWrap = tw.div`flex
 mobile:flex-col`

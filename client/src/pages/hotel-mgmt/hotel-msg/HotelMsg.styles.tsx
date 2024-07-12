@@ -17,6 +17,9 @@ export const ContentsWrap = tw.div`flex flex-col w-full space-y-3 mt-4`
 export const MobileWrap = tw.div`flex flex-col w-full px-10
 mobile:w-full mobile:px-2`
 
+export const NoMsgWrap = tw.div`w-full flex flex-col justify-center items-center space-y-10 py-16`
+export const NoMsgText = tw.p`text-lg font-medium`
+
 export const MsgWrap = tw.div`flex w-full rounded-2xl bg-white h-auto shadow-md border p-4 cursor-pointer
 mobile:flex`
 

@@ -1,9 +1,10 @@
 import React, { DragEvent, useEffect, useState } from "react";
 import { sendJWT } from "../../../utils/jwtUtils";
-import { axios, axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
+import { axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
 import { useNavigate } from "react-router-dom";
 
 import * as tw from "./SetRoom.modal.styles";
+import { nanoid } from "nanoid";
 
 interface ModalProps {
     onClose: () => void;
@@ -143,7 +144,7 @@ export default function SetRoomModal({ onClose, hotel_id, room_id }: ModalProps)
 
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
-            const key = `room_img/${hotel_id}/${room_id}/${file.name}`;
+            const key = `room_img/${hotel_id}/${room_id}/${nanoid(12)}`;
             const contentType = file.type;
 
             const presignedUrlsResponse = await axiosInstance.post("/auth/presignedUrl", {
@@ -188,6 +189,7 @@ export default function SetRoomModal({ onClose, hotel_id, room_id }: ModalProps)
             const response = await axiosInstance.request(config);
             fetchRoomInfo();
             window.alert("저장완료");
+            onClose();
         } catch (error) {
             handleAxiosError(error, navigate);
         }
@@ -209,20 +211,19 @@ export default function SetRoomModal({ onClose, hotel_id, room_id }: ModalProps)
                     <tw.Title>객실정보수정</tw.Title>
                 </tw.TitleWrap>
                 <tw.InputWrap>
-                    <tw.ContentsFlex>
+                    <tw.SubTitleWrap>
                         <tw.SubTitle>숙소정보</tw.SubTitle>
                         <tw.HalfFlex>
                             <tw.ResetBtn>되돌리기</tw.ResetBtn>
                             <tw.SetBtn
                                 onClick={() => {
                                     clickInfoSavePre();
-                                    onClose();
                                 }}
                             >
                                 저장
                             </tw.SetBtn>
                         </tw.HalfFlex>
-                    </tw.ContentsFlex>
+                    </tw.SubTitleWrap>
                     <tw.UpperTag>호텔이름</tw.UpperTag>
                     <tw.Input value={roomData.name} onChange={onChangeInput} name="name" />
                     <tw.UpperTag>인원</tw.UpperTag>

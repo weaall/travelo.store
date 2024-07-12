@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { axios, axiosInstance } from "../../utils/axios.utils";
+import { axios, axiosInstance, handleAxiosError } from "../../utils/axios.utils";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 
@@ -139,12 +139,7 @@ export default function Payment() {
 
             fetchRoom();
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 401) {
-                    window.alert("올바른 접근이 아닙니다.");
-                    navigate("/");
-                }
-            }
+            handleAxiosError(error, navigate);
         } finally {
             setLoading(false);
         }
@@ -168,12 +163,7 @@ export default function Payment() {
     
             setRoomData(room);
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 401) {
-                    window.alert("올바른 접근이 아닙니다.");
-                    navigate("/");
-                }
-            }
+            handleAxiosError(error, navigate);
         }
     };
 

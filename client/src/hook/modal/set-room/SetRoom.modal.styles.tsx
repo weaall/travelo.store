@@ -19,6 +19,7 @@ export const CloseSVG = tw.img`h-full w-full group-hover-scale-105`
 export const ContentsFlex = tw.div`w-full flex`
 export const HalfFlex = tw.div`w-[50%] flex justify-end `
 
+export const SubTitleWrap = tw.div`w-full flex`
 export const SubTitle = tw.h3`w-[50%] py-4 text-lg font-bold mobile:text-lg`
 
 export const SetBtn = tw.button`font-bold hover:text-main mobile:text-sm`
