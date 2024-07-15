@@ -18,7 +18,7 @@ export default function MyInfoPage() {
         mobile: "",
         social: "",
     });
-    const [initialUserInfo, setInitialUserInfo] =  useState({
+    const [initialUserInfo, setInitialUserInfo] = useState({
         email: "",
         name: "",
         mobile: "",
@@ -48,10 +48,11 @@ export default function MyInfoPage() {
             setInitialUserInfo(userData);
 
             setFormValid({
-                isName: response.data.data[0].name !== "",
-                isEmail: response.data.data[0].email !== "",
-                isMobile: response.data.data[0].phone_num !== "",
+                isName: true,
+                isEmail: true,
+                isMobile: true,
             });
+
         } catch (error) {
             handleAxiosError(error, navigate);
         } finally {
@@ -71,7 +72,7 @@ export default function MyInfoPage() {
                 data: userInfo,
             });
             await axiosInstance.request(config);
-            window.alert("수정완료")
+            window.alert("수정완료");
         } catch (error) {
             handleAxiosError(error, navigate);
         } finally {
@@ -104,7 +105,7 @@ export default function MyInfoPage() {
                 if (window.confirm("변경 사항을 저장하시겠습니까?")) {
                     updateMyInfo();
                 }
-            } else{
+            } else {
                 setInputState(false);
             }
         }
@@ -169,8 +170,8 @@ export default function MyInfoPage() {
                     </tw.UnderTag>
                 </tw.InputWrap>
                 <tw.MgmtBtnWrap>
-                    <tw.MgmtBtn onClick={onClickChangeBtn} $validator={isFormValid()} disabled={!isFormValid}>
-                        {inputState ? "수정완료" : "수정"}
+                    <tw.MgmtBtn onClick={onClickChangeBtn} $validator={isFormValid()} disabled={!isFormValid()}>
+                        {inputState ? "수정완료" : "수정하기"}
                     </tw.MgmtBtn>
                 </tw.MgmtBtnWrap>
             </tw.MobileWrap>

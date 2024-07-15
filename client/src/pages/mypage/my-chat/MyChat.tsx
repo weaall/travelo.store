@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import * as tw from "./MyChat.styles";
 import { sendJWT } from "../../../utils/jwtUtils";
-import { axios, axiosInstance } from "../../../utils/axios.utils";
+import { axios, axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
 import { useNavigate, useParams } from "react-router-dom";
 import Loading from "../../../components/loading/Loading";
 import ImgLoader from "../../../utils/imgLoader";
@@ -60,12 +60,7 @@ export default function MyChatPage() {
             const response = await axiosInstance.request(config);
             setMsgList(response.data.data);
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 401) {
-                    window.alert("올바른 접근이 아닙니다.");
-                    navigate("/");
-                }
-            }
+            handleAxiosError(error, navigate);
         }
     };
 
@@ -81,12 +76,7 @@ export default function MyChatPage() {
             await fetchHotel();
             await fetchHotelImg();
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 401) {
-                    window.alert("올바른 접근이 아닙니다.");
-                    navigate("/");
-                }
-            }
+            handleAxiosError(error, navigate);
         } finally {
             setLoading(false);
         }
@@ -97,12 +87,7 @@ export default function MyChatPage() {
             const response = await axiosInstance.get("/hotel/" + id);
             setHotelData(response.data.data[0]);
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 401) {
-                    window.alert("올바른 접근이 아닙니다.");
-                    navigate("/");
-                }
-            }
+            handleAxiosError(error, navigate);
         }
     };
 
@@ -114,12 +99,7 @@ export default function MyChatPage() {
                 img: response.data.data[0],
             }));
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 401) {
-                    window.alert("올바른 접근이 아닙니다.");
-                    navigate("/");
-                }
-            }
+            handleAxiosError(error, navigate);
         }
     };
 

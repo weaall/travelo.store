@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import * as tw from "./MyReview.styles";
 import { sendJWT } from "../../../utils/jwtUtils";
-import { axios, axiosInstance } from "../../../utils/axios.utils";
+import { axios, axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../../components/loading/Loading";
 import ImgLoader from "../../../utils/imgLoader";
@@ -91,22 +91,12 @@ export default function MyReviewPage() {
                     booking.hotelData = hotelData;
                     booking.hotelData.img = hotelImg;
                 } catch (error) {
-                    if (axios.isAxiosError(error) && error.response) {
-                        if (error.response.status === 401) {
-                            window.alert("올바른 접근이 아닙니다.");
-                            navigate("/");
-                        }
-                    }
+                    handleAxiosError(error, navigate);
                 }
             }
             setBookingData(bookings);
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 401) {
-                    window.alert("올바른 접근이 아닙니다.");
-                    navigate("/");
-                }
-            }
+            handleAxiosError(error, navigate);
         } finally {
             setLoading(false);
         }
