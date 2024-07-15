@@ -11,7 +11,8 @@ module.exports = {
                 main: "#6666ff",
                 tomain: "#9999ff",
                 kakao: "#FAE100",
-                "kakao-text": "#371D1E"
+                "kakao-text": "#371D1E",
+                naver: "#2DB400",
             },
             screens: {
                 mobile: { max: "640px" },

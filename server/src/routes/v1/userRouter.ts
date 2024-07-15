@@ -12,6 +12,12 @@ userRouter.get(
     asyncHandler((req: Request, res: Response) => userController.me(req as JWTCheck, res)),
 );
 
+userRouter.put(
+    "/updateMe",
+    isAuthenticated,
+    asyncHandler((req: Request, res: Response) => userController.putMyInfo(req as JWTCheck, res)),
+);
+
 userRouter.get("/name/:id", asyncHandler(userController.getNameByUserId));
 
 

@@ -5,7 +5,7 @@ interface MenuOpenProps {
 }
 
 export const Container = tw.div`w-full border-b`
-export const ContentsWrap = tw.div`m-auto max-w-[840px] h-16 bg-white/[0.7]`
+export const ContentsWrap = tw.div`m-auto max-w-[840px] h-16 bg-white/[0.7] mobile:h-[10vh]`
 
 export const NavWrap = tw.div`flex px-2 h-full w-full items-center justify-between`
 export const NavHome = tw.button`text-xl`

@@ -12,6 +12,15 @@ const userController = {
         });
     },
 
+    async putMyInfo(req: JWTCheck, res: Response) {
+        const user = await userService.putMyInfo(req.user.id, req.body);
+
+        res.status(201).json({
+            error: null,
+            data: user,
+        });
+    },
+
     async getNameByUserId(req: Request, res: Response) {
         const user = await userService.getNameByUserId(req.params.id);
 

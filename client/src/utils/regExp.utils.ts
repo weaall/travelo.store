@@ -63,3 +63,23 @@ export const checkValidAccountNum = (targetAccountNum: string): boolean => {
     const accountNumRegex = targetAccountNum.length > 9;
     return accountNumRegex;
 }
+
+export const checkValidMobile = (targetMobile: string): boolean => {
+    const mobileRegex = /^010-\d{3,4}-\d{4}$/;
+    return mobileRegex.test(targetMobile) && targetMobile.length === 13;
+}
+
+export const formatPhoneNumber = (phoneNumber: string): string => {
+    const cleaned = phoneNumber.replace(/\D/g, '');
+
+    if (cleaned.length < 10) {
+        return phoneNumber; 
+    }
+
+    const match = cleaned.match(/^(\d{3})(\d{3,4})(\d{4})$/);
+    if (match) {
+        return `${match[1]}-${match[2]}-${match[3]}`;
+    }
+
+    return phoneNumber; 
+}

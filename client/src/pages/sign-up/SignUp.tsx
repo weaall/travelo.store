@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { axios, axiosInstance } from "../../utils/axios.utils"
+import { axios, axiosInstance, handleAxiosError } from "../../utils/axios.utils"
 import { checkValidEmail, checkValidPassword, checkValidPhoneNumber, checkValidUserName } from "../../utils/regExp.utils"
 import { ModalPortal } from "../../hook/modal/ModalPortal"
 import { useNavigate } from "react-router-dom"
@@ -58,13 +58,7 @@ export default function SignUp() {
             } else {
             }
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 409) {
-                    window.alert("이미 존재하는 이메일입니다.")
-                } else {
-                    window.alert("알수없는 오류")
-                }
-            }
+            handleAxiosError(error, navigate);
         }
     }
 
