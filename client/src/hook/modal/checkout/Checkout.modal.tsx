@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import * as tw from "./Checkout.modal.styles";
 import { useNavigate } from "react-router-dom";
 import { sendJWT } from "../../../utils/jwtUtils";
-import { axios, axiosInstance } from "../../../utils/axios.utils";
+import { axios, axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
 
 
 interface ModalProps {
@@ -87,15 +87,7 @@ export function CheckoutModal( props : ModalProps) {
 
             await axiosInstance.request(config);
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 401) {
-                    window.alert("로그인해주세요");
-                    navigate("/");
-                } else if (error.response.status === 400) {
-                    window.alert("해당객실이 모두 소진되었습니다.");
-                    navigate("/");
-                }
-            }
+            handleAxiosError(error, navigate);
         }
     };
 
@@ -103,15 +95,7 @@ export function CheckoutModal( props : ModalProps) {
         try {
             const response = await axiosInstance.post("/booking/remove", { booking_id: customerKey });
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 401) {
-                    window.alert("로그인해주세요");
-                    navigate("/");
-                } else if (error.response.status === 400) {
-                    window.alert("해당객실이 모두 소진되었습니다.");
-                    navigate("/");
-                }
-            }
+            handleAxiosError(error, navigate);
         }
     };
 
@@ -121,7 +105,7 @@ export function CheckoutModal( props : ModalProps) {
         params.append("hotelName", props.hotelName);
         params.append("name", props.customerName);
         params.append("email", props.customerEmail);
-        params.append("phone_num", props.customerMobilePhone);
+        params.append("mobile", props.customerMobilePhone);
         return `${URL}/booking/confirm?${params.toString()}`;
     };
 
@@ -156,7 +140,7 @@ export function CheckoutModal( props : ModalProps) {
                                         orderName: props.orderName,
                                         customerName: props.customerName,
                                         customerEmail: props.customerEmail,
-                                        customerMobilePhone: props.customerMobilePhone,
+                                        customerMobilePhone: props.customerMobilePhone.replace(/-/g, ''),
                                         successUrl: buildSuccessUrl(),
                                         failUrl: window.location.origin + "/fail",
                                     });

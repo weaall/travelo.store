@@ -12,6 +12,7 @@ export default function KaKao() {
     return (
         <tw.SocialButton onClick={loginHandler}>
             <tw.SocialSVG alt="" src={require("../../assets/svg/btn_kakao.svg").default}></tw.SocialSVG>
+            <tw.SocailLabel>카카오 로그인</tw.SocailLabel>
         </tw.SocialButton>
     )
 }

@@ -17,7 +17,7 @@ interface Booking {
     check_in: string;
     check_out: string;
     name: string;
-    phone_num: number;
+    mobile: string;
     email: string;
     hotelData: HotelData;
 }

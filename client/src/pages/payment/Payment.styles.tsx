@@ -55,7 +55,10 @@ export const TotalLabel = tw.p`text-lg font-medium`
 export const TotalPrice = tw.p`text-lg font-semibold`
 
 export const UserWrap = tw.div`flex flex-col mx-1 border p-5`
-export const UserLabel = tw.label`
+export const LabelWrap = tw.div`flex justify-between`
+export const UserInfoWrap = tw.div`flex items-center`
+export const InfoLabel = tw.label`font-medium text-sm`
+export const UserLabel = tw.label`font-medium
 after:content-['*'] after:text-red-500 after:px-1`
 export const UserInput = tw.input`font-medium outline-none
 w-full h-10 px-6 rounded-lg bg-gray-100 my-1`

@@ -159,7 +159,7 @@ const bookingController = {
     },
 
     async confirm(req: Request, res: Response) {
-        const { hotelName, hotel_id, name, email, phone_num, paymentType, orderId, paymentKey, amount } = req.query;
+        const { hotelName, hotel_id, name, email, mobile, paymentType, orderId, paymentKey, amount } = req.query;
 
         const widgetSecretKey = "test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6";
         const encryptedSecretKey = "Basic " + Buffer.from(widgetSecretKey + ":").toString("base64");
@@ -194,7 +194,7 @@ const bookingController = {
                         check_in: bookingRefData[0].check_in,
                         check_out: bookingRefData[0].check_out,
                         name: name as string,
-                        phone_num: phone_num as string,
+                        mobile: mobile as string,
                         email: email as string,
                     });
 
@@ -207,7 +207,7 @@ const bookingController = {
                             체크아웃 날짜: ${bookingRefData[0].check_out}
                             총 결제 금액: ${parsedAmount.toLocaleString()}원
                             예약자 이름: ${name}
-                            예약자 연락처: ${phone_num}
+                            예약자 연락처: ${mobile}
                             예약자 이메일: ${email}`;
 
                     await msgService.sendBookingMsgFromHotel(bookingRefData[0].user_id, hotel_id as string, successMsg);

@@ -130,11 +130,11 @@ const bookingService = {
         }
     },
 
-    async addBooking(user_id: string, { booking_id, hotel_id, room_id, total_price, check_in, check_out, name, phone_num, email }: BookingProps) {
+    async addBooking(user_id: string, { booking_id, hotel_id, room_id, total_price, check_in, check_out, name, mobile, email }: BookingProps) {
         const connection = await pool.getConnection();
 
-        const addBookingSql = `INSERT INTO booking (user_id, booking_id, hotel_id, room_id, total_price, check_in, check_out, name, phone_num, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-        const addBookingValue = [user_id, booking_id, hotel_id, room_id, total_price, check_in, check_out, name, phone_num, email];
+        const addBookingSql = `INSERT INTO booking (user_id, booking_id, hotel_id, room_id, total_price, check_in, check_out, name, mobile, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        const addBookingValue = [user_id, booking_id, hotel_id, room_id, total_price, check_in, check_out, name, mobile, email];
 
         try {
             await connection.beginTransaction();

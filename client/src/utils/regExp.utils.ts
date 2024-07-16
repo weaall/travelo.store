@@ -11,7 +11,7 @@ export const checkValidEmail = (targetEmail: string): boolean => {
  * @param targetPassword
  */
 export const checkValidPassword = (targetPassword: string): boolean => {
-    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/;
+    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,16}$/;
     return passwordRegex.test(targetPassword);
 }
 /**
@@ -19,8 +19,9 @@ export const checkValidPassword = (targetPassword: string): boolean => {
  * @param targetUserName
  */
 export const checkValidUserName = (targetUserName: string): boolean => {
-    const userNameRegex = targetUserName.length > 1;
-    return userNameRegex;
+    // 이름이 1자리 이상이며 완성된 한글, 영어, 띄어쓰기만 허용하는 정규식
+    const userNameRegex = /^[가-힣a-zA-Z\s]+$/;
+    return targetUserName.length >= 1 && userNameRegex.test(targetUserName);
 }
 /**
  * 전화번호 11자리 이상 함수
@@ -65,21 +66,6 @@ export const checkValidAccountNum = (targetAccountNum: string): boolean => {
 }
 
 export const checkValidMobile = (targetMobile: string): boolean => {
-    const mobileRegex = /^010-\d{3,4}-\d{4}$/;
-    return mobileRegex.test(targetMobile) && targetMobile.length === 13;
-}
-
-export const formatPhoneNumber = (phoneNumber: string): string => {
-    const cleaned = phoneNumber.replace(/\D/g, '');
-
-    if (cleaned.length < 10) {
-        return phoneNumber; 
-    }
-
-    const match = cleaned.match(/^(\d{3})(\d{3,4})(\d{4})$/);
-    if (match) {
-        return `${match[1]}-${match[2]}-${match[3]}`;
-    }
-
-    return phoneNumber; 
+    const mobileRegex  = targetMobile.length > 10;
+    return mobileRegex 
 }

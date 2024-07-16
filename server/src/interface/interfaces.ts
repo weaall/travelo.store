@@ -221,6 +221,6 @@ export interface BookingProps{
     check_in: string, 
     check_out: string,
     name: string,
-    phone_num: string,
+    mobile: string,
     email: string,
 }

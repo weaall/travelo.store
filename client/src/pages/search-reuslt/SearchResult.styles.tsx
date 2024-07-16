@@ -9,6 +9,11 @@ export const MainContainer = tw.div`w-full h-full pb-10`
 export const HotelList = tw.div`flex flex-col gap-6
 mobile:px-4`
 
+export const NoHotelWrap = tw.div`w-full flex flex-col justify-center items-center space-y-10 py-16`
+export const NoHotelText = tw.p`text-lg font-medium`
+export const AddHotelBtn = tw.button`mt-2 text-base font-medium px-5 py-2 rounded-xl bg-black text-white hover:bg-black/[0.8]
+mobile:hover:bg-black`
+
 export const HotelWrap = tw.div`flex w-auto rounded-2xl bg-white shadow-md hover:shadow-xl
 mobile:flex-col mobile:h-auto`
 export const HotelPic = tw.div`w-4/12 h-60 bg-gray-30

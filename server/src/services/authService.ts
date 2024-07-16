@@ -4,6 +4,7 @@ import bcrypt from "bcrypt"
 import pool from "../config/db"
 import CustomError from "../utils/customError"
 import { SignUpParams, SignInParams, userRowsProps } from "../interface/interfaces"
+require('dotenv').config();
 
 interface NaverAuthProps{
     id:string,
@@ -13,7 +14,7 @@ interface NaverAuthProps{
 }
 
 const JWT_SECRET = process.env.JWT_SECRET || ""
-const BCRYPT_SALT = process.env.BCRYPT_SALT || ""
+const BCRYPT_SALT = parseInt(process.env.BCRYPT_SALT  || "", 10);
 
 const authService = {
     async singUp({ email, password, name, phone_num }: SignUpParams) {

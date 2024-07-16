@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { sendJWT } from "../../../utils/jwtUtils";
-import { axios, axiosInstance } from "../../../utils/axios.utils";
+import { axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
 import Loading from "../../../components/loading/Loading";
 
 import ImgLoader from "../../../utils/imgLoader";
@@ -97,12 +97,7 @@ export function SuccessPage() {
             fetchHotel(bookingData.hotel_id);
             fetchRoom(bookingData.room_id);
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 401) {
-                    window.alert("올바른 접근이 아닙니다.");
-                    navigate("/");
-                }
-            }
+            handleAxiosError(error, navigate);
         } finally {
             setLoading(false);
         }
@@ -118,12 +113,7 @@ export function SuccessPage() {
 
             setHotelData(hotelData);
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 401) {
-                    window.alert("올바른 접근이 아닙니다.");
-                    navigate("/");
-                }
-            }
+            handleAxiosError(error, navigate);
         }
     };
 
@@ -137,12 +127,7 @@ export function SuccessPage() {
 
             setRoomData(room);
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 401) {
-                    window.alert("올바른 접근이 아닙니다.");
-                    navigate("/");
-                }
-            }
+            handleAxiosError(error, navigate);
         }
     };
 

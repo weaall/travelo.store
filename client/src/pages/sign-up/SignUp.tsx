@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
-import { axios, axiosInstance, handleAxiosError } from "../../utils/axios.utils"
-import { checkValidEmail, checkValidPassword, checkValidPhoneNumber, checkValidUserName } from "../../utils/regExp.utils"
+import { axiosInstance, handleAxiosError } from "../../utils/axios.utils"
+import { checkValidEmail, checkValidMobile, checkValidPassword, checkValidUserName } from "../../utils/regExp.utils"
 import { ModalPortal } from "../../hook/modal/ModalPortal"
 import { useNavigate } from "react-router-dom"
 import * as tw from "./SignUp.styles"
@@ -19,21 +19,33 @@ export default function SignUp() {
     const [formData, setFormData] = useState({
         email: "",
         password: "",
+        confirmPassword: "",
         name: "",
-        phone_num: "",
+        mobile: "",
     })
 
     const [formValid, setFormValid] = useState({
         isEmail: false,
         isPassword: false,
+        isConfirmPassword: false,
         isUserName: false,
-        isPhoneNumber: false,
+        isMobile: false,
     })
 
     const [termsValid, setTermsValid] = useState(false)
 
     const isFormValid = () => {
-        return formValid.isEmail && formValid.isPassword && formValid.isUserName && formValid.isPhoneNumber && termsValid
+        return formValid.isEmail 
+        && formValid.isPassword 
+        && formValid.isConfirmPassword
+        && formValid.isUserName 
+        && formValid.isMobile
+        && termsValid 
+        && formData.email.length !== 0
+        && formData.password.length !== 0
+        && formData.confirmPassword.length !== 0
+        && formData.name.length !== 0
+        && formData.mobile.length !== 0
     }
 
     const handleInput = (e: React.FormEvent<HTMLInputElement>, validationFunction: (value: string) => boolean, validationKey: string) => {
@@ -46,7 +58,7 @@ export default function SignUp() {
 
     const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
-        const sanitizedValue = name === "phone_num" ? value.replace(/[^0-9]/g, "") : value
+        const sanitizedValue = name === "mobile" ? value.replace(/[^0-9]/g, "").replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3") : value;
         setFormData({ ...formData, [name]: sanitizedValue })
     }
 
@@ -62,71 +74,100 @@ export default function SignUp() {
         }
     }
 
-    useEffect(() => {}, [])
+    useEffect(() => {
+        setFormValid({
+            isEmail: true,
+            isPassword: true,
+            isConfirmPassword: true,
+            isUserName: true,
+            isMobile: true,
+        })
+    }, [])
 
     return (
         <tw.Container>
             <tw.ContentsWrap>
                 <tw.ContentsLabel>
-                    Create
-                    <br />
-                    Account
+                    가입하기
                 </tw.ContentsLabel>
 
-                <tw.UpperTag>Your Email</tw.UpperTag>
+                <tw.UpperTag $validator={formValid.isEmail}>이메일 주소</tw.UpperTag>
                 <tw.FlexWrap>
                     <tw.Input
                         onChange={onChangeInput}
                         onInput={(e) => handleInput(e, checkValidEmail, "isEmail")}
                         value={formData.email}
                         name="email"
+                        placeholder="예) travel@travel.co.kr"
                         maxLength={30}
+                        $validator={formValid.isEmail}
                     />
-                    <tw.VerifyBtn>Verify</tw.VerifyBtn>
+                    <tw.VerifyBtn $validator={formValid.isEmail && formData.email.length !==0} disabled={!formValid.isEmail}>중복확인</tw.VerifyBtn>
                 </tw.FlexWrap>
                 <tw.UnderTag draggable="true" $validator={formValid.isEmail}>
-                    {formData.email === "" ? "" : formValid.isEmail === false ? "example@gmail.com 형식으로 입력해 주세요." : "올바른 이메일입니다."}
+                    {formData.email === "" ? "" : formValid.isEmail === false ? "travel@travel.co.kr 형식으로 입력해 주세요." : "올바른 이메일입니다."}
                 </tw.UnderTag>
 
-                <tw.UpperTag>Password</tw.UpperTag>
+                <tw.UpperTag $validator={formValid.isPassword}>비밀번호</tw.UpperTag>
                 <tw.Input
                     type="password"
                     onChange={onChangeInput}
                     onInput={(e) => handleInput(e, checkValidPassword, "isPassword")}
                     value={formData.password}
                     name="password"
-                    maxLength={20}
+                    maxLength={16}
+                    $validator={formValid.isPassword}
                 />
                 <tw.UnderTag draggable="true" $validator={formValid.isPassword}>
                     {formData.password === ""
                         ? ""
                         : formValid.isPassword === false
-                        ? "영문,숫자,특수문자를 포함한 8자리 이상을 입력해 주세요. "
+                        ? "영문, 숫자, 특수문자를 조합해서 입력해주세요. (8-16자)"
                         : "올바른 비밀번호입니다."}
                 </tw.UnderTag>
 
-                <tw.UpperTag>Your Name</tw.UpperTag>
+                <tw.UpperTag $validator={formValid.isConfirmPassword}>비밀번호 확인</tw.UpperTag>
+                <tw.Input
+                    type="password"
+                    onChange={onChangeInput}
+                    onInput={(e) => handleInput(e, (value) => value === formData.password, "isConfirmPassword")}
+                    value={formData.confirmPassword}
+                    name="confirmPassword"
+                    maxLength={16}
+                    $validator={formValid.isConfirmPassword}
+                />
+                <tw.UnderTag draggable="true" $validator={formValid.isConfirmPassword}>
+                    {formData.confirmPassword === ""
+                        ? ""
+                        : formValid.isConfirmPassword === false
+                        ? "비밀번호가 일치하지 않습니다."
+                        : "비밀번호가 일치합니다."}
+                </tw.UnderTag>
+
+                <tw.UpperTag  $validator={formValid.isUserName}>이름</tw.UpperTag>
                 <tw.Input
                     onChange={onChangeInput}
                     onInput={(e) => handleInput(e, checkValidUserName, "isUserName")}
                     value={formData.name}
                     name="name"
                     maxLength={8}
+                    $validator={formValid.isUserName}
                 />
                 <tw.UnderTag draggable="true" $validator={formValid.isUserName}>
                     {formData.name === "" ? "" : formValid.isUserName === false ? "올바른 이름을 입력해주세요." : "올바른 이름입니다."}
                 </tw.UnderTag>
 
-                <tw.UpperTag>Your Phone Number</tw.UpperTag>
+                <tw.UpperTag $validator={formValid.isMobile}>전화번호</tw.UpperTag>
                 <tw.Input
                     onChange={onChangeInput}
-                    onKeyUp={(e) => handleInput(e, checkValidPhoneNumber, "isPhoneNumber")}
-                    value={formData.phone_num}
-                    name="phone_num"
-                    maxLength={11}
+                    onKeyUp={(e) => handleInput(e, checkValidMobile, "isMobile")}
+                    value={formData.mobile}
+                    name="mobile"
+                    maxLength={13}
+                    $validator={formValid.isMobile}
                 />
-                <tw.UnderTag draggable="true" $validator={formValid.isPhoneNumber}>
-                    {formData.phone_num === "" ? "" : formValid.isPhoneNumber === false ? "올바른 전화번호를 입력해주세요." : "올바른 전화번호입니다."}
+                <tw.UnderTag draggable="true" $validator={formValid.isMobile}>
+                    {formData.mobile === "" ? "" : formValid.isMobile === false ? "올바른 전화번호를 입력해주세요." : "올바른 전화번호입니다."}
                 </tw.UnderTag>
 
                 <tw.FlexWrap>

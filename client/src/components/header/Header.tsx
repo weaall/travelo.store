@@ -52,7 +52,7 @@ export default function Header() {
                 <tw.NavWrap>
                     <tw.ActiveBtn onClick={handleBackClick}>
                         {isRoot ? (
-                            <tw.GnbSvg alt="spinner" src={require("../../assets/svg/spinner.svg").default} />
+                            <></>
                         ) : (
                             <tw.BackSvg alt="back" src={require("../../assets/svg/arrow_left_short.svg").default} />
                         )}

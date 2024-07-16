@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { axios, axiosInstance } from "../../utils/axios.utils";
+import { axios, axiosInstance, handleAxiosError } from "../../utils/axios.utils";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 
@@ -71,12 +71,7 @@ export default function SearchResult() {
             });
             setHotelList(response.data.data);
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 401) {
-                    window.alert("올바른 접근이 아닙니다.");
-                    navigate("/");
-                }
-            }
+            handleAxiosError(error, navigate);
         } finally {
             setLoading(false);
         }
@@ -105,7 +100,14 @@ export default function SearchResult() {
                     defaultChild={parseInt(child || "0")}/>
 
                 <tw.HotelList>
-                    {hotelList.map((hotel) => (
+                {hotelList.length === 0 ? (
+                            <tw.NoHotelWrap>
+                                <tw.NoHotelText>검색결과가 없어요!</tw.NoHotelText>
+                                <tw.AddHotelBtn onClick={() => navigate("/")}>숙소검색하기</tw.AddHotelBtn>
+                            </tw.NoHotelWrap>
+                        ) : (
+                    
+                    hotelList.map((hotel) => (
                         <tw.HotelWrap key={hotel.hotel_id}>
                                 <tw.HotelPic>
                                     <ImgSlider images={hotel.hotel_img} />
@@ -170,7 +172,7 @@ export default function SearchResult() {
                                     </tw.HotelInfo>
                                 </tw.HotelInfoWrap>
                         </tw.HotelWrap>
-                    ))}
+                    )))}
                 </tw.HotelList>
             </tw.MainContainer>
         </tw.Container>

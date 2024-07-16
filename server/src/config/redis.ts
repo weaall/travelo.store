@@ -4,7 +4,7 @@ import util from "util";
 const client = new Redis({
     retryStrategy: (times : number) => {
         console.log(`Redis reconnect #${times}`);
-        return 10000 * 60;
+        return 10000 * 300;
     }
 });
 

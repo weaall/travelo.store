@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react"
-import { axios, axiosInstance } from "../../utils/axios.utils"
+import { axiosInstance, handleAxiosError } from "../../utils/axios.utils"
 import KaKao from "./Kakao"
 import Naver from "./Naver"
-import { ModalPortal } from "../../hook/modal/ModalPortal"
-import LoginModal from "../../hook/modal/ModalLayout"
 import { useNavigate } from "react-router-dom"
 import { checkValidEmail, checkValidPassword } from "../../utils/regExp.utils"
 import Cookies from "js-cookie"
@@ -14,22 +12,12 @@ import { HeaderRenderAtom } from "../../recoil/HeaderRender.Atom"
 export default function SignIn() {
     const navigate = useNavigate()
     const setHeaderRender = useSetRecoilState(HeaderRenderAtom);
-    
-    const [isModalOpen, setIsModalOpen] = useState(false)
-
-    const openModal = () => {
-        setIsModalOpen(true)
-    }
-
-    const closeModal = () => {
-        setIsModalOpen(false)
-    }
 
     const checkSignInState = () => {
         const jwtToken = Cookies.get("jwt")
         if (jwtToken) {
             window.alert("올바른 접근이 아닙니다.")
-            navigate("/main")
+            navigate("/")
         } else {
         }
     }
@@ -45,7 +33,7 @@ export default function SignIn() {
     })
 
     const isFormValid = () => {
-        return formValid.isEmail && formValid.isPassword
+        return formValid.isEmail && formValid.isPassword && formData.email.length !==0 && formData.password.length !==0
     }
 
     const handleInput = (e: React.FormEvent<HTMLInputElement>, validationFunction: (value: string) => boolean, validationKey: string) => {
@@ -76,87 +64,75 @@ export default function SignIn() {
                 navigate("/");
             }
         } catch (error) {
-            if (axios.isAxiosError(error)) {
-                if (error.code === 'ECONNABORTED') {
-                    window.alert("요청 시간이 초과되었습니다. 다시 시도해주세요.");
-                } else if (error.response && error.response.status === 401) {
-                    window.alert("이메일과 패스워드를 확인해주세요.");
-                } else if (error.response && error.response.status === 503) {
-                    window.alert("서버가 일시적으로 사용 불가능합니다. 잠시 후 다시 시도해주세요.");
-                } else {
-                    window.alert("알 수 없는 오류");
-                }
-            } else {
-                window.alert("서버에 연결할 수 없습니다. 나중에 다시 시도해주세요.");
-            }
+            handleAxiosError(error, navigate);
         }
     };
 
     useEffect(() => {
         checkSignInState();
+        setFormValid({
+            isEmail: true,
+            isPassword: true,
+        })
     }, []);
 
     return (
         <tw.Container>
-            <tw.BannerWrap>
-                <tw.BannerLabel>weaall dev</tw.BannerLabel>
-            </tw.BannerWrap>
-
             <tw.ContentsWrap>
+                <tw.ContentsLabel>
+                    Travel.io
+                </tw.ContentsLabel>
 
                 <tw.InputWrap>
-                <tw.UpperTag>Your Email</tw.UpperTag>
-                <tw.Input
-                    onChange={onChangeInput}
-                    onInput={(e) => handleInput(e, checkValidEmail, "isEmail")}
-                    value={formData.email}
-                    name="email"
-                    maxLength={30}
-                />
+                    <tw.UpperTag $validator={formValid.isEmail}>이메일 주소</tw.UpperTag>
+                    <tw.Input
+                        onChange={onChangeInput}
+                        onInput={(e) => handleInput(e, checkValidEmail, "isEmail")}
+                        value={formData.email}
+                        name="email"
+                        placeholder="예) travel@travel.co.kr"
+                        maxLength={30}
+                        $validator={formValid.isEmail}
+                    />
 
-                <tw.UnderTag draggable="true" $validator={formValid.isEmail}>
-                    {formData.email === "" ? "" : formValid.isEmail === false ? "example@gmail.com 형식으로 입력해 주세요." : "올바른 이메일입니다."}
-                </tw.UnderTag>
+                    <tw.UnderTag draggable="true" $validator={formValid.isEmail}>
+                        {formData.email === "" ? "" : formValid.isEmail === false ? "이메일 주소를 정확히 입력해주세요." : ""}
+                    </tw.UnderTag>
 
-                <tw.UpperTag>Password</tw.UpperTag>
-                <tw.Input
-                    type="password"
-                    onChange={onChangeInput}
-                    onInput={(e) => handleInput(e, checkValidPassword, "isPassword")}
-                    value={formData.password}
-                    name="password"
-                    maxLength={20}
-                />
-                <tw.UnderTag draggable="true" $validator={formValid.isPassword}>
-                    {formData.password === ""
-                        ? ""
-                        : formValid.isPassword === false
-                        ? "영문,숫자,특수문자를 포함한 8자리 이상을 입력해 주세요. "
-                        : "올바른 비밀번호입니다."}
-                </tw.UnderTag>
-
+                    <tw.UpperTag $validator={formValid.isPassword}>비밀번호</tw.UpperTag>
+                    <tw.Input
+                        type="password"
+                        onChange={onChangeInput}
+                        onInput={(e) => handleInput(e, checkValidPassword, "isPassword")}
+                        value={formData.password}
+                        name="password"
+                        maxLength={16}
+                        $validator={formValid.isPassword}
+                    />
+                    <tw.UnderTag draggable="true" $validator={formValid.isPassword}>
+                        {formData.password === "" ? "" : formValid.isPassword === false ? "영문, 숫자, 특수문자를 조합해서 입력해주세요. (8-16자)" : ""}
+                    </tw.UnderTag>
                 </tw.InputWrap>
 
                 <tw.SignInBtn onClick={onClickSignIn} $validator={isFormValid()} disabled={!isFormValid()}>
-                    Sign in
+                    로그인
                 </tw.SignInBtn>
-                <tw.PwLabel onClick={() => navigate("/signup")}>Forgot your password?</tw.PwLabel>
+
+                <tw.SignUpWrap>
+                    <tw.SignUpBtn onClick={()=>navigate("/signup")}>이메일 가입</tw.SignUpBtn>
+                    <tw.SignUpCenter>
+                        <tw.SignUpBtn>이메일 찾기</tw.SignUpBtn>
+                    </tw.SignUpCenter>
+                    <tw.SignUpBtn>비밀번호 찾기</tw.SignUpBtn>
+                </tw.SignUpWrap>
 
                 <tw.SocialWrap>
-                    <tw.SocialLabel>Or sign in with</tw.SocialLabel>
-
                     <tw.SocialButtonWrap>
                         <KaKao />
                         <Naver />
                     </tw.SocialButtonWrap>
                 </tw.SocialWrap>
             </tw.ContentsWrap>
-
-            {isModalOpen && (
-                <ModalPortal>
-                    <LoginModal onClose={closeModal} />
-                </ModalPortal>
-            )}
         </tw.Container>
-    )
+    );
 }

@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import Loading from "../components/loading/Loading";
 
 interface ImageLoaderProps {
     imageUrl: string;
@@ -32,7 +33,9 @@ export default function ImgLoader({ imageUrl, altText, rounded}: ImageLoaderProp
         }
     }, [imageBlob]);
 
-    if (isLoading) return <div></div>;
+    if (isLoading) {
+        return <Loading />;
+    }
 
     return imageSrc ? (
         <img className={`w-full h-full object-cover ${rounded ? `rounded-${rounded}` : ''}`}
