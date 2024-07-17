@@ -20,7 +20,7 @@ app.use(Express.urlencoded({ extended: true }))
 app.use(Express.json())
 app.use(cors())
 
-app.use((req: Request, res: Response, next: NextFunction) => {
+app.use((err: CustomError, req: Request, res: Response, next: NextFunction) => {
     req.setTimeout(10000, () => {
         next(CustomError.timeoutError());
     });
@@ -40,6 +40,6 @@ app.use((error: CustomError, req: Request, res: Response, next: NextFunction) =>
     console.error(error);
     res.status(error.status ?? 500).json({
         error: error.message,
-        data: null,
+        data: error.data ?? null,
     });
 });

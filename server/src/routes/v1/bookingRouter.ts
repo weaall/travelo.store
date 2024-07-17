@@ -3,12 +3,16 @@ import asyncHandler from "../../utils/asyncHandler"
 import { JWTCheck } from "../../interface/interfaces"
 import isAuthenticated from "../../middlewares/isAuthenticated"
 import bookingController from "../../controllers/bookingController"
+import { bookingValidator } from "../../middlewares/validator/bookingValidator"
+import { validateError } from "../../middlewares/validator/validatorError"
 
 
 const bookingRouter = Router();
 
 bookingRouter.post(
     "/ref",
+    bookingValidator.addBookingRef,
+    validateError,
     isAuthenticated,
     asyncHandler((req: Request, res: Response) => bookingController.addBookingRef(req as JWTCheck, res)),
 );

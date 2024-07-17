@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import authService from "../services/authService";
 import { presignedUrl } from "../config/presignedUrl";
 import axios from 'axios';
+import CustomError from "../utils/customError";
 
 const authController = {
     async signUp(req: Request, res: Response) {
@@ -69,14 +70,14 @@ const authController = {
             const { access_token } = response.data;
             res.json({ access_token });
         } catch (error) {
-            console.error(error);
-            res.status(500).send("Error exchanging code for token");
+            throw new CustomError("INTERNAL_SERVER_ERROR", 500);
         }
     },
 
     async presignedUrl(req: Request, res: Response) {
         const { key, contentType } = req.body;
 
+        console.log(req.body)
         try {
             const signedUrl = await presignedUrl(key, contentType);
 
@@ -86,12 +87,10 @@ const authController = {
                     data: signedUrl,
                 });
             } else {
-                return res.status(500).json({
-                    error: "Failed to generate presigned URL",
-                });
+                throw new CustomError("INTERNAL_SERVER_ERROR", 500);
             }
         } catch (error) {
-            return error;
+            throw error;
         }
     },
 };
