@@ -11,7 +11,6 @@ export const Container = tw.div`min-h-screen-16 w-full flex flex-col items-cente
 
 export const ContentsWrap = tw.div`max-w-[480px] px-8 w-full flex flex-col pb-6`
 
-export const ContentsLabel = tw.p`text-2xl font-extrabold py-4`
 
 export const FlexWrap = tw.div`flex justify-center items-center text-center`
 

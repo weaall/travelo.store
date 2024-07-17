@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import * as tw from "./MyMsg.styles";
 import { sendJWT } from "../../../utils/jwtUtils";
-import { axios, axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
+import { axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../../components/loading/Loading";
 import ImgLoader from "../../../utils/imgLoader";
@@ -82,10 +82,10 @@ export default function MyMsgPage() {
         }
     };
 
-    const clickChat = (hotelId : number) =>{
+    const clickChat = (hotelId: number) => {
         const encryptedId = encrypt(`${hotelId}`);
         navigate(`../chat/${encryptedId}`);
-    }
+    };
 
     useEffect(() => {
         fetchMsg();
@@ -102,29 +102,35 @@ export default function MyMsgPage() {
                     <tw.Title>메세지</tw.Title>
                 </tw.TitleWrap>
                 <tw.ContentsWrap>
-                    {msgList.map((msg) => (
-                        <tw.MsgWrap key={msg.created_at} onClick={()=>clickChat(msg.hotel_id)}>
-                            <tw.PicWrap>
-                                <tw.Pic>
-                                    {msg.hotelData?.img?.[0]?.url ? (
-                                        <ImgLoader imageUrl={msg.hotelData.img[0].url} altText="" rounded="full" />
-                                    ) : (
-                                        <tw.UnRegWrap>미등록</tw.UnRegWrap>
-                                    )}
-                                </tw.Pic>
-                            </tw.PicWrap>
-                            <tw.MsgInfoWrap>
-                                <tw.UpperWrap>
-                                    <tw.Name>{msg.hotelData.name}</tw.Name>
-                                    <tw.Time>{msgDateFormat(msg.created_at)}</tw.Time>
-                                </tw.UpperWrap>
-                                <tw.LowerWrap>
-                                    <tw.Text>{msg.text}</tw.Text>
-                                    <tw.Checked $checked={msg.checked} />
-                                </tw.LowerWrap>
-                            </tw.MsgInfoWrap>
-                        </tw.MsgWrap>
-                    ))}
+                    {msgList.length === 0 ? (
+                        <tw.NoMsgWrap>
+                            <tw.NoMsgText>메세지가 없어요!</tw.NoMsgText>
+                        </tw.NoMsgWrap>
+                    ) : (
+                        msgList.map((msg) => (
+                            <tw.MsgWrap key={msg.created_at} onClick={() => clickChat(msg.hotel_id)}>
+                                <tw.PicWrap>
+                                    <tw.Pic>
+                                        {msg.hotelData?.img?.[0]?.url ? (
+                                            <ImgLoader imageUrl={msg.hotelData.img[0].url} altText="" rounded="full" />
+                                        ) : (
+                                            <tw.UnRegWrap>미등록</tw.UnRegWrap>
+                                        )}
+                                    </tw.Pic>
+                                </tw.PicWrap>
+                                <tw.MsgInfoWrap>
+                                    <tw.UpperWrap>
+                                        <tw.Name>{msg.hotelData.name}</tw.Name>
+                                        <tw.Time>{msgDateFormat(msg.created_at)}</tw.Time>
+                                    </tw.UpperWrap>
+                                    <tw.LowerWrap>
+                                        <tw.Text>{msg.text}</tw.Text>
+                                        <tw.Checked $checked={msg.checked} />
+                                    </tw.LowerWrap>
+                                </tw.MsgInfoWrap>
+                            </tw.MsgWrap>
+                        ))
+                    )}
                 </tw.ContentsWrap>
             </tw.MobileWrap>
         </tw.Container>

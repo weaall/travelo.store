@@ -47,6 +47,7 @@ export default function ImgLoader({ imageUrl, altText, rounded}: ImageLoaderProp
                 ${imageUrl}?w=1200 1200w
             `}
             sizes="(max-width: 480px) 480px, (max-width: 840px) 840px, 1200px"
+            loading="lazy"
         />
     ) : (
         <div>Image not available</div>

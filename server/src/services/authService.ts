@@ -3,8 +3,16 @@ import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 import pool from "../config/db"
 import CustomError from "../utils/customError"
-import { SignUpParams, SignInParams, userRowsProps } from "../interface/interfaces"
+import { SignInParams, userRowsProps } from "../interface/interfaces"
 require('dotenv').config();
+
+
+interface SignUpParams {
+    email: string;
+    password: string;
+    name: string;
+    mobile: string;
+}
 
 interface NaverAuthProps{
     id:string,
@@ -17,12 +25,12 @@ const JWT_SECRET = process.env.JWT_SECRET || ""
 const BCRYPT_SALT = parseInt(process.env.BCRYPT_SALT  || "", 10);
 
 const authService = {
-    async singUp({ email, password, name, phone_num }: SignUpParams) {
+    async singUp({ email, password, name, mobile }: SignUpParams) {
         const hashedPassword = await bcrypt.hash(password, BCRYPT_SALT);
         const checkIdSql = "SELECT * FROM user WHERE email = ?";
         const checkIdParams = [email];
-        const singUpSql = "INSERT INTO user (email, password, name, phone_num) VALUES (? , ? , ? , ?)";
-        const singUpParams = [email, hashedPassword, name, phone_num];
+        const singUpSql = "INSERT INTO user (email, password, name, mobile) VALUES (? , ? , ? , ?)";
+        const singUpParams = [email, hashedPassword, name, mobile];
 
         const connection = await pool.getConnection();
 

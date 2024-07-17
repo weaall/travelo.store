@@ -2,6 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { axiosInstance, handleAxiosError } from "../../utils/axios.utils";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
+import Cookies from "js-cookie";
 
 import { decrypt, encrypt } from "../../utils/cryptoJs";
 import { facilItems, servItems } from "../../data/hotelData";
@@ -138,6 +139,12 @@ export default function Hotel() {
     };
 
     const clickRoom = (hotelId: number, roomId: number) => {
+        const jwtToken = Cookies.get("jwt");
+        if (!jwtToken) {
+            alert("로그인해주세요.");
+            navigate("/signin");
+            return;
+        }
         const encryptedHotelId = encrypt(`${hotelId}`);
         const encryptedRoomId = encrypt(`${roomId}`);
         navigate(`/payment/${encryptedHotelId}/${encryptedRoomId}/${startDate}/${endDate}`);

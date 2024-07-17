@@ -71,7 +71,7 @@ export default function SignUp() {
             const response = await axiosInstance.post("/auth/sign-up", formData);
             if (response.status === 201) {
                 window.alert("성공적으로 가입되었습니다.");
-            } else {
+                navigate("/signin")
             }
         } catch (error) {
             handleAxiosError(error, navigate);
@@ -113,7 +113,6 @@ export default function SignUp() {
     return (
         <tw.Container>
             <tw.ContentsWrap>
-                <tw.ContentsLabel>가입하기</tw.ContentsLabel>
 
                 <tw.UpperTag $validator={formValid.isEmail}>이메일 주소</tw.UpperTag>
                 <tw.FlexWrap>

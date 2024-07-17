@@ -63,6 +63,13 @@ export default function Payment() {
         isEmail: false,
     });
 
+    const isFormValid = () => {
+        return formValid.isEmail && formData.email !== "" &&
+        formValid.isUserName && formData.name !== "" &&
+        formValid.isMobile && formData.mobile !== "" &&
+        termsValid;
+    };
+
     const fetchUser = async () => {
         try {
             const config = await sendJWT({
@@ -88,10 +95,6 @@ export default function Payment() {
     const [termsValid, setTermsValid] = useState(false);
 
     const [userCheck, setUserCheck] = useState(false);
-
-    const isFormValid = () => {
-        return formValid.isEmail && formValid.isUserName && formValid.isMobile && termsValid;
-    };
 
     const handleInput = (e: React.FormEvent<HTMLInputElement>, validationFunction: (value: string) => boolean, validationKey: string) => {
         const { value } = (e as React.ChangeEvent<HTMLInputElement>).target;
@@ -209,11 +212,6 @@ export default function Payment() {
     useEffect(() => {
         if (userCheck) {
             setFormData(initialFormData);
-            setFormValid({
-                isUserName: false,
-                isMobile: false,
-                isEmail: false,
-            });
         } else {
             setFormData(fetchedFormData);
             setFormValid({
@@ -240,38 +238,41 @@ export default function Payment() {
                                 <tw.PolicyCheck type="checkbox" checked={userCheck} onChange={() => setUserCheck((prevUserCheck) => !prevUserCheck)} />
                             </tw.UserInfoWrap>
                         </tw.LabelWrap>
-                        <tw.UserLabel>이름</tw.UserLabel>
+                        <tw.UserLabel $validator={formValid.isUserName}>이름</tw.UserLabel>
                         <tw.UserInput
                             onChange={onChangeInput}
                             onInput={(e) => handleInput(e, checkValidUserName, "isUserName")}
                             value={formData.name}
                             name="name"
                             maxLength={8}
+                            $validator={formValid.isUserName}
                         />
                         <tw.UnderTag draggable="true" $validator={formValid.isUserName}>
-                            {formData.name === "" ? "" : formValid.isUserName === false ? "올바른 이름을 입력해주세요." : "올바른 이름입니다."}
+                            {formData.name === "" ? "" : formValid.isUserName === false ? "올바른 이름을 입력해주세요." : ""}
                         </tw.UnderTag>
-                        <tw.UserLabel>전화번호</tw.UserLabel>
+                        <tw.UserLabel $validator={formValid.isMobile}>전화번호</tw.UserLabel>
                         <tw.UserInput
                             onChange={onChangeInput}
                             onKeyUp={(e) => handleInput(e, checkValidMobile, "isMobile")}
                             value={formData.mobile}
                             name="mobile"
                             maxLength={13}
+                            $validator={formValid.isMobile}
                         />
                         <tw.UnderTag draggable="true" $validator={formValid.isMobile}>
-                            {formData.mobile === "" ? "" : formValid.isMobile === false ? "올바른 전화번호를 입력해주세요." : "올바른 전화번호입니다."}
+                            {formData.mobile === "" ? "" : formValid.isMobile === false ? "올바른 전화번호를 입력해주세요." : ""}
                         </tw.UnderTag>
-                        <tw.UserLabel>이메일</tw.UserLabel>
+                        <tw.UserLabel $validator={formValid.isEmail}>이메일</tw.UserLabel>
                         <tw.UserInput
                             onChange={onChangeInput}
                             onInput={(e) => handleInput(e, checkValidEmail, "isEmail")}
                             value={formData.email}
                             name="email"
                             maxLength={30}
+                            $validator={formValid.isEmail}
                         />
                         <tw.UnderTag draggable="true" $validator={formValid.isEmail}>
-                            {formData.email === "" ? "" : formValid.isEmail === false ? "example@gmail.com 형식으로 입력해 주세요." : "올바른 이메일입니다."}
+                            {formData.email === "" ? "" : formValid.isEmail === false ? "travel@travel.co.kr 형식으로 입력해 주세요." : ""}
                         </tw.UnderTag>
                     </tw.UserWrap>
 

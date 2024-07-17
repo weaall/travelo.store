@@ -1,14 +1,15 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { axios, axiosInstance, handleAxiosError } from "../../utils/axios.utils";
+import { axiosInstance, handleAxiosError } from "../../utils/axios.utils";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 
-import * as tw from "./SearchResult.styles";
 import Loading from "../../components/loading/Loading";
 import { facilItems, servItems } from "../../data/hotelData";
 import ImgSlider from "../../components/imgSlider/imgSlider";
 import SearchBox from "../../components/searchBox/SearchBox";
 import { encrypt } from "../../utils/cryptoJs";
+
+import * as tw from "./SearchResult.styles";
 
 export default function SearchResult() {
     const navigate = useNavigate();
@@ -86,6 +87,19 @@ export default function SearchResult() {
         fetchSearch();
     }, [searchValue, startDate, endDate, adult, child]);
 
+    const sortedHotelList = [...hotelList].sort((a, b) => {
+        const totalPriceA = a.room_price.reduce((total, room) => total + room.price, 0);
+        const totalPriceB = b.room_price.reduce((total, room) => total + room.price, 0);
+
+        if (totalPriceA === 0 && totalPriceB !== 0) {
+            return 1;
+        } else if (totalPriceA !== 0 && totalPriceB === 0) {
+            return -1;
+        } else {
+            return totalPriceA - totalPriceB;
+        }
+    });
+
     if (loading) {
         return <Loading />;
     }
@@ -93,26 +107,27 @@ export default function SearchResult() {
     return (
         <tw.Container>
             <tw.MainContainer>
-                <SearchBox defaultSearchValue={searchValue}
+                <SearchBox
+                    defaultSearchValue={searchValue}
                     defaultStartDate={startDate}
                     defaultEndDate={endDate}
                     defaultAdult={parseInt(adult || "2")}
-                    defaultChild={parseInt(child || "0")}/>
+                    defaultChild={parseInt(child || "0")}
+                />
 
                 <tw.HotelList>
-                {hotelList.length === 0 ? (
-                            <tw.NoHotelWrap>
-                                <tw.NoHotelText>검색결과가 없어요!</tw.NoHotelText>
-                                <tw.AddHotelBtn onClick={() => navigate("/")}>숙소검색하기</tw.AddHotelBtn>
-                            </tw.NoHotelWrap>
-                        ) : (
-                    
-                    hotelList.map((hotel) => (
-                        <tw.HotelWrap key={hotel.hotel_id}>
+                    {sortedHotelList.length === 0 ? (
+                        <tw.NoHotelWrap>
+                            <tw.NoHotelText>검색결과가 없어요!</tw.NoHotelText>
+                            <tw.AddHotelBtn onClick={() => navigate("/")}>숙소검색하기</tw.AddHotelBtn>
+                        </tw.NoHotelWrap>
+                    ) : (
+                        sortedHotelList.map((hotel) => (
+                            <tw.HotelWrap key={hotel.hotel_id}>
                                 <tw.HotelPic>
                                     <ImgSlider images={hotel.hotel_img} />
                                 </tw.HotelPic>
-                                <tw.HotelInfoWrap onClick={()=>clickHotel(hotel.hotel_id)}>
+                                <tw.HotelInfoWrap onClick={() => clickHotel(hotel.hotel_id)}>
                                     <tw.HotelInfo>
                                         <tw.HotelName>{hotel.name}</tw.HotelName>
                                         <tw.ContentsFlex>
@@ -163,16 +178,21 @@ export default function SearchResult() {
                                         </tw.TooltipFacil>
 
                                         <tw.PriceWrap>
-                                            <tw.TotalLabel>{dayjs(endDate).diff(dayjs(startDate), "day")}박 총 요금</tw.TotalLabel>
+                                            <tw.TotalLabel>
+                                                {dayjs(endDate).diff(dayjs(startDate), "day")}박 총 요금
+                                            </tw.TotalLabel>
                                             <tw.TotalPrice>
-                                                {hotel.room_price.reduce((total, room) => total + room.price, 0).toLocaleString()}원~
+                                                {hotel.room_price
+                                                    .reduce((total, room) => total + room.price, 0)
+                                                    .toLocaleString()}
+                                                원~
                                             </tw.TotalPrice>
                                         </tw.PriceWrap>
-
                                     </tw.HotelInfo>
                                 </tw.HotelInfoWrap>
-                        </tw.HotelWrap>
-                    )))}
+                            </tw.HotelWrap>
+                        ))
+                    )}
                 </tw.HotelList>
             </tw.MainContainer>
         </tw.Container>

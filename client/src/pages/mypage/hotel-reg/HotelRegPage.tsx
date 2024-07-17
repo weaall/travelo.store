@@ -5,7 +5,7 @@ import { axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
 import { useNavigate } from "react-router-dom";
 import { ModalPortal } from "../../../hook/modal/ModalPortal";
 import DaumPostcodeModal from "../../../hook/modal/daum-postcode/DaumPostcode.modal";
-import { checkValidAccountNum, checkValidBusinessNum, checkValidEmail, checkValidInput} from "../../../utils/regExp.utils";
+import { checkValidAccountNum, checkValidBusinessNum, checkValidEmail, checkValidInput, checkValidUserName } from "../../../utils/regExp.utils";
 
 export default function HotelRegPage() {
     const navigate = useNavigate();
@@ -44,12 +44,19 @@ export default function HotelRegPage() {
     const isFormValid = () => {
         return (
             formValid.isName &&
+            formData.name.length !== 0 &&
             formValid.isPostcode &&
+            formData.postcode.length !== 0 &&
             formValid.isRegNum &&
+            formData.reg_num.length !== 0 &&
             formValid.isBank &&
+            formData.bank.length !== 0 &&
             formValid.isAccount &&
+            formData.account.length !== 0 &&
             formValid.isOwner &&
-            formValid.isImages
+            formData.owner.length !== 0 &&
+            formValid.isImages &&
+            files.length !== 0
         );
     };
 
@@ -63,7 +70,7 @@ export default function HotelRegPage() {
 
     const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        const sanitizedValue = (name === "reg_num" || name === "account") ? value.replace(/[^0-9]/g, "") : value;
+        const sanitizedValue = name === "reg_num" || name === "account" ? value.replace(/[^0-9]/g, "") : value;
         setFormData({ ...formData, [name]: sanitizedValue });
     };
 
@@ -155,11 +162,23 @@ export default function HotelRegPage() {
 
             await axiosInstance.request(config);
             window.alert("저장완료");
-            navigate("/me/hotel")
+            navigate("/me/hotel");
         } catch (error) {
             handleAxiosError(error, navigate);
         }
     };
+
+    useEffect(() => {
+        setFormValid({
+            isName: true,
+            isPostcode: true,
+            isRegNum: true,
+            isBank: true,
+            isAccount: true,
+            isOwner: true,
+            isImages: true,
+        });
+    }, []);
 
     return (
         <tw.Container>
@@ -169,77 +188,82 @@ export default function HotelRegPage() {
                 </tw.TitleWrap>
 
                 <tw.InputWrap>
-                    <tw.UpperTag>호텔이름</tw.UpperTag>
+                    <tw.UpperTag $validator={formValid.isName}>호텔이름</tw.UpperTag>
                     <tw.Input
                         onChange={onChangeInput}
                         onInput={(e) => handleInput(e, checkValidInput, "isName")}
                         value={formData.name}
                         name="name"
                         maxLength={25}
+                        $validator={formValid.isName}
                     />
                     <tw.UnderTag draggable="true" $validator={formValid.isName}>
                         {formData.name === "" ? "" : formValid.isName === false ? "올바른 이름을 입력해주세요." : "올바른 이름입니다."}
                     </tw.UnderTag>
 
-                    <tw.UpperTag>우편번호</tw.UpperTag>
+                    <tw.UpperTag $validator={formValid.isPostcode}>우편번호</tw.UpperTag>
                     <tw.FlexWrap>
-                        <tw.Input onChange={onChangeInput} value={formData.postcode} name="postcode" disabled />
+                        <tw.Input onChange={onChangeInput} value={formData.postcode} name="postcode" $validator={formValid.isPostcode} disabled />
                         <tw.SearchBtn onClick={openDaumAddressModal}>주소검색</tw.SearchBtn>
                     </tw.FlexWrap>
                     <tw.UnderTag draggable="true" $validator={formValid.isPostcode}>
                         {formData.postcode === "" ? "" : formValid.isPostcode === false ? "올바른 주소를 입력해주세요." : "올바른 주소입니다."}
                     </tw.UnderTag>
 
-                    <tw.UpperTag>주소</tw.UpperTag>
-                    <tw.Input onChange={onChangeInput} value={formData.address} name="address" disabled />
+                    <tw.UpperTag $validator={formValid.isPostcode}>주소</tw.UpperTag>
+                    <tw.Input onChange={onChangeInput} value={formData.address} name="address" $validator={formValid.isPostcode} disabled />
                     <tw.UnderTag draggable="true" $validator={formValid.isPostcode} />
                     <tw.UpperTagNon>상세주소</tw.UpperTagNon>
-                    <tw.Input onChange={onChangeInput} value={formData.address_detail} name="address_detail" maxLength={30} />
+                    <tw.Input $validator={formValid.isPostcode} onChange={onChangeInput} value={formData.address_detail} name="address_detail" maxLength={30} />
                     <tw.UnderTag draggable="true" $validator={formValid.isPostcode} />
 
-                    <tw.UpperTag>사업자등록번호</tw.UpperTag>
+                    <tw.UpperTag $validator={formValid.isRegNum}>사업자등록번호</tw.UpperTag>
                     <tw.Input
                         onChange={onChangeInput}
                         onInput={(e) => handleInput(e, checkValidBusinessNum, "isRegNum")}
                         value={formData.reg_num}
                         name="reg_num"
                         maxLength={10}
+                        $validator={formValid.isRegNum}
                     />
                     <tw.UnderTag draggable="true" $validator={formValid.isRegNum}>
                         {formData.reg_num === "" ? "" : formValid.isRegNum === false ? "올바른 사업자등록번호를 입력해주세요." : "올바른 사업자등록번호입니다."}
                     </tw.UnderTag>
 
-                    <tw.UpperTag>은행</tw.UpperTag>
+                    <tw.UpperTag $validator={formValid.isBank}>은행</tw.UpperTag>
                     <tw.Input
                         onChange={onChangeInput}
                         onInput={(e) => handleInput(e, checkValidInput, "isBank")}
                         value={formData.bank}
                         name="bank"
                         maxLength={10}
+                        $validator={formValid.isBank}
                     />
                     <tw.UnderTag draggable="true" $validator={formValid.isBank}>
                         {formData.bank === "" ? "" : formValid.isBank === false ? "올바른 이름을 입력해주세요." : "올바른 이름입니다."}
                     </tw.UnderTag>
 
-                    <tw.UpperTag>계좌주</tw.UpperTag>
+                    <tw.UpperTag $validator={formValid.isOwner}>계좌주</tw.UpperTag>
                     <tw.Input
                         onChange={onChangeInput}
-                        onInput={(e) => handleInput(e, checkValidInput, "isOwner")}
+                        onInput={(e) => handleInput(e, checkValidUserName, "isOwner")}
                         value={formData.owner}
                         name="owner"
                         maxLength={20}
+                        $validator={formValid.isOwner}
                     />
                     <tw.UnderTag draggable="true" $validator={formValid.isOwner}>
                         {formData.owner === "" ? "" : formValid.isOwner === false ? "올바른 이름을 입력해주세요." : "올바른 이름입니다."}
                     </tw.UnderTag>
 
-                    <tw.UpperTag>계좌번호</tw.UpperTag>
+                    <tw.UpperTag $validator={formValid.isAccount}>계좌번호</tw.UpperTag>
                     <tw.Input
                         onChange={onChangeInput}
                         onInput={(e) => handleInput(e, checkValidAccountNum, "isAccount")}
                         value={formData.account}
                         name="account"
                         maxLength={14}
+                        $validator={formValid.isAccount}
                     />
                     <tw.UnderTag draggable="true" $validator={formValid.isAccount}>
                         {formData.account === ""
@@ -249,7 +273,7 @@ export default function HotelRegPage() {
                             : "올바른 계좌번호입니다."}
                     </tw.UnderTag>
 
-                    <tw.UpperTag>사업자등록증 및 통장사본</tw.UpperTag>
+                    <tw.UpperTag $validator={formValid.isImages}>사업자등록증 및 통장사본</tw.UpperTag>
                     <tw.UploadWrap onDragOver={onDragOver} onDrop={onDrop}>
                         {imagePreviews.length === 0 && <tw.ImgLabel>이미지를 드래그 앤 드롭하세요.</tw.ImgLabel>}
                         <tw.ImgContainer>
@@ -265,9 +289,7 @@ export default function HotelRegPage() {
                             ))}
                         </tw.ImgContainer>
                     </tw.UploadWrap>
-                    <tw.UnderTag $validator={formValid.isImages}>
-                        {formValid.isImages ? "" : "사업자등록증과 통장사본을 업로드해주세요."}
-                    </tw.UnderTag>
+                    <tw.UnderTag $validator={formValid.isImages}>{formValid.isImages ? "" : "사업자등록증과 통장사본을 업로드해주세요."}</tw.UnderTag>
                     <tw.RegBtn onClick={onClickRegister} $validator={isFormValid()} disabled={!isFormValid()}>
                         호텔등록
                     </tw.RegBtn>
@@ -284,7 +306,7 @@ export default function HotelRegPage() {
                             setFormData((prevData) => ({ ...prevData, postcode: newPostcode }));
                             setFormValid((prevValid) => ({
                                 ...prevValid,
-                                isPostcode: checkValidInput(newPostcode)
+                                isPostcode: checkValidInput(newPostcode),
                             }));
                         }}
                         onClose={closeDaumAddressModal}

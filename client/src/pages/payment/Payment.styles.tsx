@@ -58,12 +58,14 @@ export const UserWrap = tw.div`flex flex-col mx-1 border p-5`
 export const LabelWrap = tw.div`flex justify-between`
 export const UserInfoWrap = tw.div`flex items-center`
 export const InfoLabel = tw.label`font-medium text-sm`
-export const UserLabel = tw.label`font-medium
-after:content-['*'] after:text-red-500 after:px-1`
-export const UserInput = tw.input`font-medium outline-none
-w-full h-10 px-6 rounded-lg bg-gray-100 my-1`
-export const UnderTag = tw.p<UnderTagProps>`text-xs font-normal h-[16px] mb-1
-${(p) => (p.$validator ? "text-blue-500" : "text-red-500")}`
+export const UserLabel = tw.p<UnderTagProps>`text-sm font-medium mt-3
+after:content-['*'] after:text-red-500 after:px-1
+${(p) => (p.$validator ? "text-black" : "text-red-400")}`;
+export const UserInput = tw.input<UnderTagProps>`text-sm w-full h-10 outline-none border-b border-gray-200 placeholder-gray-200
+focus:border-b-2 focus:placeholder-transparent disabled:bg-white disabled:text-gray-300
+${(p) => (p.$validator ? "focus:border-black" : "border-red-400 focus:border-b-1")}`;
+export const UnderTag = tw.p<UnderTagProps>`text-xs font-normal h-[16px]
+${(p) => (p.$validator ? "text-blue-500" : "text-red-400")}`
 
 export const PolicyWrap = tw.div`flex flex-col mx-1 border p-5`
 export const PolicyCheck = tw.input`ml-2 w-5 h-5 cursor-pointer accent-main`
@@ -72,11 +74,11 @@ export const PolicyText = tw.p`pl-1 text-sm text-gray-500`
 
 export const PaymentWrap = tw.div`flex flex-col mx-1 border p-5`
 
-export const PaymentBtn = tw.button<ValidatorBtnProps>`mx-1 text-lg font-medium px-5 py-3 rounded-xl bg-black text-white
+export const PaymentBtn = tw.button<ValidatorBtnProps>`mx-1 text-lg font-medium px-5 h-12 rounded-xl bg-black text-white
 mobile:hidden
-${(p) => (p.$validator ? "bg-black hover:bg-black/[0.8]" : "bg-gray-200")}`
+${(p) => (p.$validator ? "bg-black hover:bg-black/[0.8] mobile:hover:bg-black" : "bg-gray-200")}`
 
-export const PaymentBtnMobile = tw.button<ValidatorBtnProps>`mx-1 text-lg font-medium px-5 py-4 rounded-xl bg-black text-white hidden
+export const PaymentBtnMobile = tw.button<ValidatorBtnProps>`mx-1 text-lg font-medium px-5 h-12 rounded-xl bg-black text-white hidden
 mobile:block
-${(p) => (p.$validator ? "bg-black" : "bg-gray-200")}`
+${(p) => (p.$validator ? "bg-black hover:bg-black/[0.8] mobile:hover:bg-black" : "bg-gray-200")}`
 

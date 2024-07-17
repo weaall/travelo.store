@@ -45,19 +45,23 @@ export default function Header() {
         setIsMenuOpen(false);
     }, [headerRender, location]);
 
+    const navTitleMapping: { [key: string]: string } = {
+        "/": "Travel.io",
+        "/signin": "로그인",
+        "/signup": "가입하기",
+    };
+
+    const navTitle: string = navTitleMapping[location.pathname] || "Travel.io";
+
     return (
         <tw.Container>
             <tw.ContentsWrap>
                 <UserMenu isMenuOpen={isMenuOpen} />
                 <tw.NavWrap>
                     <tw.ActiveBtn onClick={handleBackClick}>
-                        {isRoot ? (
-                            <></>
-                        ) : (
-                            <tw.BackSvg alt="back" src={require("../../assets/svg/arrow_left_short.svg").default} />
-                        )}
+                        {isRoot ? <></> : <tw.BackSvg alt="back" src={require("../../assets/svg/arrow_left_short.svg").default} />}
                     </tw.ActiveBtn>
-                    <tw.NavHome onClick={() => navigateClick("/")}>Travel.io</tw.NavHome>
+                    <tw.NavHome onClick={() => navigateClick("/")}>{navTitle}</tw.NavHome>
                     {isSignIn === false ? (
                         <tw.SignInBtn onClick={() => navigateClick("/signin")}>로그인</tw.SignInBtn>
                     ) : (
