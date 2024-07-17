@@ -12,6 +12,7 @@ import { CheckoutModal } from "../../hook/modal/checkout/Checkout.modal";
 import { checkValidEmail, checkValidMobile, checkValidUserName } from "../../utils/regExp.utils";
 import ImgLoader from "../../utils/imgLoader";
 import { sendJWT } from "../../utils/jwtUtils";
+import Cookies from "js-cookie";
 
 export default function Payment() {
     const navigate = useNavigate();
@@ -203,6 +204,15 @@ export default function Payment() {
             handleAxiosError(error, navigate);
         }
     };
+
+    useEffect(()=>{
+        const jwtToken = Cookies.get("jwt");
+        if (!jwtToken) {
+            alert("로그인해주세요.");
+            navigate("/signin");
+            return;
+        }
+    })
 
     useEffect(() => {
         fetchUser();

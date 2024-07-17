@@ -31,15 +31,6 @@ export const checkValidPhoneNumber = (targetPhoneNumber: string): boolean => {
     const phoneNumberRegex = targetPhoneNumber.length > 10;
     return phoneNumberRegex;
 }
-
-/**
- * 전화번호 9자리 이상 함수
- * @param targetPhoneNumber
- */
-export const checkValidPhoneNumberNine = (targetPhoneNumber: string): boolean => {
-    const phoneNumberRegex = targetPhoneNumber.length > 10;
-    return phoneNumberRegex;
-}
 /**
  * 공란이 아닌지 확인
  * @param targetInput

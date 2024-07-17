@@ -22,12 +22,29 @@ const authController = {
         });
     },
 
-    async signInKakao(req: Request, res: Response) {
-        const token = await authService.kakaoSignIn(req.body.id);
+    async signInByKakao(req: Request, res: Response) {
+        const token = await authService.signInByKakao(req.body.id);
 
         res.status(201).json({
             error: null,
             data: token,
+        });
+    },
+
+    async signInByNaver(req: Request, res: Response) {
+        const { token } = req.body;
+
+        const response = await axios.get("https://openapi.naver.com/v1/nid/me", {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        const jwtToken = await authService.signInByNaver(response.data.response);
+
+        res.status(201).json({
+            error: null,
+            data: jwtToken,
         });
     },
 
@@ -55,23 +72,6 @@ const authController = {
             console.error(error);
             res.status(500).send("Error exchanging code for token");
         }
-    },
-
-    async signInByNaver(req: Request, res: Response) {
-        const { token } = req.body;
-
-        const response = await axios.get("https://openapi.naver.com/v1/nid/me", {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-
-        const jwtToken = await authService.signInByNaver(response.data.response);
-
-        res.status(201).json({
-            error: null,
-            data: jwtToken,
-        });
     },
 
     async presignedUrl(req: Request, res: Response) {

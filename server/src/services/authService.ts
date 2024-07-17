@@ -1,17 +1,31 @@
-import { FieldPacket, ResultSetHeader } from "mysql2"
+import { FieldPacket, ResultSetHeader, RowDataPacket } from "mysql2"
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 import pool from "../config/db"
 import CustomError from "../utils/customError"
-import { SignInParams, userRowsProps } from "../interface/interfaces"
 require('dotenv').config();
 
+export interface userRows extends RowDataPacket {
+    id: number;
+    email: string;
+    password: string;
+    name: string;
+    phone_num: string;
+    social: string;
+    social_id: string;
+    admin: number;
+}
 
 interface SignUpParams {
     email: string;
     password: string;
     name: string;
     mobile: string;
+}
+
+interface SignInParams {
+    email: string;
+    password: string;
 }
 
 interface NaverAuthProps{
@@ -35,7 +49,7 @@ const authService = {
         const connection = await pool.getConnection();
 
         try {
-            const [rows, fields]: [userRowsProps[], FieldPacket[]] = await connection.execute(checkIdSql, checkIdParams);
+            const [rows, fields]: [userRows[], FieldPacket[]] = await connection.execute(checkIdSql, checkIdParams);
 
             if (rows.length > 0) {
                 throw new CustomError("이미 존재하는 이메일입니다.", 409);
@@ -58,7 +72,7 @@ const authService = {
         const connection = await pool.getConnection();
 
         try {
-            const [rows, fields]: [userRowsProps[], FieldPacket[]] = await connection.execute(checkIdSql, checkIdParams);
+            const [rows, fields]: [userRows[], FieldPacket[]] = await connection.execute(checkIdSql, checkIdParams);
 
             if (rows.length === 0) {
                 throw new CustomError("이메일과 비밀번호가 일치하지 않습니다", 401);
@@ -81,7 +95,7 @@ const authService = {
         }
     },
 
-    async kakaoSignIn(id: string) {
+    async signInByKakao(id: string) {
         const selectSql = "SELECT * FROM user WHERE social = 'kakao' AND social_id = ?";
         const selectParams = [id];
         const insertSql = "INSERT INTO user (social, social_id) VALUES (? , ?)";
@@ -90,7 +104,7 @@ const authService = {
         const connection = await pool.getConnection();
 
         try {
-            const [rows, fields]: [userRowsProps[], FieldPacket[]] = await connection.execute(selectSql, selectParams);
+            const [rows, fields]: [userRows[], FieldPacket[]] = await connection.execute(selectSql, selectParams);
 
             if (rows.length > 0) {
                 const token = jwt.sign({ id: rows[0].id, ad: rows[0].admin }, JWT_SECRET, {
@@ -122,7 +136,7 @@ const authService = {
         const connection = await pool.getConnection();
 
         try {
-            const [rows, fields]: [userRowsProps[], FieldPacket[]] = await connection.execute(selectSql, selectParams);
+            const [rows, fields]: [userRows[], FieldPacket[]] = await connection.execute(selectSql, selectParams);
 
             if (rows.length > 0) {
                 const token = jwt.sign({ id: rows[0].id, ad: rows[0].admin }, JWT_SECRET, {
