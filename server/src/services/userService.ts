@@ -37,7 +37,7 @@ const userService = {
         const connection = await pool.getConnection();
 
         try {
-            const [rows, fields]: [ResultSetHeader, FieldPacket[]] = await connection.execute(updateMyinfoSql, updateMyinfoSqlValues);
+            const [rows, fields]: [ResultSetHeader[], FieldPacket[]] = await connection.execute(updateMyinfoSql, updateMyinfoSqlValues);
 
             return rows;
         } catch (error) {
@@ -60,6 +60,22 @@ const userService = {
             }
 
             return rows;
+        } catch (error) {
+            throw error;
+        } finally {
+            connection.release();
+        }
+    },
+
+    async checkEmail(email: string) {
+        const checkIdSql = "SELECT email FROM user WHERE email = ?";
+        const checkIdParams = [email];
+        const connection = await pool.getConnection();
+
+        try {
+            const [rows, fields]: [ResultSetHeader[], FieldPacket[]] = await connection.execute(checkIdSql, checkIdParams);
+
+            return rows.length;
         } catch (error) {
             throw error;
         } finally {

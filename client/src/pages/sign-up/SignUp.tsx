@@ -1,20 +1,20 @@
-import { useEffect, useState } from "react"
-import { axiosInstance, handleAxiosError } from "../../utils/axios.utils"
-import { checkValidEmail, checkValidMobile, checkValidPassword, checkValidUserName } from "../../utils/regExp.utils"
-import { ModalPortal } from "../../hook/modal/ModalPortal"
-import { useNavigate } from "react-router-dom"
-import * as tw from "./SignUp.styles"
-import Terms from "../../hook/modal/Terms/Terms.modal"
+import { useEffect, useState } from "react";
+import { axiosInstance, handleAxiosError } from "../../utils/axios.utils";
+import { checkValidEmail, checkValidMobile, checkValidPassword, checkValidUserName } from "../../utils/regExp.utils";
+import { ModalPortal } from "../../hook/modal/ModalPortal";
+import { useNavigate } from "react-router-dom";
+import * as tw from "./SignUp.styles";
+import Terms from "../../hook/modal/Terms/Terms.modal";
 
 export default function SignUp() {
-    const navigate = useNavigate()
-    const [isModalOpen, setIsModalOpen] = useState(false)
+    const navigate = useNavigate();
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const openModal = () => {
-        setIsModalOpen(true)
-    }
+        setIsModalOpen(true);
+    };
     const closeModal = () => {
-        setIsModalOpen(false)
-    }
+        setIsModalOpen(false);
+    };
 
     const [formData, setFormData] = useState({
         email: "",
@@ -22,7 +22,7 @@ export default function SignUp() {
         confirmPassword: "",
         name: "",
         mobile: "",
-    })
+    });
 
     const [formValid, setFormValid] = useState({
         isEmail: false,
@@ -30,49 +30,75 @@ export default function SignUp() {
         isConfirmPassword: false,
         isUserName: false,
         isMobile: false,
-    })
+    });
 
-    const [termsValid, setTermsValid] = useState(false)
+    const [emailValid, setEmailValid] = useState(false);
+    const [termsValid, setTermsValid] = useState(false);
 
     const isFormValid = () => {
-        return formValid.isEmail 
-        && formValid.isPassword 
-        && formValid.isConfirmPassword
-        && formValid.isUserName 
-        && formValid.isMobile
-        && termsValid 
-        && formData.email.length !== 0
-        && formData.password.length !== 0
-        && formData.confirmPassword.length !== 0
-        && formData.name.length !== 0
-        && formData.mobile.length !== 0
-    }
+        return (
+            formValid.isEmail &&
+            formValid.isPassword &&
+            formValid.isConfirmPassword &&
+            formValid.isUserName &&
+            formValid.isMobile &&
+            termsValid &&
+            emailValid &&
+            formData.email.length !== 0 &&
+            formData.password.length !== 0 &&
+            formData.confirmPassword.length !== 0 &&
+            formData.name.length !== 0 &&
+            formData.mobile.length !== 0
+        );
+    };
 
     const handleInput = (e: React.FormEvent<HTMLInputElement>, validationFunction: (value: string) => boolean, validationKey: string) => {
-        const { value } = (e as React.ChangeEvent<HTMLInputElement>).target
+        const { value } = (e as React.ChangeEvent<HTMLInputElement>).target;
         setFormValid({
             ...formValid,
             [validationKey]: validationFunction(value),
-        })
-    }
+        });
+    };
 
     const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target
+        const { name, value } = e.target;
         const sanitizedValue = name === "mobile" ? value.replace(/[^0-9]/g, "").replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3") : value;
-        setFormData({ ...formData, [name]: sanitizedValue })
-    }
+        setFormData({ ...formData, [name]: sanitizedValue });
+    };
 
     const onClickSignUp = async () => {
         try {
-            const response = await axiosInstance.post("/auth/sign-up", formData)
+            const response = await axiosInstance.post("/auth/sign-up", formData);
             if (response.status === 201) {
-                window.alert("성공적으로 가입되었습니다.")
+                window.alert("성공적으로 가입되었습니다.");
             } else {
             }
         } catch (error) {
             handleAxiosError(error, navigate);
         }
-    }
+    };
+
+    const checkEmail = async () => {
+        try {
+            const response = await axiosInstance.get("/user/email/" + formData.email);
+            if (response.data.data === 0) {
+                window.alert("사용이 가능합니다.");
+                setEmailValid(true);
+            } else {
+                window.alert("이미 가입된 이메일입니다.");
+            }
+        } catch (error) {
+            handleAxiosError(error, navigate);
+        }
+    };
+
+    const onClickEmailCheck = () => {
+        if (emailValid === true) {
+            setEmailValid(false);
+        } else {
+            checkEmail();
+        }
+    };
 
     useEffect(() => {
         setFormValid({
@@ -81,15 +107,13 @@ export default function SignUp() {
             isConfirmPassword: true,
             isUserName: true,
             isMobile: true,
-        })
-    }, [])
+        });
+    }, []);
 
     return (
         <tw.Container>
             <tw.ContentsWrap>
-                <tw.ContentsLabel>
-                    가입하기
-                </tw.ContentsLabel>
+                <tw.ContentsLabel>가입하기</tw.ContentsLabel>
 
                 <tw.UpperTag $validator={formValid.isEmail}>이메일 주소</tw.UpperTag>
                 <tw.FlexWrap>
@@ -101,8 +125,15 @@ export default function SignUp() {
                         placeholder="예) travel@travel.co.kr"
                         maxLength={30}
                         $validator={formValid.isEmail}
+                        disabled={emailValid && formData.email.length !== 0}
                     />
-                    <tw.VerifyBtn $validator={formValid.isEmail && formData.email.length !==0} disabled={!formValid.isEmail}>중복확인</tw.VerifyBtn>
+                    <tw.VerifyBtn
+                        onClick={() => onClickEmailCheck()}
+                        $validator={formValid.isEmail && formData.email.length !== 0}
+                        disabled={!formValid.isEmail && formData.email.length !== 0}
+                    >
+                        {emailValid ? "수정하기" : "중복확인"}
+                    </tw.VerifyBtn>
                 </tw.FlexWrap>
                 <tw.UnderTag draggable="true" $validator={formValid.isEmail}>
                     {formData.email === "" ? "" : formValid.isEmail === false ? "travel@travel.co.kr 형식으로 입력해 주세요." : "올바른 이메일입니다."}
@@ -137,14 +168,10 @@ export default function SignUp() {
                     $validator={formValid.isConfirmPassword}
                 />
                 <tw.UnderTag draggable="true" $validator={formValid.isConfirmPassword}>
-                    {formData.confirmPassword === ""
-                        ? ""
-                        : formValid.isConfirmPassword === false
-                        ? "비밀번호가 일치하지 않습니다."
-                        : "비밀번호가 일치합니다."}
+                    {formData.confirmPassword === "" ? "" : formValid.isConfirmPassword === false ? "비밀번호가 일치하지 않습니다." : "비밀번호가 일치합니다."}
                 </tw.UnderTag>
 
-                <tw.UpperTag  $validator={formValid.isUserName}>이름</tw.UpperTag>
+                <tw.UpperTag $validator={formValid.isUserName}>이름</tw.UpperTag>
                 <tw.Input
                     onChange={onChangeInput}
                     onInput={(e) => handleInput(e, checkValidUserName, "isUserName")}
@@ -173,15 +200,13 @@ export default function SignUp() {
                 <tw.FlexWrap>
                     <tw.CheckBox checked={termsValid} onChange={() => setTermsValid((prevTermsValid) => !prevTermsValid)} type="checkbox" />
                     <tw.CheckLabel>
-                        I agree to the
-                        <tw.Terms onClick={openModal}> Terms & Conditions </tw.Terms>
-                        and
-                        <tw.Terms onClick={openModal}> Privacy Policy</tw.Terms>
+                        <tw.Terms onClick={openModal}> 개인정보 처리방침</tw.Terms>
+                        에 따라 본인의 개인 정보를 사용하고 수집하는 것에 동의합니다.
                     </tw.CheckLabel>
                 </tw.FlexWrap>
 
                 <tw.RegBtn onClick={onClickSignUp} $validator={isFormValid()} disabled={!isFormValid()}>
-                    Create account
+                    가입하기
                 </tw.RegBtn>
             </tw.ContentsWrap>
 
@@ -191,5 +216,5 @@ export default function SignUp() {
                 </ModalPortal>
             )}
         </tw.Container>
-    )
+    );
 }

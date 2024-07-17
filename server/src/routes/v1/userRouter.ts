@@ -19,6 +19,7 @@ userRouter.put(
 );
 
 userRouter.get("/name/:id", asyncHandler(userController.getNameByUserId));
+userRouter.get("/email/:id", asyncHandler(userController.checkEmail));
 
 
 export default userRouter;

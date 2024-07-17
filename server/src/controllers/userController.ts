@@ -29,5 +29,14 @@ const userController = {
             data: user,
         });
     },
+
+    async checkEmail(req: Request, res: Response) {
+        const user = await userService.checkEmail(req.params.id);
+
+        res.status(200).json({
+            error: null,
+            data: user,
+        });
+    },
 };
 export default userController;
