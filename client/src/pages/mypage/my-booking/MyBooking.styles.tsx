@@ -4,7 +4,7 @@ interface ColorProps{
     $color: string
 }
 
-export const Container = tw.div`w-full h-full flex flex-col items-center`
+export const Container = tw.div`w-full h-full flex flex-col items-center mb-10`
 export const FlexWrap = tw.div`flex
 mobile:flex-col`
 

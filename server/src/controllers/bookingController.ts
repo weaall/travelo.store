@@ -152,7 +152,6 @@ const bookingController = {
 
     async confirmBooking(req: Request, res: Response) {
         const { hotelName, hotel_id, name, email, mobile, paymentType, orderId, paymentKey, amount } = req.query;
-        console.log(req.query)
 
         const widgetSecretKey = "test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6";
         const encryptedSecretKey = "Basic " + Buffer.from(widgetSecretKey + ":").toString("base64");

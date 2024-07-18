@@ -34,6 +34,7 @@ bookingRouter.get(
 
 bookingRouter.get(
     "/:id",
+    bookingValidator.getBookingById, validateError,
     isAuthenticated,
     asyncHandler((req: Request, res: Response) => bookingController.getBookingById(req as JWTCheck, res)),
 );

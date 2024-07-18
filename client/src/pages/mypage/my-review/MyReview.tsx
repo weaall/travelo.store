@@ -140,7 +140,7 @@ export default function MyReviewPage() {
                 <tw.ContentsWrap>
                     {Object.keys(groupedBookings).length === 0 ? (
                         <tw.NoBookingWrap>
-                            <tw.NoBookingText>예정된 여행이 없어요!</tw.NoBookingText>
+                            <tw.NoBookingText>다녀온 여행이 없어요!</tw.NoBookingText>
                             <tw.GoTripBtn onClick={() => navigate("/")}>여행하러가기</tw.GoTripBtn>
                         </tw.NoBookingWrap>
                     ) : (

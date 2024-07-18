@@ -102,7 +102,7 @@ const hotelService = {
         }
     },
     
-    async myHotel(user_id: string) {
+    async getMyHotel(user_id: string) {
         const connection = await pool.getConnection();
 
         const checkIdSql = "SELECT * FROM hotel WHERE user_id = ?";
