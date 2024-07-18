@@ -11,16 +11,13 @@ const bookingRouter = Router();
 
 bookingRouter.post(
     "/ref",
-    bookingValidator.addBookingRef,
-    validateError,
     isAuthenticated,
     asyncHandler((req: Request, res: Response) => bookingController.addBookingRef(req as JWTCheck, res)),
 );
 
+bookingRouter.get("/confirm", bookingValidator.confirmBooking, validateError, asyncHandler(bookingController.confirmBooking));
 
-bookingRouter.get("/confirm", asyncHandler(bookingController.confirm));
-
-bookingRouter.post("/remove", asyncHandler(bookingController.removeBookingRef));
+bookingRouter.delete("/delete/:id", bookingValidator.deleteBookingRef, validateError, asyncHandler(bookingController.deleteBookingRef));
 
 bookingRouter.get(
     "/user",

@@ -47,17 +47,9 @@ const bookingController = {
         }
     },
 
-    async removeBookingRef(req: Request, res: Response) {
-        let bookingRefProps = req.query.booking_id as string;
-
-        if (bookingRefProps === undefined) {
-            bookingRefProps = req.body.booking_id;
-        }
-
-        console.log(bookingRefProps);
-
+    async deleteBookingRef(req: Request, res: Response) {
         try {
-            const data = await bookingService.removeBookingRef(bookingRefProps);
+            const data = await bookingService.deleteBookingRef(req.params.id);
 
             res.status(200).json({
                 error: null,
@@ -158,8 +150,9 @@ const bookingController = {
         }
     },
 
-    async confirm(req: Request, res: Response) {
+    async confirmBooking(req: Request, res: Response) {
         const { hotelName, hotel_id, name, email, mobile, paymentType, orderId, paymentKey, amount } = req.query;
+        console.log(req.query)
 
         const widgetSecretKey = "test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6";
         const encryptedSecretKey = "Basic " + Buffer.from(widgetSecretKey + ":").toString("base64");

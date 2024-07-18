@@ -20,6 +20,7 @@ export const authValidator = {
             .notEmpty()
             .withMessage("이름을 입력해주세요")
             .trim()
+            .matches(/^[가-힣a-zA-Z\s]+$/)
             .isLength({ min: 2, max: 20 })
             .withMessage("이름은 2자에서 20자 사이어야 합니다."),
 

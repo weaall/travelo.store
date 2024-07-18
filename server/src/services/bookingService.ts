@@ -23,7 +23,7 @@ const bookingService = {
         }
     },
 
-    async removeBookingRef( booking_id: string) {
+    async deleteBookingRef( booking_id: string) {
         const connection = await pool.getConnection();
 
         const removeBookingRefSql = `DELETE FROM booking_ref WHERE booking_id = ?`;

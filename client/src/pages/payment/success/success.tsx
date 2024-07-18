@@ -35,7 +35,7 @@ export function SuccessPage() {
         check_in: "",
         check_out: "",
         name: "",
-        phone_num: 0,
+        mobile: 0,
         emial: "",
     });
 
@@ -243,7 +243,7 @@ export function SuccessPage() {
                         <tw.DetailLabel>대표 전화번호</tw.DetailLabel>
                     </tw.DetailLabelWrap>
                     <tw.DetailTextWrap>
-                        <tw.DetailText>{bookingData.phone_num}</tw.DetailText>
+                        <tw.DetailText>{bookingData.mobile}</tw.DetailText>
                     </tw.DetailTextWrap>
                 </tw.DetailRow>
                 <tw.DetailRow>

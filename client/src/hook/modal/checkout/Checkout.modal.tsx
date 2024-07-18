@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import * as tw from "./Checkout.modal.styles";
 import { useNavigate } from "react-router-dom";
 import { sendJWT } from "../../../utils/jwtUtils";
-import { axios, axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
+import { axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
 
 
 interface ModalProps {
@@ -77,7 +77,6 @@ export function CheckoutModal( props : ModalProps) {
                 url: "/booking/ref",
                 data: {
                     booking_id: customerKey,
-                    hotel_id: props.hotelId,
                     room_id: props.roomId,
                     total_price: props.totalPrice,
                     check_in: props.checkInDate,
@@ -93,7 +92,7 @@ export function CheckoutModal( props : ModalProps) {
 
     const removeBookingRef = async () => {
         try {
-            const response = await axiosInstance.post("/booking/remove", { booking_id: customerKey });
+            await axiosInstance.delete("/booking/delete/" + customerKey);
         } catch (error) {
             handleAxiosError(error, navigate);
         }
