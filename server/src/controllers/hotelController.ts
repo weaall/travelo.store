@@ -62,15 +62,6 @@ const hotelController = {
         });
     },
 
-    async checkHotelById(req: JWTCheck, res: Response) {
-        const data = await hotelService.checkHotelById(req.user.id, req.params.id);
-
-        res.status(200).json({
-            error: null,
-            data: data,
-        });
-    },
-
     async getHotelInfoById(req: JWTCheck, res: Response) {
         const data = await hotelService.getHotelInfoById(req.user.id, req.params.id);
 

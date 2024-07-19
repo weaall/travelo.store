@@ -6,9 +6,11 @@ import { useNavigate } from "react-router-dom";
 import { ModalPortal } from "../../../hook/modal/ModalPortal";
 import DaumPostcodeModal from "../../../hook/modal/daum-postcode/DaumPostcode.modal";
 import { checkValidAccountNum, checkValidBusinessNum, checkValidEmail, checkValidInput, checkValidUserName } from "../../../utils/regExp.utils";
+import Loading from "../../../components/loading/Loading";
 
 export default function HotelRegPage() {
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
 
     const [isDaumAddressModalOpen, setIsSearchDateModalOpen] = useState(false);
 
@@ -70,7 +72,13 @@ export default function HotelRegPage() {
 
     const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        const sanitizedValue = name === "reg_num" || name === "account" ? value.replace(/[^0-9]/g, "") : value;
+    
+        const sanitizedValue = name === "reg_num" 
+            ? value.replace(/[^0-9]/g, "").replace(/(\d{3})(\d{2})(\d{5})/, "$1-$2-$3").slice(0, 12 + 2)  // 하이픈 2개를 고려하여 최대 길이 14자리
+            : name === "account" 
+            ? value.replace(/[^0-9]/g, "")
+            : value;
+    
         setFormData({ ...formData, [name]: sanitizedValue });
     };
 
@@ -143,6 +151,7 @@ export default function HotelRegPage() {
     };
 
     const onClickRegister = async () => {
+        setLoading(true)
         try {
             const uploadedKeys = await uploadFilesToS3();
 
@@ -179,6 +188,10 @@ export default function HotelRegPage() {
             isImages: true,
         });
     }, []);
+
+    if (loading) {
+        return <Loading />;
+    }
 
     return (
         <tw.Container>
@@ -236,7 +249,7 @@ export default function HotelRegPage() {
                         onInput={(e) => handleInput(e, checkValidInput, "isBank")}
                         value={formData.bank}
                         name="bank"
-                        maxLength={10}
+                        maxLength={12}
                         $validator={formValid.isBank}
                     />
                     <tw.UnderTag draggable="true" $validator={formValid.isBank}>

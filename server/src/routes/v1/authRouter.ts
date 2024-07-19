@@ -2,7 +2,7 @@ import { Router } from "express";
 import authController from "../../controllers/authController";
 import asyncHandler from "../../utils/asyncHandler";
 import { authValidator } from "../../middlewares/validator/authValidator";
-import { validateError } from "../../middlewares/validator/validatorError";
+import { validateError } from "../../middlewares/validator/validateError";
 
 const authRouter = Router();
 

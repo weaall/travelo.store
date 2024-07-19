@@ -76,8 +76,6 @@ const authController = {
 
     async presignedUrl(req: Request, res: Response) {
         const { key, contentType } = req.body;
-
-        console.log(req.body)
         try {
             const signedUrl = await presignedUrl(key, contentType);
 

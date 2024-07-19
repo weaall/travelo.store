@@ -22,7 +22,7 @@ export default function HotelMgmt() {
         try {
             const config = await sendJWT({
                 method: "get",
-                url: "/hotel/mgmt/" + hotelId,
+                url: "/hotel/mgmt/info/" + hotelId,
             });
 
             const response = await axiosInstance.request(config);

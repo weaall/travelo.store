@@ -14,7 +14,7 @@ interface AddMsgByHotelId {
 }
 
 const msgService = {
-    async addMsg(user_id: string, { hotel_id, text }: AddMsgProps) {
+    async sendMsg(user_id: string, { hotel_id, text }: AddMsgProps) {
         const addMsg = "INSERT INTO message (user_id, hotel_id, text) VALUES (? , ? , ?)";
         const addMsgValues = [user_id, hotel_id, text];
 

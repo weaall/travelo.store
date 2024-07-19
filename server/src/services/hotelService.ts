@@ -118,22 +118,6 @@ const hotelService = {
         }
     },
 
-    async checkHotelById(user_id: string, id: string) {
-        const connection = await pool.getConnection();
-
-        const checkIdSql = "SELECT * FROM hotel WHERE user_id = ? and id = ?";
-        const checkIdParams = [user_id, id];
-        try {
-            const [rows, fields]: [HotelRows[], FieldPacket[]] = await connection.execute(checkIdSql, checkIdParams);
-
-            return rows;
-        } catch (error) {
-            throw error;
-        } finally {
-            connection.release();
-        }
-    },
-
     async getHotelInfoById(user_id: string, hotel_id: string) {
         const connection = await pool.getConnection();
 

@@ -4,8 +4,8 @@ import { getRedis, setRedis } from "../utils/redisUtils";
 import msgService from "../services/msgService";
 
 const msgController = {
-    async addMsg(req: JWTCheck, res: Response) {
-        const data = await msgService.addMsg(req.user.id, req.body);
+    async sendMsg(req: JWTCheck, res: Response) {
+        const data = await msgService.sendMsg(req.user.id, req.body);
 
         res.status(201).json({
             error: null,
@@ -14,20 +14,10 @@ const msgController = {
     },
 
     async sendMsgFromHotel(req: JWTCheck, res: Response) {
-        console.log(req.body)
         const data = await msgService.sendMsgFromHotel(req.user.id, 
             req.body.user_id,req.body.hotel_id,req.body.text);
 
         res.status(201).json({
-            error: null,
-            data: data,
-        });
-    },
-
-    async getMsgByBothId(req: JWTCheck, res: Response) {
-        const data = await msgService.getMsgByBothId(req.user.id, req.params.id);
-
-        res.status(200).json({
             error: null,
             data: data,
         });
@@ -102,6 +92,15 @@ const msgController = {
                 data: data,
             });
         }
+    },
+
+    async getMsgByBothId(req: JWTCheck, res: Response) {
+        const data = await msgService.getMsgByBothId(req.user.id, req.params.id);
+
+        res.status(200).json({
+            error: null,
+            data: data,
+        });
     },
 };
 

@@ -82,13 +82,12 @@ export const authValidator = {
     ],
 
     presignedUrl: [
-        body("code")
+        body("key")
             .notEmpty()
             .trim(),
     
-        body("state")
+        body("contentType")
             .notEmpty()
             .trim()
-            .isBoolean()
     ],
 };

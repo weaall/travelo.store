@@ -4,7 +4,7 @@ import { JWTCheck } from "../../interface/interfaces"
 import isAuthenticated from "../../middlewares/isAuthenticated"
 import bookingController from "../../controllers/bookingController"
 import { bookingValidator } from "../../middlewares/validator/bookingValidator"
-import { validateError } from "../../middlewares/validator/validatorError"
+import { validateError } from "../../middlewares/validator/validateError"
 
 
 const bookingRouter = Router();
