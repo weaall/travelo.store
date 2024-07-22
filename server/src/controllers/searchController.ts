@@ -8,12 +8,12 @@ import { getSearchRows, priceFilter } from "../interface/mysql.interface";
 export const searchController = {
     async getSearch(req: Request, res: Response) {
         const searchValue = decodeURIComponent(req.query.searchValue as string);
-        const startDate = dayjs(req.query.startDate as string).format("YYYY-MM-DD");
-        const endDate = dayjs(req.query.endDate as string).format("YYYY-MM-DD");
+        const checkInDate = dayjs(req.query.checkInDate as string).format("YYYY-MM-DD");
+        const checkOutDate = dayjs(req.query.checkOutDate as string).format("YYYY-MM-DD");
         const personNum = parseInt(req.query.adult as string) + parseInt(req.query.child as string);
 
         const filterByHotelId = (data: getSearchRows[]) => {
-            const filterdData = data.filter((item) => item.room_price.length === dayjs(endDate).diff(dayjs(startDate), "day"));
+            const filterdData = data.filter((item) => item.room_price.length === dayjs(checkOutDate).diff(dayjs(checkInDate), "day"));
 
             const filteredHotel: { [key: string]: getSearchRows } = {};
 
@@ -37,7 +37,7 @@ export const searchController = {
         const filterByDate = (priceData: RoomPriceRows[]) => {
             return priceData.filter((price) => {
                 return (
-                    dayjs(price.date).isAfter(dayjs(startDate).subtract(1, "day")) && dayjs(price.date).isBefore(endDate, "day")
+                    dayjs(price.date).isAfter(dayjs(checkInDate).subtract(1, "day")) && dayjs(price.date).isBefore(checkOutDate, "day")
                 );
             });
         };

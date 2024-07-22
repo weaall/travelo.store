@@ -6,16 +6,18 @@ export const msgValidator = {
         body("text").notEmpty().trim(),
     ],
     sendMsgFromHotel: [
-        param("hotel_id").notEmpty().trim(),
-        param("user_id").notEmpty().trim(),
+        body("hotel_id").notEmpty().trim(),
+        body("user_id").notEmpty().trim(),
+        body("text").notEmpty().trim(),
     ],
     getMsgByBothId: [
-        body("hotel_id").notEmpty().trim(),
+        param("id").notEmpty().trim(),
     ],
     getMsgByHotelId: [
         param("id").notEmpty().trim(),
     ],
     getMsgFromHotel: [
-        param("id").notEmpty().trim(),
+        param("hotel_id").notEmpty().trim(),
+        param("user_id").notEmpty().trim(),
     ],
 }

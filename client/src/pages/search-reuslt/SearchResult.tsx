@@ -14,7 +14,7 @@ import * as tw from "./SearchResult.styles";
 export default function SearchResult() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
-    const { searchValue, startDate, endDate, adult, child } = useParams();
+    const { searchValue, checkInDate, checkOutDate, adult, child } = useParams();
 
     const [hotelList, setHotelList] = useState([
         {
@@ -64,8 +64,8 @@ export default function SearchResult() {
             const response = await axiosInstance.get("/search", {
                 params: {
                     searchValue: encodeURIComponent(`${searchValue}`),
-                    startDate: startDate,
-                    endDate: endDate,
+                    checkInDate: checkInDate,
+                    checkOutDate: checkOutDate,
                     adult: adult,
                     child: child,
                 },
@@ -80,12 +80,12 @@ export default function SearchResult() {
 
     const clickHotel = (hotelId : number) =>{
         const encryptedId = encrypt(`${hotelId}`);
-        navigate(`/hotel/${encryptedId}/${startDate}/${endDate}/${adult}/${child}`);
+        navigate(`/hotel/${encryptedId}/${checkInDate}/${checkOutDate}/${adult}/${child}`);
     }
 
     useEffect(() => {
         fetchSearch();
-    }, [searchValue, startDate, endDate, adult, child]);
+    }, [searchValue, checkInDate, checkOutDate, adult, child]);
 
     const sortedHotelList = [...hotelList].sort((a, b) => {
         const totalPriceA = a.room_price.reduce((total, room) => total + room.price, 0);
@@ -109,8 +109,8 @@ export default function SearchResult() {
             <tw.MainContainer>
                 <SearchBox
                     defaultSearchValue={searchValue}
-                    defaultStartDate={startDate}
-                    defaultEndDate={endDate}
+                    defaultStartDate={checkInDate}
+                    defaultEndDate={checkOutDate}
                     defaultAdult={parseInt(adult || "2")}
                     defaultChild={parseInt(child || "0")}
                 />
@@ -179,7 +179,7 @@ export default function SearchResult() {
 
                                         <tw.PriceWrap>
                                             <tw.TotalLabel>
-                                                {dayjs(endDate).diff(dayjs(startDate), "day")}박 총 요금
+                                                {dayjs(checkOutDate).diff(dayjs(checkInDate), "day")}박 총 요금
                                             </tw.TotalLabel>
                                             <tw.TotalPrice>
                                                 {hotel.room_price

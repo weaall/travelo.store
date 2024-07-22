@@ -32,7 +32,7 @@ export default function Hotel() {
         setIsKakaoMapModalOpen(false);
     };
 
-    const { encryptedId, startDate, endDate, adult, child } = useParams();
+    const { encryptedId, checkInDate, checkOutDate, adult, child } = useParams();
 
     const id = decrypt(encryptedId || "");
 
@@ -126,8 +126,8 @@ export default function Hotel() {
 
                 const roomPriceresponse = await axiosInstance.get(`/room/price/${room.id}`, {
                     params: {
-                        startDate: startDate,
-                        endDate: endDate,
+                        checkInDate: checkInDate,
+                        checkOutDate: checkOutDate,
                     },
                 });
                 room.room_price = roomPriceresponse.data.data;
@@ -147,12 +147,12 @@ export default function Hotel() {
         }
         const encryptedHotelId = encrypt(`${hotelId}`);
         const encryptedRoomId = encrypt(`${roomId}`);
-        navigate(`/payment/${encryptedHotelId}/${encryptedRoomId}/${startDate}/${endDate}`);
+        navigate(`/payment/${encryptedHotelId}/${encryptedRoomId}/${checkInDate}/${checkOutDate}`);
     };
 
     useEffect(() => {
         fetchHotel();
-    }, [startDate, endDate]);
+    }, [checkInDate, checkOutDate]);
 
     const sortedRoomList = [...roomList].sort((a, b) => {
         const totalPriceA = a.room_price.reduce((total, room) => total + room.price, 0);
@@ -177,8 +177,8 @@ export default function Hotel() {
                 <tw.SearchWrap>
                     <SearchBoxSlim
                         defaultSearchValue={hotelData.name}
-                        defaultStartDate={startDate}
-                        defaultEndDate={endDate}
+                        defaultStartDate={checkInDate}
+                        defaultEndDate={checkOutDate}
                         defaultAdult={parseInt(adult || "2")}
                         defaultChild={parseInt(child || "0")}
                         currentHotelId={id}
@@ -188,8 +188,8 @@ export default function Hotel() {
                 <tw.SearchWrapMobile>
                     <SearchBox
                         defaultSearchValue={hotelData.name}
-                        defaultStartDate={startDate}
-                        defaultEndDate={endDate}
+                        defaultStartDate={checkInDate}
+                        defaultEndDate={checkOutDate}
                         defaultAdult={parseInt(adult || "2")}
                         defaultChild={parseInt(child || "0")}
                         currentHotelId={id}
@@ -253,10 +253,11 @@ export default function Hotel() {
                                             </tw.RoomText>
                                         </tw.InfoWrap>
                                         <tw.PriceWrap>
-                                            <tw.TotalLabel>{startDate}~</tw.TotalLabel>
-                                            <tw.TotalLabel>{dayjs(endDate).diff(dayjs(startDate), "day")}박 총 요금</tw.TotalLabel>
+                                            <tw.TotalLabel>{checkInDate}~</tw.TotalLabel>
+                                            <tw.TotalLabel>{dayjs(checkOutDate).diff(dayjs(checkInDate), "day")}박 총 요금</tw.TotalLabel>
                                             <tw.TotalPrice>{room.room_price.reduce((total, room) => total + room.price, 0).toLocaleString()}원</tw.TotalPrice>
-                                            {room.room_price.length === 0 || room.room_price.some((priceData) => priceData.room_limit === priceData.room_current || priceData.price === 0) ? (
+                                            {room.room_price.length === 0 ||
+                                            room.room_price.some((priceData) => priceData.room_limit === priceData.room_current || priceData.price === 0) ? (
                                                 <tw.BookBtnWrap>
                                                     <tw.BookBtn>객실이 모두 소진되었습니다.</tw.BookBtn>
                                                 </tw.BookBtnWrap>

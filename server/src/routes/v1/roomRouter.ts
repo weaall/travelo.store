@@ -8,7 +8,7 @@ import { validateError } from "../../middlewares/validator/validateError";
 
 const roomRouter = Router();
 
-roomRouter.get("/hotel/:id", roomValidator.getRoomByHotel, validateError, isAuthenticated, asyncHandler(roomController.getRoomByHotel));
+roomRouter.get("/hotel/:id", roomValidator.getRoomByHotel, validateError, asyncHandler(roomController.getRoomByHotel));
 
 roomRouter.get("/bed", asyncHandler(roomController.getBedType));
 
@@ -50,6 +50,6 @@ roomRouter.post(
     asyncHandler((req: Request, res: Response) => roomController.insertPriceByMonth(req as JWTCheck, res)),
 );
 
-roomRouter.get("/price/:id", asyncHandler(roomController.getPriceByRoomId));
+roomRouter.get("/price/:id", roomValidator.getPriceByRoomId, validateError, asyncHandler(roomController.getPriceByRoomId));
 
 export default roomRouter;

@@ -125,7 +125,7 @@ export default function MyMsgPage() {
                                     </tw.UpperWrap>
                                     <tw.LowerWrap>
                                         <tw.Text>{msg.text}</tw.Text>
-                                        <tw.Checked $checked={msg.checked} />
+                                        <tw.Checked $checked={msg.checked === 0 && msg.by_user === 0} />
                                     </tw.LowerWrap>
                                 </tw.MsgInfoWrap>
                             </tw.MsgWrap>

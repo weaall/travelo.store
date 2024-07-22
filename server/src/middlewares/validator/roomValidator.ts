@@ -60,4 +60,9 @@ export const roomValidator = {
         body("saturday").notEmpty().trim(),
         body("room_limit").notEmpty().trim(),
     ],
+    getPriceByRoomId: [
+        param("id").notEmpty().trim(),
+        query("checkInDate").notEmpty().trim(),
+        query("checkOutDate").notEmpty().trim(),
+    ]
 }

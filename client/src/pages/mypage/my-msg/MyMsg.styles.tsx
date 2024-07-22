@@ -1,7 +1,7 @@
 import tw from "tailwind-styled-components"
 
 interface CheckedProps{
-    $checked: number
+    $checked: boolean
 }
 
 export const Container = tw.div`w-full h-full flex flex-col items-center`
@@ -39,4 +39,4 @@ export const LowerWrap = tw.div`w-full flex justify-between items-center`
 export const Text = tw.p`text-sm max-w-[340px] truncate text-gray-400 font-medium
 mobile:max-w-[75%] mobile:text-xs`
 export const Checked = tw.div<CheckedProps>`w-2 h-2 bg-main rounded-full
-${(p) => (p.$checked === 0 ? "block" : "hidden")}`
+${(p) => (p.$checked ? "block" : "hidden")}`

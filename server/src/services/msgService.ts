@@ -140,7 +140,7 @@ const msgService = {
         const updateChecked = `
             UPDATE message
             SET checked = 1
-            WHERE user_id = ? AND hotel_id = ? AND checked = 0;`;
+            WHERE user_id = ? AND hotel_id = ? AND checked = 0 AND by_user = 1`;
         const updateCheckedValues = [user_id, hotel_id];
 
 
@@ -189,8 +189,8 @@ const msgService = {
         const checkAuthSql = "SELECT * FROM hotel WHERE id = ? and user_id = ?";
         const checkAuthParams = [hotel_id, user_id];
 
-        const addMsg = "INSERT INTO message (user_id, hotel_id, text, checked, by_user) VALUES (?, ?, ?, ?, ?)";
-        const addMsgValues = [user_id, hotel_id, text, 0, 0];
+        const addMsg = "INSERT INTO message (user_id, hotel_id, text, by_user) VALUES (?, ?, ?, ?, ?)";
+        const addMsgValues = [user_id, hotel_id, text, 0];
 
         const connection = await pool.getConnection();
 

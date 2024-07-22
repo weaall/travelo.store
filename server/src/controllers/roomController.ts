@@ -109,18 +109,17 @@ const roomController = {
         });
     },
 
-
     async getPriceByRoomId(req: Request, res: Response) {
         const roomId: string = req.params.id;
-        const startDate = dayjs(req.query.startDate as string).format("YYYY-MM-DD");
-        const endDate = dayjs(req.query.endDate as string).format("YYYY-MM-DD");
+        const checkInDate = dayjs(req.query.checkInDate as string).format("YYYY-MM-DD");
+        const checkOutDate = dayjs(req.query.checkOutDate as string).format("YYYY-MM-DD");
 
         const filterByDate = (priceData: RoomPriceRows[]) => {
-            if (startDate === endDate) {
+            if (checkInDate === checkOutDate) {
                 return priceData;
             } else {
                 return priceData.filter((price) => {
-                    return dayjs(price.date).isAfter(dayjs(startDate).subtract(1, "day")) && dayjs(price.date).isBefore(endDate, "day");
+                    return dayjs(price.date).isAfter(dayjs(checkInDate).subtract(1, "day")) && dayjs(price.date).isBefore(checkOutDate, "day");
                 });
             }
         };

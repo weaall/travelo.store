@@ -35,8 +35,8 @@ function App() {
                             <Route path="/signin" element={<SignIn />} />
                             <Route path="/signup" element={<SignUp />} />
 
-                            <Route path="/hotel/:encryptedId/:startDate/:endDate/:adult/:child" element={<Hotel />} />
-                            <Route path="/payment/:encryptedHotelId/:encryptedRoomId/:startDate/:endDate" element={<Payment />} />
+                            <Route path="/hotel/:encryptedId/:checkInDate/:checkOutDate/:adult/:child" element={<Hotel />} />
+                            <Route path="/payment/:encryptedHotelId/:encryptedRoomId/:checkInDate/:checkOutDate" element={<Payment />} />
 
                             <Route path="/hotel/mgmt/">
                                 <Route path=":hotelId/*" element={<HotelMgmt />} />
@@ -44,7 +44,7 @@ function App() {
                             <Route path="/auth/kakao" element={<AuthKaKao />} />
                             <Route path="/auth/naver" element={<AuthNaver />} />
 
-                            <Route path="/search/:searchValue/:startDate/:endDate/:adult/:child" element={<SearchResult />} />
+                            <Route path="/search/:searchValue/:checkInDate/:checkOutDate/:adult/:child" element={<SearchResult />} />
                             <Route path="/success/:id" element={<SuccessPage />} />
                             <Route path="/fail" element={<FailPage />} />
                         </Routes>

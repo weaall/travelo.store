@@ -44,4 +44,4 @@ export const AddTextBtn = tw.button`mt-1.5 py-1.5 px-3 inline-flex flex-shrink-0
 export const AddTextSvg = tw.img`w-6`
 export const AddTextNum = tw.p`text-end px-3 text-xs text-gray-500`
 
-export const ListWrap = tw.div`overflow-y-auto pb-3 min-h-screen-36`
+export const ListWrap = tw.div`overflow-y-auto pb-3`

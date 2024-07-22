@@ -18,7 +18,7 @@ export default function Payment() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
 
-    const { encryptedHotelId, encryptedRoomId, startDate, endDate } = useParams();
+    const { encryptedHotelId, encryptedRoomId, checkInDate, checkOutDate } = useParams();
 
     const hotelId = decrypt(encryptedHotelId || "");
     const roomId = decrypt(encryptedRoomId || "");
@@ -193,8 +193,8 @@ export default function Payment() {
 
             const roomPriceResponse = await axiosInstance.get("/room/price/" + roomId, {
                 params: {
-                    startDate: startDate,
-                    endDate: endDate,
+                    checkInDate: checkInDate,
+                    checkOutDate: checkOutDate,
                 },
             });
             room.room_price = roomPriceResponse.data.data;
@@ -217,7 +217,7 @@ export default function Payment() {
     useEffect(() => {
         fetchUser();
         fetchHotel();
-    }, [startDate, endDate]);
+    }, [checkInDate, checkOutDate]);
 
     useEffect(() => {
         if (userCheck) {
@@ -348,7 +348,7 @@ export default function Payment() {
                     </tw.OuterWrap>
                     <tw.PriceWrap>
                         <tw.PriceRow>
-                            <tw.PriceLabel>객실 가격 ({dayjs(endDate).diff(dayjs(startDate), "day")}박)</tw.PriceLabel>
+                            <tw.PriceLabel>객실 가격 ({dayjs(checkOutDate).diff(dayjs(checkInDate), "day")}박)</tw.PriceLabel>
                             <tw.PriceLabel>{roomData.room_price.reduce((total, room) => total + room.price, 0).toLocaleString()}원</tw.PriceLabel>
                         </tw.PriceRow>
                         <tw.PriceRow>
@@ -380,8 +380,8 @@ export default function Payment() {
             {isCheckoutModalOpen && (
                 <ModalPortal>
                     <CheckoutModal
-                        checkInDate={startDate || ""}
-                        checkOutDate={endDate || ""}
+                        checkInDate={checkInDate || ""}
+                        checkOutDate={checkOutDate || ""}
                         hotelId={hotelData.id}
                         hotelName={hotelData.name}
                         roomId={roomId}

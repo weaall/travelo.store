@@ -105,7 +105,7 @@ export default function HotelMsgPage({ hotel_id }: { hotel_id: string | undefine
                                 </tw.UpperWrap>
                                 <tw.LowerWrap>
                                     <tw.Text>{msg.text}</tw.Text>
-                                    <tw.Checked $checked={msg.checked} />
+                                    <tw.Checked $checked={msg.checked === 0 && msg.by_user === 1} />
                                 </tw.LowerWrap>
                             </tw.MsgInfoWrap>
                         </tw.MsgWrap>
