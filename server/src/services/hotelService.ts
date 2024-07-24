@@ -9,16 +9,13 @@ const hotelService = {
     async getHotel() {
         const connection = await pool.getConnection();
 
-        const getHotelInfoSql =
-            `SELECT * FROM hotel AS H 
+        const getHotelInfoSql = `SELECT * FROM hotel AS H 
             left join hotel_service as S on H.id = S.hotel_id 
             left join hotel_facility as F using (hotel_id)
             WHERE H.permission = 1`;
 
         try {
-            const [rows, fields]: [HotelInfoRows[], FieldPacket[]] = await connection.execute(
-                getHotelInfoSql,
-            );
+            const [rows, fields]: [HotelInfoRows[], FieldPacket[]] = await connection.execute(getHotelInfoSql);
 
             return rows;
         } catch (error) {
@@ -27,11 +24,11 @@ const hotelService = {
             connection.release();
         }
     },
-    async getHotelById(id : string) {
+
+    async getHotelById(id: string) {
         const connection = await pool.getConnection();
 
-        const getHotelSql =
-            `SELECT H.id, H.name, H.postcode, H.address, H.address_detail, H.description, H.check_in, H.check_out,
+        const getHotelSql = `SELECT H.id, H.name, H.postcode, H.address, H.address_detail, H.description, H.check_in, H.check_out,
             S.wifi, S.always_check_in, S.breakfast, S.barbecue,
             F.carpark, F.restaurant, F.cafe, F.swimming_pool, F.spa, F.fitness, F.convenience_store
             FROM hotel AS H 
@@ -42,9 +39,7 @@ const hotelService = {
         const getHotelValues = [id];
 
         try {
-            const [rows, fields]: [HotelInfoRows[], FieldPacket[]] = await connection.execute(
-                getHotelSql, getHotelValues
-            );
+            const [rows, fields]: [HotelInfoRows[], FieldPacket[]] = await connection.execute(getHotelSql, getHotelValues);
 
             return rows;
         } catch (error) {
@@ -53,46 +48,40 @@ const hotelService = {
             connection.release();
         }
     },
-    async regHotel(
-        user_id: string,
-        { name, address, address_detail, postcode, reg_num, bank, account, owner, urls }: RegHotelParams,
-    ) {
-        const addHotelSql =
-            "INSERT INTO hotel (user_id, name, postcode, address, address_detail) VALUES (?, ?, ?, ?, ?)";
+
+    async regHotel(user_id: string, { name, address, address_detail, postcode, reg_num, bank, account, owner, urls }: RegHotelParams) {
+        const addHotelSql = "INSERT INTO hotel (user_id, name, postcode, address, address_detail) VALUES (?, ?, ?, ?, ?)";
         const addHotelValues = [user_id, name, postcode, address, address_detail];
-    
+
         const addHotelRegSql = "INSERT INTO hotel_reg (hotel_id, reg_num, bank, account, owner) VALUES (?, ?, ?, ?, ?)";
         const addHotelRegValues = [reg_num, bank, account, owner];
-    
+
         const addHotelServSql = "INSERT INTO hotel_service (hotel_id) VALUES (?)";
-    
+
         const addHotelFacilSql = "INSERT INTO hotel_facility (hotel_id) VALUES (?)";
-    
+
         const addRegDocSql = "INSERT INTO hotel_reg_doc (hotel_id, url) VALUES (?,?)";
         const addRegDocValues = urls.map((url) => [url]);
-        
+
         const connection = await pool.getConnection();
         try {
             await connection.beginTransaction();
-    
-            const [addHotelResult]: [ResultSetHeader, FieldPacket[]] = await connection.execute(
-                addHotelSql,
-                addHotelValues,
-            );
-    
+
+            const [addHotelResult]: [ResultSetHeader, FieldPacket[]] = await connection.execute(addHotelSql, addHotelValues);
+
             const hotel_id = addHotelResult.insertId;
             await connection.execute(addHotelRegSql, [hotel_id, ...addHotelRegValues]);
             await connection.execute(addHotelServSql, [hotel_id]);
             await connection.execute(addHotelFacilSql, [hotel_id]);
-    
+
             if (addRegDocValues.length > 0) {
                 for (const imageUrl of urls) {
                     await connection.execute(addRegDocSql, [hotel_id, imageUrl]);
                 }
             }
-    
+
             await connection.commit();
-    
+
             return;
         } catch (error) {
             await connection.rollback();
@@ -101,7 +90,7 @@ const hotelService = {
             connection.release();
         }
     },
-    
+
     async getMyHotel(user_id: string) {
         const connection = await pool.getConnection();
 
@@ -126,10 +115,7 @@ const hotelService = {
         const getHotelInfoSqlParams = [user_id, hotel_id];
 
         try {
-            const [rows, fields]: [HotelInfoRows[], FieldPacket[]] = await connection.execute(
-                getHotelInfoSql,
-                getHotelInfoSqlParams,
-            );
+            const [rows, fields]: [HotelInfoRows[], FieldPacket[]] = await connection.execute(getHotelInfoSql, getHotelInfoSqlParams);
 
             return rows;
         } catch (error) {
@@ -145,10 +131,7 @@ const hotelService = {
         const checkHotelImgSql = "SELECT url FROM hotel_img where hotel_id = ?";
         const checkHotelImgParams = [id];
         try {
-            const [checkHotelImgResult]: [urlRows[], FieldPacket[]] = await connection.execute(
-                checkHotelImgSql,
-                checkHotelImgParams,
-            );
+            const [checkHotelImgResult]: [urlRows[], FieldPacket[]] = await connection.execute(checkHotelImgSql, checkHotelImgParams);
 
             return checkHotelImgResult;
         } catch (error) {
@@ -158,17 +141,13 @@ const hotelService = {
         }
     },
 
-    async putHotelInfo(
-        user_id: string,
-        { hotel_id, description, check_in, check_out, tel_num, urls }: HotelInfoProps,
-    ) {
+    async putHotelInfo(user_id: string, { hotel_id, description, check_in, check_out, tel_num, urls }: HotelInfoProps) {
         const connection = await pool.getConnection();
 
         const checkAuthSql = "SELECT * FROM hotel WHERE id = ? and user_id = ?";
         const checkAuthParams = [hotel_id, user_id];
 
-        const putHotelInfoSql =
-            "UPDATE hotel SET description = ?,check_in = ?, check_out = ?, tel_num = ? WHERE id = ?";
+        const putHotelInfoSql = "UPDATE hotel SET description = ?,check_in = ?, check_out = ?, tel_num = ? WHERE id = ?";
         const putHotelInfoParams = [description, check_in, check_out, tel_num, hotel_id];
 
         const checkHotelImgSql = "SELECT url FROM hotel_img where hotel_id = ?";
@@ -183,32 +162,25 @@ const hotelService = {
         try {
             await connection.beginTransaction();
 
-            const [rows, fields]: [HotelRows[], FieldPacket[]] = await connection.execute(
-                checkAuthSql,
-                checkAuthParams,
-            );
+            const [rows, fields]: [HotelRows[], FieldPacket[]] = await connection.execute(checkAuthSql, checkAuthParams);
 
             if (rows.length === 0) {
                 throw new CustomError("UNAUTHORIZED", 401);
             }
 
             const [putHotelInfoResult] = await connection.execute(putHotelInfoSql, putHotelInfoParams);
-            const [checkHotelImgResult]: [urlRows[], FieldPacket[]] = await connection.execute(
-                checkHotelImgSql,
-                checkHotelImgParams,
-            );
+            const [checkHotelImgResult]: [urlRows[], FieldPacket[]] = await connection.execute(checkHotelImgSql, checkHotelImgParams);
             const imageUrls: string[] = checkHotelImgResult.map((row) => row.url);
 
             await deleteHotelImg(imageUrls);
 
             const [deleteHotelImgResult] = await connection.execute(deleteHotelImgSql, deleteHotelImgParams);
-            
+
             if (addHotelImgParams.length > 0) {
                 for (const imageUrl of urls) {
                     await connection.execute(addHotelImgSql, [hotel_id, imageUrl]);
                 }
             }
-            
 
             await connection.commit();
 
@@ -221,24 +193,17 @@ const hotelService = {
         }
     },
 
-    async putHotelServ(
-        user_id: string,
-        { hotel_id, wifi, always_check_in, breakfast, breakfast_price, barbecue }: HotelServProps,
-    ) {
+    async putHotelServ(user_id: string, { hotel_id, wifi, always_check_in, breakfast, breakfast_price, barbecue }: HotelServProps) {
         const connection = await pool.getConnection();
 
         const checkAuthSql = "SELECT * FROM hotel WHERE id = ? and user_id = ?";
         const checkAuthParams = [hotel_id, user_id];
 
-        const putHotelServSql =
-            "UPDATE hotel_service SET wifi = ?, always_check_in = ?, breakfast = ?, breakfast_price = ?, barbecue = ? WHERE hotel_id = ?";
+        const putHotelServSql = "UPDATE hotel_service SET wifi = ?, always_check_in = ?, breakfast = ?, breakfast_price = ?, barbecue = ? WHERE hotel_id = ?";
         const putHotelServParams = [wifi, always_check_in, breakfast, breakfast_price, barbecue, hotel_id];
 
         try {
-            const [rows, fields]: [HotelRows[], FieldPacket[]] = await connection.execute(
-                checkAuthSql,
-                checkAuthParams,
-            );
+            const [rows, fields]: [HotelRows[], FieldPacket[]] = await connection.execute(checkAuthSql, checkAuthParams);
 
             if (rows.length === 0) {
                 throw new CustomError("UNAUTHORIZED", 401);
@@ -254,10 +219,7 @@ const hotelService = {
         }
     },
 
-    async putHotelFacil(
-        user_id: string,
-        { hotel_id, carpark, restaurant, cafe, swimming_pool, spa, fitness, convenience_store }: HotelFacilProps,
-    ) {
+    async putHotelFacil(user_id: string, { hotel_id, carpark, restaurant, cafe, swimming_pool, spa, fitness, convenience_store }: HotelFacilProps) {
         const connection = await pool.getConnection();
 
         const checkAuthSql = "SELECT * FROM hotel WHERE id = ? and user_id = ?";
@@ -265,22 +227,10 @@ const hotelService = {
 
         const putHotelFacilSql =
             "UPDATE hotel_facility SET carpark = ?, restaurant = ?, cafe = ?, swimming_pool = ?, spa = ?, fitness = ?, convenience_store = ? WHERE hotel_id = ?";
-        const putHotelFacilParams = [
-            carpark,
-            restaurant,
-            cafe,
-            swimming_pool,
-            spa,
-            fitness,
-            convenience_store,
-            hotel_id,
-        ];
+        const putHotelFacilParams = [carpark, restaurant, cafe, swimming_pool, spa, fitness, convenience_store, hotel_id];
 
         try {
-            const [rows, fields]: [HotelRows[], FieldPacket[]] = await connection.execute(
-                checkAuthSql,
-                checkAuthParams,
-            );
+            const [rows, fields]: [HotelRows[], FieldPacket[]] = await connection.execute(checkAuthSql, checkAuthParams);
 
             if (rows.length === 0) {
                 throw new CustomError("UNAUTHORIZED", 401);

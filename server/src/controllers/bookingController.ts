@@ -203,6 +203,15 @@ const bookingController = {
                             예약자 이메일: ${email}`;
 
                     await msgService.sendBookingMsgFromHotel(bookingRefData[0].user_id, hotel_id as string, successMsg);
+
+                    const getMsgByUserIdKey: string = `/msg/${bookingRefData[0].user_id}`;
+                    const getMsgByUserId= await msgService.getMsgByUserId(bookingRefData[0].user_id);
+                    setRedis1D(getMsgByUserIdKey, getMsgByUserId);
+
+                    const getBookingByUserIdKey: string = `/booking/user/${bookingRefData[0].user_id}`;
+                    const getBookingByUserId = await bookingService.getBookingByUserId(bookingRefData[0].user_id);
+                    setRedis1D(getBookingByUserIdKey, getBookingByUserId);
+
                     res.redirect(`http://localhost:3000/success/${orderId}`);
                 } catch (paymentError) {
                     await bookingService.rollbackBookingRef(bookingRefData[0].user_id, parsedOrderId);

@@ -13,6 +13,11 @@ interface AddMsgByHotelId {
     user_id: string;
 }
 
+interface GetMsgFromHotel {
+    hotel_id: string;
+    user_id: string;
+}
+
 const msgService = {
     async sendMsg(user_id: string, { hotel_id, text }: AddMsgProps) {
         const addMsg = "INSERT INTO message (user_id, hotel_id, text) VALUES (? , ? , ?)";
@@ -126,6 +131,24 @@ const msgService = {
         }
     },
 
+    async updateChecked(user_id: string, hotel_id: string) {
+        const updateChecked = `
+            UPDATE message
+            SET checked = 1
+            WHERE user_id = ? AND hotel_id = ? AND checked = 0;`;
+        const updateCheckedValues = [user_id, hotel_id];
+    
+        const connection = await pool.getConnection();
+    
+        try {
+            await connection.execute(updateChecked, updateCheckedValues);
+        } catch (error) {
+            throw error;
+        } finally {
+            connection.release();
+        }
+    },
+
     async getMsgFromHotel(jwt_id: string, hotel_id: string, user_id:string) {
         const checkAuthSql = "SELECT * FROM hotel WHERE id = ? and user_id = ?";
         const checkAuthParams = [hotel_id, user_id];
@@ -185,9 +208,9 @@ const msgService = {
         }
     },
 
-    async sendMsgFromHotel(jwt_id: string, user_id: string, hotel_id: string, text: string) {
+    async sendMsgFromHotel(id: string, {user_id, hotel_id, text}:AddMsgByHotelId) {
         const checkAuthSql = "SELECT * FROM hotel WHERE id = ? and user_id = ?";
-        const checkAuthParams = [hotel_id, user_id];
+        const checkAuthParams = [hotel_id, id];
 
         const addMsg = "INSERT INTO message (user_id, hotel_id, text, by_user) VALUES (?, ?, ?, ?, ?)";
         const addMsgValues = [user_id, hotel_id, text, 0];

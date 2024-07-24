@@ -21,6 +21,10 @@ export function setRedis1D(key: string, data: Object, ttl = 86400) {
     client.set(key, JSON.stringify(data), "EX", ttl);
 }
 
+export function setRedis1W(key: string, data: Object, ttl = 604800) {
+    client.set(key, JSON.stringify(data), "EX", ttl);
+}
+
 export function delRedis(key: string) {
     client.del(key);
 }
