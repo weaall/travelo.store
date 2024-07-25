@@ -103,7 +103,7 @@ const msgService = {
 
     async getChatByUser(user_id: string, hotel_id: string) {
         const getMsg = `
-            SELECT text, created_at, checked, by_user
+            SELECT text, created_at, checked, by_user, user_id
             FROM message 
             WHERE user_id = ? AND hotel_id = ?
             ORDER BY created_at ASC;`;

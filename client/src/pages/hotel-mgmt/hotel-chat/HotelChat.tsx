@@ -55,7 +55,7 @@ export default function HotelChatPage() {
         try {
             const config = await sendJWT({
                 method: "GET",
-                url: `/msg/hotel/chat/${id}/${userId}`,
+                url: "/msg/hotel/chat/" + id + "/" + userId,
             });
 
             const response = await axiosInstance.request(config);
@@ -106,11 +106,12 @@ export default function HotelChatPage() {
 
     const onClickSendMsg = async () => {
         try {
+            console.log(msgList)
             const config = await sendJWT({
                 method: "post",
                 url: "/msg/hotel/send",
                 data: {
-                    user_id: msgList[0].user_id,
+                    user_id: userId,
                     hotel_id: id,
                     text: text,
                 },
