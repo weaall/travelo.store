@@ -36,7 +36,7 @@ const msgService = {
         }
     },
 
-    async getMsgByUserId(user_id: string) {
+    async getMsgListByUser(user_id: string) {
         const getMsg = `
             SELECT m.text, m.created_at, m.checked, m.by_user, m.hotel_id
             FROM message m
@@ -64,7 +64,7 @@ const msgService = {
         }
     },
 
-    async getMsgByHotelId(user_id: string, hotel_id: string) {
+    async getMsgListByHotel(user_id: string, hotel_id: string) {
         const checkAuthSql = "SELECT * FROM hotel WHERE id = ? and user_id = ?";
         const checkAuthParams = [hotel_id, user_id];
         
@@ -101,7 +101,7 @@ const msgService = {
         }
     },
 
-    async getMsgByBothId(user_id: string, hotel_id: string) {
+    async getChatByUser(user_id: string, hotel_id: string) {
         const getMsg = `
             SELECT text, created_at, checked, by_user
             FROM message 
@@ -112,7 +112,7 @@ const msgService = {
         const updateChecked = `
             UPDATE message
             SET checked = 1
-            WHERE user_id = ? AND hotel_id = ? AND checked = 0;`;
+            WHERE user_id = ? AND hotel_id = ? AND checked = 0 AND by_user = 0;`;
         const updateCheckedValues = [user_id, hotel_id];
 
 
@@ -131,27 +131,9 @@ const msgService = {
         }
     },
 
-    async updateChecked(user_id: string, hotel_id: string) {
-        const updateChecked = `
-            UPDATE message
-            SET checked = 1
-            WHERE user_id = ? AND hotel_id = ? AND checked = 0;`;
-        const updateCheckedValues = [user_id, hotel_id];
-    
-        const connection = await pool.getConnection();
-    
-        try {
-            await connection.execute(updateChecked, updateCheckedValues);
-        } catch (error) {
-            throw error;
-        } finally {
-            connection.release();
-        }
-    },
-
-    async getMsgFromHotel(jwt_id: string, hotel_id: string, user_id:string) {
+    async getChatByHotel(id: string, hotel_id: string, user_id:string) {
         const checkAuthSql = "SELECT * FROM hotel WHERE id = ? and user_id = ?";
-        const checkAuthParams = [hotel_id, user_id];
+        const checkAuthParams = [hotel_id, id];
 
         const getMsg = `
             SELECT text, created_at, checked, by_user, user_id
@@ -212,7 +194,7 @@ const msgService = {
         const checkAuthSql = "SELECT * FROM hotel WHERE id = ? and user_id = ?";
         const checkAuthParams = [hotel_id, id];
 
-        const addMsg = "INSERT INTO message (user_id, hotel_id, text, by_user) VALUES (?, ?, ?, ?, ?)";
+        const addMsg = "INSERT INTO message (user_id, hotel_id, text, by_user) VALUES (?, ?, ?, ?)";
         const addMsgValues = [user_id, hotel_id, text, 0];
 
         const connection = await pool.getConnection();

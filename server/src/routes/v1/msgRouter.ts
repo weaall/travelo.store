@@ -29,13 +29,13 @@ msgRouter.get(
     msgValidator.getMsgByBothId,
     validateError,
     isAuthenticated,
-    asyncHandler((req: Request, res: Response) =>  msgController.getMsgByBothId(req as JWTCheck, res)),
+    asyncHandler((req: Request, res: Response) =>  msgController.getChatByUser(req as JWTCheck, res)),
 )
 
 msgRouter.get(
     "/me",
     isAuthenticated,
-    asyncHandler((req: Request, res: Response) =>  msgController.getMsgByUserId(req as JWTCheck, res)),
+    asyncHandler((req: Request, res: Response) =>  msgController.getMsgListByUser(req as JWTCheck, res)),
 )
 
 msgRouter.get(
@@ -43,7 +43,7 @@ msgRouter.get(
     msgValidator.getMsgByHotelId,
     validateError,
     isAuthenticated,
-    asyncHandler((req: Request, res: Response) =>  msgController.getMsgByHotelId(req as JWTCheck, res)),
+    asyncHandler((req: Request, res: Response) =>  msgController.getMsgListByHotel(req as JWTCheck, res)),
 )
 
 msgRouter.get(
@@ -51,7 +51,7 @@ msgRouter.get(
     msgValidator.getMsgFromHotel,
     validateError,
     isAuthenticated,
-    asyncHandler((req: Request, res: Response) =>  msgController.getMsgFromHotel(req as JWTCheck, res)),
+    asyncHandler((req: Request, res: Response) =>  msgController.getChatByHotel(req as JWTCheck, res)),
 )
 
 export default msgRouter

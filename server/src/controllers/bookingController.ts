@@ -204,8 +204,12 @@ const bookingController = {
 
                     await msgService.sendBookingMsgFromHotel(bookingRefData[0].user_id, hotel_id as string, successMsg);
 
+                    const timeStamp = dayjs().toISOString();
+                    const timeStampKey: string = `/timeStamp/msg/user/${bookingRefData[0].user_id}`;
+                    setRedis1D(timeStampKey, timeStamp);
+
                     const getMsgByUserIdKey: string = `/msg/${bookingRefData[0].user_id}`;
-                    const getMsgByUserId= await msgService.getMsgByUserId(bookingRefData[0].user_id);
+                    const getMsgByUserId= await msgService.getMsgListByUser(bookingRefData[0].user_id);
                     setRedis1D(getMsgByUserIdKey, getMsgByUserId);
 
                     const getBookingByUserIdKey: string = `/booking/user/${bookingRefData[0].user_id}`;
