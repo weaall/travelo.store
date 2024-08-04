@@ -25,6 +25,16 @@ export function setRedis1W(key: string, data: Object, ttl = 604800) {
     client.set(key, JSON.stringify(data), "EX", ttl);
 }
 
+export function msetRedis1D(pairs: { key: string, data: Object }[], ttl = 86400) {
+    const multi = client.multi();
+    
+    pairs.forEach(({ key, data }) => {
+        multi.set(key, JSON.stringify(data), 'EX', ttl);
+    });
+
+    multi.exec();
+}
+
 export function delRedis(key: string) {
     client.del(key);
 }

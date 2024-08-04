@@ -1,6 +1,6 @@
 import { Response, Request } from "express";
 import { JWTCheck } from "../interface/interfaces";
-import { getRedis, setRedis1D } from "../utils/redisUtils";
+import { getRedis, msetRedis1D, setRedis1D } from "../utils/redisUtils";
 import msgService from "../services/msgService";
 import dayjs from "dayjs";
 
@@ -9,14 +9,13 @@ const msgController = {
         const data = await msgService.sendMsg(req.user.id, req.body);
 
         const timeStamp = dayjs().toISOString();
-        const timeStampKeyMsgListUser: string = `/timeStamp/msg/list/user/${req.user.id}`;
-        const timeStampKeyMsgListHotel: string = `/timeStamp/msg/list/hotel/${req.body.hotel_id}`;
-        const timeStampKeyChat: string = `/timeStamp/msg/chat/${req.user.id}/${req.body.hotel_id}`;
-        await Promise.all([
-            setRedis1D(timeStampKeyMsgListUser, JSON.stringify(timeStamp )),
-            setRedis1D(timeStampKeyMsgListHotel, JSON.stringify(timeStamp )),
-            setRedis1D(timeStampKeyChat, JSON.stringify(timeStamp))
-        ]);
+        const pairs = [
+            { key: `/timeStamp/msg/list/user/${req.body.user_id}`, data: timeStamp },
+            { key: `/timeStamp/msg/list/hotel/${req.body.hotel_id}`, data: timeStamp },
+            { key: `/timeStamp/msg/chat/${req.body.user_id}/${req.body.hotel_id}`, data: timeStamp },
+        ];
+
+        msetRedis1D(pairs);
 
         res.status(201).json({
             error: null,
@@ -28,14 +27,13 @@ const msgController = {
         const data = await msgService.sendMsgFromHotel(req.user.id, req.body);
 
         const timeStamp = dayjs().toISOString();
-        const timeStampKeyMsgListUser: string = `/timeStamp/msg/list/user/${req.body.user_id}`;
-        const timeStampKeyMsgListHotel: string = `/timeStamp/msg/list/hotel/${req.body.hotel_id}`;
-        const timeStampKeyChat: string = `/timeStamp/msg/chat/${req.body.user_id}/${req.body.hotel_id}`;
-        await Promise.all([
-            setRedis1D(timeStampKeyMsgListUser, JSON.stringify(timeStamp)),
-            setRedis1D(timeStampKeyMsgListHotel, JSON.stringify(timeStamp)),
-            setRedis1D(timeStampKeyChat, JSON.stringify(timeStamp))
-        ]);
+        const pairs = [
+            { key: `/timeStamp/msg/list/user/${req.body.user_id}`, data: timeStamp },
+            { key: `/timeStamp/msg/list/hotel/${req.body.hotel_id}`, data: timeStamp },
+            { key: `/timeStamp/msg/chat/${req.body.user_id}/${req.body.hotel_id}`, data: timeStamp },
+        ];
+
+        await msetRedis1D(pairs);
 
         res.status(201).json({
             error: null,
@@ -58,13 +56,11 @@ const msgController = {
 
             if (redisData === null || !dayjs(JSON.parse(redisData.timeStamp)).isSame(JSON.parse(timeStampRedis))) {
                 const data = await msgService.getMsgListByUser(req.user.id);
-                
+
                 setRedis1D(key, {
                     ...data,
-                    timeStamp: timeStampRedis
+                    timeStamp: timeStampRedis,
                 });
-
-                console.log("msglist user rdb")
 
                 res.status(200).json({
                     error: null,
@@ -73,8 +69,6 @@ const msgController = {
             } else {
                 const { timeStamp, ...sortedRedisData } = redisData;
 
-                console.log("msglist user redis")
-                
                 res.status(200).json({
                     error: null,
                     data: Object.values(sortedRedisData),
@@ -95,7 +89,7 @@ const msgController = {
             const timeStamp = dayjs().toISOString();
             const timeStampKey: string = `/timeStamp/msg/list/hotel/${req.params.id}`;
             const timeStampRedis = JSON.parse(await getRedis(timeStampKey));
-            
+
             const key: string = `/msg/list/hotel/${req.params.id}`;
             const redisData = JSON.parse(await getRedis(key));
 
@@ -135,7 +129,6 @@ const msgController = {
 
     async getChatByUser(req: JWTCheck, res: Response) {
         try {
-            const timeStampKeyMsgListUser: string = `/timeStamp/msg/list/user/${req.user.id}`;
             const timeStamp = dayjs().toISOString();
             const timeStampKey: string = `/timeStamp/msg/chat/${req.user.id}/${req.params.id}`;
             const timeStampRedis = JSON.parse(await getRedis(timeStampKey));
@@ -154,7 +147,7 @@ const msgController = {
                     ...data,
                     timeStampRedis,
                 });
-                setRedis1D(timeStampKeyMsgListUser, timeStamp)
+                setRedis1D(`/timeStamp/msg/list/user/${req.user.id}`, timeStamp);
 
                 res.status(200).json({
                     error: null,
@@ -200,6 +193,7 @@ const msgController = {
                     ...data,
                     timeStampRedis,
                 });
+                setRedis1D(`/timeStamp/msg/list/hotel/${hotel_id}`, timeStamp);
 
                 res.status(200).json({
                     error: null,
