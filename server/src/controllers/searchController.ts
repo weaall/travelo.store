@@ -1,6 +1,6 @@
 import { Response, Request } from "express";
 import searchService from "../services/searchService";
-import { getRedis, setRedis, setRedis1H } from "../utils/redisUtils";
+import { getRedis, setRedis, setRedis1D, setRedis1H } from "../utils/redisUtils";
 import dayjs from "dayjs";
 import { RoomPriceRows } from "../interface/interfaces";
 import { getSearchRows, priceFilter } from "../interface/mysql.interface";
@@ -36,9 +36,7 @@ export const searchController = {
 
         const filterByDate = (priceData: RoomPriceRows[]) => {
             return priceData.filter((price) => {
-                return (
-                    dayjs(price.date).isAfter(dayjs(checkInDate).subtract(1, "day")) && dayjs(price.date).isBefore(checkOutDate, "day")
-                );
+                return dayjs(price.date).isAfter(dayjs(checkInDate).subtract(1, "day")) && dayjs(price.date).isBefore(checkOutDate, "day");
             });
         };
 
@@ -52,15 +50,14 @@ export const searchController = {
 
         const addImageDataRedis = async (data: getSearchRows[]) => {
             for (const hotel of data) {
-                const imgKey = `/hotel/img/${hotel.hotel_id}`
+                const imgKey = `/hotel/img/${hotel.hotel_id}`;
                 const redisImages = JSON.parse(await getRedis(imgKey));
 
-                if (redisImages === null){
+                if (redisImages === null) {
                     const hotelImages = await searchService.getHotelImgUrl(hotel.hotel_id);
-                    setRedis(imgKey, hotelImages);
+                    setRedis1D(imgKey, hotelImages);
                     hotel.hotel_img = hotelImages;
-
-                }else{
+                } else {
                     hotel.hotel_img = redisImages;
                 }
             }
@@ -77,18 +74,25 @@ export const searchController = {
                 setRedis1H(key, data);
 
                 for (let i = 0; i < data.length; i++) {
-                    const priceKey: string = `/room/price/${data[i].room_id}`;
+                    const timeStamp = dayjs().toISOString();
+                    const timeStampKey: string = `/timeStamp/room/price/roomId/${data[i].room_id}`;
+                    const timeStampRedis = JSON.parse(await getRedis(timeStampKey));
+
+                    const priceKey: string = `/room/price/roomId/${data[i].room_id}`;
                     const redisPriceData = JSON.parse(await getRedis(priceKey));
 
-                    if (redisPriceData === null) {
+                    if (timeStampRedis === null) {
+                        setRedis1D(timeStampKey, timeStamp);
+                    }
+
+                    if (redisPriceData === null || !dayjs(redisData.timeStamp).isSame(timeStampRedis)) {
                         const sqlPriceData = await searchService.getPriceByRoomId(data[i].room_id);
 
-                        setRedis(priceKey, sqlPriceData);
+                        setRedis1D(priceKey, { ...sqlPriceData, timeStamp: timeStampRedis });
 
                         data[i].room_price = filterByDate(sqlPriceData);
                     } else {
                         data[i].room_price = filterByDate(redisPriceData);
-
                     }
                 }
                 let resultData = filterByHotelId(data);
@@ -103,13 +107,21 @@ export const searchController = {
                 let data = redisData;
 
                 for (let i = 0; i < data.length; i++) {
-                    const priceKey: string = `/room/price/${data[i].room_id}`;
+                    const timeStamp = dayjs().toISOString();
+                    const timeStampKey: string = `/timeStamp/room/price/roomId/${data[i].room_id}`;
+                    const timeStampRedis = JSON.parse(await getRedis(timeStampKey));
+
+                    const priceKey: string = `/room/price/roomId/${data[i].room_id}`;
                     const redisPriceData = JSON.parse(await getRedis(priceKey));
 
-                    if (redisPriceData === null) {
+                    if (timeStampRedis === null) {
+                        setRedis1D(timeStampKey, timeStamp);
+                    }
+
+                    if (redisPriceData === null || !dayjs(redisData.timeStamp).isSame(timeStampRedis)) {
                         const sqlPriceData = await searchService.getPriceByRoomId(data[i].room_id);
 
-                        setRedis(priceKey, sqlPriceData);
+                        setRedis1D(priceKey, { ...sqlPriceData, timeStamp: timeStampRedis });
 
                         data[i].room_price = filterByDate(sqlPriceData);
                     } else {

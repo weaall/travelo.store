@@ -33,7 +33,7 @@ const msgController = {
             { key: `/timeStamp/msg/chat/${req.body.user_id}/${req.body.hotel_id}`, data: timeStamp },
         ];
 
-        await msetRedis1D(pairs);
+        msetRedis1D(pairs);
 
         res.status(201).json({
             error: null,
@@ -54,7 +54,7 @@ const msgController = {
                 setRedis1D(timeStampKey, timeStamp);
             }
 
-            if (redisData === null || !dayjs(JSON.parse(redisData.timeStamp)).isSame(JSON.parse(timeStampRedis))) {
+            if (redisData === null || !dayjs(redisData.timeStamp).isSame(timeStampRedis)) {
                 const data = await msgService.getMsgListByUser(req.user.id);
 
                 setRedis1D(key, {
@@ -102,7 +102,7 @@ const msgController = {
 
                 setRedis1D(key, {
                     ...data,
-                    timeStampRedis,
+                    timeStamp: timeStampRedis,
                 });
 
                 res.status(200).json({
@@ -145,7 +145,7 @@ const msgController = {
 
                 setRedis1D(key, {
                     ...data,
-                    timeStampRedis,
+                    timeStamp: timeStampRedis,
                 });
                 setRedis1D(`/timeStamp/msg/list/user/${req.user.id}`, timeStamp);
 

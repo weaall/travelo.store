@@ -1,31 +1,99 @@
-import { Response, Request } from "express"
-import { JWTCheck, RoomPriceRows } from "../interface/interfaces"
+import { Response, Request } from "express";
+import { JWTCheck, RoomPriceRows } from "../interface/interfaces";
 import roomService from "../services/roomService";
-import { getRedis, setRedis } from "../utils/redisUtils";
+import { getRedis, msetRedis1D, setRedis, setRedis1D } from "../utils/redisUtils";
 import dayjs from "dayjs";
 
 const roomController = {
     async getRoomByHotel(req: Request, res: Response) {
-        const data = await roomService.getRoomByHotel(req.params.id);
+        try {
+            const timeStamp = dayjs().toISOString();
+            const timeStampKey: string = `/timeStamp/room/roomInfo/hotelId/${req.params.id}`;
+            const timeStampRedis = JSON.parse(await getRedis(timeStampKey));
 
-        res.status(200).json({
-            error: null,
-            data: data,
-        });
+            const key: string = `/room/roomInfo/hotelId/${req.params.id}`;
+            const redisData = JSON.parse(await getRedis(key));
+
+            if (timeStampRedis === null) {
+                setRedis1D(timeStampKey, timeStamp);
+            }
+
+            if (redisData === null || !dayjs(redisData.timeStamp).isSame(timeStampRedis)) {
+                const data = await roomService.getRoomByHotel(req.params.id);
+
+                setRedis1D(key, {
+                    ...data,
+                    timeStamp: timeStampRedis,
+                });
+
+                res.status(200).json({
+                    error: null,
+                    data: data,
+                });
+            } else {
+                const { timeStamp, ...sortedRedisData } = redisData;
+
+                res.status(200).json({
+                    error: null,
+                    data: Object.values(sortedRedisData),
+                });
+            }
+        } catch (error) {
+            const data = await roomService.getRoomByHotel(req.params.id);
+
+            res.status(200).json({
+                error: null,
+                data: data,
+            });
+        }
     },
 
     async getRoomById(req: Request, res: Response) {
-        const data = await roomService.getRoomById(req.params.id);
+        try {
+            const timeStamp = dayjs().toISOString();
+            const timeStampKey: string = `/timeStamp/room/roomInfo/roomId/${req.params.id}`;
+            const timeStampRedis = JSON.parse(await getRedis(timeStampKey));
 
-        res.status(200).json({
-            error: null,
-            data: data,
-        });
+            const key: string = `/room/roomInfo/roomId/${req.params.id}`;
+            const redisData = JSON.parse(await getRedis(key));
+
+            if (timeStampRedis === null) {
+                setRedis1D(timeStampKey, timeStamp);
+            }
+
+            if (redisData === null || !dayjs(redisData.timeStamp).isSame(timeStampRedis)) {
+                const data = await roomService.getRoomById(req.params.id);
+
+                setRedis1D(key, {
+                    ...data,
+                    timeStamp: timeStampRedis,
+                });
+
+                res.status(200).json({
+                    error: null,
+                    data: data,
+                });
+            } else {
+                const { timeStamp, ...sortedRedisData } = redisData;
+
+                res.status(200).json({
+                    error: null,
+                    data: Object.values(sortedRedisData),
+                });
+            }
+        } catch (error) {
+            const data = await roomService.getRoomById(req.params.id);
+
+            res.status(200).json({
+                error: null,
+                data: data,
+            });
+        }
     },
 
     async getBedType(req: Request, res: Response) {
         try {
-            const key: string = "bedTypes";
+            const key: string = "/room/bedTypes";
             const redisData = await getRedis(key);
 
             if (redisData === null) {
@@ -55,7 +123,7 @@ const roomController = {
 
     async getViewType(req: Request, res: Response) {
         try {
-            const key: string = "viewTypes";
+            const key: string = "/room/viewTypes";
             const redisData = await getRedis(key);
 
             if (redisData === null) {
@@ -84,12 +152,46 @@ const roomController = {
     },
 
     async getRoomImgUrl(req: Request, res: Response) {
-        const data = await roomService.getRoomImgUrl(req.params.id);
+        try {
+            const timeStamp = dayjs().toISOString();
+            const timeStampKey: string = `/timeStamp/room/roomInfo/roomId/${req.params.id}`;
+            const timeStampRedis = JSON.parse(await getRedis(timeStampKey));
 
-        res.status(200).json({
-            error: null,
-            data: data,
-        });
+            const key: string = `/room/roomImg/roomId/${req.params.id}`;
+            const redisData = JSON.parse(await getRedis(key));
+
+            if (timeStampRedis === null) {
+                setRedis1D(timeStampKey, timeStamp);
+            }
+
+            if (redisData === null || !dayjs(redisData.timeStamp).isSame(timeStampRedis)) {
+                const data = await roomService.getRoomImgUrl(req.params.id);
+
+                setRedis1D(key, {
+                    ...data,
+                    timeStamp: timeStampRedis,
+                });
+
+                res.status(200).json({
+                    error: null,
+                    data: data,
+                });
+            } else {
+                const { timeStamp, ...sortedRedisData } = redisData;
+
+                res.status(200).json({
+                    error: null,
+                    data: Object.values(sortedRedisData),
+                });
+            }
+        } catch (error) {
+            const data = await roomService.getRoomImgUrl(req.params.id);
+
+            res.status(200).json({
+                error: null,
+                data: data,
+            });
+        }
     },
     async regRoom(req: JWTCheck, res: Response) {
         const data = await roomService.regRoom(req.user.id, req.body);
@@ -103,7 +205,15 @@ const roomController = {
     async putRoomInfo(req: JWTCheck, res: Response) {
         const data = await roomService.putRoomInfo(req.user.id, req.body);
 
-        res.status(201).json({
+        const timeStamp = dayjs().toISOString();
+        const pairs = [
+            { key: `/timeStamp/room/roomInfo/hotelId/${req.body.hotel_id}`, data: timeStamp },
+            { key: `/timeStamp/room/roomInfo/roomId/${req.body.room_id}`, data: timeStamp },
+        ];
+
+        msetRedis1D(pairs);
+
+        res.status(200).json({
             error: null,
             data: data,
         });
@@ -125,22 +235,35 @@ const roomController = {
         };
 
         try {
-            const key: string = `/room/price/${roomId}`;
+            const timeStamp = dayjs().toISOString();
+            const timeStampKey: string = `/timeStamp/room/price/roomId/${roomId}`;
+            const timeStampRedis = JSON.parse(await getRedis(timeStampKey));
+
+            const key: string = `/room/price/roomId/${roomId}`;
             const redisData = JSON.parse(await getRedis(key));
 
-            if (redisData === null) {
+            if (timeStampRedis === null) {
+                setRedis1D(timeStampKey, timeStamp);
+            }
+
+            if (redisData === null || !dayjs(redisData.timeStamp).isSame(timeStampRedis)) {
                 const data = await roomService.getPriceByRoomId(roomId);
 
-                setRedis(key, data);
+                setRedis1D(key, {
+                    ...data,
+                    timeStamp: timeStampRedis,
+                });
 
                 res.status(200).json({
                     error: null,
                     data: filterByDate(data),
                 });
             } else {
+                const { timeStamp, ...sortedRedisData } = redisData;
+
                 res.status(200).json({
                     error: null,
-                    data: filterByDate(redisData),
+                    data: filterByDate(Object.values(sortedRedisData)),
                 });
             }
         } catch (error) {
@@ -156,16 +279,8 @@ const roomController = {
     async insertPriceByDate(req: JWTCheck, res: Response) {
         const data = await roomService.insertPriceByDate(req.user.id, req.body);
 
-        try {
-            const redisData = await roomService.getPriceByRoomId(req.body.room_id);
-            const key: string = `/room/price/${req.body.room_id}`;
-            setRedis(key, redisData);
-        } catch (error) {
-            res.status(200).json({
-                error: null,
-                data: data,
-            });
-        }
+        const timeStamp = dayjs().toISOString();
+        setRedis1D(`/timeStamp/room/price/roomId/${req.body.room_id}`, timeStamp);
 
         res.status(201).json({
             error: null,
@@ -175,16 +290,8 @@ const roomController = {
     async insertPriceByMonth(req: JWTCheck, res: Response) {
         const data = await roomService.insertPriceByMonth(req.user.id, req.body);
 
-        try {
-            const redisData = await roomService.getPriceByRoomId(req.body.room_id);
-            const key: string = `/room/price/${req.body.room_id}`;
-            setRedis(key, redisData);
-        } catch (error) {
-            res.status(200).json({
-                error: null,
-                data: data,
-            });
-        }
+        const timeStamp = dayjs().toISOString();
+        setRedis1D(`/timeStamp/room/price/roomId/${req.body.room_id}`, timeStamp);
 
         res.status(201).json({
             error: null,

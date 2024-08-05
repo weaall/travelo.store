@@ -3,7 +3,6 @@ import dayjs from "dayjs";
 import pool from "../config/db";
 import CustomError from "../utils/customError";
 import {
-    HotelIdParams,
     RoomRegProps,
     RoomInfoProps,
     RoomServProps,
@@ -47,7 +46,8 @@ const roomService = {
         }
     },
     async getRoomByHotel(id: string) {
-        const getRoomSql = `SELECT R.id, R.name, R.num, B.id AS bed_type_id, B.name AS bed_type, V.id AS view_type_id, V.name AS view_type, discount FROM room AS R 
+        const getRoomSql = 
+        `SELECT R.id, R.name, R.num, B.id AS bed_type_id, B.name AS bed_type, V.id AS view_type_id, V.name AS view_type, discount FROM room AS R 
         LEFT JOIN bed_type AS B ON R.bed_type_id = B.id
         LEFT JOIN view_type AS V ON R.view_type_id = V.id
         WHERE hotel_id = ?`;

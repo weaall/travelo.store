@@ -2,7 +2,7 @@ import { Response, Request, query } from "express";
 import { JWTCheck, RoomPriceRows } from "../interface/interfaces";
 import bookingService from "../services/bookingService";
 import roomService from "../services/roomService";
-import { getRedis, setRedis, setRedis1D } from "../utils/redisUtils";
+import { getRedis, msetRedis1D, setRedis, setRedis1D } from "../utils/redisUtils";
 import dayjs from "dayjs";
 import CustomError from "../utils/customError";
 import msgService from "../services/msgService";
@@ -205,16 +205,17 @@ const bookingController = {
                     await msgService.sendBookingMsgFromHotel(bookingRefData[0].user_id, hotel_id as string, successMsg);
 
                     const timeStamp = dayjs().toISOString();
-                    const timeStampKey: string = `/timeStamp/msg/user/${bookingRefData[0].user_id}`;
-                    setRedis1D(timeStampKey, timeStamp);
+                    const userId = bookingRefData[0].user_id;
+                    const hotelId = hotel_id as string;
 
-                    const getMsgByUserIdKey: string = `/msg/${bookingRefData[0].user_id}`;
-                    const getMsgByUserId= await msgService.getMsgListByUser(bookingRefData[0].user_id);
-                    setRedis1D(getMsgByUserIdKey, getMsgByUserId);
+                    const pairs = [
+                        { key: `/timeStamp/msg/list/user/${userId}`, data: timeStamp },
+                        { key: `/timeStamp/msg/list/hotel/${hotelId}`, data: timeStamp },
+                        { key: `/timeStamp/msg/chat/${userId}/${hotelId}`, data: timeStamp },
+                        { key: `/booking/user/${userId}`, data: await bookingService.getBookingByUserId(userId) },
+                    ];
 
-                    const getBookingByUserIdKey: string = `/booking/user/${bookingRefData[0].user_id}`;
-                    const getBookingByUserId = await bookingService.getBookingByUserId(bookingRefData[0].user_id);
-                    setRedis1D(getBookingByUserIdKey, getBookingByUserId);
+                    msetRedis1D(pairs);
 
                     res.redirect(`http://localhost:3000/success/${orderId}`);
                 } catch (paymentError) {
