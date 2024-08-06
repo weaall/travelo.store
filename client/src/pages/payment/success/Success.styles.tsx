@@ -10,7 +10,8 @@ export const BookingWrap = tw.div`flex flex-col items-center text-center border 
 export const BookingLabel = tw.label`text-xl text-green-600 font-semibold`
 export const BookingText = tw.text``
 export const BookingSpan = tw.span`text-green-600 font-semibold`
-export const BookingBtn = tw.button`mt-6 text-lg font-medium px-20 py-3 rounded-xl bg-black text-white`
+export const BookingBtn = tw.button`mt-6 mx-1 text-lg font-medium px-20 h-12 rounded-xl bg-black text-white 
+mobile:w-full mobile:px-0`
 
 export const Img = tw.img`w-full h-full object-cover rounded-xl
 mobile:rounded-xl`
@@ -22,7 +23,7 @@ mobile:w-full`
 export const InfoWrap = tw.div`space-y-1`
 
 export const HotelTitle = tw.p`text-base font-medium truncate
-mobile:text-lg`
+mobile:text-base`
 export const HotelAddress = tw.p`text-gray-400 text-xs hover:cursor-pointer text-main`
 
 export const RoomWrap = tw.div`w-full rounded-2xl bg-white h-36 shadow-md

@@ -19,6 +19,7 @@ interface Booking {
     name: string;
     mobile: string;
     email: string;
+    review: string;
     hotelData: HotelData;
 }
 
@@ -151,7 +152,6 @@ export default function MyReviewPage() {
                                     <tw.BookingWrap key={booking.booking_id}>
                                         <tw.BookingIdWrap>
                                             <tw.BookingId>ID {booking.booking_id}</tw.BookingId>
-                                            <tw.ReviewStatus>확정됨</tw.ReviewStatus>
                                         </tw.BookingIdWrap>
                                         <tw.FlexWrap>
                                             <tw.Pic>
@@ -179,7 +179,7 @@ export default function MyReviewPage() {
                                             </tw.HotelInfo>
                                         </tw.FlexWrap>
                                         <tw.MgmtBtnWrap>
-                                            <tw.MgmtBtn>예약 관리하기</tw.MgmtBtn>
+                                            <tw.MgmtBtn>{booking.review === "0" ? "후기 남기기": "후기 확인하기"}</tw.MgmtBtn>
                                         </tw.MgmtBtnWrap>
                                     </tw.BookingWrap>
                                 ))}

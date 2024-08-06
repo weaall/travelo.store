@@ -10,6 +10,7 @@ import MyMsgPage from "./my-msg/MyMsg";
 import HotelRegPage from "./hotel-reg/HotelRegPage";
 import MyHotelPage from "./my-hotel/MyHotelPage";
 import MyChatPage from "./my-chat/MyChat";
+import { MyBookingMgmtPage } from "./my-booking-mgmt/MyBookingMgmt";
 
 export default function MyPage() {
     return (
@@ -22,6 +23,7 @@ export default function MyPage() {
                     <Routes>
                         <Route path="" element={<MyInfoPage />} />
                         <Route path="/booking" element={<MyBookingPage />} />
+                        <Route path="/booking/:id" element={<MyBookingMgmtPage />} />
                         <Route path="/review" element={<MyReviewPage />} />
                         <Route path="/message" element={<MyMsgPage />} />
 

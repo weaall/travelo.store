@@ -204,7 +204,7 @@ export default function MyBookingPage() {
                                             </tw.HotelInfo>
                                         </tw.FlexWrap>
                                         <tw.MgmtBtnWrap>
-                                            <tw.MgmtBtn>예약 관리하기</tw.MgmtBtn>
+                                            <tw.MgmtBtn onClick={()=>navigate(`./${booking.booking_id}`)}>예약 관리하기</tw.MgmtBtn>
                                         </tw.MgmtBtnWrap>
                                     </tw.BookingWrap>
                                 ))}

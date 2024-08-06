@@ -207,12 +207,14 @@ const bookingController = {
                     const timeStamp = dayjs().toISOString();
                     const userId = bookingRefData[0].user_id;
                     const hotelId = hotel_id as string;
+                    const roomId = bookingRefData[0].room_id;
 
                     const pairs = [
                         { key: `/timeStamp/msg/list/user/${userId}`, data: timeStamp },
                         { key: `/timeStamp/msg/list/hotel/${hotelId}`, data: timeStamp },
                         { key: `/timeStamp/msg/chat/${userId}/${hotelId}`, data: timeStamp },
                         { key: `/booking/user/${userId}`, data: await bookingService.getBookingByUserId(userId) },
+                        { key: `/timeStamp/room/price/roomId/${roomId}`,data: timeStamp },
                     ];
 
                     msetRedis1D(pairs);
