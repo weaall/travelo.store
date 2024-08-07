@@ -203,12 +203,12 @@ export default function Hotel() {
                     <tw.HotelInfoWrap>
                         <tw.HotelFlexWrap>
                             <tw.HotelTitle>{hotelData.name}</tw.HotelTitle>
-                            <tw.ContentsFlex>
+                            <tw.HotelAddressWrap>
                                 <tw.AddressSVG alt="" src={require("../../assets/svg/location_icon.svg").default} />
                                 <tw.HotelAddress onClick={openKakaoMapModal}>
                                     {hotelData.address} {hotelData.address_detail}
                                 </tw.HotelAddress>
-                            </tw.ContentsFlex>
+                            </tw.HotelAddressWrap>
                             <tw.HotelDesc>{hotelData.description}</tw.HotelDesc>
                         </tw.HotelFlexWrap>
                         <tw.HotelFlexWrap>
