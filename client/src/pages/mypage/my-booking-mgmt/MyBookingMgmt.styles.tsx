@@ -29,8 +29,8 @@ export const InfoWrap = tw.div`space-y-1`
 export const HotelTitle = tw.p`text-base font-medium truncate
 mobile:text-base`
 export const AddressWrap = tw.div`flex items-start`
-export const AddressSVG = tw.img`w-2 mt-1 mr-1`
-export const HotelAddress = tw.p`text-gray-400 text-5xl flex-1 hover:cursor-pointer text-main`
+export const AddressSVG = tw.img`w-2.5 mt-1 mr-1`
+export const HotelAddress = tw.p`text-gray-400 text-xs flex-1 hover:cursor-pointer text-main`
 
 export const RoomWrap = tw.div`w-full rounded-2xl bg-white h-36 shadow-md
 mobile:flex mobile:flex-col mobile:h-auto`
@@ -61,9 +61,9 @@ export const DetailTextWrap = tw.div``
 export const DetailText = tw.text`text-sm
 mobile:text-xs`
 
-export const HotelServWrap = tw.div`flex flex-col border p-6 mx-1 max-w-[640px] w-full rounded-xl
+export const HotelServWrap = tw.div`flex flex-col border p-6 mx-1 w-full rounded-xl
 mobile:mx-0`
-export const HotelServ = tw.div`flex flex-wrap`
+export const HotelServ = tw.div`flex flex-wrap w-full`
 export const HotelTextWrap = tw.div`flex items-center h-auto w-1/5
 mobile:w-1/3`
 export const HotelText = tw.p`text-sm

@@ -19,7 +19,7 @@ interface Booking {
     name: string;
     mobile: string;
     email: string;
-    review: string;
+    review: number;
     hotelData: HotelData;
 }
 
@@ -163,9 +163,12 @@ export default function MyReviewPage() {
                                             </tw.Pic>
                                             <tw.HotelInfo>
                                                 <tw.HotelTitle>{booking.hotelData.name}</tw.HotelTitle>
-                                                <tw.HotelAddress onClick={() => openKakaoMapModal(booking.hotelData)}>
-                                                    {booking.hotelData.address} {booking.hotelData.address_detail}, {booking.hotelData.postcode}
-                                                </tw.HotelAddress>
+                                                <tw.AddressWrap>
+                                                    <tw.AddressSVG alt="" src={require("../../../assets/svg/location_icon.svg").default} />
+                                                    <tw.HotelAddress onClick={() => openKakaoMapModal(booking.hotelData)}>
+                                                        {booking.hotelData.address} {booking.hotelData.address_detail}, {booking.hotelData.postcode}
+                                                    </tw.HotelAddress>
+                                                </tw.AddressWrap>
                                                 <tw.CheckWrap>
                                                     <tw.CheckInWrap>
                                                         <tw.CheckLabel>체크인</tw.CheckLabel>
@@ -179,7 +182,7 @@ export default function MyReviewPage() {
                                             </tw.HotelInfo>
                                         </tw.FlexWrap>
                                         <tw.MgmtBtnWrap>
-                                            <tw.MgmtBtn>{booking.review === "0" ? "후기 남기기": "후기 확인하기"}</tw.MgmtBtn>
+                                            <tw.MgmtBtn>{booking.review === 0 ? "후기 남기기" : "후기 확인하기"}</tw.MgmtBtn>
                                         </tw.MgmtBtnWrap>
                                     </tw.BookingWrap>
                                 ))}

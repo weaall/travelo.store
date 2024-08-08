@@ -150,7 +150,7 @@ export function SuccessPage() {
                     예약 번호는 <tw.BookingSpan>{bookingData.booking_id}</tw.BookingSpan>이며, 아래 버튼으로 연결되는 셀프서비스 예약 관리 기능을 이용해 예약
                     정보 확인, 예약 취소, 예약 변경을 하실 수 있습니다.
                 </tw.BookingText>
-                <tw.BookingBtn>예약 관리하기</tw.BookingBtn>
+                <tw.BookingBtn onClick={()=>navigate(`/me/booking/${bookingData.booking_id}`)}>예약 관리하기</tw.BookingBtn>
             </tw.BookingWrap>
             <tw.OuterWrap>
                 <tw.RoomWrap>

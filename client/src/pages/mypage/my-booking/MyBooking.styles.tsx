@@ -44,6 +44,8 @@ export const HotelInfo = tw.div`flex flex-col relative px-5 py-2 space-y-1 w-8/1
 mobile:w-full`
 export const HotelTitle = tw.p`text-base font-semibold truncate
 mobile:text-lg`
+export const AddressWrap = tw.div`flex items-start`
+export const AddressSVG = tw.img`w-2.5 mt-1 mr-1`
 export const HotelAddress = tw.p`text-gray-400 text-xs hover:cursor-pointer text-main pb-3`
 
 export const MgmtBtnWrap = tw.div`text-end px-4 pt-2 pb-4`

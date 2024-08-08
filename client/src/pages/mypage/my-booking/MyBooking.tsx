@@ -188,9 +188,12 @@ export default function MyBookingPage() {
                                             </tw.Pic>
                                             <tw.HotelInfo>
                                                 <tw.HotelTitle>{booking.hotelData.name}</tw.HotelTitle>
+                                                <tw.AddressWrap>
+                                                <tw.AddressSVG alt="" src={require("../../../assets/svg/location_icon.svg").default} />
                                                 <tw.HotelAddress onClick={() => openKakaoMapModal(booking.hotelData)}>
                                                     {booking.hotelData.address} {booking.hotelData.address_detail}, {booking.hotelData.postcode}
                                                 </tw.HotelAddress>
+                                                </tw.AddressWrap>
                                                 <tw.CheckWrap>
                                                     <tw.CheckInWrap>
                                                         <tw.CheckLabel>체크인</tw.CheckLabel>
