@@ -9,7 +9,6 @@ const client = new Redis({
 });
 
 client.set = util.promisify(client.set);
-client.get = util.promisify(client.get);
 
 client.on("connect", () => {
     console.log("Redis client connected");
@@ -17,4 +16,19 @@ client.on("connect", () => {
 
 export default client;
 
-//docker run -it --link social_app:redis --rm redis redis-cli -h redis -p 6379
+// const client = new Redis({
+//     host: process.env.REDIS_HOST || 'redis',
+//     port: 6379,
+//     retryStrategy: (times: number) => {
+//         console.log(`Redis reconnect #${times}`);
+//         return 1000 * 300;
+//     }
+// });
+
+// client.set = util.promisify(client.set);
+
+// client.on("connect", () => {
+//     console.log("Redis client connected");
+// });
+
+// export default client;
