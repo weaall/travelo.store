@@ -9,17 +9,18 @@ import StarRating from "./StarRating";
 
 interface ModalProps {
     onClose: () => void;
+    hotelId: string | undefined;
     hotelName: string | undefined;
     bookingId: string | undefined;
 }
 
-export default function RegReviewModal({ onClose, bookingId, hotelName }: ModalProps) {
+export default function RegReviewModal({ onClose, bookingId, hotelName, hotelId }: ModalProps) {
     const navigate = useNavigate();
 
     const [reviewData, setReviewData] = useState({
-        hotel_id: "",
+        hotel_id: hotelId,
         booking_id: bookingId,
-        rating: 0,
+        rating: 1,
         review: "",
     });
 
@@ -42,26 +43,23 @@ export default function RegReviewModal({ onClose, bookingId, hotelName }: ModalP
 
     useEffect(() => {}, []);
 
-    // const clickReviewRegister = async () => {
-    //     try {
+    const clickReviewRegister = async () => {
+        try {
+            const config = await sendJWT({
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                method: "post",
+                url: "/booking/review",
+            });
 
-    //         const config = await sendJWT({
-    //             headers: {
-    //                 "Content-Type": "application/json",
-    //             },
-    //             method: "put",
-    //             url: "/room/info",
-    //         });
-
-    //         const response = await axiosInstance.request(config);
-    //         window.alert("저장완료");
-    //         onClose();
-    //     } catch (error) {
-    //         handleAxiosError(error, navigate);
-    //     }
-    // };
-
-    useEffect(() => {}, []);
+            const response = await axiosInstance.request(config);
+            window.alert("저장완료");
+            onClose();
+        } catch (error) {
+            handleAxiosError(error, navigate);
+        }
+    };
 
     return (
         <tw.Container>
@@ -82,10 +80,13 @@ export default function RegReviewModal({ onClose, bookingId, hotelName }: ModalP
                     <tw.UpperTag>후기</tw.UpperTag>
                     <tw.AddTextWrap>
                         <tw.AddTextField value={reviewData.review} onChange={handleTextChange}></tw.AddTextField>
-                        <tw.AddTextNum>{reviewData.review.length} / 150</tw.AddTextNum>
+                        <tw.AddTextNum $validator={reviewData.review.length > 10} >{reviewData.review.length} / 150</tw.AddTextNum>
                     </tw.AddTextWrap>
                 </tw.InputWrap>
-                <tw.RegBtn $validator={true} disabled={true}>
+                <tw.RegBtn
+                onClick={()=>{}}
+                $validator={reviewData.review.length > 10} 
+                disabled={!(reviewData.review.length > 10)}>
                     등록하기
                 </tw.RegBtn>
             </tw.ModalWrap>

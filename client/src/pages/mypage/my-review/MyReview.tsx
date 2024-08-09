@@ -225,6 +225,7 @@ export default function MyReviewPage() {
             {isRegReviewModalOpen && selectedHotel && (
                 <ModalPortal>
                     <RegReviewModal
+                        hotelId={selectedHotel.hotel_id}
                         hotelName={selectedHotel.hotelData.name}
                         bookingId={selectedHotel.booking_id}
                         onClose={closeRegReviewModal}
