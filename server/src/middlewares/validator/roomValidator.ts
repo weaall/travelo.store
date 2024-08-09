@@ -20,7 +20,6 @@ export const roomValidator = {
         body("num").notEmpty().trim(),
         body("bed_type_id").notEmpty().trim(),
         body("view_type_id").notEmpty().trim(),
-        body("urls").notEmpty().trim(),
     ],
     putRoomInfo: [
         body("hotel_id").notEmpty().trim(),

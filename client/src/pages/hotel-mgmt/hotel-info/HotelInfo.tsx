@@ -322,7 +322,7 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
                         <tw.OneThirdCol>
                             <tw.OptionWrap>
                                 <tw.Label>전화번호</tw.Label>
-                                <tw.InputBox value={infoData.tel_num} maxLength={11} name="tel_num" onChange={onChangeInfo}></tw.InputBox>
+                                <tw.InputBox value={infoData.tel_num} maxLength={13} name="tel_num" onChange={onChangeInfo}></tw.InputBox>
                             </tw.OptionWrap>
 
                             <tw.OptionWrap>
@@ -349,7 +349,7 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
                         </tw.OneThirdCol>
                         <tw.TwoThirdCol>
                             <tw.Label>숙소설명</tw.Label>
-                            <tw.DescInput value={infoData.description} name="description" onChange={onChangeDesk}></tw.DescInput>
+                            <tw.DescInput value={infoData.description} name="description" onChange={onChangeDesk} maxLength={300}></tw.DescInput>
                         </tw.TwoThirdCol>
                     </tw.ContentsFlex>
                     <tw.UploadWrap onDragOver={onDragOver} onDrop={onDrop}>

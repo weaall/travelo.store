@@ -46,6 +46,10 @@ const hotelController = {
     async regHotel(req: JWTCheck, res: Response) {
         const data = await hotelService.regHotel(req.user.id, req.body);
 
+        const key: string = `/myhotel/${req.user.id}`;
+        const hotelList = await hotelService.getMyHotel(req.user.id);
+        setRedis1D(key, hotelList);
+
         res.status(201).json({
             error: null,
             data: data,

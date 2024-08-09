@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import * as tw from "./MyReview.styles";
 import { sendJWT } from "../../../utils/jwtUtils";
-import { axios, axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
+import { axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../../components/loading/Loading";
 import ImgLoader from "../../../utils/imgLoader";
 import { ModalPortal } from "../../../hook/modal/ModalPortal";
 import KakaoMapModal from "../../../hook/modal/kakao-map/KakaMap.modal";
 import dayjs from "dayjs";
+import RegReviewModal from "../../../hook/modal/reg-review/RegReview.modal";
 
 interface Booking {
     booking_id: string;
@@ -39,7 +40,10 @@ interface Image {
 export default function MyReviewPage() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
+
     const [isKakaoMapModalOpen, setIsKakaoMapModalOpen] = useState(false);
+    const [isRegReviewModalOpen, setIsRegReviewModalOpen] = useState(false);
+
     const [selectedHotel, setSelectedHotel] = useState<any>(null);
     const [bookingData, setBookingData] = useState<Booking[]>([]);
     const [hotelDataCache, setHotelDataCache] = useState<{ [hotelId: number]: HotelData }>({});
@@ -53,6 +57,16 @@ export default function MyReviewPage() {
 
     const closeKakaoMapModal = () => {
         setIsKakaoMapModalOpen(false);
+        setSelectedHotel(null);
+    };
+
+    const openRegReviewModal = (bookingId: Booking) => {
+        setSelectedHotel(bookingId);
+        setIsRegReviewModalOpen(true);
+    };
+
+    const closeRegReviewModal = () => {
+        setIsRegReviewModalOpen(false);
         setSelectedHotel(null);
     };
 
@@ -182,7 +196,7 @@ export default function MyReviewPage() {
                                             </tw.HotelInfo>
                                         </tw.FlexWrap>
                                         <tw.MgmtBtnWrap>
-                                            <tw.MgmtBtn>{booking.review === 0 ? "후기 남기기" : "후기 확인하기"}</tw.MgmtBtn>
+                                            <tw.MgmtBtn onClick={()=> openRegReviewModal(booking)}>{booking.review === 0 ? "후기 남기기" : "후기 확인하기"}</tw.MgmtBtn>
                                         </tw.MgmtBtnWrap>
                                     </tw.BookingWrap>
                                 ))}
@@ -204,6 +218,16 @@ export default function MyReviewPage() {
                         address={`${selectedHotel.address} ${selectedHotel.address_detail}`}
                         imgUrl={selectedHotel.img[0].url}
                         onClose={closeKakaoMapModal}
+                    />
+                </ModalPortal>
+            )}
+
+            {isRegReviewModalOpen && selectedHotel && (
+                <ModalPortal>
+                    <RegReviewModal
+                        hotelName={selectedHotel.hotelData.name}
+                        bookingId={selectedHotel.booking_id}
+                        onClose={closeRegReviewModal}
                     />
                 </ModalPortal>
             )}

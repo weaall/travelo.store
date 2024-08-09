@@ -196,6 +196,9 @@ const roomController = {
     async regRoom(req: JWTCheck, res: Response) {
         const data = await roomService.regRoom(req.user.id, req.body);
 
+        const timeStamp = dayjs().toISOString();
+        setRedis1D(`/timeStamp/room/roomInfo/hotelId/${req.body.hotel_id}`,timeStamp);
+
         res.status(201).json({
             error: null,
             data: data,
