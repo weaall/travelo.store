@@ -1,10 +1,9 @@
-import React, { DragEvent, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { sendJWT } from "../../../utils/jwtUtils";
 import { axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
 import { useNavigate } from "react-router-dom";
 
 import * as tw from "./RegReview.modal.styles";
-import { nanoid } from "nanoid";
 import StarRating from "./StarRating";
 
 interface ModalProps {
@@ -12,9 +11,10 @@ interface ModalProps {
     hotelId: string | undefined;
     hotelName: string | undefined;
     bookingId: string | undefined;
+    checkInDate: string | undefined;
 }
 
-export default function RegReviewModal({ onClose, bookingId, hotelName, hotelId }: ModalProps) {
+export default function RegReviewModal({ onClose, bookingId, hotelName, hotelId, checkInDate }: ModalProps) {
     const navigate = useNavigate();
 
     const [reviewData, setReviewData] = useState({
@@ -22,6 +22,7 @@ export default function RegReviewModal({ onClose, bookingId, hotelName, hotelId 
         booking_id: bookingId,
         rating: 1,
         review: "",
+        check_in_date: checkInDate
     });
 
     const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -40,8 +41,6 @@ export default function RegReviewModal({ onClose, bookingId, hotelName, hotelId 
             rating: rating + 1,
         }));
     };
-
-    useEffect(() => {}, []);
 
     const clickReviewRegister = async () => {
         try {
@@ -84,7 +83,7 @@ export default function RegReviewModal({ onClose, bookingId, hotelName, hotelId 
                     </tw.AddTextWrap>
                 </tw.InputWrap>
                 <tw.RegBtn
-                onClick={()=>{}}
+                onClick={()=>{console.log(reviewData)}}
                 $validator={reviewData.review.length > 10} 
                 disabled={!(reviewData.review.length > 10)}>
                     등록하기

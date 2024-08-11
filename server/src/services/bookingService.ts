@@ -1,9 +1,17 @@
-import { FieldPacket, ResultSetHeader } from "mysql2";
+import { FieldPacket, ResultSetHeader, RowDataPacket } from "mysql2";
 import pool from "../config/db";
 import CustomError from "../utils/customError";
 import { BookingProps, BookingRefProps } from "../interface/interfaces";
 import dayjs from "dayjs";
 import { BookingRefRows, BookingRows } from "../interface/mysql.interface";
+
+interface RegReview{
+    hotel_id: string,
+    booking_id: string,
+    rating: string,
+    review: string,
+    check_in_date: string,
+}
 
 const bookingService = {
     async addBookingRef(user_id: string, { booking_id, room_id, total_price, check_in, check_out }: BookingRefProps) {
@@ -23,7 +31,7 @@ const bookingService = {
         }
     },
 
-    async deleteBookingRef( booking_id: string) {
+    async deleteBookingRef(booking_id: string) {
         const connection = await pool.getConnection();
 
         const removeBookingRefSql = `DELETE FROM booking_ref WHERE booking_id = ?`;
@@ -95,7 +103,7 @@ const bookingService = {
     async getBookingByUserId(user_id: string) {
         const connection = await pool.getConnection();
 
-        const today = dayjs().format('YYYY-MM-DD');
+        const today = dayjs().format("YYYY-MM-DD");
 
         const getBookingSql = `SELECT * FROM booking WHERE user_id = ? AND check_out >= ?`;
         const getBookingValue = [user_id, today];
@@ -114,13 +122,39 @@ const bookingService = {
     async getReviewByUserId(user_id: string) {
         const connection = await pool.getConnection();
 
-        const today = dayjs().format('YYYY-MM-DD');
+        const today = dayjs().format("YYYY-MM-DD");
 
         const getBookingSql = `SELECT * FROM booking WHERE user_id = ? AND check_out < ? ORDER BY check_in DESC;`;
         const getBookingValue = [user_id, today];
 
         try {
             const [rows, field]: [BookingRows[], FieldPacket[]] = await connection.execute(getBookingSql, getBookingValue);
+
+            return rows;
+        } catch (error) {
+            throw error;
+        } finally {
+            connection.release();
+        }
+    },
+
+    async regReview(user_id: string, { booking_id, hotel_id, rating, review }: RegReview) {
+        const connection = await pool.getConnection();
+
+        const checkAuthSql = `SELECT user_id FROM booking WHERE user_id = ? AND booking_id = ?;`;
+        const checkAuthValue = [user_id, booking_id];
+
+        const regReviewSql = `INSERT INTO review (booking_id, hotel_id, rating, review) VALUES (?, ?, ?, ?);`;
+        const regReviewValue = [booking_id, hotel_id, rating, review];
+
+        try {
+            const [authRows, fields]: [RowDataPacket[], FieldPacket[]] = await connection.execute(checkAuthSql, checkAuthValue);
+
+            if (authRows.length === 0) {
+                throw new CustomError("UNAUTHORIZED", 401);
+            }
+
+            const [rows, field]: [ResultSetHeader, FieldPacket[]] = await connection.execute(regReviewSql, regReviewValue);
 
             return rows;
         } catch (error) {

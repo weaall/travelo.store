@@ -228,6 +228,7 @@ export default function MyReviewPage() {
                         hotelId={selectedHotel.hotel_id}
                         hotelName={selectedHotel.hotelData.name}
                         bookingId={selectedHotel.booking_id}
+                        checkInDate={selectedHotel.check_in}
                         onClose={closeRegReviewModal}
                     />
                 </ModalPortal>

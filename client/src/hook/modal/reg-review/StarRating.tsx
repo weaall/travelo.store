@@ -59,7 +59,7 @@ const StarRating: React.FC<StarRatingProps> = ({ maxRating = 5, onRatingChange }
                                 position: "absolute",
                                 top: 0,
                                 left: 0,
-                                width: "50%",
+                                width: "41.5%",
                                 overflow: "hidden",
                                 color: "#FFD700",
                                 visibility: hover >= starIndex - 0.5 || rating >= starIndex - 0.5 ? "visible" : "hidden",
