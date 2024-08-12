@@ -9,6 +9,7 @@ import { ModalPortal } from "../../../hook/modal/ModalPortal";
 import KakaoMapModal from "../../../hook/modal/kakao-map/KakaMap.modal";
 import dayjs from "dayjs";
 import RegReviewModal from "../../../hook/modal/reg-review/RegReview.modal";
+import ViewReviewModal from "../../../hook/modal/view-review/ViewReview.modal";
 
 interface Booking {
     booking_id: string;
@@ -43,6 +44,7 @@ export default function MyReviewPage() {
 
     const [isKakaoMapModalOpen, setIsKakaoMapModalOpen] = useState(false);
     const [isRegReviewModalOpen, setIsRegReviewModalOpen] = useState(false);
+    const [isViewReviewModalOpen, setIsViewReviewModalOpen] = useState(false);
 
     const [selectedHotel, setSelectedHotel] = useState<any>(null);
     const [bookingData, setBookingData] = useState<Booking[]>([]);
@@ -70,11 +72,21 @@ export default function MyReviewPage() {
         setSelectedHotel(null);
     };
 
+    const openViewReviewModal = (bookingId: Booking) => {
+        setSelectedHotel(bookingId);
+        setIsViewReviewModalOpen(true);
+    };
+
+    const closeViewReviewModal = () => {
+        setIsViewReviewModalOpen(false);
+        setSelectedHotel(null);
+    };
+
     const fetchBooking = async () => {
         try {
             const config = await sendJWT({
                 method: "GET",
-                url: "/booking/review",
+                url: "/booking/review/me",
             });
 
             const response = await axiosInstance.request(config);
@@ -196,7 +208,17 @@ export default function MyReviewPage() {
                                             </tw.HotelInfo>
                                         </tw.FlexWrap>
                                         <tw.MgmtBtnWrap>
-                                            <tw.MgmtBtn onClick={()=> openRegReviewModal(booking)}>{booking.review === 0 ? "후기 남기기" : "후기 확인하기"}</tw.MgmtBtn>
+                                            <tw.MgmtBtn
+                                                onClick={() => {
+                                                    if (booking.review === 0) {
+                                                        openRegReviewModal(booking);
+                                                    } else {
+                                                        openViewReviewModal(booking);
+                                                    }
+                                                }}
+                                            >
+                                                {booking.review === 0 ? "후기 남기기" : "후기 확인하기"}
+                                            </tw.MgmtBtn>
                                         </tw.MgmtBtnWrap>
                                     </tw.BookingWrap>
                                 ))}
@@ -228,9 +250,14 @@ export default function MyReviewPage() {
                         hotelId={selectedHotel.hotel_id}
                         hotelName={selectedHotel.hotelData.name}
                         bookingId={selectedHotel.booking_id}
-                        checkInDate={selectedHotel.check_in}
                         onClose={closeRegReviewModal}
                     />
+                </ModalPortal>
+            )}
+
+            {isViewReviewModalOpen && selectedHotel && (
+                <ModalPortal>
+                    <ViewReviewModal hotelName={selectedHotel.hotelData.name} bookingId={selectedHotel.booking_id} onClose={closeViewReviewModal} />
                 </ModalPortal>
             )}
         </tw.Container>

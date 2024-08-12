@@ -1,26 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { sendJWT } from "../../../utils/jwtUtils";
 import { axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
 import { useNavigate } from "react-router-dom";
 
-import * as tw from "./RegReview.modal.styles";
-import StarRating from "./StarRating";
+import * as tw from "./ViewReview.modal.styles";
+import Loading from "../../../components/loading/Loading";
 
 interface ModalProps {
     onClose: () => void;
-    hotelId: string | undefined;
-    hotelName: string | undefined;
     bookingId: string | undefined;
+    hotelName: string | undefined;
 }
 
-export default function RegReviewModal({ onClose, bookingId, hotelName, hotelId }: ModalProps) {
+export default function ViewReviewModal({ onClose, bookingId, hotelName}: ModalProps) {
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
 
     const [reviewData, setReviewData] = useState({
-        hotel_id: hotelId,
-        booking_id: bookingId,
-        rating: 1,
+        hotel_id: "",
+        booking_id: "",
+        rating: 0,
         review: "",
+        name: "",
+        check_in: "",
     });
 
     const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -40,24 +41,26 @@ export default function RegReviewModal({ onClose, bookingId, hotelName, hotelId 
         }));
     };
 
-    const clickReviewRegister = async () => {
+    const fetchReview = async () => {
+        setLoading(true);
         try {
-            const config = await sendJWT({
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                method: "post",
-                url: "/booking/review/reg",
-                data: reviewData
-            });
-
-            await axiosInstance.request(config);
-            window.alert("저장완료");
-            onClose();
+            const response = await axiosInstance.get("/booking/review/booking/" + bookingId);
+            setReviewData(response.data.data[0]);
+            console.log(response.data.data[0])
         } catch (error) {
             handleAxiosError(error, navigate);
+        } finally {
+            setLoading(false);
         }
     };
+
+    useEffect(() => {
+        fetchReview();
+    }, []);
+
+    if (loading) {
+        return <Loading />;
+    }
 
     return (
         <tw.Container>
@@ -73,20 +76,15 @@ export default function RegReviewModal({ onClose, bookingId, hotelName, hotelId 
                         <tw.SubTitle>{hotelName}</tw.SubTitle>
                         <tw.BookingId>{bookingId}</tw.BookingId>
                     </tw.SubTitleWrap>
-                    <tw.UpperTag>별점</tw.UpperTag>
-                    <StarRating onRatingChange={handleRatingChange} />
-                    <tw.UpperTag>후기</tw.UpperTag>
-                    <tw.AddTextWrap>
-                        <tw.AddTextField value={reviewData.review} onChange={handleTextChange}></tw.AddTextField>
-                        <tw.AddTextNum $validator={reviewData.review.length > 10} >{reviewData.review.length} / 150</tw.AddTextNum>
-                    </tw.AddTextWrap>
+                    <tw.ReviewWrap>
+                        <tw.RatingWrap>
+                            <tw.Rating>{reviewData.rating * 2}</tw.Rating>
+                            <tw.Name>{reviewData.name}</tw.Name>
+                            <tw.Date>{reviewData.check_in}</tw.Date>
+                        </tw.RatingWrap>
+                        <tw.Review>{reviewData.review}</tw.Review>
+                    </tw.ReviewWrap>
                 </tw.InputWrap>
-                <tw.RegBtn
-                onClick={()=>{clickReviewRegister()}}
-                $validator={reviewData.review.length > 10} 
-                disabled={!(reviewData.review.length > 10)}>
-                    등록하기
-                </tw.RegBtn>
             </tw.ModalWrap>
         </tw.Container>
     );

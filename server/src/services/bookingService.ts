@@ -147,14 +147,69 @@ const bookingService = {
         const regReviewSql = `INSERT INTO review (booking_id, hotel_id, rating, review) VALUES (?, ?, ?, ?);`;
         const regReviewValue = [booking_id, hotel_id, rating, review];
 
+        const updateBookingSql = `UPDATE booking SET review = ? WHERE booking_id = ?;`;
+        const updateBookingValue = [1, booking_id];
+
         try {
-            const [authRows, fields]: [RowDataPacket[], FieldPacket[]] = await connection.execute(checkAuthSql, checkAuthValue);
+            const [authRows, authField]: [RowDataPacket[], FieldPacket[]] = await connection.execute(checkAuthSql, checkAuthValue);
 
             if (authRows.length === 0) {
                 throw new CustomError("UNAUTHORIZED", 401);
             }
 
-            const [rows, field]: [ResultSetHeader, FieldPacket[]] = await connection.execute(regReviewSql, regReviewValue);
+            await connection.beginTransaction();
+
+            const [regRows, regField]: [ResultSetHeader, FieldPacket[]] = await connection.execute(regReviewSql, regReviewValue);
+
+            const [updateRows, updateField]: [ResultSetHeader, FieldPacket[]] = await connection.execute(updateBookingSql, updateBookingValue);
+
+            await connection.commit();
+
+            return regRows;
+        } catch (error) {
+            await connection.rollback();
+            throw error;
+        } finally {
+            connection.release();
+        }
+    },
+
+    async getReviewByHotelId(hotel_id: string) {
+        const connection = await pool.getConnection();
+
+        const getReviewSql = `
+            SELECT r.*, b.user_id, b.check_in, u.name 
+            FROM (SELECT * FROM review WHERE hotel_id = ?) AS r
+            JOIN 
+            booking b ON r.booking_id = b.booking_id
+            JOIN 
+            user u ON b.user_id = u.id;`;
+        const getReviewValue = [hotel_id];
+
+        try {
+            const [rows, field]: [ResultSetHeader[], FieldPacket[]] = await connection.execute(getReviewSql, getReviewValue);
+
+            return rows;
+        } catch (error) {
+            throw error;
+        } finally {
+            connection.release();
+        }
+    },
+
+    async getReviewByBookingId(booking_id: string) {
+        const connection = await pool.getConnection();
+
+        const getReviewSql = `
+            SELECT r.*, b.user_id, b.check_in, u.name 
+            FROM review r
+            JOIN booking b ON r.booking_id = b.booking_id
+            JOIN user u ON b.user_id = u.id
+            WHERE r.booking_id = ?;`
+        const getReviewValue = [booking_id];
+
+        try {
+            const [rows, field]: [ResultSetHeader[], FieldPacket[]] = await connection.execute(getReviewSql, getReviewValue);
 
             return rows;
         } catch (error) {

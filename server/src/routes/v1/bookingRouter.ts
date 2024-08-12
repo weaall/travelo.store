@@ -26,17 +26,26 @@ bookingRouter.get(
 );
 
 bookingRouter.get(
-    "/review",
-    isAuthenticated,
-    asyncHandler((req: Request, res: Response) => bookingController.getReviewByUserId(req as JWTCheck, res)),
-);
-
-
-bookingRouter.get(
     "/:id",
     bookingValidator.getBookingById, validateError,
     isAuthenticated,
     asyncHandler((req: Request, res: Response) => bookingController.getBookingById(req as JWTCheck, res)),
 );
+
+bookingRouter.get(
+    "/review/me",
+    isAuthenticated,
+    asyncHandler((req: Request, res: Response) => bookingController.getReviewByUserId(req as JWTCheck, res)),
+);
+
+bookingRouter.post(
+    "/review/reg",
+    isAuthenticated,
+    asyncHandler((req: Request, res: Response) => bookingController.regReview(req as JWTCheck, res)),
+);
+
+bookingRouter.get("/review/hotel/:id", asyncHandler(bookingController.getReviewByHotelId));
+
+bookingRouter.get("/review/booking/:id", asyncHandler(bookingController.getReviewByBookingId));
 
 export default bookingRouter;

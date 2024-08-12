@@ -120,6 +120,97 @@ const bookingController = {
         }
     },
 
+    async confirmBooking(req: Request, res: Response) {
+        const { hotelName, hotel_id, name, email, mobile, paymentType, orderId, paymentKey, amount } = req.query;
+
+        const widgetSecretKey = "test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6";
+        const encryptedSecretKey = "Basic " + Buffer.from(widgetSecretKey + ":").toString("base64");
+
+        try {
+            const bookingRefData = await bookingService.getBookingRef(orderId as string);
+
+            const parsedAmount = Number(amount);
+            const parsedOrderId = orderId as string;
+
+            if (bookingRefData[0].total_price === parsedAmount && bookingRefData[0].booking_id === parsedOrderId) {
+                try {
+                    const response = await got.post("https://api.tosspayments.com/v1/payments/confirm", {
+                        headers: {
+                            Authorization: encryptedSecretKey,
+                            "Content-Type": "application/json",
+                        },
+                        json: {
+                            orderId: orderId,
+                            amount: amount,
+                            paymentKey: paymentKey,
+                        },
+                        responseType: "json",
+                    });
+
+                    await bookingService.addBooking(bookingRefData[0].user_id, {
+                        booking_id: parsedOrderId,
+                        hotel_id: hotel_id as string,
+                        room_id: bookingRefData[0].room_id,
+                        total_price: parsedAmount,
+                        check_in: bookingRefData[0].check_in,
+                        check_out: bookingRefData[0].check_out,
+                        name: name as string,
+                        mobile: mobile as string,
+                        email: email as string,
+                    });
+
+                    const successMsg = `예약이 성공적으로 완료되었습니다.
+
+                            예약 번호: ${orderId}
+                            이름 : ${hotelName}
+                            체크인 날짜: ${bookingRefData[0].check_in}
+                            체크아웃 날짜: ${bookingRefData[0].check_out}
+                            총 결제 금액: ${parsedAmount.toLocaleString()}원
+                            예약자 이름: ${name}
+                            예약자 연락처: ${mobile}
+                            예약자 이메일: ${email}`;
+
+                    await msgService.sendBookingMsgFromHotel(bookingRefData[0].user_id, hotel_id as string, successMsg);
+
+                    const timeStamp = dayjs().toISOString();
+                    const userId = bookingRefData[0].user_id;
+                    const hotelId = hotel_id as string;
+                    const roomId = bookingRefData[0].room_id;
+
+                    const pairs = [
+                        { key: `/timeStamp/msg/list/user/${userId}`, data: timeStamp },
+                        { key: `/timeStamp/msg/list/hotel/${hotelId}`, data: timeStamp },
+                        { key: `/timeStamp/msg/chat/${userId}/${hotelId}`, data: timeStamp },
+                        { key: `/booking/user/${userId}`, data: await bookingService.getBookingByUserId(userId) },
+                        { key: `/timeStamp/room/price/roomId/${roomId}`, data: timeStamp },
+                    ];
+
+                    msetRedis1D(pairs);
+
+                    res.redirect(`http://localhost:3000/success/${orderId}`);
+                } catch (paymentError) {
+                    await bookingService.rollbackBookingRef(bookingRefData[0].user_id, parsedOrderId);
+                    throw paymentError;
+                }
+            } else {
+                throw new CustomError("UNAUTHORIZED", 401);
+            }
+        } catch (error) {
+            res.redirect("http://localhost:3000/fail");
+        }
+    },
+
+    async regReview(req: JWTCheck, res: Response) {
+        const data = await bookingService.regReview(req.user.id, req.body);
+
+        setRedis1D(`/review/user/${req.user.id}`, await bookingService.getReviewByUserId(req.user.id));
+
+        res.status(201).json({
+            error: null,
+            data: data,
+        });
+    },
+
     async getReviewByUserId(req: JWTCheck, res: Response) {
         try {
             const key: string = `/review/user/${req.user.id}`;
@@ -150,85 +241,63 @@ const bookingController = {
         }
     },
 
-    async confirmBooking(req: Request, res: Response) {
-        const { hotelName, hotel_id, name, email, mobile, paymentType, orderId, paymentKey, amount } = req.query;
-
-        const widgetSecretKey = "test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6";
-        const encryptedSecretKey = "Basic " + Buffer.from(widgetSecretKey + ":").toString("base64");
-
+    async getReviewByHotelId(req: Request, res: Response) {
         try {
-            const bookingRefData = await bookingService.getBookingRef(orderId as string);
+            const key: string = `/review/hotel/${req.params.id}`;
+            const redisData = JSON.parse(await getRedis(key));
 
-            const parsedAmount = Number(amount);
-            const parsedOrderId = orderId as string;
+            if (redisData === null) {
+                const data = await bookingService.getReviewByHotelId(req.params.id);
 
-            if (bookingRefData[0].total_price === parsedAmount && bookingRefData[0].booking_id === parsedOrderId) {
+                setRedis1D(key, data);
 
-                try {
-                    const response = await got.post("https://api.tosspayments.com/v1/payments/confirm", {
-                        headers: {
-                            Authorization: encryptedSecretKey,
-                            "Content-Type": "application/json",
-                        },
-                        json: {
-                            orderId: orderId,
-                            amount: amount,
-                            paymentKey: paymentKey,
-                        },
-                        responseType: "json",
-                    });
-
-                    await bookingService.addBooking(bookingRefData[0].user_id, {
-                        booking_id: parsedOrderId,
-                        hotel_id: hotel_id as string,
-                        room_id: bookingRefData[0].room_id,
-                        total_price: parsedAmount,
-                        check_in: bookingRefData[0].check_in,
-                        check_out: bookingRefData[0].check_out,
-                        name: name as string,
-                        mobile: mobile as string,
-                        email: email as string,
-                    });
-
-                    const successMsg = 
-                            `예약이 성공적으로 완료되었습니다.
-
-                            예약 번호: ${orderId}
-                            이름 : ${hotelName}
-                            체크인 날짜: ${bookingRefData[0].check_in}
-                            체크아웃 날짜: ${bookingRefData[0].check_out}
-                            총 결제 금액: ${parsedAmount.toLocaleString()}원
-                            예약자 이름: ${name}
-                            예약자 연락처: ${mobile}
-                            예약자 이메일: ${email}`;
-
-                    await msgService.sendBookingMsgFromHotel(bookingRefData[0].user_id, hotel_id as string, successMsg);
-
-                    const timeStamp = dayjs().toISOString();
-                    const userId = bookingRefData[0].user_id;
-                    const hotelId = hotel_id as string;
-                    const roomId = bookingRefData[0].room_id;
-
-                    const pairs = [
-                        { key: `/timeStamp/msg/list/user/${userId}`, data: timeStamp },
-                        { key: `/timeStamp/msg/list/hotel/${hotelId}`, data: timeStamp },
-                        { key: `/timeStamp/msg/chat/${userId}/${hotelId}`, data: timeStamp },
-                        { key: `/booking/user/${userId}`, data: await bookingService.getBookingByUserId(userId) },
-                        { key: `/timeStamp/room/price/roomId/${roomId}`,data: timeStamp },
-                    ];
-
-                    msetRedis1D(pairs);
-
-                    res.redirect(`http://localhost:3000/success/${orderId}`);
-                } catch (paymentError) {
-                    await bookingService.rollbackBookingRef(bookingRefData[0].user_id, parsedOrderId);
-                    throw paymentError;
-                }
+                res.status(200).json({
+                    error: null,
+                    data: data,
+                });
             } else {
-                throw new CustomError("UNAUTHORIZED", 401);
+                res.status(200).json({
+                    error: null,
+                    data: redisData,
+                });
             }
         } catch (error) {
-            res.redirect("http://localhost:3000/fail");
+            const data = await bookingService.getReviewByHotelId(req.params.id);
+
+            res.status(200).json({
+                error: null,
+                data: data,
+            });
+        }
+    },
+
+    async getReviewByBookingId(req: Request, res: Response) {
+        try {
+            const key: string = `/review/booking/${req.params.id}`;
+            const redisData = JSON.parse(await getRedis(key));
+
+            if (redisData === null) {
+                const data = await bookingService.getReviewByBookingId(req.params.id);
+
+                setRedis1D(key, data);
+
+                res.status(200).json({
+                    error: null,
+                    data: data,
+                });
+            } else {
+                res.status(200).json({
+                    error: null,
+                    data: redisData,
+                });
+            }
+        } catch (error) {
+            const data = await bookingService.getReviewByBookingId(req.params.id);
+
+            res.status(200).json({
+                error: null,
+                data: data,
+            });
         }
     },
 };
