@@ -204,6 +204,7 @@ const bookingController = {
         const data = await bookingService.regReview(req.user.id, req.body);
 
         setRedis1D(`/review/user/${req.user.id}`, await bookingService.getReviewByUserId(req.user.id));
+        setRedis1D(`/review/hotel/${req.body.hotel_id}`, await bookingService.getReviewByHotelId(req.body.hotel_id));
 
         res.status(201).json({
             error: null,

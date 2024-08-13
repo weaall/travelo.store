@@ -24,21 +24,11 @@ export default function ViewReviewModal({ onClose, bookingId, hotelName}: ModalP
         check_in: "",
     });
 
-    const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        const newText = e.target.value;
-        if (newText.length <= 150) {
-            setReviewData((prevData) => ({
-                ...prevData,
-                review: newText,
-            }));
-        }
-    };
-
-    const handleRatingChange = (rating: number) => {
-        setReviewData((prevData) => ({
-            ...prevData,
-            rating: rating + 1,
-        }));
+    const getInitialAndLastChar = (name: string) => {
+        if (name.length === 0) return "";
+        if (name.length === 1) return name;
+        if (name.length === 2) return `${name.charAt(0)}*`;
+        return `${name.charAt(0)}${" * ".repeat(name.length - 2)}${name.charAt(name.length - 1)}`;
     };
 
     const fetchReview = async () => {
@@ -46,7 +36,6 @@ export default function ViewReviewModal({ onClose, bookingId, hotelName}: ModalP
         try {
             const response = await axiosInstance.get("/booking/review/booking/" + bookingId);
             setReviewData(response.data.data[0]);
-            console.log(response.data.data[0])
         } catch (error) {
             handleAxiosError(error, navigate);
         } finally {
@@ -69,21 +58,20 @@ export default function ViewReviewModal({ onClose, bookingId, hotelName}: ModalP
                     <tw.CloseBtn onClick={onClose}>
                         <tw.CloseSVG alt="" src={require("../../../assets/svg/close_svg.svg").default}></tw.CloseSVG>
                     </tw.CloseBtn>
-                    <tw.Title>후기 작성</tw.Title>
+                    <tw.Title>후기</tw.Title>
                 </tw.TitleWrap>
                 <tw.InputWrap>
                     <tw.SubTitleWrap>
                         <tw.SubTitle>{hotelName}</tw.SubTitle>
-                        <tw.BookingId>{bookingId}</tw.BookingId>
+                        <tw.Date>{reviewData.check_in}</tw.Date>
                     </tw.SubTitleWrap>
                     <tw.ReviewWrap>
-                        <tw.RatingWrap>
+                        <tw.Review>
                             <tw.Rating>{reviewData.rating * 2}</tw.Rating>
-                            <tw.Name>{reviewData.name}</tw.Name>
-                            <tw.Date>{reviewData.check_in}</tw.Date>
-                        </tw.RatingWrap>
-                        <tw.Review>{reviewData.review}</tw.Review>
+                            {reviewData.review}
+                        </tw.Review>
                     </tw.ReviewWrap>
+                    <tw.Name>{getInitialAndLastChar(reviewData.name)}</tw.Name>
                 </tw.InputWrap>
             </tw.ModalWrap>
         </tw.Container>

@@ -70,6 +70,7 @@ export default function MyReviewPage() {
     const closeRegReviewModal = () => {
         setIsRegReviewModalOpen(false);
         setSelectedHotel(null);
+        fetchBooking();
     };
 
     const openViewReviewModal = (bookingId: Booking) => {

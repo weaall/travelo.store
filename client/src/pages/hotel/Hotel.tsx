@@ -17,6 +17,7 @@ import { ModalPortal } from "../../hook/modal/ModalPortal";
 import KakaoMapModal from "../../hook/modal/kakao-map/KakaMap.modal";
 
 import * as tw from "./Hotel.styles";
+import ReviewSlider from "../../components/reviewList/ReviewList";
 
 export default function Hotel() {
     const navigate = useNavigate();
@@ -89,6 +90,17 @@ export default function Hotel() {
         },
     ]);
 
+    const [reviewList, setReviewList] = useState([
+        {
+            hotel_id: "",
+            booking_id: "",
+            rating: 0,
+            review: "",
+            name: "",
+            check_in: "",
+        },
+    ]);
+
     const fetchHotel = async () => {
         setLoading(true);
         try {
@@ -138,6 +150,19 @@ export default function Hotel() {
         }
     };
 
+    const fetchReview = async () => {
+        setLoading(true);
+        try {
+            const response = await axiosInstance.get("/booking/review/hotel/" + id);
+            setReviewList(response.data.data);
+            console.log(response.data.data)
+        } catch (error) {
+            handleAxiosError(error, navigate);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const clickRoom = (hotelId: number, roomId: number) => {
         const jwtToken = Cookies.get("jwt");
         if (!jwtToken) {
@@ -152,7 +177,15 @@ export default function Hotel() {
 
     useEffect(() => {
         fetchHotel();
+        fetchReview();
     }, [checkInDate, checkOutDate]);
+
+    const getInitialAndLastChar = (name: string) => {
+        if (name.length === 0) return "";
+        if (name.length === 1) return name;
+        if (name.length === 2) return `${name.charAt(0)}*`;
+        return `${name.charAt(0)}${" * ".repeat(name.length - 2)}${name.charAt(name.length - 1)}`;
+    };
 
     const sortedRoomList = [...roomList].sort((a, b) => {
         const totalPriceA = a.room_price.reduce((total, room) => total + room.price, 0);
@@ -273,6 +306,26 @@ export default function Hotel() {
                         </tw.RoomWrap>
                     ))}
                 </tw.RoomList>
+                <tw.ReviewList>
+                    {reviewList.map((review) => (
+                        <tw.ReviewWrap key={review.check_in}>
+                            <tw.Review
+                                style={{
+                                    display: "-webkit-box",
+                                    WebkitLineClamp: 4,
+                                    WebkitBoxOrient: "vertical",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                }}
+                            >
+                                <tw.Rating>{review.rating * 2}</tw.Rating>
+                                {review.review}
+                            </tw.Review>
+                            <tw.Name>{getInitialAndLastChar(review.name)}</tw.Name>
+                        </tw.ReviewWrap>
+                    ))}
+                </tw.ReviewList>
+                <ReviewSlider reviewList={reviewList} getInitialAndLastChar={getInitialAndLastChar} />
             </tw.MainContainer>
 
             {isKakaoMapModalOpen && (
