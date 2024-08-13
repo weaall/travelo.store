@@ -16,6 +16,13 @@ mobile:px-4`
 export const HotelInfoWrap = tw.div`w-full space-y-2`
 export const HotelFlexWrap = tw.div`flex flex-col w-auto mx-6 p-4 border space-y-2
 mobile:mx-0`
+export const HotelTitleWrap = tw.div`flex flex-col w-[90%] space-y-2
+mobile:w-[80%]`
+export const HotelInnerWrap = tw.div`flex w-full`
+export const HotelRatingWrap = tw.div`flex items-center justify-center w-[10%] bg-black rounded-xl
+mobile:w-[20%] mobile:my-2`
+export const HotelRating = tw.p`font-semibold text-3xl text-white
+mobile:text-2xl`
 export const HotelTitle = tw.p`text-2xl font-semibold truncate`
 export const HotelAddressWrap = tw.div`flex items-start`
 export const HotelAddress = tw.p`text-main text-sm pl-1 hover:cursor-pointer`

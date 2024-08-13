@@ -180,10 +180,9 @@ const bookingService = {
         const getReviewSql = `
             SELECT r.*, b.user_id, b.check_in, u.name 
             FROM (SELECT * FROM review WHERE hotel_id = ?) AS r
-            JOIN 
-            booking b ON r.booking_id = b.booking_id
-            JOIN 
-            user u ON b.user_id = u.id;`;
+            JOIN booking b ON r.booking_id = b.booking_id
+            JOIN user u ON b.user_id = u.id
+            ORDER BY b.check_in DESC;`;
         const getReviewValue = [hotel_id];
 
         try {

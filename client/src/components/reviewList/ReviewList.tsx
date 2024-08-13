@@ -10,42 +10,38 @@ interface Review {
 
 interface CustomSliderProps {
     reviewList: Review[];
-    getInitialAndLastChar: (name: string) => string;
 }
 
-const ITEMS_PER_PAGE = 3;
+const ITEMS_PER_PAGE = 3; // 각 페이지에 표시할 리뷰 수를 4로 설정
 
-const ReviewSlider: React.FC<CustomSliderProps> = ({ reviewList, getInitialAndLastChar }) => {
+const ReviewPagination: React.FC<CustomSliderProps> = ({ reviewList }) => {
     const [currentPage, setCurrentPage] = useState(0);
 
     const totalPages = Math.ceil(reviewList.length / ITEMS_PER_PAGE);
 
     const prevPage = () => {
-        setCurrentPage((prevPage) => (prevPage > 0 ? prevPage - 1 : totalPages - 1));
+        setCurrentPage((prevPage) => (prevPage > 0 ? prevPage - 1 : 0));
     };
 
     const nextPage = () => {
-        setCurrentPage((prevPage) => (prevPage < totalPages - 1 ? prevPage + 1 : 0));
+        setCurrentPage((prevPage) => (prevPage < totalPages - 1 ? prevPage + 1 : prevPage));
+    };
+
+    const getInitialAndLastChar = (name: string) => {
+        if (name.length === 0) return "";
+        if (name.length === 1) return name;
+        if (name.length === 2) return `${name.charAt(0)}*`;
+        return `${name.charAt(0)}${" * ".repeat(name.length - 2)}${name.charAt(name.length - 1)}`;
     };
 
     const startIndex = currentPage * ITEMS_PER_PAGE;
-    const endIndex = startIndex + ITEMS_PER_PAGE;
+    const currentReviews = reviewList.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
     return (
-        <div className="relative w-full overflow-hidden">
-            <button
-                onClick={prevPage}
-                className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-transparent border-none cursor-pointer text-2xl text-black z-10"
-                disabled={totalPages <= 1}
-            >
-                &lt;
-            </button>
-            <div
-                className="flex gap-4 transition-transform duration-300 ease-in-out"
-                style={{ transform: `translateX(-${currentPage * 75}%)`, width: `${totalPages * 66}%` }}
-            >
-                {reviewList.map((review, index) => (
-                    <tw.ReviewWrap key={review.check_in} className="w-1/3 p-4 border border-gray-300 rounded-lg bg-white">
+        <div className="w-full">
+            <div className="grid grid-cols-1 gap-4">
+                {currentReviews.map((review, index) => (
+                    <tw.ReviewWrap key={index} className="p-4 border border-gray-300 rounded-lg bg-white">
                         <tw.Review
                             style={{
                                 display: "-webkit-box",
@@ -62,15 +58,19 @@ const ReviewSlider: React.FC<CustomSliderProps> = ({ reviewList, getInitialAndLa
                     </tw.ReviewWrap>
                 ))}
             </div>
-            <button
-                onClick={nextPage}
-                className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-transparent border-none cursor-pointer text-2xl text-black z-10"
-                disabled={totalPages <= 1}
-            >
-                &gt;
-            </button>
+            <div className="flex justify-between mt-4">
+                <button onClick={prevPage} className="bg-transparent border-none cursor-pointer text-xl text-black" disabled={currentPage === 0}>
+                    Previous
+                </button>
+                <span className="text-gray-500">
+                    Page {currentPage + 1} of {totalPages}
+                </span>
+                <button onClick={nextPage} className="bg-transparent border-none cursor-pointer text-xl text-black" disabled={currentPage >= totalPages - 1}>
+                    Next
+                </button>
+            </div>
         </div>
     );
 };
 
-export default ReviewSlider;
+export default ReviewPagination;
