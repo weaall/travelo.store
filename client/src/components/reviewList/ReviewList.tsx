@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import * as tw from "./ReviewList.styles";  // Tailwind CSS 스타일을 정의한 파일
+import * as tw from "./ReviewList.styles"; // Tailwind CSS 스타일을 정의한 파일
 
 interface Review {
     check_in: string;
@@ -40,9 +40,12 @@ const ReviewSlider: React.FC<CustomSliderProps> = ({ reviewList, getInitialAndLa
             >
                 &lt;
             </button>
-            <div className="flex gap-4 transition-transform duration-300 ease-in-out" style={{ transform: `translateX(-${currentPage * 100}%)`, width: `${totalPages * 100}%` }}>
+            <div
+                className="flex gap-4 transition-transform duration-300 ease-in-out"
+                style={{ transform: `translateX(-${currentPage * 75}%)`, width: `${totalPages * 66}%` }}
+            >
                 {reviewList.map((review, index) => (
-                    <tw.ReviewWrap key={review.check_in} className="flex-none w-1/3 p-4 border border-gray-300 rounded-lg bg-white">
+                    <tw.ReviewWrap key={review.check_in} className="w-1/3 p-4 border border-gray-300 rounded-lg bg-white">
                         <tw.Review
                             style={{
                                 display: "-webkit-box",

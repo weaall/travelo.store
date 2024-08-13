@@ -309,23 +309,25 @@ export default function Hotel() {
                 <tw.ReviewList>
                     {reviewList.map((review) => (
                         <tw.ReviewWrap key={review.check_in}>
-                            <tw.Review
-                                style={{
-                                    display: "-webkit-box",
-                                    WebkitLineClamp: 4,
-                                    WebkitBoxOrient: "vertical",
-                                    overflow: "hidden",
-                                    textOverflow: "ellipsis",
-                                }}
-                            >
-                                <tw.Rating>{review.rating * 2}</tw.Rating>
-                                {review.review}
-                            </tw.Review>
+                            <tw.Date>{dayjs(review.check_in).format('YYYY년 MM월 DD일')}</tw.Date>
+                            <tw.TextWrap>
+                                <tw.Review
+                                    style={{
+                                        display: "-webkit-box",
+                                        WebkitLineClamp: 6,
+                                        WebkitBoxOrient: "vertical",
+                                        overflow: "hidden",
+                                        textOverflow: "ellipsis",
+                                    }}
+                                >
+                                    <tw.Rating>{review.rating * 2}</tw.Rating>
+                                    {review.review}
+                                </tw.Review>
+                            </tw.TextWrap>
                             <tw.Name>{getInitialAndLastChar(review.name)}</tw.Name>
                         </tw.ReviewWrap>
                     ))}
                 </tw.ReviewList>
-                <ReviewSlider reviewList={reviewList} getInitialAndLastChar={getInitialAndLastChar} />
             </tw.MainContainer>
 
             {isKakaoMapModalOpen && (

@@ -60,9 +60,11 @@ export const BookBtnWrap = tw.div`text-end`
 export const BookBtn = tw.button`mt-2 text-lg font-medium px-5 py-2 rounded-xl bg-black text-white hover:bg-black/[0.8]
 mobile:hover:bg-black`
 
-export const ReviewList = tw.div`flex gap-6 mx-6 px-4 py-6 border 
+export const ReviewList = tw.div`flex gap-3 mx-4 p-4
 mobile:p-0 mobile:m-0 mobile:`
-export const ReviewWrap = tw.div`flex flex-col min-w-1/3`
-export const Rating = tw.span`text-3xl font-semibold pr-4 `
+export const ReviewWrap = tw.div`flex flex-col w-1/3 bg-gray-100/[0.5] p-3 rounded-xl`
+export const Rating = tw.span`text-3xl font-semibold pr-4`
+export const TextWrap = tw.div`h-32`
 export const Review = tw.p`px-2 text-sm truncate-on-overflow`
-export const Name = tw.p`text-end pt-4`
+export const Name = tw.p`text-end pt-4 text-xs`
+export const Date = tw.p`pb-1 text-gray-400 text-xs`
