@@ -8,29 +8,35 @@ import { decrypt, encrypt } from "../../utils/cryptoJs";
 import { facilItems, servItems } from "../../data/hotelData";
 
 import Loading from "../../components/loading/Loading";
-
 import SearchBox from "../../components/searchBox/SearchBox";
 import SearchBoxSlim from "../../components/searchBoxSlim/SearchBoxSlim";
 import ImgSlider from "../../components/imgSlider/imgSlider";
 import ImgSliderMain from "../../components/imgSliderMain/imgSliderMain";
+
 import { ModalPortal } from "../../hook/modal/ModalPortal";
 import KakaoMapModal from "../../hook/modal/kakao-map/KakaMap.modal";
+import ReviewListModal from "../../hook/modal/review-list/ReviewList.modal";
 
 import * as tw from "./Hotel.styles";
-import ReviewSlider from "../../components/reviewList/ReviewList";
 
 export default function Hotel() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
 
     const [isKakaoMapModalOpen, setIsKakaoMapModalOpen] = useState(false);
-
     const openKakaoMapModal = () => {
         setIsKakaoMapModalOpen(true);
     };
-
     const closeKakaoMapModal = () => {
         setIsKakaoMapModalOpen(false);
+    };
+
+    const [isReviewListModalOpen, setIsReviewListModalOpen] = useState(false);
+    const openReviewListModal = () => {
+        setIsReviewListModalOpen(true);
+    };
+    const closeReviewListModal = () => {
+        setIsReviewListModalOpen(false);
     };
 
     const { encryptedId, checkInDate, checkOutDate, adult, child } = useParams();
@@ -108,6 +114,7 @@ export default function Hotel() {
             setHotelData(response.data.data[0]);
             await fetchHotelImg();
             await fetchRoom();
+            await fetchReview();
         } catch (error) {
             handleAxiosError(error, navigate);
         } finally {
@@ -176,7 +183,6 @@ export default function Hotel() {
 
     useEffect(() => {
         fetchHotel();
-        fetchReview();
     }, [checkInDate, checkOutDate]);
 
     const [averageRating, setAverageRating] = useState(0);
@@ -184,9 +190,8 @@ export default function Hotel() {
     useEffect(() => {
         if (reviewList.length > 0) {
             const totalRating = reviewList.reduce((sum, review) => sum + review.rating, 0);
-            const avgRating = parseFloat((totalRating / reviewList.length).toFixed(2)); // 소수점 둘째 자리까지 계산
-            const adjustedRating = parseFloat((avgRating * 2).toFixed(1)); // *2 후 소수점 첫째 자리까지 표시
-            setAverageRating(adjustedRating);
+            const avgRating = parseFloat((totalRating / reviewList.length).toFixed(1));
+            setAverageRating(avgRating);
         }
     }, [reviewList]);
 
@@ -246,19 +251,15 @@ export default function Hotel() {
                     <tw.HotelInfoWrap>
                         <tw.HotelFlexWrap>
                             <tw.HotelInnerWrap>
-                                <tw.HotelTitleWrap>
-                                    <tw.HotelTitle>{hotelData.name}</tw.HotelTitle>
-                                    <tw.HotelAddressWrap>
-                                        <tw.AddressSVG alt="" src={require("../../assets/svg/location_icon.svg").default} />
-                                        <tw.HotelAddress onClick={openKakaoMapModal}>
-                                            {hotelData.address} {hotelData.address_detail}
-                                        </tw.HotelAddress>
-                                    </tw.HotelAddressWrap>
-                                </tw.HotelTitleWrap>
-                                <tw.HotelRatingWrap>
-                                    <tw.HotelRating>{averageRating}</tw.HotelRating>
-                                </tw.HotelRatingWrap>
+                                <tw.HotelTitle>{hotelData.name}</tw.HotelTitle>
+                                <tw.HotelRating>{averageRating}</tw.HotelRating>
                             </tw.HotelInnerWrap>
+                            <tw.HotelAddressWrap>
+                                <tw.AddressSVG alt="" src={require("../../assets/svg/location_icon.svg").default} />
+                                <tw.HotelAddress onClick={openKakaoMapModal}>
+                                    {hotelData.address} {hotelData.address_detail}
+                                </tw.HotelAddress>
+                            </tw.HotelAddressWrap>
                             <tw.HotelDesc>{hotelData.description}</tw.HotelDesc>
                         </tw.HotelFlexWrap>
                         <tw.HotelFlexWrap>
@@ -323,28 +324,35 @@ export default function Hotel() {
                         </tw.RoomWrap>
                     ))}
                 </tw.RoomList>
-                <tw.ReviewList>
-                    {reviewList.slice(0, 3).map((review) => (
-                        <tw.ReviewWrap key={review.check_in}>
-                            <tw.Date>{dayjs(review.check_in).format("YYYY년 MM월 DD일")}</tw.Date>
-                            <tw.TextWrap>
-                                <tw.Review
-                                    style={{
-                                        display: "-webkit-box",
-                                        WebkitLineClamp: 6,
-                                        WebkitBoxOrient: "vertical",
-                                        overflow: "hidden",
-                                        textOverflow: "ellipsis",
-                                    }}
-                                >
-                                    <tw.Rating>{review.rating * 2}</tw.Rating>
-                                    {review.review}
-                                </tw.Review>
-                            </tw.TextWrap>
-                            <tw.Name>{getInitialAndLastChar(review.name)}</tw.Name>
-                        </tw.ReviewWrap>
-                    ))}
-                </tw.ReviewList>
+
+                <tw.ReviewContainer>
+                    <tw.FlexWrap>
+                        <tw.Label>후기</tw.Label>
+                        <tw.MoreReviewBtn onClick={openReviewListModal}>더보기</tw.MoreReviewBtn>
+                    </tw.FlexWrap>
+                    <tw.ReviewList>
+                        {reviewList.slice(0, 3).map((review) => (
+                            <tw.ReviewWrap key={review.check_in}>
+                                <tw.Date>{dayjs(review.check_in).format("YYYY년 MM월 DD일")}</tw.Date>
+                                <tw.TextWrap>
+                                    <tw.Review
+                                        style={{
+                                            display: "-webkit-box",
+                                            WebkitLineClamp: 6,
+                                            WebkitBoxOrient: "vertical",
+                                            overflow: "hidden",
+                                            textOverflow: "ellipsis",
+                                        }}
+                                    >
+                                        <tw.Rating>{review.rating}</tw.Rating>
+                                        {review.review}
+                                    </tw.Review>
+                                </tw.TextWrap>
+                                <tw.Name>{getInitialAndLastChar(review.name)}</tw.Name>
+                            </tw.ReviewWrap>
+                        ))}
+                    </tw.ReviewList>
+                </tw.ReviewContainer>
             </tw.MainContainer>
 
             {isKakaoMapModalOpen && (
@@ -355,6 +363,12 @@ export default function Hotel() {
                         imgUrl={hotelData.img[0].url}
                         onClose={closeKakaoMapModal}
                     />
+                </ModalPortal>
+            )}
+
+            {isReviewListModalOpen && (
+                <ModalPortal>
+                    <ReviewListModal reviewList={reviewList} onClose={closeReviewListModal} />
                 </ModalPortal>
             )}
         </tw.Container>

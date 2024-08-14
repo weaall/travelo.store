@@ -36,7 +36,7 @@ export default function RegReviewModal({ onClose, bookingId, hotelName, hotelId 
     const handleRatingChange = (rating: number) => {
         setReviewData((prevData) => ({
             ...prevData,
-            rating: rating + 1,
+            rating: (rating + 1) * 2,
         }));
     };
 

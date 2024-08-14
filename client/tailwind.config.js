@@ -9,8 +9,7 @@ module.exports = {
                 '5xl': "0.65rem"
             },
             colors: {
-                main: "#6666ff",
-                tomain: "#9999ff",
+                main: "#006CE4",
                 kakao: "#FAE100",
                 "kakao-text": "#371D1E",
                 naver: "#2DB400",
