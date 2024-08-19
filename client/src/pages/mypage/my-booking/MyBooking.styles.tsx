@@ -42,11 +42,11 @@ export const UnRegWrap = tw.div`flex h-full justify-center items-center text-2xl
 
 export const HotelInfo = tw.div`flex flex-col relative px-5 py-2 space-y-1 w-8/12
 mobile:w-full`
-export const HotelTitle = tw.p`text-base font-semibold truncate
+export const HotelTitle = tw.p`text-base font-medium truncate
 mobile:text-lg`
-export const AddressWrap = tw.div`flex items-start`
-export const AddressSVG = tw.img`w-2.5 mt-1 mr-1`
-export const HotelAddress = tw.p`text-gray-400 text-xs hover:cursor-pointer text-main pb-3`
+export const AddressWrap = tw.div`flex items-start`;
+export const HotelAddress = tw.p`text-main text-xs pl-1 hover:cursor-pointer`;
+export const AddressSVG = tw.img`w-3 mt-0.5`;
 
 export const MgmtBtnWrap = tw.div`text-end px-4 pt-2 pb-4`
 export const MgmtBtn = tw.button`mt-2 text-base font-medium px-5 py-2 rounded-xl bg-black text-white hover:bg-black/[0.8]

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { axiosInstance, handleAxiosError } from "../../utils/axios.utils"
+import { axios, axiosInstance, handleAxiosError } from "../../utils/axios.utils"
 import KaKao from "./Kakao"
 import Naver from "./Naver"
 import { useNavigate } from "react-router-dom"
@@ -8,16 +8,35 @@ import Cookies from "js-cookie"
 import * as tw from "./SignIn.styles"
 import { useSetRecoilState } from "recoil"
 import { HeaderRenderAtom } from "../../recoil/HeaderRender.Atom"
+import AlertModal from "../../hook/modal/alert/Alert.modal"
+import { ModalPortal } from "../../hook/modal/ModalPortal"
 
 export default function SignIn() {
     const navigate = useNavigate()
     const setHeaderRender = useSetRecoilState(HeaderRenderAtom);
 
+    const [alertMessage, setAlertMessage] = useState("")
+    const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
+    const [onCloseCallback, setOnCloseCallback] = useState<() => void>(() => {});
+    const openAlertModal = (callback: () => void) => {
+        setOnCloseCallback(() => callback);
+        setIsAlertModalOpen(true);
+    };
+    
+    const closeAlertModal = () => {
+        setIsAlertModalOpen(false);
+        onCloseCallback();
+    };
+
     const checkSignInState = () => {
         const jwtToken = Cookies.get("jwt")
         if (jwtToken) {
-            window.alert("올바른 접근이 아닙니다.")
-            navigate("/")
+            setAlertMessage("올바른 접근이 아닙니다.");
+            const handleModalClose = () => {
+                navigate("/");
+            };
+
+            openAlertModal(handleModalClose);
         } else {
         }
     }
@@ -54,19 +73,49 @@ export default function SignIn() {
       };
 
       const onClickSignIn = async () => {
-        try {
-            const response = await axiosInstance.post("/auth/sign-in", formData);
-            const receivedToken = response.data.data;
-            if (response.status === 201) {
-                Cookies.set("jwt", receivedToken, { expires: 1 });
-                window.alert("성공적으로 로그인되었습니다.");
-                headerRender();
-                navigate("/");
-            }
-        } catch (error) {
-            handleAxiosError(error, navigate);
-        }
-    };
+          try {
+              const response = await axiosInstance.post("/auth/sign-in", formData);
+              const receivedToken = response.data.data;
+              if (response.status === 201) {
+                  Cookies.set("jwt", receivedToken, { expires: 1 });
+                  setAlertMessage("성공적으로 로그인되었습니다.");
+                  const handleModalClose = () => {
+                      headerRender();
+                      navigate("/");
+                  };
+                  openAlertModal(handleModalClose);
+              }
+          } catch (error) {
+              if (axios.isAxiosError(error)) {
+                  if (error.response) {
+                      const status = error.response.status;
+                      if (status === 400) {
+                          setAlertMessage("잘못된 요청입니다.");
+                          const handleModalClose = () => {
+                              navigate("/");
+                          };
+                          openAlertModal(handleModalClose);
+                      } else if (status === 401) {
+                          setAlertMessage("이메일과 비밀번호가 일치하지 않습니다.");
+                          const handleModalClose = () => {};
+                          openAlertModal(handleModalClose);
+                      } else if (status >= 500) {
+                          setAlertMessage("잘못된 요청입니다.");
+                          const handleModalClose = () => {
+                              navigate("/");
+                          };
+                          openAlertModal(handleModalClose);
+                      }
+                  } else {
+                      setAlertMessage("잘못된 요청입니다.");
+                      const handleModalClose = () => {
+                          navigate("/");
+                      };
+                      openAlertModal(handleModalClose);
+                  }
+              }
+          }
+      };
 
     useEffect(() => {
         checkSignInState();
@@ -133,6 +182,11 @@ export default function SignIn() {
                     </tw.SocialButtonWrap>
                 </tw.SocialWrap>
             </tw.ContentsWrap>
+            {isAlertModalOpen && (
+                <ModalPortal>
+                    <AlertModal message={alertMessage} onClose={closeAlertModal} />
+                </ModalPortal>
+            )}
         </tw.Container>
     );
 }

@@ -18,10 +18,23 @@ import KakaoMapModal from "../../hook/modal/kakao-map/KakaMap.modal";
 import ReviewListModal from "../../hook/modal/review-list/ReviewList.modal";
 
 import * as tw from "./Hotel.styles";
+import AlertModal from "../../hook/modal/alert/Alert.modal";
 
 export default function Hotel() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
+
+    const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
+    const [onCloseCallback, setOnCloseCallback] = useState<() => void>(() => {});
+    const openAlertModal = (callback: () => void) => {
+        setOnCloseCallback(() => callback);
+        setIsAlertModalOpen(true);
+    };
+    
+    const closeAlertModal = () => {
+        setIsAlertModalOpen(false);
+        onCloseCallback();
+    };
 
     const [isKakaoMapModalOpen, setIsKakaoMapModalOpen] = useState(false);
     const openKakaoMapModal = () => {
@@ -172,8 +185,11 @@ export default function Hotel() {
     const clickRoom = (hotelId: number, roomId: number) => {
         const jwtToken = Cookies.get("jwt");
         if (!jwtToken) {
-            alert("로그인해주세요.");
-            navigate("/signin");
+            const handleModalClose = () => {
+                navigate("/signin");
+            };
+
+            openAlertModal(handleModalClose);
             return;
         }
         const encryptedHotelId = encrypt(`${hotelId}`);
@@ -298,10 +314,20 @@ export default function Hotel() {
                                     <tw.RoomInfo>
                                         <tw.InfoWrap>
                                             <tw.RoomName>{room.name}</tw.RoomName>
-                                            <tw.RoomText>{room.view_type}</tw.RoomText>
-                                            <tw.RoomText>
-                                                {room.bed_type} / {room.num}인
-                                            </tw.RoomText>
+                                            <tw.RoomDetailWrap>
+                                                <tw.RoomDetail>
+                                                    <tw.RoomSvg alt="" src={require("../../assets/svg/view_icon.svg").default} />
+                                                    <tw.RoomText>{room.view_type}</tw.RoomText>
+                                                </tw.RoomDetail>
+                                                <tw.RoomDetail>
+                                                    <tw.RoomSvg alt="" src={require("../../assets/svg/room.svg").default} />
+                                                    <tw.RoomText>{room.bed_type}</tw.RoomText>
+                                                </tw.RoomDetail>
+                                                <tw.RoomDetail>
+                                                    <tw.RoomSvg alt="" src={require("../../assets/svg/person_icon.svg").default} />
+                                                    <tw.RoomText>{room.num}인</tw.RoomText>
+                                                </tw.RoomDetail>
+                                            </tw.RoomDetailWrap>
                                         </tw.InfoWrap>
                                         <tw.PriceWrap>
                                             <tw.TotalLabel>{checkInDate}~</tw.TotalLabel>
@@ -354,6 +380,12 @@ export default function Hotel() {
                     </tw.ReviewList>
                 </tw.ReviewContainer>
             </tw.MainContainer>
+
+            {isAlertModalOpen && (
+                <ModalPortal>
+                    <AlertModal message="로그인이 필요합니다." onClose={closeAlertModal} />
+                </ModalPortal>
+            )}
 
             {isKakaoMapModalOpen && (
                 <ModalPortal>

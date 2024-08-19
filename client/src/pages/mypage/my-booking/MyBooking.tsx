@@ -189,10 +189,10 @@ export default function MyBookingPage() {
                                             <tw.HotelInfo>
                                                 <tw.HotelTitle>{booking.hotelData.name}</tw.HotelTitle>
                                                 <tw.AddressWrap>
-                                                <tw.AddressSVG alt="" src={require("../../../assets/svg/location_icon.svg").default} />
-                                                <tw.HotelAddress onClick={() => openKakaoMapModal(booking.hotelData)}>
-                                                    {booking.hotelData.address} {booking.hotelData.address_detail}, {booking.hotelData.postcode}
-                                                </tw.HotelAddress>
+                                                    <tw.AddressSVG alt="" src={require("../../../assets/svg/location_icon.svg").default} />
+                                                    <tw.HotelAddress onClick={() => openKakaoMapModal(booking.hotelData)}>
+                                                        {booking.hotelData.address} {booking.hotelData.address_detail}, {booking.hotelData.postcode}
+                                                    </tw.HotelAddress>
                                                 </tw.AddressWrap>
                                                 <tw.CheckWrap>
                                                     <tw.CheckInWrap>
@@ -207,7 +207,7 @@ export default function MyBookingPage() {
                                             </tw.HotelInfo>
                                         </tw.FlexWrap>
                                         <tw.MgmtBtnWrap>
-                                            <tw.MgmtBtn onClick={()=>navigate(`./${booking.booking_id}`)}>예약 관리하기</tw.MgmtBtn>
+                                            <tw.MgmtBtn onClick={() => navigate(`./${booking.booking_id}`)}>예약 관리하기</tw.MgmtBtn>
                                         </tw.MgmtBtnWrap>
                                     </tw.BookingWrap>
                                 ))}

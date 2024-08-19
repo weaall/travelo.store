@@ -148,12 +148,12 @@ export function MyBookingMgmtPage() {
                 </tw.TitleWrap>
                 <tw.ContentsWrap>
                     <tw.OuterWrap>
-                    <tw.Label>호텔정보</tw.Label> 
+                        <tw.Label>호텔정보</tw.Label>
                         <tw.RoomWrap>
                             <tw.ContentsFlex>
                                 <tw.Pic>
                                     {hotelData?.img?.[0]?.url ? (
-                                        <ImgLoader imageUrl={hotelData.img[0].url} altText="" rounded="xl mobile:rounded-none mobile:rounded-xl" />
+                                        <ImgLoader imageUrl={hotelData.img[0].url} altText="" rounded="l-xl mobile:rounded-none mobile:rounded-t-xl" />
                                     ) : (
                                         <tw.UnRegWrap>미등록</tw.UnRegWrap>
                                     )}
@@ -186,10 +186,20 @@ export function MyBookingMgmtPage() {
                                     <tw.RoomInfo>
                                         <tw.InfoWrap>
                                             <tw.RoomName>{roomData.name}</tw.RoomName>
-                                            <tw.RoomText>{roomData.view_type}</tw.RoomText>
-                                            <tw.RoomText>
-                                                {roomData.bed_type} / 최대인원: {roomData.num}명
-                                            </tw.RoomText>
+                                            <tw.RoomDetailWrap>
+                                                <tw.RoomDetail>
+                                                    <tw.RoomSvg alt="" src={require("../../../assets/svg/view_icon.svg").default} />
+                                                    <tw.RoomText>{roomData.view_type}</tw.RoomText>
+                                                </tw.RoomDetail>
+                                                <tw.RoomDetail>
+                                                    <tw.RoomSvg alt="" src={require("../../../assets/svg/room.svg").default} />
+                                                    <tw.RoomText>{roomData.bed_type}</tw.RoomText>
+                                                </tw.RoomDetail>
+                                                <tw.RoomDetail>
+                                                    <tw.RoomSvg alt="" src={require("../../../assets/svg/person_icon.svg").default} />
+                                                    <tw.RoomText>{roomData.num}인</tw.RoomText>
+                                                </tw.RoomDetail>
+                                            </tw.RoomDetailWrap>
                                         </tw.InfoWrap>
                                     </tw.RoomInfo>
                                 </tw.OuterInfoWrap>
@@ -275,8 +285,8 @@ export function MyBookingMgmtPage() {
                         </tw.DetailRow>
                     </tw.DetailWrap>
                     <tw.MgmtWrap>
-                        <tw.MgmtBtn>날짜 수정하기</tw.MgmtBtn>
-                        <tw.MgmtBtn>예약 취소하기</tw.MgmtBtn>
+                        <tw.MgmtBtn>예약 취소</tw.MgmtBtn>
+                        <tw.MgmtBtn>예약 변경</tw.MgmtBtn>
                         <tw.MgmtBtn>요청하기</tw.MgmtBtn>
                     </tw.MgmtWrap>
                 </tw.ContentsWrap>

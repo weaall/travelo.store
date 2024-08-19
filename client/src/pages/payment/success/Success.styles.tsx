@@ -24,17 +24,21 @@ export const InfoWrap = tw.div`space-y-1`
 
 export const HotelTitle = tw.p`text-base font-medium truncate
 mobile:text-base`
-export const HotelAddress = tw.p`text-gray-400 text-xs hover:cursor-pointer text-main`
+export const AddressWrap = tw.div`flex items-start`;
+export const HotelAddress = tw.p`text-main text-xs pl-1 hover:cursor-pointer`;
+export const AddressSVG = tw.img`w-3 mt-0.5`;
 
 export const RoomWrap = tw.div`w-full rounded-2xl bg-white h-36 shadow-md
 mobile:flex mobile:flex-col mobile:h-auto`
 export const Pic = tw.div`w-4/12 h-36 bg-gray-30
-mobile:h-40 mobile:w-full`
-export const RoomInfo = tw.div`flex flex-col relative px-5 py-2 space-y-1
+mobile:min-h-40 mobile:max-h-40 mobile:w-full`
+export const RoomInfo = tw.div`flex flex-col relative px-5 py-2 space-y-1 items-start
 mobile:flex-row`
-export const RoomName = tw.h2`text-base font-medium truncate
-mobile:text-sm`
-export const RoomText = tw.p`text-xs text-gray-400
+export const RoomDetailWrap = tw.div`flex flex-col`
+export const RoomDetail = tw.div`flex items-center py-0.5`
+export const RoomSvg = tw.img`w-5 mr-2`
+export const RoomName = tw.h2`text-base font-medium truncate`
+export const RoomText = tw.p`text-xs
 mobile:text-xs`
 
 export const CheckWrap = tw.div`flex w-full border-y my-3`

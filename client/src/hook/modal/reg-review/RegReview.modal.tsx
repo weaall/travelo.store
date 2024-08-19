@@ -25,7 +25,7 @@ export default function RegReviewModal({ onClose, bookingId, hotelName, hotelId 
 
     const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const newText = e.target.value;
-        if (newText.length <= 150) {
+        if (newText.length <= 200) {
             setReviewData((prevData) => ({
                 ...prevData,
                 review: newText,

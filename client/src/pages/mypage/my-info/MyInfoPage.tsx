@@ -5,10 +5,41 @@ import { axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../../components/loading/Loading";
 import { checkValidEmail, checkValidMobile, checkValidPhoneNumber, checkValidUserName } from "../../../utils/regExp.utils";
+import { ModalPortal } from "../../../hook/modal/ModalPortal";
+import AlertModal from "../../../hook/modal/alert/Alert.modal";
+import ConfirmModal from "../../../hook/modal/alert-confirm/Confrim.modal";
 
 export default function MyInfoPage() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
+
+    const [alertMessage, setAlertMessage] = useState("");
+
+    const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
+    const [onCloseCallback, setOnCloseCallback] = useState<() => void>(() => {});
+    const openAlertModal = (callback: () => void) => {
+        setOnCloseCallback(() => callback);
+        setIsAlertModalOpen(true);
+    };
+
+    const closeAlertModal = () => {
+        setIsAlertModalOpen(false);
+        onCloseCallback();
+    };
+
+    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+    const [onCloseConfirmCallback, setOnCloseConfirmCallback] = useState<(result: boolean) => void>(() => {});
+
+    const openConfirmModal = (message: string, callback: (result: boolean) => void) => {
+        setAlertMessage(message);
+        setOnCloseConfirmCallback(() => callback);
+        setIsConfirmModalOpen(true);
+    };
+
+    const closeConfirmModal = (result: boolean) => {
+        setIsConfirmModalOpen(false);
+        onCloseConfirmCallback(result);
+    };
 
     const [inputState, setInputState] = useState(false);
 
@@ -52,7 +83,6 @@ export default function MyInfoPage() {
                 isEmail: true,
                 isMobile: true,
             });
-
         } catch (error) {
             handleAxiosError(error, navigate);
         } finally {
@@ -72,7 +102,11 @@ export default function MyInfoPage() {
                 data: userInfo,
             });
             await axiosInstance.request(config);
-            window.alert("수정완료");
+            setAlertMessage("수정되었습니다.");
+            const handleModalClose = () => {
+                setInputState(false);
+            };
+            openAlertModal(handleModalClose);
         } catch (error) {
             handleAxiosError(error, navigate);
         } finally {
@@ -102,9 +136,11 @@ export default function MyInfoPage() {
             setInputState(true);
         } else {
             if (JSON.stringify(userInfo) !== JSON.stringify(initialUserInfo)) {
-                if (window.confirm("변경 사항을 저장하시겠습니까?")) {
-                    updateMyInfo();
-                }
+                openConfirmModal("변경 사항을 저장하시겠습니까?", (result) => {
+                    if (result) {
+                        updateMyInfo();
+                    }
+                });
             } else {
                 setInputState(false);
             }
@@ -175,6 +211,18 @@ export default function MyInfoPage() {
                     </tw.MgmtBtn>
                 </tw.MgmtBtnWrap>
             </tw.MobileWrap>
+
+            {isAlertModalOpen && (
+                <ModalPortal>
+                    <AlertModal message={alertMessage} onClose={closeAlertModal} />
+                </ModalPortal>
+            )}
+
+            {isConfirmModalOpen && (
+                <ModalPortal>
+                    <ConfirmModal message={alertMessage} onClose={closeConfirmModal} />
+                </ModalPortal>
+            )}
         </tw.Container>
     );
 }

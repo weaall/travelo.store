@@ -5,6 +5,7 @@ import { ModalPortal } from "../../hook/modal/ModalPortal";
 import { useNavigate } from "react-router-dom";
 import * as tw from "./SignUp.styles";
 import Terms from "../../hook/modal/Terms/Terms.modal";
+import AlertModal from "../../hook/modal/alert/Alert.modal";
 
 export default function SignUp() {
     const navigate = useNavigate();
@@ -14,6 +15,19 @@ export default function SignUp() {
     };
     const closeModal = () => {
         setIsModalOpen(false);
+    };
+
+    const [alertMessage, setAlertMessage] = useState("")
+    const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
+    const [onCloseCallback, setOnCloseCallback] = useState<() => void>(() => {});
+    const openAlertModal = (callback: () => void) => {
+        setOnCloseCallback(() => callback);
+        setIsAlertModalOpen(true);
+    };
+    
+    const closeAlertModal = () => {
+        setIsAlertModalOpen(false);
+        onCloseCallback();
     };
 
     const [formData, setFormData] = useState({
@@ -70,8 +84,11 @@ export default function SignUp() {
         try {
             const response = await axiosInstance.post("/auth/sign-up", formData);
             if (response.status === 201) {
-                window.alert("성공적으로 가입되었습니다.");
-                navigate("/signin")
+                setAlertMessage("성공적으로 가입되었습니다.")
+                const handleModalClose = () => {
+                    navigate("/signin");
+                };
+                openAlertModal(handleModalClose);
             }
         } catch (error) {
             handleAxiosError(error, navigate);
@@ -82,10 +99,20 @@ export default function SignUp() {
         try {
             const response = await axiosInstance.get("/user/email/" + formData.email);
             if (response.data.data === 0) {
-                window.alert("사용이 가능합니다.");
-                setEmailValid(true);
+                setAlertMessage("사용이 가능한 이메일 입니다.")
+                const handleModalClose = () => {
+                    setEmailValid(true);
+                };
+                openAlertModal(handleModalClose);
             } else {
-                window.alert("이미 가입된 이메일입니다.");
+                setAlertMessage("이미 가입된 이메일입니다.")
+                const handleModalClose = () => {
+                    setFormData((prevFormData) => ({
+                        ...prevFormData,
+                        email: "", 
+                    }));
+                };
+                openAlertModal(handleModalClose);
             }
         } catch (error) {
             handleAxiosError(error, navigate);
@@ -208,6 +235,12 @@ export default function SignUp() {
                     가입하기
                 </tw.RegBtn>
             </tw.ContentsWrap>
+
+            {isAlertModalOpen && (
+                <ModalPortal>
+                    <AlertModal message={alertMessage} onClose={closeAlertModal} />
+                </ModalPortal>
+            )}
 
             {isModalOpen && (
                 <ModalPortal>

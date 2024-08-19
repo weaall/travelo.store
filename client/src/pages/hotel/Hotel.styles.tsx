@@ -14,10 +14,10 @@ export const HotelPic = tw.div`px-6 w-full h-96 rounded-2xl mobile:h-60
 mobile:px-4`;
 
 export const HotelInfoWrap = tw.div`w-full space-y-2`;
-export const HotelFlexWrap = tw.div`flex flex-col w-auto mx-6 p-4 border space-y-2
-mobile:mx-0`;
+export const HotelFlexWrap = tw.div`flex flex-col w-auto mx-6 p-4 border space-y-2 rounded-xl
+mobile:mx-0.5`;
 export const HotelInnerWrap = tw.div`flex w-full justify-between`;
-export const HotelRating = tw.p`text-lg text-white bg-black rounded-xl px-3 py-1
+export const HotelRating = tw.p`text-lg text-white bg-black rounded-xl px-3 py-1 font-medium
 mobile:text-lg`;
 export const HotelTitle = tw.p`text-2xl font-semibold truncate`;
 export const HotelAddressWrap = tw.div`flex items-start`;
@@ -41,19 +41,21 @@ mobile:flex mobile:flex-col mobile:h-auto`;
 export const RoomPic = tw.div`w-4/12 h-60 bg-gray-30
 mobile:h-40 mobile:w-full`;
 
-export const RoomInfoWrap = tw.div`flex flex-col w-8/12 py-2 
-mobile:w-full`;
-export const RoomInfo = tw.div`flex flex-col relative px-5 py-2 space-y-1
+export const RoomInfoWrap = tw.div`flex flex-col w-8/12 py-2 h-60
+mobile:w-full mobile:h-auto`;
+export const RoomInfo = tw.div`flex relative px-5 py-3 space-y-1 justify-between h-full
 mobile:flex-row`;
-export const InfoWrap = tw.div`space-y-1
+export const InfoWrap = tw.div`
 mobile:w-3/5`;
+export const RoomDetailWrap = tw.div`flex flex-col py-3`
+export const RoomDetail = tw.div`flex items-center py-0.5`
+export const RoomSvg = tw.img`w-5 mr-2`
 export const RoomName = tw.h2`text-xl font-semibold truncate
 mobile:text-sm`;
-export const RoomLabel = tw.p`text-sm text-gray`;
-export const RoomText = tw.p`text-sm text-gray
+export const RoomText = tw.p`text-sm
 mobile:text-xs`;
 
-export const PriceWrap = tw.div`flex flex-col text-end
+export const PriceWrap = tw.div`flex flex-col text-end self-end
 mobile:w-2/5 mobile:itmes-bottom`;
 export const TotalLabel = tw.p`text-xs text-gray-400`;
 export const TotalPrice = tw.p`text-xl text-red-500 font-bold
@@ -63,7 +65,8 @@ export const BookBtnWrap = tw.div`text-end`;
 export const BookBtn = tw.button`mt-2 text-lg font-medium px-5 py-2 rounded-xl bg-black text-white hover:bg-black/[0.8]
 mobile:hover:bg-black`;
 
-export const ReviewContainer = tw.div`flex flex-col mx-6 px-4 py-6`;
+export const ReviewContainer = tw.div`flex flex-col mx-6 px-4 py-6
+mobile:mx-0`;
 export const FlexWrap = tw.div`flex items-center justify-between pb-4`;
 export const MoreReviewBtn = tw.button`w-auto self-end text-gray-500 text-base`;
 export const ReviewList = tw.div`flex gap-3 my-2

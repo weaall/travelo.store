@@ -150,14 +150,14 @@ export function SuccessPage() {
                     예약 번호는 <tw.BookingSpan>{bookingData.booking_id}</tw.BookingSpan>이며, 아래 버튼으로 연결되는 셀프서비스 예약 관리 기능을 이용해 예약
                     정보 확인, 예약 취소, 예약 변경을 하실 수 있습니다.
                 </tw.BookingText>
-                <tw.BookingBtn onClick={()=>navigate(`/me/booking/${bookingData.booking_id}`)}>예약 관리하기</tw.BookingBtn>
+                <tw.BookingBtn onClick={() => navigate(`/me/booking/${bookingData.booking_id}`)}>예약 관리하기</tw.BookingBtn>
             </tw.BookingWrap>
             <tw.OuterWrap>
                 <tw.RoomWrap>
                     <tw.ContentsFlex>
                         <tw.Pic>
                             {hotelData?.img?.[0]?.url ? (
-                                <ImgLoader imageUrl={hotelData.img[0].url} altText="" rounded="xl mobile:rounded-none mobile:rounded-xl" />
+                                <ImgLoader imageUrl={hotelData.img[0].url} altText="" rounded="l-xl mobile:rounded-none mobile:rounded-t-xl" />
                             ) : (
                                 <tw.UnRegWrap>미등록</tw.UnRegWrap>
                             )}
@@ -166,9 +166,12 @@ export function SuccessPage() {
                             <tw.RoomInfo>
                                 <tw.InfoWrap>
                                     <tw.HotelTitle>{hotelData.name}</tw.HotelTitle>
-                                    <tw.HotelAddress onClick={openKakaoMapModal}>
-                                        {hotelData.address} {hotelData.address_detail}, {hotelData.postcode}
-                                    </tw.HotelAddress>
+                                    <tw.AddressWrap>
+                                        <tw.AddressSVG alt="" src={require("../../../assets/svg/location_icon.svg").default} />
+                                        <tw.HotelAddress onClick={openKakaoMapModal}>
+                                            {hotelData.address} {hotelData.address_detail}, {hotelData.postcode}
+                                        </tw.HotelAddress>
+                                    </tw.AddressWrap>
                                 </tw.InfoWrap>
                             </tw.RoomInfo>
                         </tw.OuterInfoWrap>
@@ -187,10 +190,20 @@ export function SuccessPage() {
                             <tw.RoomInfo>
                                 <tw.InfoWrap>
                                     <tw.RoomName>{roomData.name}</tw.RoomName>
-                                    <tw.RoomText>{roomData.view_type}</tw.RoomText>
-                                    <tw.RoomText>
-                                        {roomData.bed_type} / 최대인원: {roomData.num}명
-                                    </tw.RoomText>
+                                    <tw.RoomDetailWrap>
+                                        <tw.RoomDetail>
+                                            <tw.RoomSvg alt="" src={require("../../../assets/svg/view_icon.svg").default} />
+                                            <tw.RoomText>{roomData.view_type}</tw.RoomText>
+                                        </tw.RoomDetail>
+                                        <tw.RoomDetail>
+                                            <tw.RoomSvg alt="" src={require("../../../assets/svg/room.svg").default} />
+                                            <tw.RoomText>{roomData.bed_type}</tw.RoomText>
+                                        </tw.RoomDetail>
+                                        <tw.RoomDetail>
+                                            <tw.RoomSvg alt="" src={require("../../../assets/svg/person_icon.svg").default} />
+                                            <tw.RoomText>{roomData.num}인</tw.RoomText>
+                                        </tw.RoomDetail>
+                                    </tw.RoomDetailWrap>
                                 </tw.InfoWrap>
                             </tw.RoomInfo>
                         </tw.OuterInfoWrap>
