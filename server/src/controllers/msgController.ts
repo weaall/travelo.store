@@ -10,9 +10,9 @@ const msgController = {
 
         const timeStamp = dayjs().toISOString();
         const pairs = [
-            { key: `/timeStamp/msg/list/user/${req.body.user_id}`, data: timeStamp },
+            { key: `/timeStamp/msg/list/user/${req.user.id}`, data: timeStamp },
             { key: `/timeStamp/msg/list/hotel/${req.body.hotel_id}`, data: timeStamp },
-            { key: `/timeStamp/msg/chat/${req.body.user_id}/${req.body.hotel_id}`, data: timeStamp },
+            { key: `/timeStamp/msg/chat/${req.user.id}/${req.body.hotel_id}`, data: timeStamp },
         ];
 
         msetRedis1D(pairs);

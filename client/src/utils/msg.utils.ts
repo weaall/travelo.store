@@ -5,11 +5,14 @@ import dayjs from "dayjs";
  * @param targetDate
  */
 export const msgDateFormat = (targetDate: string): string => {
-    const date = dayjs(targetDate);
+    const date = dayjs(targetDate).subtract(9, 'hour');
     const today = dayjs().format('YYYY-MM-DD');
     const yesterday = dayjs().subtract(1, 'day').format('YYYY-MM-DD');
 
     const timeFormat = date.format('A h:mm');
+
+    console.log(today)
+    console.log(timeFormat)
 
     if (date.format('YYYY-MM-DD') === today) {
         return `${timeFormat}`;
@@ -21,7 +24,7 @@ export const msgDateFormat = (targetDate: string): string => {
 };
 
 export const msgTimeStampFormat = (targetDate: string): string => {
-    const date = dayjs(targetDate);
+    const date = dayjs(targetDate).subtract(9, 'hour');
     const today = dayjs().format('YYYY-MM-DD');
     const yesterday = dayjs().subtract(1, 'day').format('YYYY-MM-DD');
 

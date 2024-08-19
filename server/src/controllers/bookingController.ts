@@ -160,7 +160,6 @@ const bookingController = {
                     });
 
                     const successMsg = `예약이 성공적으로 완료되었습니다.
-
                             예약 번호: ${orderId}
                             이름 : ${hotelName}
                             체크인 날짜: ${bookingRefData[0].check_in}
