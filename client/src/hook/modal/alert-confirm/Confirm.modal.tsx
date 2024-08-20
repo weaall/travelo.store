@@ -1,4 +1,5 @@
-import * as tw from "./Confrim.modal.styles";
+import React, { useState } from "react";
+import * as tw from "./Confirm.modal.styles";
 
 interface ModalProps {
     onClose: (confirmed: boolean) => void;
@@ -6,17 +7,26 @@ interface ModalProps {
 }
 
 export default function ConfirmModal({ onClose, message }: ModalProps) {
+    const [isClosing, setIsClosing] = useState(false);
+
     const handleConfirmClick = () => {
-        onClose(true);
+        triggerCloseAnimation(true);
     };
 
     const handleCancelClick = () => {
-        onClose(false);
+        triggerCloseAnimation(false);
+    };
+
+    const triggerCloseAnimation = (confirmed: boolean) => {
+        setIsClosing(true);
+        setTimeout(() => {
+            onClose(confirmed);
+        }, 500);
     };
 
     return (
-        <tw.Container>
-            <tw.ModalWrap>
+        <tw.Container $isClosing={isClosing}>
+            <tw.ModalWrap $isClosing={isClosing}>
                 <tw.ContentsWrap>
                     <tw.Message>{message}</tw.Message>
                     <tw.BtnWrap>

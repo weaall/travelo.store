@@ -4,11 +4,9 @@ interface RemoveProps{
     $value: string;
 }
 
-export const Container = tw.div`flex flex-col items-center min-h-screen-16
-mobile:min-w-[0px]`
+export const Container = tw.div`flex flex-col items-center min-h-screen-16`
 
-export const MainContainer = tw.div`flex flex-col w-full min-h-screen-16 justify-center bg-main-img bg-no-repeat bg-center min-h-[640px]
-mobile:bg-white mobile:bg-main-img-mobile mobile:min-h-screen-16`
+export const MainContainer = tw.div`flex flex-col w-full min-h-screen-16 justify-center min-h-[640px]`
 
 export const SearchContainer = tw.div`flex bg-white shadow-md flex rounded-full px-2 py-3 mx-4 min-w-[640px] max-w-[640px]
 mobile:flex-col mobile:space-y-3 mobile:bg-gray-100 mobile:rounded-2xl mobile:min-w-[0px] mobile:px-4`

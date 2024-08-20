@@ -11,9 +11,6 @@ export const msgDateFormat = (targetDate: string): string => {
 
     const timeFormat = date.format('A h:mm');
 
-    console.log(today)
-    console.log(timeFormat)
-
     if (date.format('YYYY-MM-DD') === today) {
         return `${timeFormat}`;
     } else if (date.format('YYYY-MM-DD') === yesterday) {

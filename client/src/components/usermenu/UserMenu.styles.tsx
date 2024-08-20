@@ -6,7 +6,7 @@ interface MenuOpenProps {
 
 export const Container = tw.div`max-w-[840px] relative`
 
-export const MenuWrap = tw.div<MenuOpenProps>`max-w-[420px] absolute top-[4.04rem] right-0 w-[50%] h-auto z-50
+export const MenuWrap = tw.div<MenuOpenProps>`max-w-[420px] absolute top-[4.04rem] right-0 w-[50%] h-auto z-51
 bg-white/[0.95] flex flex-col rounded-3xl border-b shadow-lg
 transition ease-in duration-200 overflow-hidden
 mobile:w-[100%] mobile:ml-[0%] mobile:max-w-[840px]

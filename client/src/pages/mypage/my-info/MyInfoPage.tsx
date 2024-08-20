@@ -7,7 +7,7 @@ import Loading from "../../../components/loading/Loading";
 import { checkValidEmail, checkValidMobile, checkValidPhoneNumber, checkValidUserName } from "../../../utils/regExp.utils";
 import { ModalPortal } from "../../../hook/modal/ModalPortal";
 import AlertModal from "../../../hook/modal/alert/Alert.modal";
-import ConfirmModal from "../../../hook/modal/alert-confirm/Confrim.modal";
+import ConfirmModal from "../../../hook/modal/alert-confirm/Confirm.modal";
 
 export default function MyInfoPage() {
     const navigate = useNavigate();

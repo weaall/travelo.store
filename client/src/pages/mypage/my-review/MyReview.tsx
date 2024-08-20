@@ -163,7 +163,7 @@ export default function MyReviewPage() {
         <tw.Container>
             <tw.MobileWrap>
                 <tw.TitleWrap>
-                    <tw.Title>예약확인</tw.Title>
+                    <tw.Title>이용후기</tw.Title>
                 </tw.TitleWrap>
                 <tw.ContentsWrap>
                     {Object.keys(groupedBookings).length === 0 ? (

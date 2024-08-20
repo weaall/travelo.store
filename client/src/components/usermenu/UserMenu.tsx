@@ -4,6 +4,9 @@ import Cookies from "js-cookie";
 
 import { HeaderRenderAtom } from "../../recoil/HeaderRender.Atom";
 import * as tw from "./UserMenu.styles";
+import { useState } from "react";
+import ConfirmModal from "../../hook/modal/alert-confirm/Confirm.modal";
+import { ModalPortal } from "../../hook/modal/ModalPortal";
 
 interface UserMenuProps {
     isMenuOpen: boolean;
@@ -13,13 +16,29 @@ export default function UserMenu({ isMenuOpen }: UserMenuProps) {
     const [headerRender, setHeaderRender] = useRecoilState(HeaderRenderAtom);
     const navigate = useNavigate();
 
+    const [alertMessage, setAlertMessage] = useState("");
+    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+    const [onCloseConfirmCallback, setOnCloseConfirmCallback] = useState<(result: boolean) => void>(() => {});
+
+    const openConfirmModal = (message: string, callback: (result: boolean) => void) => {
+        setAlertMessage(message);
+        setOnCloseConfirmCallback(() => callback);
+        setIsConfirmModalOpen(true);
+    };
+
+    const closeConfirmModal = (result: boolean) => {
+        setIsConfirmModalOpen(false);
+        onCloseConfirmCallback(result);
+    };
+
     const logoutClick = () => {
-        if (window.confirm("로그아웃 하시겠습니까?")) {
-            Cookies.remove("jwt");
-            setHeaderRender((prevCount) => prevCount + 1);
-            navigate("/");
-        } else {
-        }
+        openConfirmModal("로그아웃 하시겠습니까?", (result) => {
+            if (result) {
+                Cookies.remove("jwt");
+                setHeaderRender((prevCount) => prevCount + 1);
+                navigate("/");
+            }
+        });
     };
 
     const navigateClick = (url: string) => {
@@ -60,6 +79,12 @@ export default function UserMenu({ isMenuOpen }: UserMenuProps) {
                     </tw.MenuUl>
                 </tw.MenuNav>
             </tw.MenuWrap>
+
+            {isConfirmModalOpen && (
+                <ModalPortal>
+                    <ConfirmModal message={alertMessage} onClose={closeConfirmModal} />
+                </ModalPortal>
+            )}
         </tw.Container>
     );
 }

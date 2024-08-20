@@ -1,6 +1,6 @@
 import tw from "tailwind-styled-components"
 
-export const Container = tw.div`flex flex-col items-center pb-4`
+export const Container = tw.div`w-full flex flex-col items-center pb-4`
 
 export const MainContainer = tw.div`w-full`
 

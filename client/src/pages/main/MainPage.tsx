@@ -7,6 +7,7 @@ import { ModalPortal } from "../../hook/modal/ModalPortal";
 import SearchDateModal from "../../hook/modal/search_date/SearchDate.modal";
 import SearchPersonModal from "../../hook/modal/search_person/SearchPerson.modal";
 import { encrypt } from "../../utils/cryptoJs";
+import BannerSlider from "../../components/bannerSlider/BannerSlider";
 
 interface MainPageProps {
     defaultSearchValue?: string;
@@ -18,7 +19,7 @@ interface MainPageProps {
     currentHotelName? : string;
 }
 
-export default function MainPage({ defaultSearchValue, defaultStartDate, defaultEndDate, defaultAdult, defaultChild, currentHotelId, currentHotelName}: MainPageProps) {
+export default function Search({ defaultSearchValue, defaultStartDate, defaultEndDate, defaultAdult, defaultChild, currentHotelId, currentHotelName}: MainPageProps) {
     const navigate = useNavigate();
 
     const [isSearchDateModalOpen, setIsSearchDateModalOpen] = useState(false);
@@ -149,6 +150,8 @@ export default function MainPage({ defaultSearchValue, defaultStartDate, default
 
                     <tw.SearchBtnMobile onClick={handleOnClick}>검색하기</tw.SearchBtnMobile>
                 </tw.SearchContainer>
+
+                <BannerSlider />
             </tw.MainContainer>
 
             {isSearchDateModalOpen && (

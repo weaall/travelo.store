@@ -18,17 +18,9 @@ module.exports = {
                 mobile: { max: "640px" },
                 tablet: { min: "641px", max: "1024px" },
             },
-            keyframes: {
-                modal: {
-                    from: { transform: "translate(-50%, -50%) translateY(-100%)" },
-                    to: { transform: "translate(-50%, -50%) translateY(0)" },
-                },
-            },
-            animation: {
-                modal: "modal 0.5s ease-in-out 1",
-            },
             zIndex: {
                 100: "100",
+                51: "51",
             },
             fontFamily: {
                 sans: ['"Noto Sans KR"', "sans-serif"],
@@ -46,7 +38,55 @@ module.exports = {
             backgroundImage: {
                 "main-img": "url('/src/assets/main.jpg')",
                 "main-img-mobile": "url('/src/assets/main_mobile.png')",
-            }
+            },
+            keyframes: {
+              modal: {
+                from: {
+                  transform: "translate(-50%, -50%) scale(0.8)",
+                  opacity: 0,
+                },
+                to: {
+                  transform: "translate(-50%, -50%) scale(1)",
+                  opacity: 1,
+                },
+              },
+              closeModal: {
+                from: {
+                  transform: "translate(-50%, -50%) scale(1)",
+                  opacity: 1,
+                },
+                to: {
+                  transform: "translate(-50%, -50%) scale(0.8)",
+                  opacity: 0,
+                },
+              },
+              backdrop: {
+                from: {
+                  opacity: 0,
+                  backdropFilter: "blur(0px)",
+                },
+                to: {
+                  opacity: 1,
+                  backdropFilter: "blur(3px)",
+                },
+              },
+              closeBackdrop: {
+                from: {
+                  opacity: 1,
+                  backdropFilter: "blur(3px)",
+                },
+                to: {
+                  opacity: 0,
+                  backdropFilter: "blur(0px)",
+                },
+              },
+            },
+            animation: {
+              modal: "modal 0.5s ease-out forwards",
+              closeModal: "closeModal 0.5s ease-out forwards",
+              backdrop: "backdrop 0.5s ease-out forwards",
+              closeBackdrop: "closeBackdrop 0.5s ease-out forwards",
+            },
         },
     },
     plugins: [],
