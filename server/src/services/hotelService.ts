@@ -49,6 +49,27 @@ const hotelService = {
         }
     },
 
+    async getHotelRatingByHotelId(id: string) {
+        const connection = await pool.getConnection();
+
+        const getHotelSql = `
+            SELECT ROUND(AVG(rating), 1) AS rating
+            FROM review
+            WHERE hotel_id = ?`;
+
+        const getHotelValues = [id];
+
+        try {
+            const [rows, fields]: [ResultSetHeader[], FieldPacket[]] = await connection.execute(getHotelSql, getHotelValues);
+
+            return rows;
+        } catch (error) {
+            throw error;
+        } finally {
+            connection.release();
+        }
+    },
+
     async regHotel(user_id: string, { name, address, address_detail, postcode, reg_num, bank, account, owner, urls }: RegHotelParams) {
         const addHotelSql = "INSERT INTO hotel (user_id, name, postcode, address, address_detail) VALUES (?, ?, ?, ?, ?)";
         const addHotelValues = [user_id, name, postcode, address, address_detail];

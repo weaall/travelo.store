@@ -43,6 +43,36 @@ const hotelController = {
         }
     },
 
+    async getHotelRatingByHotelId(req: Request, res: Response) {
+        try {
+            const key: string = `/hotel/rating/${req.params.id}`;
+            const redisData = JSON.parse(await getRedis(key));
+
+            if (redisData === null) {
+                const data = await hotelService.getHotelRatingByHotelId(req.params.id);
+
+                setRedis1D(key, data);
+
+                res.status(200).json({
+                    error: null,
+                    data: data,
+                });
+            } else {
+                res.status(200).json({
+                    error: null,
+                    data: redisData,
+                });
+            }
+        } catch (error) {
+            const data = await hotelService.getHotelRatingByHotelId(req.params.id);
+
+            res.status(200).json({
+                error: null,
+                data: data,
+            });
+        }
+    },
+
     async regHotel(req: JWTCheck, res: Response) {
         const data = await hotelService.regHotel(req.user.id, req.body);
 

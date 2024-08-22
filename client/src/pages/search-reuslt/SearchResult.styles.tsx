@@ -23,10 +23,14 @@ export const HotelInfoWrap = tw.div`flex flex-col w-8/12 py-2 hover:cursor-point
 mobile:w-full`
 export const HotelInfo = tw.div`relative px-5 py-2 space-y-1
 mobile:flex-row`
-export const UpperInfo = tw.div`flex flex-col`
+export const HotelTitleWrap = tw.div`flex justify-between`
+export const HotelNameWrap = tw.div`mobile:w-[75%] flex flex-col space-y-1`
 export const HotelName = tw.h2`text-xl font-bold`
-export const HotelAddress = tw.p`text-xs font-bold text-main pl-1 truncate`
+export const HotelAddress = tw.p`text-xs text-main pl-1 truncate`
 export const AddressSVG = tw.img`w-3`
+export const RatingWrap = tw.div`flex items-center ml-4`
+export const RatingLabel = tw.p`text-xl font-bold text-white bg-black rounded-xl px-3 py-1`
+
 export const HotelP = tw.p`text-xs`
 export const HotelComp = tw.p`text-xs bg-gray-100 py-1 px-2 rounded-lg`
 

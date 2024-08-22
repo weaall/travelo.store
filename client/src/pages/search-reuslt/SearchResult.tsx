@@ -41,6 +41,8 @@ export default function SearchResult() {
             room_num: 0,
             discount: 0,
 
+            rating: 0,
+
             room_price: [
                 {
                     room_id: 0,
@@ -70,7 +72,14 @@ export default function SearchResult() {
                     child: child,
                 },
             });
-            setHotelList(response.data.data);
+            const hotels = response.data.data;
+
+            for (let hotel of hotels) {
+                const ratingResponse = await axiosInstance.get(`/hotel/rating/${hotel.hotel_id}`);
+                hotel.rating = ratingResponse.data.data[0].rating
+            }
+
+            setHotelList(hotels);
         } catch (error) {
             handleAxiosError(error, navigate);
         } finally {
@@ -129,24 +138,26 @@ export default function SearchResult() {
                                 </tw.HotelPic>
                                 <tw.HotelInfoWrap onClick={() => clickHotel(hotel.hotel_id)}>
                                     <tw.HotelInfo>
-                                        <tw.HotelName>{hotel.name}</tw.HotelName>
-                                        <tw.ContentsFlex>
-                                            <tw.AddressSVG
-                                                alt=""
-                                                src={require("../../assets/svg/location_icon.svg").default}
-                                            ></tw.AddressSVG>
-                                            <tw.HotelAddress>
-                                                {hotel.address} {hotel.address_detail}
-                                            </tw.HotelAddress>
-                                        </tw.ContentsFlex>
+                                        <tw.HotelTitleWrap>
+                                            <tw.HotelNameWrap>
+                                                <tw.HotelName>{hotel.name}</tw.HotelName>
+                                                <tw.ContentsFlex>
+                                                    <tw.AddressSVG alt="" src={require("../../assets/svg/location_icon.svg").default}></tw.AddressSVG>
+                                                    <tw.HotelAddress>
+                                                        {hotel.address} {hotel.address_detail}
+                                                    </tw.HotelAddress>
+                                                </tw.ContentsFlex>
+                                            </tw.HotelNameWrap>
+                                            <tw.RatingWrap>
+                                                <tw.RatingLabel>{hotel.rating}</tw.RatingLabel>
+                                            </tw.RatingWrap>
+                                        </tw.HotelTitleWrap>
 
                                         <tw.HotelServWrap>
                                             <tw.HotelP>서비스</tw.HotelP>
                                             <tw.HotelServList>
                                                 {servItems.map((item) =>
-                                                    (hotel as any)[item.comp] === 1 ? (
-                                                        <tw.HotelComp key={item.comp}>{item.label}</tw.HotelComp>
-                                                    ) : null,
+                                                    (hotel as any)[item.comp] === 1 ? <tw.HotelComp key={item.comp}>{item.label}</tw.HotelComp> : null,
                                                 )}
                                             </tw.HotelServList>
                                         </tw.HotelServWrap>
@@ -155,36 +166,26 @@ export default function SearchResult() {
                                             <tw.HotelP>편의시설</tw.HotelP>
                                             <tw.HotelFacilList>
                                                 {facilItems.map((item) =>
-                                                    (hotel as any)[item.comp] === 1 ? (
-                                                        <tw.HotelComp key={item.comp}>{item.label}</tw.HotelComp>
-                                                    ) : null,
+                                                    (hotel as any)[item.comp] === 1 ? <tw.HotelComp key={item.comp}>{item.label}</tw.HotelComp> : null,
                                                 )}
                                             </tw.HotelFacilList>
                                         </tw.HotelFacilWrap>
 
                                         <tw.TooltipServ>
                                             {servItems.map((item) =>
-                                                (hotel as any)[item.comp] === 1 ? (
-                                                    <tw.ToolTipText key={item.comp}>{item.label}</tw.ToolTipText>
-                                                ) : null,
+                                                (hotel as any)[item.comp] === 1 ? <tw.ToolTipText key={item.comp}>{item.label}</tw.ToolTipText> : null,
                                             )}
                                         </tw.TooltipServ>
                                         <tw.TooltipFacil>
                                             {facilItems.map((item) =>
-                                                (hotel as any)[item.comp] === 1 ? (
-                                                    <tw.ToolTipText key={item.comp}>{item.label}</tw.ToolTipText>
-                                                ) : null,
+                                                (hotel as any)[item.comp] === 1 ? <tw.ToolTipText key={item.comp}>{item.label}</tw.ToolTipText> : null,
                                             )}
                                         </tw.TooltipFacil>
 
                                         <tw.PriceWrap>
-                                            <tw.TotalLabel>
-                                                {dayjs(checkOutDate).diff(dayjs(checkInDate), "day")}박 총 요금
-                                            </tw.TotalLabel>
+                                            <tw.TotalLabel>{dayjs(checkOutDate).diff(dayjs(checkInDate), "day")}박 총 요금</tw.TotalLabel>
                                             <tw.TotalPrice>
-                                                {hotel.room_price
-                                                    .reduce((total, room) => total + room.price, 0)
-                                                    .toLocaleString()}
+                                                {hotel.room_price.reduce((total, room) => total + room.price, 0).toLocaleString()}
                                                 원~
                                             </tw.TotalPrice>
                                         </tw.PriceWrap>

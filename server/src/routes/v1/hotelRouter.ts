@@ -28,6 +28,8 @@ hotelRouter.post(
 
 hotelRouter.get("/:id", hotelValidator.getHotelById, validateError, asyncHandler(hotelController.getHotelById));
 
+hotelRouter.get("/rating/:id", hotelValidator.getHotelById, validateError, asyncHandler(hotelController.getHotelRatingByHotelId));
+
 hotelRouter.get(
     "/mgmt/info/:id",
     hotelValidator.getHotelInfoById,

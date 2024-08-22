@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Loading from "../components/loading/Loading";
+import S3UrlToCFUrl from "./s3UrlToCFD.utils";
 
 interface ImageLoaderProps {
     imageUrl: string;
@@ -14,9 +15,12 @@ const fetchImage = async (url: string): Promise<Blob> => {
 };
 
 export default function ImgLoader({ imageUrl, altText, rounded}: ImageLoaderProps) {
+
+    const cloudFrontUrl = S3UrlToCFUrl(imageUrl);
+
     const { data: imageBlob, isLoading } = useQuery<Blob, Error>({
-        queryKey: ["image", imageUrl],
-        queryFn: () => fetchImage(imageUrl),
+        queryKey: ["image", cloudFrontUrl],
+        queryFn: () => fetchImage(cloudFrontUrl),
         gcTime: Infinity, 
     });
 
@@ -38,13 +42,14 @@ export default function ImgLoader({ imageUrl, altText, rounded}: ImageLoaderProp
     }
 
     return imageSrc ? (
-        <img className={`w-full h-full object-cover ${rounded ? `rounded-${rounded}` : ''}`}
+        <img
+            className={`w-full h-full object-cover ${rounded ? `rounded-${rounded}` : ''}`}
             src={imageSrc}
             alt={altText}
             srcSet={`
-                ${imageUrl}?w=480 480w,
-                ${imageUrl}?w=840 840w,
-                ${imageUrl}?w=1200 1200w
+                ${cloudFrontUrl}?w=480 480w,
+                ${cloudFrontUrl}?w=840 840w,
+                ${cloudFrontUrl}?w=1200 1200w
             `}
             sizes="(max-width: 480px) 480px, (max-width: 840px) 840px, 1200px"
             loading="lazy"
