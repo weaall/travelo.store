@@ -19,6 +19,7 @@ import ReviewListModal from "../../hook/modal/review-list/ReviewList.modal";
 
 import * as tw from "./Hotel.styles";
 import AlertModal from "../../hook/modal/alert/Alert.modal";
+import recentViewHotels from "../../utils/recentView.util";
 
 export default function Hotel() {
     const navigate = useNavigate();
@@ -30,7 +31,7 @@ export default function Hotel() {
         setOnCloseCallback(() => callback);
         setIsAlertModalOpen(true);
     };
-    
+
     const closeAlertModal = () => {
         setIsAlertModalOpen(false);
         onCloseCallback();
@@ -119,6 +120,10 @@ export default function Hotel() {
             check_in: "",
         },
     ]);
+
+    useEffect(() => {
+        recentViewHotels(id);
+    }, [id]);
 
     const fetchHotel = async () => {
         setLoading(true);

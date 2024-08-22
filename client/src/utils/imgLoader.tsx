@@ -47,11 +47,8 @@ export default function ImgLoader({ imageUrl, altText, rounded}: ImageLoaderProp
             src={imageSrc}
             alt={altText}
             srcSet={`
-                ${cloudFrontUrl}?w=480 480w,
-                ${cloudFrontUrl}?w=840 840w,
-                ${cloudFrontUrl}?w=1200 1200w
+                ${cloudFrontUrl}
             `}
-            sizes="(max-width: 480px) 480px, (max-width: 840px) 840px, 1200px"
             loading="lazy"
         />
     ) : (
