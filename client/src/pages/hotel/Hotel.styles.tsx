@@ -17,7 +17,7 @@ export const HotelInfoWrap = tw.div`w-full space-y-2`;
 export const HotelFlexWrap = tw.div`flex flex-col w-auto mx-6 p-4 border space-y-2 rounded-xl
 mobile:mx-0.5`;
 export const HotelInnerWrap = tw.div`flex w-full justify-between`;
-export const HotelRating = tw.p`text-lg text-white bg-black rounded-xl px-3 py-1 font-medium
+export const HotelRating = tw.p`text-lg text-white bg-black rounded-xl px-3 py-1 font-semibold
 mobile:text-lg`;
 export const HotelTitle = tw.p`text-2xl font-semibold truncate`;
 export const HotelAddressWrap = tw.div`flex items-start`;
@@ -69,6 +69,7 @@ export const ReviewContainer = tw.div`flex flex-col mx-6 px-4 py-6
 mobile:mx-0`;
 export const FlexWrap = tw.div`flex items-center justify-between pb-4`;
 export const MoreReviewBtn = tw.button`w-auto self-end text-gray-500 text-base`;
+export const NoReview = tw.div`h-20 w-full text-sm flex justify-center items-center`
 export const ReviewList = tw.div`flex gap-3 my-2
 mobile:p-0 mobile:m-0 mobile:flex-col`;
 export const ReviewWrap = tw.div`flex flex-col w-1/3 bg-gray-100/[0.5] p-3 rounded-xl

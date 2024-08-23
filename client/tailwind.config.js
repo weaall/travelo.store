@@ -24,6 +24,7 @@ module.exports = {
             },
             fontFamily: {
                 sans: ['"Noto Sans KR"', "sans-serif"],
+                apple: ['"Apple SD Gothic Neo"', 'Noto Sans KR', 'sans-serif'],
             },
             minHeight: {
                 "screen-16": "calc(100vh - 4.1rem)",

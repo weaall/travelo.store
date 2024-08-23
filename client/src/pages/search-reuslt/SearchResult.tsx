@@ -149,7 +149,7 @@ export default function SearchResult() {
                                                 </tw.ContentsFlex>
                                             </tw.HotelNameWrap>
                                             <tw.RatingWrap>
-                                                <tw.RatingLabel>{hotel.rating}</tw.RatingLabel>
+                                                <tw.RatingLabel>{hotel.rating === null ? "-" : `${hotel.rating}`}</tw.RatingLabel>
                                             </tw.RatingWrap>
                                         </tw.HotelTitleWrap>
 

@@ -84,6 +84,8 @@ export default function Hotel() {
         ],
     });
 
+    const [ratingData, setRatingData] = useState<number>();
+
     const [roomList, setRoomList] = useState([
         {
             id: 0,
@@ -130,6 +132,8 @@ export default function Hotel() {
         try {
             const response = await axiosInstance.get("/hotel/" + id);
             setHotelData(response.data.data[0]);
+            const ratingResponse = await axiosInstance.get(`/hotel/rating/${id}`);
+            setRatingData(ratingResponse.data.data[0].rating);
             await fetchHotelImg();
             await fetchRoom();
             await fetchReview();
@@ -176,14 +180,11 @@ export default function Hotel() {
     };
 
     const fetchReview = async () => {
-        setLoading(true);
         try {
             const response = await axiosInstance.get("/booking/review/hotel/" + id);
             setReviewList(response.data.data);
         } catch (error) {
             handleAxiosError(error, navigate);
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -205,16 +206,6 @@ export default function Hotel() {
     useEffect(() => {
         fetchHotel();
     }, [checkInDate, checkOutDate]);
-
-    const [averageRating, setAverageRating] = useState(0);
-
-    useEffect(() => {
-        if (reviewList.length > 0) {
-            const totalRating = reviewList.reduce((sum, review) => sum + review.rating, 0);
-            const avgRating = parseFloat((totalRating / reviewList.length).toFixed(1));
-            setAverageRating(avgRating);
-        }
-    }, [reviewList]);
 
     const getInitialAndLastChar = (name: string) => {
         if (name.length === 0) return "";
@@ -273,7 +264,7 @@ export default function Hotel() {
                         <tw.HotelFlexWrap>
                             <tw.HotelInnerWrap>
                                 <tw.HotelTitle>{hotelData.name}</tw.HotelTitle>
-                                <tw.HotelRating>{averageRating}</tw.HotelRating>
+                                <tw.HotelRating>{ratingData === null ? "-" : `${ratingData}`}</tw.HotelRating>
                             </tw.HotelInnerWrap>
                             <tw.HotelAddressWrap>
                                 <tw.AddressSVG alt="" src={require("../../assets/svg/location_icon.svg").default} />
@@ -359,29 +350,35 @@ export default function Hotel() {
                 <tw.ReviewContainer>
                     <tw.FlexWrap>
                         <tw.Label>후기</tw.Label>
-                        <tw.MoreReviewBtn onClick={openReviewListModal}>더보기</tw.MoreReviewBtn>
+                        <tw.MoreReviewBtn onClick={openReviewListModal} disabled={reviewList.length == 0}>
+                            더보기
+                        </tw.MoreReviewBtn>
                     </tw.FlexWrap>
                     <tw.ReviewList>
-                        {reviewList.slice(0, 3).map((review) => (
-                            <tw.ReviewWrap key={review.check_in}>
-                                <tw.Date>{dayjs(review.check_in).format("YYYY년 MM월 DD일")}</tw.Date>
-                                <tw.TextWrap>
-                                    <tw.Review
-                                        style={{
-                                            display: "-webkit-box",
-                                            WebkitLineClamp: 6,
-                                            WebkitBoxOrient: "vertical",
-                                            overflow: "hidden",
-                                            textOverflow: "ellipsis",
-                                        }}
-                                    >
-                                        <tw.Rating>{review.rating}</tw.Rating>
-                                        {review.review}
-                                    </tw.Review>
-                                </tw.TextWrap>
-                                <tw.Name>{getInitialAndLastChar(review.name)}</tw.Name>
-                            </tw.ReviewWrap>
-                        ))}
+                        {reviewList.length === 0 ? (
+                            <tw.NoReview>리뷰가 없습니다.</tw.NoReview>
+                        ) : (
+                            reviewList.slice(0, 3).map((review) => (
+                                <tw.ReviewWrap key={review.check_in}>
+                                    <tw.Date>{dayjs(review.check_in).format("YYYY년 MM월 DD일")}</tw.Date>
+                                    <tw.TextWrap>
+                                        <tw.Review
+                                            style={{
+                                                display: "-webkit-box",
+                                                WebkitLineClamp: 6,
+                                                WebkitBoxOrient: "vertical",
+                                                overflow: "hidden",
+                                                textOverflow: "ellipsis",
+                                            }}
+                                        >
+                                            <tw.Rating>{review.rating}</tw.Rating>
+                                            {review.review}
+                                        </tw.Review>
+                                    </tw.TextWrap>
+                                    <tw.Name>{getInitialAndLastChar(review.name)}</tw.Name>
+                                </tw.ReviewWrap>
+                            ))
+                        )}
                     </tw.ReviewList>
                 </tw.ReviewContainer>
             </tw.MainContainer>

@@ -3,6 +3,7 @@ import * as tw from "./KakaMap.modal.styles";
 
 import markerSvg from "../../../assets/svg/marker_icon.svg";
 import rightSvg from "../../../assets/svg/right_icon.svg";
+import S3UrlToCFUrl from "../../../utils/s3UrlToCFD.utils";
 
 interface ModalProps {
     onClose: () => void;
@@ -36,6 +37,8 @@ export default function KakaoMapModal({ onClose, hotelName, address, imgUrl }: M
                 const map = new window.kakao.maps.Map(mapContainer, mapOption);
                 const geocoder = new window.kakao.maps.services.Geocoder();
 
+                const hotelUrl = S3UrlToCFUrl(imgUrl)
+
                 geocoder.addressSearch(address, (result: { x: number; y: number }[], status: any) => {
                     if (status === window.kakao.maps.services.Status.OK) {
                         const coords = new window.kakao.maps.LatLng(result[0].y, result[0].x);
@@ -50,7 +53,7 @@ export default function KakaoMapModal({ onClose, hotelName, address, imgUrl }: M
                         const content = `
                             <div class="flex bg-white">
                                 <div class="h-12 w-12">
-                                    <img class="h-full w-full object-cover rounded-l-lg" src="${imgUrl}">
+                                    <img class="h-full w-full object-cover rounded-l-lg" src="${hotelUrl}">
                                 </div>
                                 <div class="my-auto px-3">
                                     <p class="font-medium text-base">${hotelName}</p>
