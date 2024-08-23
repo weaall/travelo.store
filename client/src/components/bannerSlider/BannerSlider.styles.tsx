@@ -1,6 +1,6 @@
 import tw from "tailwind-styled-components"
 
-export const Container = tw.div`relative flex flex-col items-center overflow-hidden w-full py-10 px-5`
+export const Container = tw.div`relative flex flex-col items-center overflow-hidden w-full px-5`
 
 export const ImgContainer = tw.div`relative w-full flex items-center justify-center overflow-hidden group`;
 export const ImgListWrap = tw.div`flex transition-transform duration-500 ease-in-out`

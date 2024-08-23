@@ -8,8 +8,8 @@ import SearchDateModal from "../../hook/modal/search_date/SearchDate.modal";
 import SearchPersonModal from "../../hook/modal/search_person/SearchPerson.modal";
 import { encrypt } from "../../utils/cryptoJs";
 import BannerSlider from "../../components/bannerSlider/BannerSlider";
-import Cookies from "js-cookie";
 import RecentView from "../../components/recentView/RecentView";
+import RecRegion from "../../components/rec-region/RecRegion";
 
 interface MainPageProps {
     defaultSearchValue?: string;
@@ -155,6 +155,7 @@ export default function Search({ defaultSearchValue, defaultStartDate, defaultEn
 
                 <BannerSlider />
                 <RecentView />
+                <RecRegion />
             </tw.MainContainer>
 
             {isSearchDateModalOpen && (
