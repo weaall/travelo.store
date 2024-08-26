@@ -5,7 +5,7 @@ import { axios, axiosInstance, handleAxiosError } from "../../../utils/axios.uti
 import { useNavigate } from "react-router-dom";
 import Loading from "../../../components/loading/Loading";
 import { msgDateFormat } from "../../../utils/msg.utils";
-import { encrypt } from "../../../utils/cryptoJs";
+import { decrypt, encrypt } from "../../../utils/cryptoJs";
 
 interface MsgList {
     hotel_id: number;
@@ -21,9 +21,10 @@ interface UserData {
     name: string;
 }
 
-export default function HotelMsgPage({ hotel_id }: { hotel_id: string | undefined }) {
+export default function HotelMsgPage({ hotelId }: { hotelId: string | undefined }) {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
+    const hotel_id = decrypt(hotelId || "");
 
     const [msgList, setMsgList] = useState<MsgList[]>([]);
     const [userDataCache, setUserDataCache] = useState<{ [userId: number]: UserData }>({});
@@ -52,7 +53,6 @@ export default function HotelMsgPage({ hotel_id }: { hotel_id: string | undefine
                     }
 
                     msg.userData = userData;
-                    console.log(msg.userData)
                 } catch (error) {
                     handleAxiosError(error, navigate);
                 }

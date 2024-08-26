@@ -81,13 +81,18 @@ export const authValidator = {
             .withMessage("네이버토큰의 형식이 올바르지 않습니다.")
     ],
 
-    presignedUrl: [
-        body("key")
-            .notEmpty()
-            .trim(),
+    presignedUrls: [
+        body('keysAndContentTypes')
+        .isArray({ min: 1 }),
     
-        body("contentType")
-            .notEmpty()
-            .trim()
+        body('keysAndContentTypes.*.key')
+        .notEmpty()
+        .trim()
+        .escape(),
+    
+        body('keysAndContentTypes.*.contentType')
+        .notEmpty()
+        .trim()
+        .escape()
     ],
 };

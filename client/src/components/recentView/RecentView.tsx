@@ -18,7 +18,6 @@ interface HotelData {
 export default function RecentView() {
     const navigate = useNavigate();
     const [hotelData, setHotelData] = useState<HotelData[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
 
     const fetchHotels = async (hotelIds: string[]) => {
         try {

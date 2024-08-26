@@ -5,6 +5,7 @@ import { axios, axiosInstance, handleAxiosError } from "../../../utils/axios.uti
 import { useNavigate } from "react-router-dom";
 import ImgLoader from "../../../utils/imgLoader";
 import Loading from "../../../components/loading/Loading";
+import { encrypt } from "../../../utils/cryptoJs";
 
 export default function MyHotelPage() {
     const navigate = useNavigate();
@@ -105,7 +106,7 @@ export default function MyHotelPage() {
                                 </tw.HotelInfoWrap>
                             </tw.MiddleWrap>
                             <tw.MgmtBtnWrap>
-                                <tw.MgmtBtn onClick={() => navigate("/hotel/mgmt/" + hotel.id)}>숙소 관리하기</tw.MgmtBtn>
+                                <tw.MgmtBtn onClick={() => navigate("/hotel/mgmt/" + encrypt( hotel.id.toString()))}>숙소 관리하기</tw.MgmtBtn>
                             </tw.MgmtBtnWrap>
                         </tw.BookingWrap>
                     )))}

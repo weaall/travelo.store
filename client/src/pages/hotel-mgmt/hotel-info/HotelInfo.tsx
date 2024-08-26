@@ -1,4 +1,4 @@
-import React, { DragEvent, useEffect, useState } from "react";
+import React, { DragEvent, useCallback, useEffect, useState } from "react";
 import { sendJWT } from "../../../utils/jwtUtils";
 import { axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
 import { useNavigate } from "react-router-dom";
@@ -6,7 +6,12 @@ import { HotelDataInInfo } from "../../../interface/interfaces";
 
 import * as tw from "./HotelInfo.styles";
 import Loading from "../../../components/loading/Loading";
-import { nanoid } from "nanoid";
+import { uploadFilesToS3 } from "../../../utils/s3Upload.utils";
+import ImgLoader from "../../../utils/imgLoader";
+import S3UrlToCFUrl from "../../../utils/s3UrlToCFD.utils";
+import { ModalPortal } from "../../../hook/modal/ModalPortal";
+import ConfirmModal from "../../../hook/modal/alert-confirm/Confirm.modal";
+import AlertModal from "../../../hook/modal/alert/Alert.modal";
 
 interface ServData {
     hotel_id: number;
@@ -31,6 +36,41 @@ interface FacilData {
 export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }) {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
+
+    const [alertMessage, setAlertMessage] = useState("");
+    const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
+    const [onCloseAlertCallback, setOnCloseAlertCallback] = useState<() => void>(() => {});
+
+     const openAlertModal = (message: string, callback: () => void) => {
+        setAlertMessage(message);
+        setOnCloseAlertCallback(() => callback);
+        setIsAlertModalOpen(true);
+    };
+
+    const closeAlertModal = () => {
+        setIsAlertModalOpen(false);
+        onCloseAlertCallback();
+    };
+
+    const [confirmMessage, setConfirmMessage] = useState("");
+    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+    const [onCloseConfirmCallback, setOnCloseConfirmCallback] = useState<(result: boolean) => void>(() => {});
+
+    const openConfirmModal = (message: string): Promise<boolean> => {
+        return new Promise((resolve) => {
+            setConfirmMessage(message);
+            setOnCloseConfirmCallback(() => (result: boolean) => {
+                setIsConfirmModalOpen(false);
+                resolve(result);
+            });
+            setIsConfirmModalOpen(true);
+        });
+    };
+
+    const closeConfirmModal = (result: boolean) => {
+        setIsConfirmModalOpen(false);
+        onCloseConfirmCallback(result);
+    };
 
     const [hotelData, setHotelData] = useState<HotelDataInInfo>();
 
@@ -64,26 +104,55 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
 
     const [files, setFiles] = useState<File[]>([]);
     const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+    const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
 
-    const fetchImageFile = async () => {
+    const onDragStartImg = (index: number) => {
+        setDraggedIndex(index);
+    };
+
+    const onDragOverImg = (e: DragEvent<HTMLDivElement>, index: number) => {
+        e.preventDefault();
+
+        if (draggedIndex === null || draggedIndex === index) return;
+
+        const newImagePreviews = [...imagePreviews];
+        const draggedItem = newImagePreviews.splice(draggedIndex, 1)[0];
+        newImagePreviews.splice(index, 0, draggedItem);
+
+        const newFiles = [...files];
+        const draggedFile = newFiles.splice(draggedIndex, 1)[0];
+        newFiles.splice(index, 0, draggedFile);
+
+        setDraggedIndex(index);
+        setImagePreviews(newImagePreviews);
+        setFiles(newFiles);
+    };
+
+    const onDropImg = () => {
+        setDraggedIndex(null);
+    };
+
+    const fetchImageFile = useCallback(async () => {
         try {
             const urlResponse = await axiosInstance.get("/hotel/img/" + hotel_id);
-
             const imagesData = urlResponse.data.data;
 
             const newFiles = [];
             const imagePreviews = [];
 
             for (let i = 0; i < imagesData.length; i++) {
-                const imageUrl = imagesData[i].url;
+                const s3Url = imagesData[i].url;
+                const cloudFrontUrl = S3UrlToCFUrl(s3Url);
 
-                const response = await fetch(imageUrl);
+                const response = await fetch(cloudFrontUrl);
                 const blob = await response.blob();
 
-                const urlParts = imageUrl.split(".");
+                const urlParts = cloudFrontUrl.split(".");
                 const fileExtension = urlParts[urlParts.length - 1];
 
-                const file = new File([blob], `image${i + 1}.${fileExtension}`, { type: `image/${fileExtension}` });
+                const file = new File([blob], `image${i + 1}.${fileExtension}`, {
+                    type: `image/${fileExtension}`,
+                });
 
                 newFiles.push(file);
                 imagePreviews.push(URL.createObjectURL(file));
@@ -92,14 +161,15 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
             setFiles(newFiles);
             setImagePreviews(imagePreviews);
         } catch (error) {
-            window.alert("올바른 접근이 아닙니다.");
-            navigate("/");
+            openAlertModal("올바른 접근이 아닙니다.", () => {
+                navigate("/");
+            });
         }
-    };
+    }, [hotel_id, navigate]);
 
     useEffect(() => {
         fetchImageFile();
-    }, []);
+    }, [fetchImageFile]);
 
     const onDragOver = (e: DragEvent<HTMLDivElement>) => {
         e.preventDefault();
@@ -117,17 +187,14 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
     };
 
     const removeFile = (index: number) => {
-        const newFiles = [...files];
+        const newFiles = [...imagePreviews];
         newFiles.splice(index, 1);
-        setFiles(newFiles);
-
-        const previews = newFiles.map((file) => URL.createObjectURL(file));
-        setImagePreviews(previews);
+        setImagePreviews(newFiles);
     };
 
     const onChangeInfo = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        const sanitizedValue = name === "tel_num" ? value.replace(/[^0-9]/g, "") : value
+        const sanitizedValue = name === "tel_num" ? value.replace(/[^0-9]/g, "") : value;
         setInfoData({ ...infoData, [name]: sanitizedValue });
     };
 
@@ -143,8 +210,8 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
 
     const onChangeServ = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        const sanitizedValue = name === "breakfast_price" ? value.replace(/[^0-9]/g, "") : value
-        setServData({ ...servData, [name]:  sanitizedValue });
+        const sanitizedValue = name === "breakfast_price" ? value.replace(/[^0-9]/g, "") : value;
+        setServData({ ...servData, [name]: sanitizedValue });
     };
 
     const toggleServData = (key: keyof ServData) => {
@@ -161,11 +228,11 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
         }));
     };
 
-    const fetchHotelData = async () => {
+    const fetchHotelData = useCallback(async () => {
         try {
             const config = await sendJWT({
                 method: "get",
-                url: "/hotel/mgmt/info/" + hotel_id,
+                url: `/hotel/mgmt/info/${hotel_id}`,
             });
 
             const response = await axiosInstance.request(config);
@@ -179,65 +246,41 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
         } finally {
             setLoading(false);
         }
-    };
-
-    const uploadFilesToS3 = async () => {
-        const uploadedKeys = [];
-
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            const key = `hotel_img/${hotel_id}/${nanoid(12)}`;
-            const contentType = file.type;
-
-            const presignedUrlsResponse = await axiosInstance.post("/auth/presignedUrl", {
-                key: key,
-                contentType: contentType,
-            });
-
-            const presignedUrl = presignedUrlsResponse.data.data;
-
-            await fetch(presignedUrl, {
-                method: "PUT",
-                body: file,
-                headers: {
-                    "Content-Type": contentType,
-                },
-            });
-
-            const imageUrl = presignedUrl.split("?")[0];
-            uploadedKeys.push(imageUrl);
-        }
-        return uploadedKeys;
-    };
+    }, [hotel_id, navigate]);
 
     const clickInfoSave = async () => {
         try {
-            const uploadedKeys = await uploadFilesToS3();
+            const confirmResult = await openConfirmModal("변경사항을 저장하시겠습니까?");
+            if (confirmResult) {
+                const uploadedKeys = await uploadFilesToS3(files, `hotel_img/${hotel_id}`);
 
-            const updatedHotelData = {
-                ...infoData,
-                urls: uploadedKeys,
-            };
+                const updatedHotelData = {
+                    ...infoData,
+                    urls: uploadedKeys,
+                };
 
-            const config = await sendJWT({
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                method: "put",
-                url: "/hotel/mgmt/info",
-                data: updatedHotelData,
-            });
+                const config = await sendJWT({
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    method: "put",
+                    url: "/hotel/mgmt/info",
+                    data: updatedHotelData,
+                });
 
-            await axiosInstance.request(config);
-            fetchHotelData();
-            window.alert("저장완료");
+                await axiosInstance.request(config);
+                openAlertModal("저장되었습니다.", () => {
+                    fetchHotelData();
+                });
+            }
         } catch (error) {
             handleAxiosError(error, navigate);
         }
     };
 
-    const clickInfoReset = () => {
-        if (window.confirm("되돌리시겠습니까?")) {
+    const clickInfoReset = async () => {
+        const confirmResult = await openConfirmModal("변경사항을 되돌리시겠습니까?");
+        if (confirmResult) {
             if (hotelData) {
                 setInfoData(hotelData);
                 fetchImageFile();
@@ -246,7 +289,8 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
     };
 
     const clickServSave = async () => {
-        if (window.confirm("저장하시겠습니까?")) {
+        const confirmResult = await openConfirmModal("변경사항을 저장하시겠습니까?");
+        if (confirmResult) {
             try {
                 const config = await sendJWT({
                     method: "put",
@@ -254,17 +298,18 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
                     data: servData,
                 });
                 await axiosInstance.request(config);
-                window.alert("저장완료");
-                fetchHotelData();
+                openAlertModal("저장되었습니다.", () => {
+                    fetchHotelData();
+                });
             } catch (error) {
                 handleAxiosError(error, navigate);
             }
-        } else {
         }
     };
 
-    const clickServReset = () => {
-        if (window.confirm("되돌리시겠습니까?")) {
+    const clickServReset = async () => {
+        const confirmResult = await openConfirmModal("변경사항을 되돌리시겠습니까?");
+        if (confirmResult) {
             if (hotelData) {
                 setServData(hotelData);
             }
@@ -272,7 +317,8 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
     };
 
     const clickFacilSave = async () => {
-        if (window.confirm("저장하시겠습니까?")) {
+        const confirmResult = await openConfirmModal("변경사항을 저장하시겠습니까?");
+        if (confirmResult) {
             try {
                 const config = await sendJWT({
                     method: "put",
@@ -280,8 +326,9 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
                     data: facilData,
                 });
                 await axiosInstance.request(config);
-                window.alert("저장완료");
-                fetchHotelData();
+                openAlertModal("저장되었습니다.", () => {
+                    fetchHotelData();
+                });
             } catch (error) {
                 handleAxiosError(error, navigate);
             }
@@ -289,17 +336,18 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
         }
     };
 
-    const clickFacilReset = () => {
-        if (window.confirm("되돌리시겠습니까?")) {
+    const clickFacilReset = async () => {
+        const confirmResult = await openConfirmModal("변경사항을 되돌리시겠습니까?");
+        if (confirmResult) {
             if (hotelData) {
                 setFacilData(hotelData);
             }
         }
     };
 
-    useEffect(() => {
+     useEffect(() => {
         fetchHotelData();
-    }, [hotel_id]);
+    }, [fetchHotelData]);
 
     if (loading) {
         return <Loading />;
@@ -352,16 +400,19 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
                             <tw.DescInput value={infoData.description} name="description" onChange={onChangeDesk} maxLength={300}></tw.DescInput>
                         </tw.TwoThirdCol>
                     </tw.ContentsFlex>
-                    <tw.UploadWrap onDragOver={onDragOver} onDrop={onDrop}>
-                        <tw.ImgLabel>이미지를 드래그 앤 드롭하세요.</tw.ImgLabel>
-                        <tw.ImgContainer>
+                    <tw.UploadWrap>
+                        <tw.UploadDragWrap onDragOver={onDragOver} onDrop={onDrop}>
+                            <tw.UploadDragLabel>이곳에 이미지를 드래그엔 드롭해주세요.</tw.UploadDragLabel>
+                        </tw.UploadDragWrap>
+                        <tw.ImgLabel>*이미지가 정렬된 순서대로 유저에게 보여집니다.</tw.ImgLabel>
+                        <tw.ImgContainer onDragOver={onDragOver} onDrop={onDropImg}>
                             {imagePreviews.map((preview, index) => (
-                                <tw.ImgOutWrap key={index}>
+                                <tw.ImgOutWrap key={index} draggable onDragStart={() => onDragStartImg(index)} onDragOver={(e) => onDragOverImg(e, index)}>
                                     <tw.RemoveBtn onClick={() => removeFile(index)} style={{ marginLeft: "10px" }}>
                                         삭제
                                     </tw.RemoveBtn>
                                     <tw.ImgWrap>
-                                        <tw.Img src={preview} alt={`이미지 미리보기 ${index + 1}`} draggable={false} />
+                                        <ImgLoader imageUrl={preview} altText={`이미지 미리보기 ${index + 1}`} rounded="xl" />
                                     </tw.ImgWrap>
                                 </tw.ImgOutWrap>
                             ))}
@@ -476,6 +527,19 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
                     </tw.ContentsFlex>
                 </tw.ContentsWrap>
             </tw.MobileWrap>
+
+            {isAlertModalOpen && (
+                <ModalPortal>
+                    <AlertModal message={alertMessage} onClose={closeAlertModal} />
+                </ModalPortal>
+            )}
+
+            {isConfirmModalOpen && (
+                <ModalPortal>
+                    <ConfirmModal message={confirmMessage} onClose={closeConfirmModal} />
+                </ModalPortal>
+            )}
+
         </tw.Container>
     );
 }

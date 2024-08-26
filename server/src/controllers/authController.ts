@@ -74,21 +74,30 @@ const authController = {
         }
     },
 
-    async presignedUrl(req: Request, res: Response) {
-        const { key, contentType } = req.body;
-        try {
-            const signedUrl = await presignedUrl(key, contentType);
+    async presignedUrls(req: Request, res: Response) {
+        const { keysAndContentTypes }: { keysAndContentTypes: { key: string; contentType: string }[] } = req.body;
 
-            if (signedUrl) {
-                return res.status(201).json({
-                    error: null,
-                    data: signedUrl,
-                });
-            } else {
-                throw new CustomError("INTERNAL_SERVER_ERROR", 500);
-            }
+        const decodeUrl = (url: string): string => {
+            return decodeURIComponent(url);
+        };
+
+        try {
+            const signedUrls = await Promise.all(
+                keysAndContentTypes.map(async ({ key, contentType }) => {
+                    const signedUrl = await presignedUrl(decodeUrl(key), contentType);
+                    if (!signedUrl) {
+                        throw new CustomError("INTERNAL_SERVER_ERROR", 500);
+                    }
+                    return signedUrl;
+                }),
+            );
+
+            return res.status(201).json({
+                error: null,
+                data: signedUrls,
+            });
         } catch (error) {
-            throw error;
+            throw new CustomError("INTERNAL_SERVER_ERROR", 500);
         }
     },
 };

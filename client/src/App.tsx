@@ -39,7 +39,7 @@ function App() {
                             <Route path="/payment/:encryptedHotelId/:encryptedRoomId/:checkInDate/:checkOutDate" element={<Payment />} />
 
                             <Route path="/hotel/mgmt/">
-                                <Route path=":hotelId/*" element={<HotelMgmt />} />
+                                <Route path=":encryptedId/*" element={<HotelMgmt />} />
                             </Route>
                             <Route path="/auth/kakao" element={<AuthKaKao />} />
                             <Route path="/auth/naver" element={<AuthNaver />} />
