@@ -6,7 +6,8 @@ interface ColorProps{
 
 export const Container = tw.div`h-full flex flex-col items-center`
 
-export const HotelStateWrap = tw.div`flex w-full h-auto border-b py-3 px-4 justify-between space-x-4 content-center mb-2`
+export const HotelStateWrap = tw.div`flex w-full h-auto border-b py-3 px-4 justify-between space-x-4 content-center mb-2
+cursor-pointer`
 export const HotelName = tw.h3`font-bold text-base
 mobile:text-sm`
 export const HotelAddress = tw.p`flex-1 text-center text-sm truncate

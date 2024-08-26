@@ -73,7 +73,7 @@ export default function BannerSlider() {
                 </tw.ImgButton>
                 <tw.ImgListWrap style={containerStyle}>
                     {images.map((image, index) => (
-                        <tw.ImgWrap onClick={()=>navigate(`${image.href}`)}>
+                        <tw.ImgWrap key={index} onClick={()=>navigate(`${image.href}`)}>
                             <ImgLoader imageUrl={image.url} altText={`Slide ${index}`} rounded="2xl"/>
                         </tw.ImgWrap>
                     ))}

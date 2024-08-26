@@ -12,6 +12,7 @@ import S3UrlToCFUrl from "../../../utils/s3UrlToCFD.utils";
 import { ModalPortal } from "../../../hook/modal/ModalPortal";
 import ConfirmModal from "../../../hook/modal/alert-confirm/Confirm.modal";
 import AlertModal from "../../../hook/modal/alert/Alert.modal";
+import LoadingModal from "../../../hook/modal/loading/Loading.modal";
 
 interface ServData {
     hotel_id: number;
@@ -36,6 +37,12 @@ interface FacilData {
 export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }) {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
+    const openLoadingModal = () => {
+        setLoading(true);
+    };
+    const closeLoadingModal = () => {
+        setLoading(false);
+    };
 
     const [alertMessage, setAlertMessage] = useState("");
     const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
@@ -252,6 +259,7 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
         try {
             const confirmResult = await openConfirmModal("변경사항을 저장하시겠습니까?");
             if (confirmResult) {
+                openLoadingModal();
                 const uploadedKeys = await uploadFilesToS3(files, `hotel_img/${hotel_id}`);
 
                 const updatedHotelData = {
@@ -275,6 +283,8 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
             }
         } catch (error) {
             handleAxiosError(error, navigate);
+        } finally {
+            closeLoadingModal();
         }
     };
 
@@ -348,10 +358,6 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
      useEffect(() => {
         fetchHotelData();
     }, [fetchHotelData]);
-
-    if (loading) {
-        return <Loading />;
-    }
 
     return (
         <tw.Container>
@@ -527,6 +533,12 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
                     </tw.ContentsFlex>
                 </tw.ContentsWrap>
             </tw.MobileWrap>
+
+            {loading && (
+                <ModalPortal>
+                    <LoadingModal onClose={closeLoadingModal} />
+                </ModalPortal>
+            )}
 
             {isAlertModalOpen && (
                 <ModalPortal>

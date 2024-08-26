@@ -1,14 +1,16 @@
-import { useState } from "react"
-import * as tw from "./Loading.modal.styles"
+import * as tw from "./Loading.modal.styles";
+import { SvgSpinner } from "../../../assets/spinner";
 
 interface LoadingModalProps {
-    onClose: () => void
+    onClose: () => void;
 }
 
 export default function LoadingModal({ onClose }: LoadingModalProps) {
     return (
         <tw.Container>
-            <tw.LoadingSvg alt="" src={require("../../../assets/svg/loading.svg").default}></tw.LoadingSvg>
+            <tw.ModalWrap>
+                <SvgSpinner />
+            </tw.ModalWrap>
         </tw.Container>
-    )
+    );
 }
