@@ -1,13 +1,15 @@
-import Cookies from "js-cookie";
-import { useEffect, useState } from "react";
-import { axiosInstance, handleAxiosError } from "../../utils/axios.utils";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import * as tw from "./RecentView.styles";
-import ImgLoader from "../../utils/imgLoader";
-import Loading from "../loading/Loading";
-import { encrypt } from "../../utils/cryptoJs";
+
+import Cookies from "js-cookie";
 import dayjs from "dayjs";
+
+import { axiosInstance, handleAxiosError } from "../../utils/axios.utils";
+import ImgLoader from "../../utils/imgLoader";
+import { encrypt } from "../../utils/cryptoJs";
 import { getThumbnailCFUrl } from "../../utils/s3UrlToCFD.utils";
+
+import * as tw from "./RecentView.styles";
 
 interface HotelData {
     id: number;
@@ -19,41 +21,41 @@ export default function RecentView() {
     const navigate = useNavigate();
     const [hotelData, setHotelData] = useState<HotelData[]>([]);
 
-    const fetchHotels = async (hotelIds: string[]) => {
+    const fetchHotels = useCallback(async (hotelIds: string[]) => {
         try {
             const fetchedHotels: HotelData[] = [];
-
+    
             for (const id of hotelIds) {
                 if (!id) continue;
-
+    
                 const response = await axiosInstance.get(`/hotel/${id}`);
                 const hotel = response.data.data[0];
-
+    
                 const ratingResponse = await axiosInstance.get(`/hotel/rating/${hotel.id}`);
                 const rating = ratingResponse.data.data[0].rating;
-
+    
                 if (!fetchedHotels.some(h => h.id === hotel.id)) {
                     fetchedHotels.push({
                         id: hotel.id,
                         name: hotel.name,
                         rating: rating,
-                 });
+                    });
                 }
             }
-
+    
             setHotelData(fetchedHotels);
         } catch (error) {
             handleAxiosError(error, navigate);
         }
-    };
-
+    }, [navigate]);
+    
     const clickHotel = (hotelId: number) => {
         const encryptedId = encrypt(`${hotelId}`);
         const today = dayjs().format("YYYY-MM-DD");
         const tomorrow = dayjs().add(1, "day").format("YYYY-MM-DD");
         navigate(`/hotel/${encryptedId}/${today}/${tomorrow}/${2}/${0}`);
     };
-
+    
     useEffect(() => {
         const recentHotels = Cookies.get("recentHotels");
         if (recentHotels) {
@@ -62,7 +64,7 @@ export default function RecentView() {
             hotelIds = Array.from(new Set(hotelIds));
             fetchHotels(hotelIds);
         }
-    }, []);
+    }, [fetchHotels]);
 
     return (
         <tw.Container>

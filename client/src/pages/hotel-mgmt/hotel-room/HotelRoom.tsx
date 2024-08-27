@@ -1,19 +1,29 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
 import { ModalPortal } from "../../../hook/modal/ModalPortal";
+import LoadingModal from "../../../hook/modal/loading/Loading.modal";
 import RegRoomModal from "../../../hook/modal/reg-room/RegRoom.modal";
 import SetRoomModal from "../../../hook/modal/set-room/SetRoom.modal";
-import Loading from "../../../components/loading/Loading";
+
+import { axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
+import ImgLoader from "../../../utils/imgLoader";
+import { getThumbnailCFUrl } from "../../../utils/s3UrlToCFD.utils";
 
 import * as tw from "./HotelRoom.styles";
-import ImgLoader from "../../../utils/imgLoader";
 
 export default function HotelRoom({ hotel_id }: { hotel_id: string | undefined }) {
     const navigate = useNavigate();
-    const [isRegModalOpen, setIsRegModalOpen] = useState(false);
+    
     const [loading, setLoading] = useState(true);
+    const openLoadingModal = () => {
+        setLoading(true);
+    };
+    const closeLoadingModal = () => {
+        setLoading(false);
+    };
+
+    const [isRegModalOpen, setIsRegModalOpen] = useState(false);
 
     const openRegModal = () => {
         setIsRegModalOpen(true);
@@ -21,7 +31,7 @@ export default function HotelRoom({ hotel_id }: { hotel_id: string | undefined }
 
     const closeRegModal = () => {
         setIsRegModalOpen(false);
-        fetchRoom();
+        fetchRooms();
     };
 
     const [isSetModalOpen, setIsSetModalOpen] = useState(false);
@@ -34,7 +44,7 @@ export default function HotelRoom({ hotel_id }: { hotel_id: string | undefined }
 
     const closeSetModal = () => {
         setIsSetModalOpen(false);
-        fetchRoom();
+        fetchRooms();
     };
 
     const [roomList, setRoomList] = useState([
@@ -47,41 +57,25 @@ export default function HotelRoom({ hotel_id }: { hotel_id: string | undefined }
             view_type_id: 0,
             view_type: "",
             discount: 0,
-
-            img: [
-                {
-                    url: "",
-                },
-            ],
         },
     ]);
 
-    const fetchRoom = async () => {
-        setLoading(true);
+    const fetchRooms = useCallback(async () => {
+        openLoadingModal();
         try {
             const response = await axiosInstance.get("/room/hotel/" + hotel_id);
             const rooms = response.data.data;
-
-            for (let room of rooms) {
-                const roomImgResponse = await axiosInstance.get(`/room/img/${room.id}`);
-                room.img = roomImgResponse.data.data;
-            }
-
             setRoomList(rooms);
         } catch (error) {
             handleAxiosError(error, navigate);
         } finally {
-            setLoading(false);
+            closeLoadingModal();
         }
-    };
+    }, [hotel_id, navigate]);
 
     useEffect(() => {
-        fetchRoom();
-    }, []);
-
-    if (loading) {
-        return <Loading />;
-    }
+        fetchRooms();
+    }, [fetchRooms]);
 
     return (
         <tw.Container>
@@ -111,11 +105,7 @@ export default function HotelRoom({ hotel_id }: { hotel_id: string | undefined }
                                     </tw.UpperWrap>
                                     <tw.MiddleWrap>
                                         <tw.Pic>
-                                            {room?.img?.[0]?.url ? (
-                                                <ImgLoader imageUrl={room.img[0].url} altText="" rounded="es-xl" />
-                                            ) : (
-                                                <tw.UnRegWrap>미등록</tw.UnRegWrap>
-                                            )}
+                                            <ImgLoader imageUrl={getThumbnailCFUrl(`/room_img/${hotel_id}/${room.id}`)} altText="" rounded="es-xl" />
                                         </tw.Pic>
                                         <tw.HotelInfoWrap>
                                             <tw.RoomText>
@@ -134,6 +124,12 @@ export default function HotelRoom({ hotel_id }: { hotel_id: string | undefined }
                     </tw.RoomList>
                 </tw.ContentsWrap>
             </tw.MobileWrap>
+
+            {loading && (
+                <ModalPortal>
+                    <LoadingModal onClose={closeLoadingModal} />
+                </ModalPortal>
+            )}
 
             {isRegModalOpen && (
                 <ModalPortal>

@@ -14,7 +14,7 @@ import {
     RoomPriceRows,
     DatePriceProps
 } from "../interface/interfaces";
-import { deleteRoomImg } from "../config/multer";
+import { deleteHotelImg} from "../config/multer";
 
 const roomService = {
     async getBedType() {
@@ -47,7 +47,7 @@ const roomService = {
     },
     async getRoomByHotel(id: string) {
         const getRoomSql = 
-        `SELECT R.id, R.name, R.num, B.id AS bed_type_id, B.name AS bed_type, V.id AS view_type_id, V.name AS view_type, discount FROM room AS R 
+        `SELECT R.hotel_id, R.id, R.name, R.num, B.id AS bed_type_id, B.name AS bed_type, V.id AS view_type_id, V.name AS view_type, discount FROM room AS R 
         LEFT JOIN bed_type AS B ON R.bed_type_id = B.id
         LEFT JOIN view_type AS V ON R.view_type_id = V.id
         WHERE hotel_id = ?`;
@@ -55,7 +55,7 @@ const roomService = {
 
         const connection = await pool.getConnection();
         try {
-            const [getRoomResult, fields]: [RoomRows[], FieldPacket[]] = await connection.execute(
+            const [getRoomResult, fields]: [ResultSetHeader[], FieldPacket[]] = await connection.execute(
                 getRoomSql,
                 getRoomValues,
             );
@@ -76,7 +76,7 @@ const roomService = {
 
         const connection = await pool.getConnection();
         try {
-            const [getRoomResult, fields]: [RoomRows[], FieldPacket[]] = await connection.execute(
+            const [getRoomResult, fields]: [ResultSetHeader[], FieldPacket[]] = await connection.execute(
                 getRoomSql,
                 getRoomValues,
             );
@@ -92,7 +92,7 @@ const roomService = {
     async getRoomImgUrl(id: string) {
         const connection = await pool.getConnection();
 
-        const checkRoomImgSql = "SELECT url FROM room_img where room_id = ?";
+        const checkRoomImgSql = `SELECT url FROM room_img where room_id = ? AND url NOT LIKE '%thumbnail%'`;
         const checkRoomImgParams = [id];
         try {
             const [checkRoomImgResult]: [urlRows[], FieldPacket[]] = await connection.execute(
@@ -181,7 +181,7 @@ const roomService = {
             );
             const imageUrls: string[] = checkRoomImgResult.map((row) => row.url);
 
-            await deleteRoomImg(imageUrls);
+            await deleteHotelImg(imageUrls);
 
             const [deleteRoomImgResult] = await connection.execute(deleteRoomImgSql, deleteRoomImgValues);
 
