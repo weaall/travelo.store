@@ -55,7 +55,7 @@ export default function HotelMgmt() {
             </tw.HotelStateWrap>
             <tw.FlexWrap>
                 <tw.DrawerWrap>
-                    <MgmtSideBar hotel_id={encryptedId}/>
+                    <MgmtSideBar hotel_id={hotelId}/>
                 </tw.DrawerWrap>
                 <tw.ContentsWrap>
                     <Routes>
@@ -64,7 +64,7 @@ export default function HotelMgmt() {
                         <Route path="/cal" element={<PriceCalendar hotel_id={hotelId} />}>
                             <Route path=":room_id/*" element={<HotelMgmt />} />
                         </Route>
-                        <Route path="/msg" element={<HotelMsgPage hotelId={encryptedId} />} />\
+                        <Route path="/msg" element={<HotelMsgPage hotel_id={hotelId} />} />
                         <Route path="/msg/chat/:encryptedHotelId/:encryptedUserId" element={<HotelChatPage />} />
                     </Routes>
                 </tw.ContentsWrap>

@@ -40,30 +40,6 @@ export const searchController = {
             });
         };
 
-        const addImageData = async (data: getSearchRows[]) => {
-            for (const hotel of data) {
-                const hotelImages = await searchService.getHotelImgUrl(hotel.hotel_id);
-                hotel.hotel_img = hotelImages;
-            }
-            return data;
-        };
-
-        const addImageDataRedis = async (data: getSearchRows[]) => {
-            for (const hotel of data) {
-                const imgKey = `/hotel/img/${hotel.hotel_id}`;
-                const redisImages = JSON.parse(await getRedis(imgKey));
-
-                if (redisImages === null) {
-                    const hotelImages = await searchService.getHotelImgUrl(hotel.hotel_id);
-                    setRedis1D(imgKey, hotelImages);
-                    hotel.hotel_img = hotelImages;
-                } else {
-                    hotel.hotel_img = redisImages;
-                }
-            }
-            return data;
-        };
-
         try {
             const key: string = `/search/${searchValue}/${personNum}`;
             const redisData = JSON.parse(await getRedis(key));
@@ -97,8 +73,6 @@ export const searchController = {
                 }
                 let resultData = filterByHotelId(data);
 
-                resultData = await addImageDataRedis(resultData);
-
                 res.status(200).json({
                     error: null,
                     data: resultData,
@@ -130,7 +104,6 @@ export const searchController = {
                 }
                 let resultData = filterByHotelId(data);
 
-                resultData = await addImageDataRedis(resultData);
 
                 res.status(200).json({
                     error: null,
@@ -147,8 +120,6 @@ export const searchController = {
             }
 
             let resultData = filterByHotelId(data);
-
-            resultData = await addImageData(resultData);
 
             res.status(200).json({
                 error: null,

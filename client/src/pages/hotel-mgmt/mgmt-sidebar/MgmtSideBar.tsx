@@ -1,9 +1,11 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import * as tw from "./MgmtSideBar.styles";
+import { encrypt } from "../../../utils/cryptoJs";
 
 export default function MgmtSideBar({ hotel_id }: { hotel_id: string | undefined }) {
     const navigate = useNavigate();
     const location = useLocation();
+    const hotelId = encrypt(hotel_id || "")
 
     const mgmtList = [
         { src: require("../../../assets/drawer/hotel_mgmt.svg").default, label: "숙소정보", nav: ""},
@@ -20,7 +22,7 @@ export default function MgmtSideBar({ hotel_id }: { hotel_id: string | undefined
             <tw.MenuWrap>
                 <tw.MenuLabel>숙소관리</tw.MenuLabel>
                 {mgmtList.map((item, index) => (
-                    <tw.ListWrap key={index} $isActive={isActive(item.nav) ? 'active' : ''} onClick={()=>{navigate(`/hotel/mgmt/${hotel_id}/${item.nav}`)}}>
+                    <tw.ListWrap key={index} $isActive={isActive(item.nav) ? 'active' : ''} onClick={()=>{navigate(`/hotel/mgmt/${hotelId}/${item.nav}`)}}>
                         <tw.SvgWrap>
                             <tw.Svg alt="" src={item.src} />
                         </tw.SvgWrap>

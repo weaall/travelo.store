@@ -21,10 +21,9 @@ interface UserData {
     name: string;
 }
 
-export default function HotelMsgPage({ hotelId }: { hotelId: string | undefined }) {
+export default function HotelMsgPage({ hotel_id }: { hotel_id: string | undefined }) {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
-    const hotel_id = decrypt(hotelId || "");
 
     const [msgList, setMsgList] = useState<MsgList[]>([]);
     const [userDataCache, setUserDataCache] = useState<{ [userId: number]: UserData }>({});

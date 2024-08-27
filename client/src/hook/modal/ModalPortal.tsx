@@ -1,12 +1,20 @@
-import { ReactNode } from "react"
-import ReactDom from "react-dom"
+import { ReactNode, useEffect } from "react";
+import ReactDOM from "react-dom";
 
 interface ModalPortalProps {
-    children: ReactNode
+    children: ReactNode;
 }
 
 export const ModalPortal = ({ children }: ModalPortalProps) => {
-    const modalRoot = document.getElementById("modal-root") as HTMLElement
+    const modalRoot = document.getElementById("modal-root") as HTMLElement;
 
-    return ReactDom.createPortal(children, modalRoot)
-}
+    useEffect(() => {
+        document.body.style.overflow = "hidden";
+
+        return () => {
+            document.body.style.overflow = "";
+        };
+    }, []);
+
+    return ReactDOM.createPortal(children, modalRoot);
+};

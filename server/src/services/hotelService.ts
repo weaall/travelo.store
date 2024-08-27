@@ -149,7 +149,7 @@ const hotelService = {
     async getHotelImgUrl(id: string) {
         const connection = await pool.getConnection();
 
-        const checkHotelImgSql = "SELECT url FROM hotel_img where hotel_id = ?";
+        const checkHotelImgSql = `SELECT url FROM hotel_img where hotel_id = ? AND url NOT LIKE '%thumbnail%'`;
         const checkHotelImgParams = [id];
         try {
             const [checkHotelImgResult]: [urlRows[], FieldPacket[]] = await connection.execute(checkHotelImgSql, checkHotelImgParams);

@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { HotelDataInInfo } from "../../../interface/interfaces";
 
 import * as tw from "./HotelInfo.styles";
-import Loading from "../../../components/loading/Loading";
 import { uploadFilesToS3 } from "../../../utils/s3Upload.utils";
 import ImgLoader from "../../../utils/imgLoader";
 import S3UrlToCFUrl from "../../../utils/s3UrlToCFD.utils";
@@ -48,7 +47,7 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
     const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
     const [onCloseAlertCallback, setOnCloseAlertCallback] = useState<() => void>(() => {});
 
-     const openAlertModal = (message: string, callback: () => void) => {
+    const openAlertModal = (message: string, callback: () => void) => {
         setAlertMessage(message);
         setOnCloseAlertCallback(() => callback);
         setIsAlertModalOpen(true);
@@ -194,9 +193,14 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
     };
 
     const removeFile = (index: number) => {
-        const newFiles = [...imagePreviews];
+        const newFiles = [...files];
+        const newImagePreviews = [...imagePreviews];
+    
         newFiles.splice(index, 1);
-        setImagePreviews(newFiles);
+        newImagePreviews.splice(index, 1);
+    
+        setFiles(newFiles);
+        setImagePreviews(newImagePreviews);
     };
 
     const onChangeInfo = (e: React.ChangeEvent<HTMLInputElement>) => {

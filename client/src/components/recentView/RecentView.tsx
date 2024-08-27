@@ -2,17 +2,17 @@ import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { axiosInstance, handleAxiosError } from "../../utils/axios.utils";
 import { useNavigate } from "react-router-dom";
-import * as tw from "./RecentView.styles"
+import * as tw from "./RecentView.styles";
 import ImgLoader from "../../utils/imgLoader";
 import Loading from "../loading/Loading";
 import { encrypt } from "../../utils/cryptoJs";
 import dayjs from "dayjs";
+import { getThumbnailCFUrl } from "../../utils/s3UrlToCFD.utils";
 
 interface HotelData {
     id: number;
     name: string;
     rating: number;
-    imgUrl: string;
 }
 
 export default function RecentView() {
@@ -24,21 +24,21 @@ export default function RecentView() {
             const fetchedHotels: HotelData[] = [];
 
             for (const id of hotelIds) {
+                if (!id) continue;
+
                 const response = await axiosInstance.get(`/hotel/${id}`);
                 const hotel = response.data.data[0];
 
                 const ratingResponse = await axiosInstance.get(`/hotel/rating/${hotel.id}`);
                 const rating = ratingResponse.data.data[0].rating;
 
-                const imgUrlResponse = await axiosInstance.get(`/hotel/img/${hotel.id}`);
-                const imgUrl = imgUrlResponse.data.data[0].url;
-
-                fetchedHotels.push({
-                    id: hotel.id,
-                    name: hotel.name,
-                    rating: rating,
-                    imgUrl: imgUrl
-                });
+                if (!fetchedHotels.some(h => h.id === hotel.id)) {
+                    fetchedHotels.push({
+                        id: hotel.id,
+                        name: hotel.name,
+                        rating: rating,
+                 });
+                }
             }
 
             setHotelData(fetchedHotels);
@@ -49,15 +49,17 @@ export default function RecentView() {
 
     const clickHotel = (hotelId: number) => {
         const encryptedId = encrypt(`${hotelId}`);
-        const today = dayjs().format('YYYY-MM-DD');
-        const tomorrow = dayjs().add(1, 'day').format('YYYY-MM-DD');
+        const today = dayjs().format("YYYY-MM-DD");
+        const tomorrow = dayjs().add(1, "day").format("YYYY-MM-DD");
         navigate(`/hotel/${encryptedId}/${today}/${tomorrow}/${2}/${0}`);
     };
 
     useEffect(() => {
         const recentHotels = Cookies.get("recentHotels");
         if (recentHotels) {
-            const hotelIds: string[] = JSON.parse(recentHotels);
+            let hotelIds: string[] = JSON.parse(recentHotels);
+            hotelIds = hotelIds.filter(id => id.trim() !== ""); 
+            hotelIds = Array.from(new Set(hotelIds));
             fetchHotels(hotelIds);
         }
     }, []);
@@ -70,10 +72,10 @@ export default function RecentView() {
                     <tw.NoCookieWrap>최근 본 상품이 없습니다.</tw.NoCookieWrap>
                 ) : (
                     <tw.HotelList>
-                        {hotelData.map((hotel) => (
-                            <tw.HotelWrap key={hotel.id} onClick={()=>clickHotel(hotel.id)}>
+                        {hotelData.map(hotel => (
+                            <tw.HotelWrap key={hotel.id} onClick={() => clickHotel(hotel.id)}>
                                 <tw.HotelImgWrap>
-                                    <ImgLoader imageUrl={hotel.imgUrl} altText={hotel.name} rounded="l-2xl" />
+                                    <ImgLoader imageUrl={getThumbnailCFUrl(`/hotel_img/${hotel.id}`)} altText={hotel.name} rounded="l-2xl" />
                                 </tw.HotelImgWrap>
                                 <tw.HotelInfoWrap>
                                     <tw.HotelName>{hotel.name}</tw.HotelName>

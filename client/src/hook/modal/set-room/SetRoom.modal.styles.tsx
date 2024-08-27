@@ -1,9 +1,5 @@
 import tw from "tailwind-styled-components"
 
-interface RegBtnProps {
-    $validator: boolean
-}
-
 export const Container = tw.div`w-full h-full bg-zinc-400/[0.3] fixed top-0`
 export const ModalWrap = tw.div`max-w-[28rem] w-[80%] h-[34rem] flex flex-col rounded-[16px] p-6
 bg-white absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%]
@@ -30,12 +26,15 @@ export const UpperTag = tw.label`text-ms font-bold py-0 my-2`
 export const Input = tw.input`w-auto text-sm py-1 px-2 border border-black outline-main rounded-lg`;
 export const Select = tw.select`w-auto text-sm py-1 px-2 border border-black outline-main rounded-lg cursor-pointer`
 
-export const UploadWrap = tw.div`p-6 text-center bg-gray-100 rounded-2xl my-4`
-export const ImgLabel = tw.p`my-4 font-bold mobile:text-sm`
+export const UploadWrap = tw.div`p-6 text-center bg-gray-100 rounded-2xl mt-4`
+export const UploadDragWrap = tw.div`bg-white/[0.8] py-2 mb-2 border-black border rounded-2xl`
+export const UploadDragLabel = tw.p`my-4 text-sm text-black/[0.8] font-bold
+mobile:text-xs`
 
+export const ImgLabel = tw.p`text-5xl text-end`
 export const ImgContainer = tw.div`grid grid-cols-2 justify-center`
-export const ImgOutWrap = tw.div`w-full h-auto relative content-center`
-export const ImgWrap = tw.div`m-1`
-export const Img = tw.img`rounded-lg`
+export const ImgOutWrap = tw.div`relative w-full h-24 content-center p-1`
+export const ImgWrap = tw.div`w-full h-full`
+export const Img = tw.img`rounded-lg h-full`
 export const RemoveBtn = tw.button`bg-gray-100/[0.9] py-1 px-2 rounded-lg text-semibold 
 hover:text-main hover:font-bold absolute bottom-2 right-2 hover:scale-105`
