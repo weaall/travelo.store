@@ -92,6 +92,7 @@ export default function SearchResult() {
     };
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         fetchSearch();
     }, [searchValue, checkInDate, checkOutDate, adult, child, fetchSearch]);
 

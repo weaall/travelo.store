@@ -10,9 +10,10 @@ export const ContentsFlex = tw.div`h-auto w-auto flex items-center`
 
 export const MainContainer = tw.div`w-full h-full pt-4 pb-10`
 
-export const SortWrap = tw.div`w-full h-12 flex justify-between my-10 border rounded-2xl`
+export const SortWrap = tw.div`w-full h-12 flex justify-between mb-6 mt-2 border rounded-2xl
+mobile:mx-4 mobile:w-auto`
 export const SortBtn = tw.button<SortProps>`w-1/5 h-full 
-hover:bg-main/[0.5] hover:text-white
+hover:bg-main/[0.5] hover:text-white mobile:text-xs mobile:hover:bg-main
 ${(p) => (p.$active ? "bg-main text-white" : " text-black")}`;
 
 export const HotelList = tw.div`flex flex-col gap-6
