@@ -14,7 +14,7 @@ import {
     RoomPriceRows,
     DatePriceProps
 } from "../interface/interfaces";
-import { deleteHotelImg} from "../config/multer";
+import { deleteS3Img } from "../config/multer";
 
 const roomService = {
     async getBedType() {
@@ -181,7 +181,7 @@ const roomService = {
             );
             const imageUrls: string[] = checkRoomImgResult.map((row) => row.url);
 
-            await deleteHotelImg(imageUrls);
+            await deleteS3Img(imageUrls);
 
             const [deleteRoomImgResult] = await connection.execute(deleteRoomImgSql, deleteRoomImgValues);
 

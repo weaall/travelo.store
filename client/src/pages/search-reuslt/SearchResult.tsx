@@ -10,6 +10,8 @@ import SearchBox from "../../components/searchBox/SearchBox";
 import { encrypt } from "../../utils/cryptoJs";
 
 import * as tw from "./SearchResult.styles";
+import ImgLoader from "../../utils/imgLoader";
+import { getThumbnailCFUrl } from "../../utils/s3UrlToCFD.utils";
 
 export default function SearchResult() {
     const navigate = useNavigate();
@@ -50,12 +52,6 @@ export default function SearchResult() {
                     price: 0,
                     room_current: 0,
                     room_limit: 0,
-                },
-            ],
-
-            hotel_img: [
-                {
-                    url: "",
                 },
             ],
         },
@@ -134,7 +130,7 @@ export default function SearchResult() {
                         sortedHotelList.map((hotel) => (
                             <tw.HotelWrap key={hotel.hotel_id}>
                                 <tw.HotelPic>
-                                    <ImgSlider images={hotel.hotel_img} />
+                                    <ImgLoader imageUrl={getThumbnailCFUrl(`/hotel_img/${hotel.hotel_id}`)} altText="" rounded="l-2xl" />
                                 </tw.HotelPic>
                                 <tw.HotelInfoWrap onClick={() => clickHotel(hotel.hotel_id)}>
                                     <tw.HotelInfo>

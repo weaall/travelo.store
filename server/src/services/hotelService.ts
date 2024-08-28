@@ -2,7 +2,7 @@ import { FieldPacket, ResultSetHeader } from "mysql2"
 import pool from "../config/db"
 import CustomError from "../utils/customError"
 import { HotelIdParams, HotelInfoRows, HotelRows, HotelInfoProps, HotelServProps, HotelFacilProps ,RegHotelParams, urlRows } from "../interface/interfaces"
-import { deleteHotelImg } from "../config/multer";
+import { deleteS3Img } from "../config/multer";
 
 
 const hotelService = {
@@ -193,7 +193,7 @@ const hotelService = {
             const [checkHotelImgResult]: [urlRows[], FieldPacket[]] = await connection.execute(checkHotelImgSql, checkHotelImgParams);
             const imageUrls: string[] = checkHotelImgResult.map((row) => row.url);
 
-            await deleteHotelImg(imageUrls);
+            await deleteS3Img(imageUrls);
 
             const [deleteHotelImgResult] = await connection.execute(deleteHotelImgSql, deleteHotelImgParams);
 

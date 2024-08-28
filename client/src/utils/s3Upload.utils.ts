@@ -49,7 +49,7 @@ const createThumbnail = (file: File, maxWidth: number, maxHeight: number): Promi
                 } else {
                     reject(new Error('Failed to create thumbnail blob'));
                 }
-            }, 'image/jpeg',0.4);
+            }, 'image/jpeg',0.8);
         };
 
         img.onerror = reject;
@@ -89,7 +89,7 @@ export const uploadFilesToS3 = async (files: File[], url: string) => {
         uploadedKeys.push(imageUrl);
     }
 
-    const thumbnailFile = await createThumbnail(files[0], 180, 180);
+    const thumbnailFile = await createThumbnail(files[0], 360, 360);
     const thumbnailPresignedUrl = presignedUrls[presignedUrls.length - 1];
 
     await fetch(thumbnailPresignedUrl, {
