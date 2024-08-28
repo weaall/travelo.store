@@ -8,6 +8,10 @@ export const ContentsWrap = tw.div`px-6 space-y-2`
 export const Lable = tw.p`text-sm font-semibold`
 export const HotelList = tw.div`flex w-full space-x-4
 mobile:flex-col mobile:space-x-0 mobile:space-y-1`
+
+export const HotelWrapLoading = tw.div`flex w-1/3 h-28 border rounded-2xl 
+mobile:w-full
+bg-gradient-to-r from-darkGray via-midGray to-lightGray bg-300% animate-gradient`
 export const HotelWrap = tw.div`flex w-1/3 h-28 border rounded-2xl cursor-pointer
 mobile:w-full`
 export const HotelImgWrap = tw.div`h-full w-2/5`

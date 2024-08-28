@@ -19,35 +19,42 @@ interface HotelData {
 
 export default function RecentView() {
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
     const [hotelData, setHotelData] = useState<HotelData[]>([]);
+    const [recentHotelIds, setRecentHotelIds] = useState<string[]>([]);
 
-    const fetchHotels = useCallback(async (hotelIds: string[]) => {
-        try {
-            const fetchedHotels: HotelData[] = [];
-    
-            for (const id of hotelIds) {
-                if (!id) continue;
-    
-                const response = await axiosInstance.get(`/hotel/${id}`);
-                const hotel = response.data.data[0];
-    
-                const ratingResponse = await axiosInstance.get(`/hotel/rating/${hotel.id}`);
-                const rating = ratingResponse.data.data[0].rating;
-    
-                if (!fetchedHotels.some(h => h.id === hotel.id)) {
-                    fetchedHotels.push({
-                        id: hotel.id,
-                        name: hotel.name,
-                        rating: rating,
-                    });
+    const fetchHotels = useCallback(
+        async (hotelIds: string[]) => {
+            try {
+                const fetchedHotels: HotelData[] = [];
+
+                for (const id of hotelIds) {
+                    if (!id) continue;
+
+                    const response = await axiosInstance.get(`/hotel/${id}`);
+                    const hotel = response.data.data[0];
+
+                    const ratingResponse = await axiosInstance.get(`/hotel/rating/${hotel.id}`);
+                    const rating = ratingResponse.data.data[0].rating;
+
+                    if (!fetchedHotels.some((h) => h.id === hotel.id)) {
+                        fetchedHotels.push({
+                            id: hotel.id,
+                            name: hotel.name,
+                            rating: rating,
+                        });
+                    }
                 }
+
+                setHotelData(fetchedHotels);
+            } catch (error) {
+                handleAxiosError(error, navigate);
+            } finally {
+                setLoading(false);
             }
-    
-            setHotelData(fetchedHotels);
-        } catch (error) {
-            handleAxiosError(error, navigate);
-        }
-    }, [navigate]);
+        },
+        [navigate],
+    );
     
     const clickHotel = (hotelId: number) => {
         const encryptedId = encrypt(`${hotelId}`);
@@ -62,7 +69,10 @@ export default function RecentView() {
             let hotelIds: string[] = JSON.parse(recentHotels);
             hotelIds = hotelIds.filter(id => id.trim() !== ""); 
             hotelIds = Array.from(new Set(hotelIds));
+            setRecentHotelIds(hotelIds); 
             fetchHotels(hotelIds);
+        } else {
+            setLoading(false); 
         }
     }, [fetchHotels]);
 
@@ -70,7 +80,13 @@ export default function RecentView() {
         <tw.Container>
             <tw.ContentsWrap>
                 <tw.Lable>최근 본 상품</tw.Lable>
-                {hotelData.length === 0 ? (
+                {loading ? (
+                    <tw.HotelList>
+                        {recentHotelIds.map((_, index) => (
+                            <tw.HotelWrapLoading key={index} />
+                        ))}
+                    </tw.HotelList>
+                ) : hotelData.length === 0 ? (
                     <tw.NoCookieWrap>최근 본 상품이 없습니다.</tw.NoCookieWrap>
                 ) : (
                     <tw.HotelList>

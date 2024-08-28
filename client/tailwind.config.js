@@ -13,9 +13,9 @@ module.exports = {
                 kakao: "#FAE100",
                 "kakao-text": "#371D1E",
                 naver: "#2DB400",
-                darkGray: "#888888",
-                midGray: "#999999",
-                lightGray: "#aaaaaa",
+                darkGray: "#aaaaaa",
+                midGray: "#cccccc",
+                lightGray: "#eeeeee",
             },
             screens: {
                 mobile: { max: "640px" },
@@ -101,7 +101,7 @@ module.exports = {
                 closeModal: "closeModal 0.5s ease-out forwards",
                 backdrop: "backdrop 0.5s ease-out forwards",
                 closeBackdrop: "closeBackdrop 0.5s ease-out forwards",
-                gradient: "gradient 0.5s ease infinite alternate",
+                gradient: "gradient 1s ease infinite alternate",
             },
             backgroundSize: {
                 '300%': '300%',

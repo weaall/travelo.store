@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import dayjs from "dayjs";
 
@@ -60,7 +60,7 @@ export default function SearchResult() {
         },
     ]);
 
-    const fetchSearch = async () => {
+    const fetchSearch =  useCallback(async () => {
         try {
             const response = await axiosInstance.get("/search", {
                 params: {
@@ -84,7 +84,7 @@ export default function SearchResult() {
         } finally {
             setLoading(false);
         }
-    };
+    },[navigate, searchValue, checkInDate, checkOutDate, adult, child]);
 
     const clickHotel = (hotelId: number) => {
         const encryptedId = encrypt(`${hotelId}`);
@@ -93,7 +93,7 @@ export default function SearchResult() {
 
     useEffect(() => {
         fetchSearch();
-    }, [searchValue, checkInDate, checkOutDate, adult, child]);
+    }, [searchValue, checkInDate, checkOutDate, adult, child, fetchSearch]);
 
     const handleSort = (method: string) => {
         setSortMethod(method);
