@@ -1,10 +1,19 @@
 import tw from "tailwind-styled-components"
 
+interface SortProps{
+    $active: boolean
+}
+
 export const Container = tw.div`flex flex-col items-center`
 
 export const ContentsFlex = tw.div`h-auto w-auto flex items-center`
 
-export const MainContainer = tw.div`w-full h-full pb-10`
+export const MainContainer = tw.div`w-full h-full pt-4 pb-10`
+
+export const SortWrap = tw.div`w-full h-12 flex justify-between my-10 border rounded-2xl`
+export const SortBtn = tw.button<SortProps>`w-1/5 h-full 
+hover:bg-main/[0.5] hover:text-white
+${(p) => (p.$active ? "bg-main text-white" : " text-black")}`;
 
 export const HotelList = tw.div`flex flex-col gap-6
 mobile:px-4`
@@ -13,6 +22,9 @@ export const NoHotelWrap = tw.div`w-full flex flex-col justify-center items-cent
 export const NoHotelText = tw.p`text-lg font-medium`
 export const AddHotelBtn = tw.button`mt-2 text-base font-medium px-5 py-2 rounded-xl bg-black text-white hover:bg-black/[0.8]
 mobile:hover:bg-black`
+
+export const HotelWrapLoading = tw.div`h-60 mobile:h-[400px] rounded-2xl shadow-md
+bg-gradient-to-r from-darkGray via-midGray to-lightGray bg-300% animate-gradient`
 
 export const HotelWrap = tw.div`flex w-auto rounded-2xl bg-white shadow-md hover:shadow-xl
 mobile:flex-col mobile:h-auto`

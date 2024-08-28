@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import Loading from "../components/loading/Loading";
 import S3UrlToCFUrl from "./s3UrlToCFD.utils";
 
 interface ImageLoaderProps {
@@ -21,7 +20,7 @@ export default function ImgLoader({ imageUrl, altText, rounded }: ImageLoaderPro
 
     const cloudFrontUrl = S3UrlToCFUrl(imageUrl);
 
-    const { data: imageBlob, isLoading, isError } = useQuery<Blob, Error>({
+    const { data: imageBlob, isError } = useQuery<Blob, Error>({
         queryKey: ["image", cloudFrontUrl],
         queryFn: () => fetchImage(cloudFrontUrl),
         gcTime: Infinity, 
@@ -39,10 +38,6 @@ export default function ImgLoader({ imageUrl, altText, rounded }: ImageLoaderPro
             };
         }
     }, [imageBlob]);
-
-    if (isLoading) {
-        return <Loading />;
-    }
 
     if (isError || !imageSrc) {
         return <div className={`flex h-full justify-center items-center text-2xl font-bold`}>미등록</div>;
