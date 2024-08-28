@@ -1,16 +1,64 @@
 import React, { DragEvent, useEffect, useState } from "react";
-import * as tw from "./HotelRegPage.styles";
+import { useNavigate } from "react-router-dom";
+
 import { sendJWT } from "../../../utils/jwtUtils";
 import { axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
-import { useNavigate } from "react-router-dom";
-import { ModalPortal } from "../../../hook/modal/ModalPortal";
+import { checkValidAccountNum, checkValidBusinessNum, checkValidInput, checkValidUserName } from "../../../utils/regExp.utils";
+import { uploadFilesToS3NoThumb } from "../../../utils/s3Upload.utils";
+
 import DaumPostcodeModal from "../../../hook/modal/daum-postcode/DaumPostcode.modal";
-import { checkValidAccountNum, checkValidBusinessNum, checkValidEmail, checkValidInput, checkValidUserName } from "../../../utils/regExp.utils";
-import Loading from "../../../components/loading/Loading";
+import LoadingModal from "../../../hook/modal/loading/Loading.modal";
+import AlertModal from "../../../hook/modal/alert/Alert.modal";
+import ConfirmModal from "../../../hook/modal/alert-confirm/Confirm.modal";
+import { ModalPortal } from "../../../hook/modal/ModalPortal";
+
+import * as tw from "./HotelRegPage.styles";
+
 
 export default function HotelRegPage() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
+    const openLoadingModal = () => {
+        setLoading(true);
+    };
+    const closeLoadingModal = () => {
+        setLoading(false);
+    };
+
+    const [alertMessage, setAlertMessage] = useState("");
+    const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
+    const [onCloseAlertCallback, setOnCloseAlertCallback] = useState<() => void>(() => {});
+
+    const openAlertModal = (message: string, callback: () => void) => {
+        setAlertMessage(message);
+        setOnCloseAlertCallback(() => callback);
+        setIsAlertModalOpen(true);
+    };
+
+    const closeAlertModal = () => {
+        setIsAlertModalOpen(false);
+        onCloseAlertCallback();
+    };
+
+    const [confirmMessage, setConfirmMessage] = useState("");
+    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+    const [onCloseConfirmCallback, setOnCloseConfirmCallback] = useState<(result: boolean) => void>(() => {});
+
+    const openConfirmModal = (message: string): Promise<boolean> => {
+        return new Promise((resolve) => {
+            setConfirmMessage(message);
+            setOnCloseConfirmCallback(() => (result: boolean) => {
+                setIsConfirmModalOpen(false);
+                resolve(result);
+            });
+            setIsConfirmModalOpen(true);
+        });
+    };
+
+    const closeConfirmModal = (result: boolean) => {
+        setIsConfirmModalOpen(false);
+        onCloseConfirmCallback(result);
+    };
 
     const [isDaumAddressModalOpen, setIsSearchDateModalOpen] = useState(false);
 
@@ -72,13 +120,17 @@ export default function HotelRegPage() {
 
     const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-    
-        const sanitizedValue = name === "reg_num" 
-            ? value.replace(/[^0-9]/g, "").replace(/(\d{3})(\d{2})(\d{5})/, "$1-$2-$3").slice(0, 12 + 2)  // 하이픈 2개를 고려하여 최대 길이 14자리
-            : name === "account" 
-            ? value.replace(/[^0-9]/g, "")
-            : value;
-    
+
+        const sanitizedValue =
+            name === "reg_num"
+                ? value
+                      .replace(/[^0-9]/g, "")
+                      .replace(/(\d{3})(\d{2})(\d{5})/, "$1-$2-$3")
+                      .slice(0, 12 + 2) // 하이픈 2개를 고려하여 최대 길이 14자리
+                : name === "account"
+                ? value.replace(/[^0-9]/g, "")
+                : value;
+
         setFormData({ ...formData, [name]: sanitizedValue });
     };
 
@@ -121,59 +173,37 @@ export default function HotelRegPage() {
         }));
     };
 
-    const uploadFilesToS3 = async () => {
-        const uploadedKeys = [];
-
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            const key = `reg_docs/${formData.name}/${file.name}`;
-            const contentType = file.type;
-
-            const presignedUrlsResponse = await axiosInstance.post("/auth/presignedUrl", {
-                key: key,
-                contentType: contentType,
-            });
-
-            const presignedUrl = presignedUrlsResponse.data.data;
-
-            const response = await fetch(presignedUrl, {
-                method: "PUT",
-                body: file,
-                headers: {
-                    "Content-Type": contentType,
-                },
-            });
-
-            const imageUrl = presignedUrl.split("?")[0];
-            uploadedKeys.push(imageUrl);
-        }
-        return uploadedKeys;
-    };
-
     const onClickRegister = async () => {
-        setLoading(true)
+        setLoading(true);
         try {
-            const uploadedKeys = await uploadFilesToS3();
+            const confirmResult = await openConfirmModal("변경사항을 저장하시겠습니까?");
+            if (confirmResult) {
+                openLoadingModal();
+                const uploadedKeys = await uploadFilesToS3NoThumb(files, `reg_docs/${formData.name}`);
 
-            const updatedRoomData = {
-                ...formData,
-                urls: uploadedKeys,
-            };
+                const updatedRoomData = {
+                    ...formData,
+                    urls: uploadedKeys,
+                };
 
-            const config = await sendJWT({
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                method: "post",
-                url: "/hotel/reg",
-                data: updatedRoomData,
-            });
+                const config = await sendJWT({
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    method: "post",
+                    url: "/hotel/reg",
+                    data: updatedRoomData,
+                });
 
-            await axiosInstance.request(config);
-            window.alert("저장완료");
-            navigate("/me/hotel");
+                await axiosInstance.request(config);
+                openAlertModal("저장되었습니다.", () => {
+                    navigate("/me/hotel");
+                });
+            }
         } catch (error) {
             handleAxiosError(error, navigate);
+        } finally {
+            closeLoadingModal();
         }
     };
 
@@ -188,10 +218,6 @@ export default function HotelRegPage() {
             isImages: true,
         });
     }, []);
-
-    if (loading) {
-        return <Loading />;
-    }
 
     return (
         <tw.Container>
@@ -324,6 +350,24 @@ export default function HotelRegPage() {
                         }}
                         onClose={closeDaumAddressModal}
                     />
+                </ModalPortal>
+            )}
+
+            {loading && (
+                <ModalPortal>
+                    <LoadingModal onClose={closeLoadingModal} />
+                </ModalPortal>
+            )}
+
+            {isAlertModalOpen && (
+                <ModalPortal>
+                    <AlertModal message={alertMessage} onClose={closeAlertModal} />
+                </ModalPortal>
+            )}
+
+            {isConfirmModalOpen && (
+                <ModalPortal>
+                    <ConfirmModal message={confirmMessage} onClose={closeConfirmModal} />
                 </ModalPortal>
             )}
         </tw.Container>

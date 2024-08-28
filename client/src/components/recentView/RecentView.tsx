@@ -55,24 +55,24 @@ export default function RecentView() {
         },
         [navigate],
     );
-    
+
     const clickHotel = (hotelId: number) => {
         const encryptedId = encrypt(`${hotelId}`);
         const today = dayjs().format("YYYY-MM-DD");
         const tomorrow = dayjs().add(1, "day").format("YYYY-MM-DD");
         navigate(`/hotel/${encryptedId}/${today}/${tomorrow}/${2}/${0}`);
     };
-    
+
     useEffect(() => {
         const recentHotels = Cookies.get("recentHotels");
         if (recentHotels) {
             let hotelIds: string[] = JSON.parse(recentHotels);
-            hotelIds = hotelIds.filter(id => id.trim() !== ""); 
+            hotelIds = hotelIds.filter((id) => id.trim() !== "");
             hotelIds = Array.from(new Set(hotelIds));
-            setRecentHotelIds(hotelIds); 
+            setRecentHotelIds(hotelIds);
             fetchHotels(hotelIds);
         } else {
-            setLoading(false); 
+            setLoading(false);
         }
     }, [fetchHotels]);
 
@@ -90,7 +90,7 @@ export default function RecentView() {
                     <tw.NoCookieWrap>최근 본 상품이 없습니다.</tw.NoCookieWrap>
                 ) : (
                     <tw.HotelList>
-                        {hotelData.map(hotel => (
+                        {hotelData.map((hotel) => (
                             <tw.HotelWrap key={hotel.id} onClick={() => clickHotel(hotel.id)}>
                                 <tw.HotelImgWrap>
                                     <ImgLoader imageUrl={getThumbnailCFUrl(`/hotel_img/${hotel.id}`)} altText={hotel.name} rounded="l-2xl" />
