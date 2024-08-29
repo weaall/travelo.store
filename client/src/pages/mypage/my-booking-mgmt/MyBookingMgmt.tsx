@@ -1,20 +1,28 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { sendJWT } from "../../../utils/jwtUtils";
-import { axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
-import Loading from "../../../components/loading/Loading";
+import dayjs from "dayjs";
 
-import ImgLoader from "../../../utils/imgLoader";
-
-import * as tw from "./MyBookingMgmt.styles";
 import { ModalPortal } from "../../../hook/modal/ModalPortal";
 import KakaoMapModal from "../../../hook/modal/kakao-map/KakaMap.modal";
-import dayjs from "dayjs";
+import LoadingModal from "../../../hook/modal/loading/Loading.modal";
+
+import { sendJWT } from "../../../utils/jwtUtils";
+import { axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
+import ImgLoader from "../../../utils/imgLoader";
+import { getThumbnailCFUrl } from "../../../utils/s3UrlToCFD.utils";
 import { facilItems, servItems } from "../../../data/hotelData";
+
+import * as tw from "./MyBookingMgmt.styles";
 
 export function MyBookingMgmtPage() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
+    const openLoadingModal = () => {
+        setLoading(true);
+    };
+    const closeLoadingModal = () => {
+        setLoading(false);
+    };
 
     const { id } = useParams();
 
@@ -62,12 +70,6 @@ export function MyBookingMgmtPage() {
         spa: 0,
         fitness: 0,
         convenience_store: 0,
-
-        img: [
-            {
-                url: "",
-            },
-        ],
     });
 
     const [roomData, setRoomData] = useState({
@@ -77,15 +79,38 @@ export function MyBookingMgmtPage() {
         view_type: "",
         bed_type: "",
         discount: 0,
-
-        img: [
-            {
-                url: "",
-            },
-        ],
     });
 
-    const fetchBooking = async () => {
+    const fetchHotel = useCallback(
+        async (hotelId: number) => {
+            try {
+                const hotelResponse = await axiosInstance.get("/hotel/" + hotelId);
+                const hotelData = hotelResponse.data.data[0];
+
+                setHotelData(hotelData);
+            } catch (error) {
+                handleAxiosError(error, navigate);
+            }
+        },
+        [navigate],
+    );
+
+    const fetchRoom = useCallback(
+        async (roomId: number) => {
+            try {
+                const roomResponse = await axiosInstance.get("/room/" + roomId);
+                const room = roomResponse.data.data[0];
+
+                setRoomData(room);
+            } catch (error) {
+                handleAxiosError(error, navigate);
+            }
+        },
+        [navigate],
+    );
+
+    const fetchBooking = useCallback(async () => {
+        openLoadingModal();
         try {
             const config = await sendJWT({
                 method: "GET",
@@ -100,45 +125,13 @@ export function MyBookingMgmtPage() {
         } catch (error) {
             handleAxiosError(error, navigate);
         } finally {
-            setLoading(false);
+            closeLoadingModal();
         }
-    };
-
-    const fetchHotel = async (hotelId: number) => {
-        try {
-            const hotelResponse = await axiosInstance.get("/hotel/" + hotelId);
-            let hotelData = hotelResponse.data.data[0];
-
-            const hotelImgResponse = await axiosInstance.get("/hotel/img/" + hotelId);
-            hotelData.img = hotelImgResponse.data.data;
-
-            setHotelData(hotelData);
-        } catch (error) {
-            handleAxiosError(error, navigate);
-        }
-    };
-
-    const fetchRoom = async (roomId: number) => {
-        try {
-            const roomResponse = await axiosInstance.get("/room/" + roomId);
-            const room = roomResponse.data.data[0];
-
-            const roomImgResponse = await axiosInstance.get("/room/img/" + roomId);
-            room.img = roomImgResponse.data.data;
-
-            setRoomData(room);
-        } catch (error) {
-            handleAxiosError(error, navigate);
-        }
-    };
+    }, [navigate, id, fetchHotel, fetchRoom]);
 
     useEffect(() => {
         fetchBooking();
-    }, []);
-
-    if (loading) {
-        return <Loading />;
-    }
+    }, [fetchBooking]);
 
     return (
         <tw.Container>
@@ -152,11 +145,11 @@ export function MyBookingMgmtPage() {
                         <tw.RoomWrap>
                             <tw.ContentsFlex>
                                 <tw.Pic>
-                                    {hotelData?.img?.[0]?.url ? (
-                                        <ImgLoader imageUrl={hotelData.img[0].url} altText="" rounded="l-xl mobile:rounded-none mobile:rounded-t-xl" />
-                                    ) : (
-                                        <tw.UnRegWrap>미등록</tw.UnRegWrap>
-                                    )}
+                                    <ImgLoader
+                                        imageUrl={getThumbnailCFUrl(`/hotel_img/${hotelData.id}`)}
+                                        altText=""
+                                        rounded="l-xl mobile:rounded-none mobile:rounded-t-xl"
+                                    />
                                 </tw.Pic>
                                 <tw.OuterInfoWrap>
                                     <tw.RoomInfo>
@@ -176,11 +169,11 @@ export function MyBookingMgmtPage() {
                         <tw.RoomWrap>
                             <tw.ContentsFlex>
                                 <tw.Pic>
-                                    {roomData?.img?.[0]?.url ? (
-                                        <ImgLoader imageUrl={roomData.img[0].url} altText="" rounded="l-xl mobile:rounded-none mobile:rounded-t-xl" />
-                                    ) : (
-                                        <tw.UnRegWrap>미등록</tw.UnRegWrap>
-                                    )}
+                                    <ImgLoader
+                                        imageUrl={getThumbnailCFUrl(`/room_img/${bookingData.hotel_id}/${bookingData.room_id}`)}
+                                        altText=""
+                                        rounded="l-xl mobile:rounded-none mobile:rounded-t-xl"
+                                    />
                                 </tw.Pic>
                                 <tw.OuterInfoWrap>
                                     <tw.RoomInfo>
@@ -292,12 +285,18 @@ export function MyBookingMgmtPage() {
                 </tw.ContentsWrap>
             </tw.MobileWrap>
 
+            {loading && (
+                <ModalPortal>
+                    <LoadingModal onClose={closeLoadingModal} />
+                </ModalPortal>
+            )}
+
             {isKakaoMapModalOpen && (
                 <ModalPortal>
                     <KakaoMapModal
                         hotelName={hotelData.name}
                         address={`${hotelData.address} ${hotelData.address_detail}`}
-                        imgUrl={hotelData.img[0].url}
+                        imgUrl={getThumbnailCFUrl(`/hotel_img/${hotelData.id}`)}
                         onClose={closeKakaoMapModal}
                     />
                 </ModalPortal>

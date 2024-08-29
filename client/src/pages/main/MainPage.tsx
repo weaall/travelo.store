@@ -111,6 +111,7 @@ export default function Search({ defaultSearchValue, defaultStartDate, defaultEn
     return (
         <tw.Container>
             <tw.MainContainer>
+                <tw.MobileContainer>
                 <tw.SearchContainer>
                     <tw.SearchWrap>
                         <tw.SvgWrap>
@@ -152,6 +153,7 @@ export default function Search({ defaultSearchValue, defaultStartDate, defaultEn
 
                     <tw.SearchBtnMobile onClick={handleOnClick}>검색하기</tw.SearchBtnMobile>
                 </tw.SearchContainer>
+                </tw.MobileContainer>
 
                 <BannerSlider />
                 <RecentView />

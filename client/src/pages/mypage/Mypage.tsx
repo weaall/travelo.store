@@ -5,7 +5,7 @@ import * as tw from "./Mypage.styles";
 import MyInfoPage from "./my-info/MyInfoPage";
 import MyBookingPage from "./my-booking/MyBooking";
 import MyReviewPage from "./my-review/MyReview";
-import MyMsgPage from "./my-msg/MyMsg";
+import MyMsgPage from "./my-chat-list/MyChatList";
 
 import HotelRegPage from "./hotel-reg/HotelRegPage";
 import MyHotelPage from "./my-hotel/MyHotelPage";

@@ -1,17 +1,26 @@
-import { ChangeEvent, useEffect, useState } from "react";
-import * as tw from "./MyInfoPage.styles";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import { sendJWT } from "../../../utils/jwtUtils";
 import { axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
-import { useNavigate } from "react-router-dom";
-import Loading from "../../../components/loading/Loading";
-import { checkValidEmail, checkValidMobile, checkValidPhoneNumber, checkValidUserName } from "../../../utils/regExp.utils";
+import { checkValidEmail, checkValidMobile, checkValidUserName } from "../../../utils/regExp.utils";
+
 import { ModalPortal } from "../../../hook/modal/ModalPortal";
 import AlertModal from "../../../hook/modal/alert/Alert.modal";
 import ConfirmModal from "../../../hook/modal/alert-confirm/Confirm.modal";
+import LoadingModal from "../../../hook/modal/loading/Loading.modal";
+
+import * as tw from "./MyInfoPage.styles";
 
 export default function MyInfoPage() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
+    const openLoadingModal = () => {
+        setLoading(true);
+    };
+    const closeLoadingModal = () => {
+        setLoading(false);
+    };
 
     const [alertMessage, setAlertMessage] = useState("");
 
@@ -66,7 +75,8 @@ export default function MyInfoPage() {
         return formValid.isEmail && formValid.isName && formValid.isMobile;
     };
 
-    const fetchUser = async () => {
+    const fetchUser = useCallback(async () => {
+        openLoadingModal();
         try {
             const config = await sendJWT({
                 method: "get",
@@ -86,12 +96,12 @@ export default function MyInfoPage() {
         } catch (error) {
             handleAxiosError(error, navigate);
         } finally {
-            setLoading(false);
+            closeLoadingModal();
         }
-    };
+    }, [navigate]);
 
     const updateMyInfo = async () => {
-        setLoading(true);
+        openLoadingModal();
         try {
             const config = await sendJWT({
                 headers: {
@@ -110,7 +120,7 @@ export default function MyInfoPage() {
         } catch (error) {
             handleAxiosError(error, navigate);
         } finally {
-            setLoading(false);
+            closeLoadingModal();
         }
     };
 
@@ -149,11 +159,7 @@ export default function MyInfoPage() {
 
     useEffect(() => {
         fetchUser();
-    }, []);
-
-    if (loading) {
-        return <Loading />;
-    }
+    }, [fetchUser]);
 
     return (
         <tw.Container>
@@ -211,6 +217,12 @@ export default function MyInfoPage() {
                     </tw.MgmtBtn>
                 </tw.MgmtBtnWrap>
             </tw.MobileWrap>
+
+            {loading && (
+                <ModalPortal>
+                    <LoadingModal onClose={closeLoadingModal} />
+                </ModalPortal>
+            )}
 
             {isAlertModalOpen && (
                 <ModalPortal>

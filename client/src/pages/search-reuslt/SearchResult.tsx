@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import dayjs from "dayjs";
 
@@ -8,31 +8,26 @@ import { axiosInstance, handleAxiosError } from "../../utils/axios.utils";
 import { encrypt } from "../../utils/cryptoJs";
 import ImgLoader from "../../utils/imgLoader";
 import { getThumbnailCFUrl } from "../../utils/s3UrlToCFD.utils";
-
 import { facilItems, servItems } from "../../data/hotelData";
 
 import * as tw from "./SearchResult.styles";
 
 export default function SearchResult() {
     const navigate = useNavigate();
-    const [loading, setLoading] = useState(true);
-
     const { searchValue, checkInDate, checkOutDate, adult, child } = useParams();
 
+    const [loading, setLoading] = useState(true);
     const [sortMethod, setSortMethod] = useState<string>("정확도순");
-
     const [hotelList, setHotelList] = useState([
         {
             hotel_id: 0,
             name: "",
             address: "",
             address_detail: "",
-
             wifi: 0,
             always_check_in: 0,
             breakfast: 0,
             barbecue: 0,
-
             carpark: 0,
             restaurnat: 0,
             cafe: 0,
@@ -40,14 +35,11 @@ export default function SearchResult() {
             spa: 0,
             fitness: 0,
             convenience_store: 0,
-
             room_id: 0,
             room_name: "",
             room_num: 0,
             discount: 0,
-
             rating: 0,
-
             room_price: [
                 {
                     room_id: 0,
@@ -59,8 +51,11 @@ export default function SearchResult() {
             ],
         },
     ]);
+    const [visibleHotels, setVisibleHotels] = useState(3);
 
-    const fetchSearch =  useCallback(async () => {
+    const observer = useRef<IntersectionObserver | null>(null);
+
+    const fetchSearch = useCallback(async () => {
         try {
             const response = await axiosInstance.get("/search", {
                 params: {
@@ -84,7 +79,7 @@ export default function SearchResult() {
         } finally {
             setLoading(false);
         }
-    },[navigate, searchValue, checkInDate, checkOutDate, adult, child]);
+    }, [navigate, searchValue, checkInDate, checkOutDate, adult, child]);
 
     const clickHotel = (hotelId: number) => {
         const encryptedId = encrypt(`${hotelId}`);
@@ -96,26 +91,41 @@ export default function SearchResult() {
         fetchSearch();
     }, [searchValue, checkInDate, checkOutDate, adult, child, fetchSearch]);
 
+    useEffect(() => {
+        if (loading) return;
+        if (observer.current) observer.current.disconnect();
+
+        const handleObserver = (entries: IntersectionObserverEntry[]) => {
+            if (entries[0].isIntersecting) {
+                setVisibleHotels((prev) => prev + 3);
+            }
+        };
+
+        observer.current = new IntersectionObserver(handleObserver);
+        const lastHotelElement = document.querySelector(".last-hotel");
+        if (lastHotelElement) observer.current.observe(lastHotelElement);
+    }, [loading, visibleHotels]);
+
     const handleSort = (method: string) => {
         setSortMethod(method);
     };
 
     const sortedHotelList = [...hotelList].sort((a, b) => {
         if (sortMethod === "정확도순") {
-            // 기본적으로 검색 결과 순서로 유지 (정확도순)
-            return 0;
+            return 0; // 기본적으로 검색 결과 순서로 유지 (정확도순)
         } else if (sortMethod === "낮은 요금순") {
             return a.room_price.reduce((total, room) => total + room.price, 0) - b.room_price.reduce((total, room) => total + room.price, 0);
         } else if (sortMethod === "높은 요금순") {
             return b.room_price.reduce((total, room) => total + room.price, 0) - a.room_price.reduce((total, room) => total + room.price, 0);
         } else if (sortMethod === "인기순") {
-            // 예시: 리뷰 수 또는 예약 수로 정렬하는 로직 추가 가능
-            return 0;
+            return 0; // 예시: 리뷰 수 또는 예약 수로 정렬하는 로직 추가 가능
         } else if (sortMethod === "평점순") {
             return b.rating - a.rating;
         }
         return 0;
     });
+
+    const currentHotels = sortedHotelList.slice(0, visibleHotels);
 
     return (
         <tw.Container>
@@ -154,14 +164,14 @@ export default function SearchResult() {
                     </tw.HotelList>
                 ) : (
                     <tw.HotelList>
-                        {sortedHotelList.length === 0 ? (
+                        {currentHotels.length === 0 ? (
                             <tw.NoHotelWrap>
                                 <tw.NoHotelText>검색결과가 없어요!</tw.NoHotelText>
                                 <tw.AddHotelBtn onClick={() => navigate("/")}>숙소검색하기</tw.AddHotelBtn>
                             </tw.NoHotelWrap>
                         ) : (
-                            sortedHotelList.map((hotel) => (
-                                <tw.HotelWrap key={hotel.hotel_id}>
+                            currentHotels.map((hotel, index) => (
+                                <tw.HotelWrap key={hotel.hotel_id} className={currentHotels.length === index + 1 ? "last-hotel" : ""}>
                                     <tw.HotelPic>
                                         <ImgLoader
                                             imageUrl={getThumbnailCFUrl(`/hotel_img/${hotel.hotel_id}`)}

@@ -1,13 +1,17 @@
-import { useEffect, useState } from "react";
-import * as tw from "./MyBooking.styles";
-import { sendJWT } from "../../../utils/jwtUtils";
-import { axios, axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Loading from "../../../components/loading/Loading";
+import dayjs from "dayjs";
+
 import ImgLoader from "../../../utils/imgLoader";
 import { ModalPortal } from "../../../hook/modal/ModalPortal";
 import KakaoMapModal from "../../../hook/modal/kakao-map/KakaMap.modal";
-import dayjs from "dayjs";
+import LoadingModal from "../../../hook/modal/loading/Loading.modal";
+
+import { sendJWT } from "../../../utils/jwtUtils";
+import { axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
+import { getThumbnailCFUrl } from "../../../utils/s3UrlToCFD.utils";
+
+import * as tw from "./MyBooking.styles";
 
 interface Booking {
     booking_id: string;
@@ -28,16 +32,17 @@ interface HotelData {
     address_detail: string;
     postcode: string;
     always_check_in: number;
-    img: Image[];
-}
-
-interface Image {
-    url: string;
 }
 
 export default function MyBookingPage() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
+    const openLoadingModal = () => {
+        setLoading(true);
+    };
+    const closeLoadingModal = () => {
+        setLoading(false);
+    };
 
     const [isKakaoMapModalOpen, setIsKakaoMapModalOpen] = useState(false);
     const [selectedHotel, setSelectedHotel] = useState<any>(null);
@@ -71,20 +76,14 @@ export default function MyBookingPage() {
                 postcode: "",
 
                 always_check_in: 0,
-
-                img: [
-                    {
-                        url: "",
-                    },
-                ],
             },
         },
     ]);
 
     const [hotelDataCache, setHotelDataCache] = useState<{ [hotelId: number]: HotelData }>({});
-    const [imageDataCache, setImageDataCache] = useState<{ [hotelId: number]: Image[] }>({});
 
-    const fetchBooking = async () => {
+    const fetchBooking = useCallback(async () => {
+        openLoadingModal();
         try {
             const config = await sendJWT({
                 method: "GET",
@@ -97,7 +96,6 @@ export default function MyBookingPage() {
             for (let booking of bookings) {
                 try {
                     let hotelData = hotelDataCache[booking.hotel_id];
-                    let hotelImg = imageDataCache[booking.hotel_id];
 
                     if (!hotelData) {
                         const hotelResponse = await axiosInstance.get("/hotel/" + booking.hotel_id);
@@ -108,17 +106,7 @@ export default function MyBookingPage() {
                         }));
                     }
 
-                    if (!hotelImg) {
-                        const hotelImgResponse = await axiosInstance.get(`/hotel/img/${booking.hotel_id}`);
-                        hotelImg = hotelImgResponse.data.data;
-                        setImageDataCache((prevCache) => ({
-                            ...prevCache,
-                            [booking.hotel_id]: hotelImg,
-                        }));
-                    }
-
                     booking.hotelData = hotelData;
-                    booking.hotelData.img = hotelImg;
                 } catch (error) {
                     handleAxiosError(error, navigate);
                 }
@@ -127,17 +115,13 @@ export default function MyBookingPage() {
         } catch (error) {
             handleAxiosError(error, navigate);
         } finally {
-            setLoading(false);
+            closeLoadingModal();
         }
-    };
+    }, [navigate, hotelDataCache]);
 
     useEffect(() => {
         fetchBooking();
-    }, []);
-
-    if (loading) {
-        return <Loading />;
-    }
+    }, [fetchBooking]);
 
     const groupByCheckInDate = (data: Booking[]) => {
         return data.reduce((acc, booking) => {
@@ -180,11 +164,7 @@ export default function MyBookingPage() {
                                         </tw.BookingIdWrap>
                                         <tw.FlexWrap>
                                             <tw.Pic>
-                                                {booking.hotelData?.img?.[0]?.url ? (
-                                                    <ImgLoader imageUrl={booking.hotelData.img[0].url} altText="" rounded="es-xl" />
-                                                ) : (
-                                                    <tw.UnRegWrap>미등록</tw.UnRegWrap>
-                                                )}
+                                                <ImgLoader imageUrl={getThumbnailCFUrl(`/hotel_img/${booking.hotel_id}`)} altText="" />
                                             </tw.Pic>
                                             <tw.HotelInfo>
                                                 <tw.HotelTitle>{booking.hotelData.name}</tw.HotelTitle>
@@ -216,6 +196,12 @@ export default function MyBookingPage() {
                     )}
                 </tw.ContentsWrap>
             </tw.MobileWrap>
+
+            {loading && (
+                <ModalPortal>
+                    <LoadingModal onClose={closeLoadingModal} />
+                </ModalPortal>
+            )}
 
             {isKakaoMapModalOpen && selectedHotel && (
                 <ModalPortal>

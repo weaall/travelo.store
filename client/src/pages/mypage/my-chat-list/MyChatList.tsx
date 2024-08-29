@@ -1,12 +1,17 @@
-import { useEffect, useState } from "react";
-import * as tw from "./MyMsg.styles";
+import { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+import ImgLoader from "../../../utils/imgLoader";
+import { ModalPortal } from "../../../hook/modal/ModalPortal";
+import LoadingModal from "../../../hook/modal/loading/Loading.modal";
+
 import { sendJWT } from "../../../utils/jwtUtils";
 import { axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
-import { useNavigate } from "react-router-dom";
-import Loading from "../../../components/loading/Loading";
-import ImgLoader from "../../../utils/imgLoader";
 import { msgDateFormat } from "../../../utils/msg.utils";
 import { encrypt } from "../../../utils/cryptoJs";
+import { getThumbnailCFUrl } from "../../../utils/s3UrlToCFD.utils";
+
+import * as tw from "./MyChatList.styles";
 
 interface MsgList {
     hotel_id: number;
@@ -20,22 +25,23 @@ interface MsgList {
 
 interface HotelData {
     name: string;
-    img: Image[];
-}
-
-interface Image {
-    url: string;
 }
 
 export default function MyMsgPage() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
+    const openLoadingModal = () => {
+        setLoading(true);
+    };
+    const closeLoadingModal = () => {
+        setLoading(false);
+    };
 
     const [msgList, setMsgList] = useState<MsgList[]>([]);
     const [hotelDataCache, setHotelDataCache] = useState<{ [hotelId: number]: HotelData }>({});
-    const [imageDataCache, setImageDataCache] = useState<{ [hotelId: number]: Image[] }>({});
 
-    const fetchMsg = async () => {
+    const fetchMsg = useCallback(async () => {
+        openLoadingModal();
         try {
             const config = await sendJWT({
                 method: "GET",
@@ -48,7 +54,6 @@ export default function MyMsgPage() {
             for (let msg of msgList) {
                 try {
                     let hotelData = hotelDataCache[msg.hotel_id];
-                    let hotelImg = imageDataCache[msg.hotel_id];
 
                     if (!hotelData) {
                         const hotelResponse = await axiosInstance.get("/hotel/" + msg.hotel_id);
@@ -59,17 +64,7 @@ export default function MyMsgPage() {
                         }));
                     }
 
-                    if (!hotelImg) {
-                        const hotelImgResponse = await axiosInstance.get(`/hotel/img/${msg.hotel_id}`);
-                        hotelImg = hotelImgResponse.data.data;
-                        setImageDataCache((prevCache) => ({
-                            ...prevCache,
-                            [msg.hotel_id]: hotelImg,
-                        }));
-                    }
-
                     msg.hotelData = hotelData;
-                    msg.hotelData.img = hotelImg;
                 } catch (error) {
                     handleAxiosError(error, navigate);
                 }
@@ -78,9 +73,9 @@ export default function MyMsgPage() {
         } catch (error) {
             handleAxiosError(error, navigate);
         } finally {
-            setLoading(false);
+            closeLoadingModal();
         }
-    };
+    }, [navigate, hotelDataCache]);
 
     const clickChat = (hotelId: number) => {
         const encryptedId = encrypt(`${hotelId}`);
@@ -89,11 +84,7 @@ export default function MyMsgPage() {
 
     useEffect(() => {
         fetchMsg();
-    }, []);
-
-    if (loading) {
-        return <Loading />;
-    }
+    }, [fetchMsg]);
 
     return (
         <tw.Container>
@@ -111,11 +102,7 @@ export default function MyMsgPage() {
                             <tw.MsgWrap key={msg.created_at} onClick={() => clickChat(msg.hotel_id)}>
                                 <tw.PicWrap>
                                     <tw.Pic>
-                                        {msg.hotelData?.img?.[0]?.url ? (
-                                            <ImgLoader imageUrl={msg.hotelData.img[0].url} altText="" rounded="full" />
-                                        ) : (
-                                            <tw.UnRegWrap>미등록</tw.UnRegWrap>
-                                        )}
+                                        <ImgLoader imageUrl={getThumbnailCFUrl(`/hotel_img/${msg.hotel_id}`)} altText="" rounded="full" />
                                     </tw.Pic>
                                 </tw.PicWrap>
                                 <tw.MsgInfoWrap>
@@ -133,6 +120,12 @@ export default function MyMsgPage() {
                     )}
                 </tw.ContentsWrap>
             </tw.MobileWrap>
+
+            {loading && (
+                <ModalPortal>
+                    <LoadingModal onClose={closeLoadingModal} />
+                </ModalPortal>
+            )}
         </tw.Container>
     );
 }

@@ -5,6 +5,7 @@ export const Container = tw.div`flex flex-col items-center`;
 export const ContentsFlex = tw.div`h-auto w-auto flex flex-wrap items-center`;
 
 export const MainContainer = tw.div`w-full h-full pb-10`;
+export const ContentsWrap = tw.div``
 
 export const SearchWrap = tw.div`mobile:hidden sticky top-0 z-10`;
 export const SearchWrapMobile = tw.div`hidden mobile:block sticky top-0 z-50`;
@@ -12,6 +13,12 @@ export const SearchWrapMobile = tw.div`hidden mobile:block sticky top-0 z-50`;
 export const HotelWrap = tw.div`flex flex-col items-center space-y-6 my-2`;
 export const HotelPic = tw.div`px-6 w-full h-96 rounded-2xl mobile:h-60
 mobile:px-4`;
+
+export const HotelPicLoading = tw.div`px-6 w-full h-96 rounded-2xl 
+mobile:h-60 mobile:px-4
+bg-gradient-to-r from-darkGray via-midGray to-lightGray bg-300% animate-gradient`
+export const HotelFlexWrapLoading = tw.div`mx-6 w-full h-36 rounded-xl mobile:mx-0.5
+bg-gradient-to-r from-darkGray via-midGray to-lightGray bg-300% animate-gradient`
 
 export const HotelInfoWrap = tw.div`w-full space-y-2`;
 export const HotelFlexWrap = tw.div`flex flex-col w-auto mx-6 p-4 border space-y-2 rounded-xl

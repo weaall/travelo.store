@@ -1,13 +1,12 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { axiosInstance, handleAxiosError } from "../../utils/axios.utils";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import dayjs from "dayjs";
 import Cookies from "js-cookie";
 
 import { decrypt, encrypt } from "../../utils/cryptoJs";
 import { facilItems, servItems } from "../../data/hotelData";
 
-import Loading from "../../components/loading/Loading";
 import SearchBox from "../../components/searchBox/SearchBox";
 import SearchBoxSlim from "../../components/searchBoxSlim/SearchBoxSlim";
 import ImgSlider from "../../components/imgSlider/imgSlider";
@@ -127,24 +126,7 @@ export default function Hotel() {
         recentViewHotels(id);
     }, [id]);
 
-    const fetchHotel = async () => {
-        setLoading(true);
-        try {
-            const response = await axiosInstance.get("/hotel/" + id);
-            setHotelData(response.data.data[0]);
-            const ratingResponse = await axiosInstance.get(`/hotel/rating/${id}`);
-            setRatingData(ratingResponse.data.data[0].rating);
-            await fetchHotelImg();
-            await fetchRoom();
-            await fetchReview();
-        } catch (error) {
-            handleAxiosError(error, navigate);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const fetchHotelImg = async () => {
+    const fetchHotelImg = useCallback(async () => {
         try {
             const response = await axiosInstance.get("/hotel/img/" + id);
             setHotelData((prevState) => ({
@@ -154,9 +136,9 @@ export default function Hotel() {
         } catch (error) {
             handleAxiosError(error, navigate);
         }
-    };
+    },[navigate, id]);
 
-    const fetchRoom = async () => {
+    const fetchRoom = useCallback(async () => {
         try {
             const response = await axiosInstance.get("/room/hotel/" + id);
             const rooms = response.data.data;
@@ -177,16 +159,33 @@ export default function Hotel() {
         } catch (error) {
             handleAxiosError(error, navigate);
         }
-    };
+    }, [navigate, id, checkInDate, checkOutDate]);
 
-    const fetchReview = async () => {
+    const fetchReview = useCallback(async () => {
         try {
             const response = await axiosInstance.get("/booking/review/hotel/" + id);
             setReviewList(response.data.data);
         } catch (error) {
             handleAxiosError(error, navigate);
         }
-    };
+    },[navigate, id]);
+
+    const fetchHotel = useCallback(async () => {
+        setLoading(true);
+        try {
+            const response = await axiosInstance.get("/hotel/" + id);
+            setHotelData(response.data.data[0]);
+            const ratingResponse = await axiosInstance.get(`/hotel/rating/${id}`);
+            setRatingData(ratingResponse.data.data[0].rating);
+            await fetchHotelImg();
+            await fetchRoom();
+            await fetchReview();
+        } catch (error) {
+            handleAxiosError(error, navigate);
+        } finally {
+            setLoading(false);
+        }
+    },[navigate, id, fetchHotelImg, fetchRoom, fetchReview]);
 
     const clickRoom = (hotelId: number, roomId: number) => {
         const jwtToken = Cookies.get("jwt");
@@ -205,7 +204,7 @@ export default function Hotel() {
 
     useEffect(() => {
         fetchHotel();
-    }, [checkInDate, checkOutDate]);
+    }, [checkInDate, checkOutDate ,fetchHotel]);
 
     const getInitialAndLastChar = (name: string) => {
         if (name.length === 0) return "";
@@ -226,10 +225,6 @@ export default function Hotel() {
             return totalPriceA - totalPriceB;
         }
     });
-
-    if (loading) {
-        return <Loading />;
-    }
 
     return (
         <tw.Container>
@@ -256,131 +251,149 @@ export default function Hotel() {
                         currentHotelName={hotelData.name}
                     />
                 </tw.SearchWrapMobile>
-                <tw.HotelWrap>
-                    <tw.HotelPic>
-                        <ImgSliderMain images={hotelData.img} />
-                    </tw.HotelPic>
-                    <tw.HotelInfoWrap>
-                        <tw.HotelFlexWrap>
-                            <tw.HotelInnerWrap>
-                                <tw.HotelTitle>{hotelData.name}</tw.HotelTitle>
-                                <tw.HotelRating>{ratingData === null ? "-" : `${ratingData}`}</tw.HotelRating>
-                            </tw.HotelInnerWrap>
-                            <tw.HotelAddressWrap>
-                                <tw.AddressSVG alt="" src={require("../../assets/svg/location_icon.svg").default} />
-                                <tw.HotelAddress onClick={openKakaoMapModal}>
-                                    {hotelData.address} {hotelData.address_detail}
-                                </tw.HotelAddress>
-                            </tw.HotelAddressWrap>
-                            <tw.HotelDesc>{hotelData.description}</tw.HotelDesc>
-                        </tw.HotelFlexWrap>
-                        <tw.HotelFlexWrap>
-                            <tw.Label>서비스 / 편의시설</tw.Label>
-                            <tw.HotelServ>
-                                {servItems.map((item) =>
-                                    (hotelData as any)[item.comp] === 1 ? (
-                                        <tw.HotelTextWrap key={item.comp}>
-                                            <tw.HotelSvg alt="" src={require("../../assets/svg/check_icon.svg").default} />
-                                            <tw.HotelText key={item.comp}>{item.label}</tw.HotelText>
-                                        </tw.HotelTextWrap>
-                                    ) : null,
-                                )}
-                                {facilItems.map((item) =>
-                                    (hotelData as any)[item.comp] === 1 ? (
-                                        <tw.HotelTextWrap key={item.comp}>
-                                            <tw.HotelSvg alt="" src={require("../../assets/svg/check_icon.svg").default} />
-                                            <tw.HotelText key={item.comp}>{item.label}</tw.HotelText>
-                                        </tw.HotelTextWrap>
-                                    ) : null,
-                                )}
-                            </tw.HotelServ>
-                        </tw.HotelFlexWrap>
-                    </tw.HotelInfoWrap>
-                </tw.HotelWrap>
+                {loading ? (
+                    <tw.ContentsWrap>
+                        <tw.HotelWrap>
+                            <tw.HotelPicLoading />
+                            <tw.HotelInfoWrap>
+                                <tw.HotelFlexWrapLoading />
+                                <tw.HotelFlexWrapLoading />
+                            </tw.HotelInfoWrap>
+                        </tw.HotelWrap>
+                    </tw.ContentsWrap>
+                ) : (
+                    <tw.ContentsWrap>
+                        <tw.HotelWrap>
+                            <tw.HotelPic>
+                                <ImgSliderMain images={hotelData.img} />
+                            </tw.HotelPic>
+                            <tw.HotelInfoWrap>
+                                <tw.HotelFlexWrap>
+                                    <tw.HotelInnerWrap>
+                                        <tw.HotelTitle>{hotelData.name}</tw.HotelTitle>
+                                        <tw.HotelRating>{ratingData === null ? "-" : `${ratingData}`}</tw.HotelRating>
+                                    </tw.HotelInnerWrap>
+                                    <tw.HotelAddressWrap>
+                                        <tw.AddressSVG alt="" src={require("../../assets/svg/location_icon.svg").default} />
+                                        <tw.HotelAddress onClick={openKakaoMapModal}>
+                                            {hotelData.address} {hotelData.address_detail}
+                                        </tw.HotelAddress>
+                                    </tw.HotelAddressWrap>
+                                    <tw.HotelDesc>{hotelData.description}</tw.HotelDesc>
+                                </tw.HotelFlexWrap>
+                                <tw.HotelFlexWrap>
+                                    <tw.Label>서비스 / 편의시설</tw.Label>
+                                    <tw.HotelServ>
+                                        {servItems.map((item) =>
+                                            (hotelData as any)[item.comp] === 1 ? (
+                                                <tw.HotelTextWrap key={item.comp}>
+                                                    <tw.HotelSvg alt="" src={require("../../assets/svg/check_icon.svg").default} />
+                                                    <tw.HotelText key={item.comp}>{item.label}</tw.HotelText>
+                                                </tw.HotelTextWrap>
+                                            ) : null,
+                                        )}
+                                        {facilItems.map((item) =>
+                                            (hotelData as any)[item.comp] === 1 ? (
+                                                <tw.HotelTextWrap key={item.comp}>
+                                                    <tw.HotelSvg alt="" src={require("../../assets/svg/check_icon.svg").default} />
+                                                    <tw.HotelText key={item.comp}>{item.label}</tw.HotelText>
+                                                </tw.HotelTextWrap>
+                                            ) : null,
+                                        )}
+                                    </tw.HotelServ>
+                                </tw.HotelFlexWrap>
+                            </tw.HotelInfoWrap>
+                        </tw.HotelWrap>
 
-                <tw.RoomList>
-                    <tw.Label>객실정보</tw.Label>
-                    {sortedRoomList.map((room) => (
-                        <tw.RoomWrap key={room.id}>
-                            <tw.ContentsFlex>
-                                <tw.RoomPic>
-                                    <ImgSlider images={room.img} />
-                                </tw.RoomPic>
-                                <tw.RoomInfoWrap>
-                                    <tw.RoomInfo>
-                                        <tw.InfoWrap>
-                                            <tw.RoomName>{room.name}</tw.RoomName>
-                                            <tw.RoomDetailWrap>
-                                                <tw.RoomDetail>
-                                                    <tw.RoomSvg alt="" src={require("../../assets/svg/view_icon.svg").default} />
-                                                    <tw.RoomText>{room.view_type}</tw.RoomText>
-                                                </tw.RoomDetail>
-                                                <tw.RoomDetail>
-                                                    <tw.RoomSvg alt="" src={require("../../assets/svg/room.svg").default} />
-                                                    <tw.RoomText>{room.bed_type}</tw.RoomText>
-                                                </tw.RoomDetail>
-                                                <tw.RoomDetail>
-                                                    <tw.RoomSvg alt="" src={require("../../assets/svg/person_icon.svg").default} />
-                                                    <tw.RoomText>{room.num}인</tw.RoomText>
-                                                </tw.RoomDetail>
-                                            </tw.RoomDetailWrap>
-                                        </tw.InfoWrap>
-                                        <tw.PriceWrap>
-                                            <tw.TotalLabel>{checkInDate}~</tw.TotalLabel>
-                                            <tw.TotalLabel>{dayjs(checkOutDate).diff(dayjs(checkInDate), "day")}박 총 요금</tw.TotalLabel>
-                                            <tw.TotalPrice>{room.room_price.reduce((total, room) => total + room.price, 0).toLocaleString()}원</tw.TotalPrice>
-                                            {room.room_price.length === 0 ||
-                                            room.room_price.some((priceData) => priceData.room_limit === priceData.room_current || priceData.price === 0) ? (
-                                                <tw.BookBtnWrap>
-                                                    <tw.BookBtn>객실이 모두 소진되었습니다.</tw.BookBtn>
-                                                </tw.BookBtnWrap>
-                                            ) : (
-                                                <tw.BookBtnWrap>
-                                                    <tw.BookBtn onClick={() => clickRoom(parseInt(hotelData.id), room.id)}>예약하기</tw.BookBtn>
-                                                </tw.BookBtnWrap>
-                                            )}
-                                        </tw.PriceWrap>
-                                    </tw.RoomInfo>
-                                </tw.RoomInfoWrap>
-                            </tw.ContentsFlex>
-                        </tw.RoomWrap>
-                    ))}
-                </tw.RoomList>
+                        <tw.RoomList>
+                            <tw.Label>객실정보</tw.Label>
+                            {sortedRoomList.map((room) => (
+                                <tw.RoomWrap key={room.id}>
+                                    <tw.ContentsFlex>
+                                        <tw.RoomPic>
+                                            <ImgSlider images={room.img} />
+                                        </tw.RoomPic>
+                                        <tw.RoomInfoWrap>
+                                            <tw.RoomInfo>
+                                                <tw.InfoWrap>
+                                                    <tw.RoomName>{room.name}</tw.RoomName>
+                                                    <tw.RoomDetailWrap>
+                                                        <tw.RoomDetail>
+                                                            <tw.RoomSvg alt="" src={require("../../assets/svg/view_icon.svg").default} />
+                                                            <tw.RoomText>{room.view_type}</tw.RoomText>
+                                                        </tw.RoomDetail>
+                                                        <tw.RoomDetail>
+                                                            <tw.RoomSvg alt="" src={require("../../assets/svg/room.svg").default} />
+                                                            <tw.RoomText>{room.bed_type}</tw.RoomText>
+                                                        </tw.RoomDetail>
+                                                        <tw.RoomDetail>
+                                                            <tw.RoomSvg alt="" src={require("../../assets/svg/person_icon.svg").default} />
+                                                            <tw.RoomText>{room.num}인</tw.RoomText>
+                                                        </tw.RoomDetail>
+                                                    </tw.RoomDetailWrap>
+                                                </tw.InfoWrap>
+                                                <tw.PriceWrap>
+                                                    <tw.TotalLabel>{checkInDate}~</tw.TotalLabel>
+                                                    <tw.TotalLabel>{dayjs(checkOutDate).diff(dayjs(checkInDate), "day")}박 총 요금</tw.TotalLabel>
+                                                    <tw.TotalPrice>
+                                                        {room.room_price.reduce((total, room) => total + room.price, 0).toLocaleString()}원
+                                                    </tw.TotalPrice>
+                                                    {room.room_price.length === 0 ||
+                                                    room.room_price.some(
+                                                        (priceData) => priceData.room_limit === priceData.room_current || priceData.price === 0,
+                                                    ) ? (
+                                                        <tw.BookBtnWrap>
+                                                            <tw.BookBtn>객실이 모두 소진되었습니다.</tw.BookBtn>
+                                                        </tw.BookBtnWrap>
+                                                    ) : (
+                                                        <tw.BookBtnWrap>
+                                                            <tw.BookBtn onClick={() => clickRoom(parseInt(hotelData.id), room.id)}>예약하기</tw.BookBtn>
+                                                        </tw.BookBtnWrap>
+                                                    )}
+                                                </tw.PriceWrap>
+                                            </tw.RoomInfo>
+                                        </tw.RoomInfoWrap>
+                                    </tw.ContentsFlex>
+                                </tw.RoomWrap>
+                            ))}
+                        </tw.RoomList>
 
-                <tw.ReviewContainer>
-                    <tw.FlexWrap>
-                        <tw.Label>후기</tw.Label>
-                        <tw.MoreReviewBtn onClick={openReviewListModal} disabled={reviewList.length == 0}>
-                            더보기
-                        </tw.MoreReviewBtn>
-                    </tw.FlexWrap>
-                    <tw.ReviewList>
-                        {reviewList.length === 0 ? (
-                            <tw.NoReview>리뷰가 없습니다.</tw.NoReview>
-                        ) : (
-                            reviewList.slice(0, 3).map((review) => (
-                                <tw.ReviewWrap key={review.check_in}>
-                                    <tw.Date>{dayjs(review.check_in).format("YYYY년 MM월 DD일")}</tw.Date>
-                                    <tw.TextWrap>
-                                        <tw.Review
-                                            style={{
-                                                display: "-webkit-box",
-                                                WebkitLineClamp: 6,
-                                                WebkitBoxOrient: "vertical",
-                                                overflow: "hidden",
-                                                textOverflow: "ellipsis",
-                                            }}
-                                        >
-                                            <tw.Rating>{review.rating}</tw.Rating>
-                                            {review.review}
-                                        </tw.Review>
-                                    </tw.TextWrap>
-                                    <tw.Name>{getInitialAndLastChar(review.name)}</tw.Name>
-                                </tw.ReviewWrap>
-                            ))
-                        )}
-                    </tw.ReviewList>
-                </tw.ReviewContainer>
+                        <tw.ReviewContainer>
+                            <tw.FlexWrap>
+                                <tw.Label>후기</tw.Label>
+                                <tw.MoreReviewBtn onClick={openReviewListModal} disabled={reviewList.length === 0}>
+                                    더보기
+                                </tw.MoreReviewBtn>
+                            </tw.FlexWrap>
+                            <tw.ReviewList>
+                                {reviewList.length === 0 ? (
+                                    <tw.NoReview>리뷰가 없습니다.</tw.NoReview>
+                                ) : (
+                                    reviewList.slice(0, 3).map((review) => (
+                                        <tw.ReviewWrap key={review.check_in}>
+                                            <tw.Date>{dayjs(review.check_in).format("YYYY년 MM월 DD일")}</tw.Date>
+                                            <tw.TextWrap>
+                                                <tw.Review
+                                                    style={{
+                                                        display: "-webkit-box",
+                                                        WebkitLineClamp: 6,
+                                                        WebkitBoxOrient: "vertical",
+                                                        overflow: "hidden",
+                                                        textOverflow: "ellipsis",
+                                                    }}
+                                                >
+                                                    <tw.Rating>{review.rating}</tw.Rating>
+                                                    {review.review}
+                                                </tw.Review>
+                                            </tw.TextWrap>
+                                            <tw.Name>{getInitialAndLastChar(review.name)}</tw.Name>
+                                        </tw.ReviewWrap>
+                                    ))
+                                )}
+                            </tw.ReviewList>
+                        </tw.ReviewContainer>
+                    </tw.ContentsWrap>
+                )}
             </tw.MainContainer>
 
             {isAlertModalOpen && (
