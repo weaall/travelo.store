@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import * as tw from "./SignUp.styles";
 import Terms from "../../hook/modal/Terms/Terms.modal";
 import AlertModal from "../../hook/modal/alert/Alert.modal";
+import { encryptPass } from "../../utils/cryptoJs";
 
 export default function SignUp() {
     const navigate = useNavigate();
@@ -82,7 +83,14 @@ export default function SignUp() {
 
     const onClickSignUp = async () => {
         try {
-            const response = await axiosInstance.post("/auth/sign-up", formData);
+            const encryptedPassword = encryptPass(formData.password);
+
+              const encryptedFormData = {
+                  ...formData,
+                  password: encryptedPassword,
+              };
+
+            const response = await axiosInstance.post("/auth/sign-up", encryptedFormData);
             if (response.status === 201) {
                 setAlertMessage("성공적으로 가입되었습니다.")
                 const handleModalClose = () => {

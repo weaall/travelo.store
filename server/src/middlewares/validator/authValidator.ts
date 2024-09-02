@@ -12,9 +12,7 @@ export const authValidator = {
         body("password")
             .notEmpty()
             .withMessage("비밀번호를 입력해주세요")
-            .trim()
-            .matches(/^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,16}$/)
-            .withMessage("비밀번호는 8자에서 16자 사이이어야 하며, 영문, 숫자, 특수문자를 포함해야 합니다."),
+            .trim(),
 
         body("name")
             .notEmpty()
@@ -44,9 +42,7 @@ export const authValidator = {
         body("password")
             .notEmpty()
             .withMessage("비밀번호를 입력해주세요")
-            .trim()
-            .matches(/^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,16}$/)
-            .withMessage("비밀번호는 8자에서 16자 사이이어야 하며, 영문, 숫자, 특수문자를 포함해야 합니다."),
+            .trim(),
     ],
 
     signInByKakao: [

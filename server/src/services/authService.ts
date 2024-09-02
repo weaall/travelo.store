@@ -1,4 +1,5 @@
 import { FieldPacket, ResultSetHeader, RowDataPacket } from "mysql2"
+import CryptoJS from "crypto-js"
 import jwt from "jsonwebtoken"
 import bcrypt from "bcryptjs"
 import pool from "../config/db"
@@ -36,11 +37,14 @@ interface NaverAuthProps{
 }
 
 const JWT_SECRET = process.env.JWT_SECRET || ""
+const PASS_SECRET = process.env.PASS_SECRET_KEY || ""
 const BCRYPT_SALT = parseInt(process.env.BCRYPT_SALT  || "", 10);
 
 const authService = {
     async singUp({ email, password, name, mobile }: SignUpParams) {
-        const hashedPassword = await bcrypt.hash(password, BCRYPT_SALT);
+        const decryptedBytes = CryptoJS.AES.decrypt(password, PASS_SECRET);
+        const decryptedPassword = decryptedBytes.toString(CryptoJS.enc.Utf8);
+        const hashedPassword = await bcrypt.hash(decryptedPassword, BCRYPT_SALT);
         const checkIdSql = "SELECT * FROM user WHERE email = ?";
         const checkIdParams = [email];
         const singUpSql = "INSERT INTO user (email, password, name, mobile) VALUES (? , ? , ? , ?)";
@@ -66,6 +70,9 @@ const authService = {
     },
 
     async singIn({ email, password }: SignInParams) {
+        const decryptedBytes = CryptoJS.AES.decrypt(password, PASS_SECRET);
+        const decryptedPassword = decryptedBytes.toString(CryptoJS.enc.Utf8);
+
         const checkIdSql = "SELECT * FROM user WHERE email = ?";
         const checkIdParams = [email];
 
@@ -78,7 +85,7 @@ const authService = {
                 throw new CustomError("이메일과 비밀번호가 일치하지 않습니다", 401);
             }
 
-            const isPasswordValid = await bcrypt.compare(password, rows[0].password);
+            const isPasswordValid = await bcrypt.compare(decryptedPassword, rows[0].password);
             if (!isPasswordValid) {
                 throw new CustomError("이메일과 비밀번호가 일치하지 않습니다", 401);
             }

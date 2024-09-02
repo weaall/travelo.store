@@ -10,6 +10,7 @@ import { useSetRecoilState } from "recoil"
 import { HeaderRenderAtom } from "../../recoil/HeaderRender.Atom"
 import AlertModal from "../../hook/modal/alert/Alert.modal"
 import { ModalPortal } from "../../hook/modal/ModalPortal"
+import { encryptPass } from "../../utils/cryptoJs"
 
 export default function SignIn() {
     const navigate = useNavigate()
@@ -74,7 +75,15 @@ export default function SignIn() {
 
       const onClickSignIn = async () => {
           try {
-              const response = await axiosInstance.post("/auth/sign-in", formData);
+              const encryptedPassword = encryptPass(formData.password);
+
+              const encryptedFormData = {
+                  ...formData,
+                  password: encryptedPassword,
+              };
+
+              const response = await axiosInstance.post("/auth/sign-in", encryptedFormData);
+
               const receivedToken = response.data.data;
               if (response.status === 201) {
                   Cookies.set("jwt", receivedToken, { expires: 1 });
