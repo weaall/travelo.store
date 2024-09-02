@@ -75,6 +75,10 @@ const userService = {
         try {
             const [rows, fields]: [ResultSetHeader[], FieldPacket[]] = await connection.execute(checkIdSql, checkIdParams);
 
+            if (rows.length === 0) {
+                throw new CustomError("해당유저가 존재하지 않습니다.", 404);
+            }
+            
             return rows.length;
         } catch (error) {
             throw error;

@@ -8,8 +8,6 @@ import { validateError } from "../../middlewares/validator/validateError";
 
 const hotelRouter = Router();
 
-hotelRouter.get("/", asyncHandler(hotelController.getHotel));
-
 hotelRouter.get("/img/:id", hotelValidator.getHotelImgUrlById, validateError, asyncHandler(hotelController.getHotelImgUrl));
 
 hotelRouter.get(
