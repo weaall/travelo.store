@@ -45,7 +45,7 @@ export const hotelValidator = {
         body("wifi").notEmpty().trim().isLength({ max: 1 }),
         body("always_check_in").notEmpty().trim().isLength({ max: 1 }),
         body("breakfast").notEmpty().trim().isLength({ max: 1 }),
-        body("breakfast_price").notEmpty().trim().isLength({ min: 4 ,max: 9 }),
+        body("breakfast_price").notEmpty().trim().isLength({ min: 4 ,max: 10 }),
         body("barbecue").notEmpty().trim().isLength({ max: 1 }),
     ],
 

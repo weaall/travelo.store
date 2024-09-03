@@ -46,8 +46,8 @@ export const roomValidator = {
         body("year").notEmpty().trim(),
         body("month").notEmpty().trim(),
         body("date").notEmpty().trim(),
-        body("price").notEmpty().trim(),
-        body("room_limit").notEmpty().trim(),
+        body("price").notEmpty().trim().isLength({ min: 4 ,max: 9 }),
+        body("room_limit").notEmpty().trim().isLength({ max: 3 }),
     ],
     insertPriceByMonth: [
         body("hotel_id").notEmpty().trim(),

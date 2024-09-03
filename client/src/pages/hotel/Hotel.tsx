@@ -343,7 +343,7 @@ export default function Hotel() {
                                                         (priceData) => priceData.room_limit === priceData.room_current || priceData.price === 0,
                                                     ) ? (
                                                         <tw.BookBtnWrap>
-                                                            <tw.BookBtn>객실이 모두 소진되었습니다.</tw.BookBtn>
+                                                            <tw.BookBtn>객실소진</tw.BookBtn>
                                                         </tw.BookBtnWrap>
                                                     ) : (
                                                         <tw.BookBtnWrap>
