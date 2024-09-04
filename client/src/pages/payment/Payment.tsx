@@ -1,22 +1,31 @@
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { axiosInstance, handleAxiosError } from "../../utils/axios.utils";
-import { useEffect, useState } from "react";
 import dayjs from "dayjs";
+import Cookies from "js-cookie";
 
-import * as tw from "./Payment.styles";
-import Loading from "../../components/loading/Loading";
-import { decrypt } from "../../utils/cryptoJs";
 import { ModalPortal } from "../../hook/modal/ModalPortal";
 import KakaoMapModal from "../../hook/modal/kakao-map/KakaMap.modal";
 import { CheckoutModal } from "../../hook/modal/checkout/Checkout.modal";
+import LoadingModal from "../../hook/modal/loading/Loading.modal";
+
+import { axiosInstance, handleAxiosError } from "../../utils/axios.utils";
+import { decrypt } from "../../utils/cryptoJs";
 import { checkValidEmail, checkValidMobile, checkValidUserName } from "../../utils/regExp.utils";
 import ImgLoader from "../../utils/imgLoader";
 import { sendJWT } from "../../utils/jwtUtils";
-import Cookies from "js-cookie";
+import { getThumbnailCFUrl } from "../../utils/s3UrlToCFD.utils";
+
+import * as tw from "./Payment.styles";
 
 export default function Payment() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
+    const openLoadingModal = () => {
+        setLoading(true);
+    };
+    const closeLoadingModal = () => {
+        setLoading(false);
+    };
 
     const { encryptedHotelId, encryptedRoomId, checkInDate, checkOutDate } = useParams();
 
@@ -43,7 +52,6 @@ export default function Payment() {
         setIsCheckoutModalOpen(false);
     };
 
-
     const initialFormData = {
         name: "",
         email: "",
@@ -65,10 +73,15 @@ export default function Payment() {
     });
 
     const isFormValid = () => {
-        return formValid.isEmail && formData.email !== "" &&
-        formValid.isUserName && formData.name !== "" &&
-        formValid.isMobile && formData.mobile !== "" &&
-        termsValid;
+        return (
+            formValid.isEmail &&
+            formData.email !== "" &&
+            formValid.isUserName &&
+            formData.name !== "" &&
+            formValid.isMobile &&
+            formData.mobile !== "" &&
+            termsValid
+        );
     };
 
     const fetchUser = async () => {
@@ -133,16 +146,10 @@ export default function Payment() {
         spa: 0,
         fitness: 0,
         convenience_store: 0,
-
-        img: [
-            {
-                url: "",
-            },
-        ],
     });
 
     const [roomData, setRoomData] = useState({
-        id: 0,
+        room_id: 0,
         name: "",
         num: 0,
         view_type: "",
@@ -157,39 +164,12 @@ export default function Payment() {
                 room_limit: 0,
             },
         ],
-
-        img: [
-            {
-                url: "",
-            },
-        ],
     });
-
-    const fetchHotel = async () => {
-        try {
-            const hotelResponse = await axiosInstance.get("/hotel/" + hotelId);
-            let hotelData = hotelResponse.data.data[0];
-
-            const hotelImgResponse = await axiosInstance.get("/hotel/img/" + hotelId);
-            hotelData.img = hotelImgResponse.data.data;
-
-            setHotelData(hotelData);
-
-            fetchRoom();
-        } catch (error) {
-            handleAxiosError(error, navigate);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const fetchRoom = async () => {
         try {
             const roomResponse = await axiosInstance.get("/room/" + roomId);
             const room = roomResponse.data.data[0];
-
-            const roomImgResponse = await axiosInstance.get("/room/img/" + roomId);
-            room.img = roomImgResponse.data.data;
 
             const roomPriceResponse = await axiosInstance.get("/room/price/" + roomId, {
                 params: {
@@ -205,19 +185,35 @@ export default function Payment() {
         }
     };
 
-    useEffect(()=>{
+    const fetchHotel = useCallback(async () => {
+        openLoadingModal();
+        try {
+            const hotelResponse = await axiosInstance.get("/hotel/" + hotelId);
+            let hotelData = hotelResponse.data.data[0];
+
+            setHotelData(hotelData);
+            fetchRoom();
+        } catch (error) {
+            handleAxiosError(error, navigate);
+        } finally {
+            closeLoadingModal();
+        }
+    }, [navigate, hotelId, fetchRoom]);
+
+    useEffect(() => {
         const jwtToken = Cookies.get("jwt");
         if (!jwtToken) {
             alert("로그인해주세요.");
             navigate("/signin");
             return;
         }
-    })
+    });
 
     useEffect(() => {
         fetchUser();
         fetchHotel();
-    }, [checkInDate, checkOutDate]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     useEffect(() => {
         if (userCheck) {
@@ -231,10 +227,6 @@ export default function Payment() {
             });
         }
     }, [userCheck]);
-
-    if (loading) {
-        return <Loading />;
-    }
 
     return (
         <tw.Container>
@@ -295,7 +287,7 @@ export default function Payment() {
                         <tw.PolicyText>[필수] 본인은 이용약관에동의하며 18세 이상임을 확인합니다.</tw.PolicyText>
                         <tw.PolicyText>[필수] 개인정보 처리방침에 따라 본인의 개인 정보를 사용하고 수집하는 것에 동의합니다.</tw.PolicyText>
                     </tw.PolicyWrap>
-                    
+
                     <tw.PaymentBtnMobile onClick={openCheckoutModal} $validator={isFormValid()} disabled={!isFormValid()}>
                         결제하기
                     </tw.PaymentBtnMobile>
@@ -305,11 +297,11 @@ export default function Payment() {
                         <tw.RoomWrap>
                             <tw.ContentsFlex>
                                 <tw.Pic>
-                                    {hotelData?.img?.[0]?.url ? (
-                                        <ImgLoader imageUrl={hotelData.img[0].url} altText="" rounded="l-xl mobile:rounded-none mobile:rounded-t-xl" />
-                                    ) : (
-                                        <tw.UnRegWrap>미등록</tw.UnRegWrap>
-                                    )}
+                                    <ImgLoader
+                                        imageUrl={getThumbnailCFUrl(`/hotel_img/${hotelData.id}`)}
+                                        altText=""
+                                        rounded="l-xl mobile:rounded-none mobile:rounded-t-xl"
+                                    />
                                 </tw.Pic>
                                 <tw.RoomInfoWrap>
                                     <tw.RoomInfo>
@@ -326,11 +318,11 @@ export default function Payment() {
                         <tw.RoomWrap>
                             <tw.ContentsFlex>
                                 <tw.Pic>
-                                    {roomData?.img?.[0]?.url ? (
-                                        <ImgLoader imageUrl={roomData.img[0].url} altText="" rounded="l-xl mobile:rounded-none mobile:rounded-t-xl" />
-                                    ) : (
-                                        <tw.UnRegWrap>미등록</tw.UnRegWrap>
-                                    )}
+                                    <ImgLoader
+                                        imageUrl={getThumbnailCFUrl(`/room_img/${hotelData.id}/${roomData.room_id}`)}
+                                        altText=""
+                                        rounded="l-xl mobile:rounded-none mobile:rounded-t-xl"
+                                    />
                                 </tw.Pic>
                                 <tw.RoomInfoWrap>
                                     <tw.RoomInfo>
@@ -366,12 +358,18 @@ export default function Payment() {
                 </tw.RightWrap>
             </tw.MainContainer>
 
+            {loading && (
+                <ModalPortal>
+                    <LoadingModal onClose={closeLoadingModal} />
+                </ModalPortal>
+            )}
+
             {isKakaoMapModalOpen && (
                 <ModalPortal>
                     <KakaoMapModal
                         hotelName={hotelData.name}
                         address={`${hotelData.address} ${hotelData.address_detail}`}
-                        imgUrl={hotelData.img[0].url}
+                        imgUrl={getThumbnailCFUrl(`/hotel_img/${hotelData.id}`)}
                         onClose={closeKakaoMapModal}
                     />
                 </ModalPortal>

@@ -84,7 +84,8 @@ export default function MyMsgPage() {
 
     useEffect(() => {
         fetchMsg();
-    }, [fetchMsg]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return (
         <tw.Container>

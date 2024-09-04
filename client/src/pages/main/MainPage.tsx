@@ -119,7 +119,7 @@ export default function Search({ defaultSearchValue, defaultStartDate, defaultEn
                         </tw.SvgWrap>
                         <tw.SearchInput
                             placeholder="지역, 숙소명으로 찾아보세요"
-                            maxLength={20}
+                            maxLength={30}
                             value={searchValue}
                             onChange={handleSearchChange}
                             onKeyPress={handleKeyPress}

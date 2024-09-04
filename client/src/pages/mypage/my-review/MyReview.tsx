@@ -126,7 +126,8 @@ export default function MyReviewPage() {
 
     useEffect(() => {
         fetchBooking();
-    }, [fetchBooking]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const groupByCheckInDate = (data: Booking[]) => {
         return data.reduce((acc, booking) => {

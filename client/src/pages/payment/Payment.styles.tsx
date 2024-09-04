@@ -28,8 +28,7 @@ export const OuterWrap = tw.div`flex flex-col border mx-1 p-4 gap-2`
 export const HotelInfoWrap = tw.div`space-y-1`
 export const HotelTitle = tw.p`text-base font-medium truncate
 mobile:text-lg`
-export const HotelAddress = tw.p`text-gray-400 text-xs hover:cursor-pointer
-mobile:text-main`
+export const HotelAddress = tw.p`text-gray-400 text-xs text-main hover:cursor-pointer`
 
 export const RoomWrap = tw.div`w-full rounded-2xl bg-white shadow-md h-36
 mobile:flex mobile:flex-col mobile:h-auto`

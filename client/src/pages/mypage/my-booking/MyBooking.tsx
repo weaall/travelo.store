@@ -57,28 +57,7 @@ export default function MyBookingPage() {
         setSelectedHotel(null);
     };
 
-    const [bookingData, setBookingData] = useState([
-        {
-            booking_id: "",
-            hotel_id: 0,
-            room_id: 0,
-            total_price: 0,
-            check_in: "",
-            check_out: "",
-            name: "",
-            phone_num: 0,
-            email: "",
-
-            hotelData: {
-                name: "",
-                address: "",
-                address_detail: "",
-                postcode: "",
-
-                always_check_in: 0,
-            },
-        },
-    ]);
+    const [bookingData, setBookingData] = useState<Booking[]>([]);
 
     const [hotelDataCache, setHotelDataCache] = useState<{ [hotelId: number]: HotelData }>({});
 
@@ -121,7 +100,8 @@ export default function MyBookingPage() {
 
     useEffect(() => {
         fetchBooking();
-    }, [fetchBooking]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const groupByCheckInDate = (data: Booking[]) => {
         return data.reduce((acc, booking) => {
