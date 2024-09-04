@@ -307,9 +307,12 @@ export default function Payment() {
                                     <tw.RoomInfo>
                                         <tw.HotelInfoWrap>
                                             <tw.HotelTitle>{hotelData.name}</tw.HotelTitle>
-                                            <tw.HotelAddress onClick={openKakaoMapModal}>
-                                                {hotelData.address} {hotelData.address_detail}, {hotelData.postcode}
-                                            </tw.HotelAddress>
+                                            <tw.AddressWrap>
+                                                    <tw.AddressSVG alt="" src={require("../../assets/svg/location_icon.svg").default} />
+                                                    <tw.HotelAddress onClick={openKakaoMapModal}>
+                                                        {hotelData.address} {hotelData.address_detail}, {hotelData.postcode}
+                                                    </tw.HotelAddress>
+                                                </tw.AddressWrap>
                                         </tw.HotelInfoWrap>
                                     </tw.RoomInfo>
                                 </tw.RoomInfoWrap>
