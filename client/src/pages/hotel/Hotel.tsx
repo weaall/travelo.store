@@ -229,28 +229,29 @@ export default function Hotel() {
     return (
         <tw.Container>
             <tw.MainContainer>
-                <tw.SearchWrap>
-                    <SearchBoxSlim
-                        defaultSearchValue={hotelData.name}
-                        defaultStartDate={checkInDate}
-                        defaultEndDate={checkOutDate}
-                        defaultAdult={parseInt(adult || "2")}
-                        defaultChild={parseInt(child || "0")}
-                        currentHotelId={id}
-                        currentHotelName={hotelData.name}
-                    />
-                </tw.SearchWrap>
-                <tw.SearchWrapMobile>
-                    <SearchBox
-                        defaultSearchValue={hotelData.name}
-                        defaultStartDate={checkInDate}
-                        defaultEndDate={checkOutDate}
-                        defaultAdult={parseInt(adult || "2")}
-                        defaultChild={parseInt(child || "0")}
-                        currentHotelId={id}
-                        currentHotelName={hotelData.name}
-                    />
-                </tw.SearchWrapMobile>
+            <tw.SearchWrap>
+    <SearchBoxSlim
+        defaultSearchValue={loading ? "" : hotelData.name}
+        defaultStartDate={loading ? "" : checkInDate}
+        defaultEndDate={loading ? "" : checkOutDate}
+        defaultAdult={loading ? 2 : parseInt(adult || "2")}
+        defaultChild={loading ? 0 : parseInt(child || "0")}
+        currentHotelId={loading ? "" : id}
+        currentHotelName={loading ? "" : hotelData.name}
+    />
+</tw.SearchWrap>
+<tw.SearchWrapMobile>
+    <SearchBox
+        defaultSearchValue={loading ? "" : hotelData.name}
+        defaultStartDate={loading ? "" : checkInDate}
+        defaultEndDate={loading ? "" : checkOutDate}
+        defaultAdult={loading ? 2 : parseInt(adult || "2")}
+        defaultChild={loading ? 0 : parseInt(child || "0")}
+        currentHotelId={loading ? "" : id}
+        currentHotelName={loading ? "" : hotelData.name}
+    />
+</tw.SearchWrapMobile>
+
                 {loading ? (
                     <tw.ContentsWrap>
                         <tw.HotelWrap>
