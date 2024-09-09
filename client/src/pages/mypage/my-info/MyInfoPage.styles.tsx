@@ -31,11 +31,14 @@ mobile:w-full mobile:px-2`
 export const InputWrap = tw.div`flex flex-col text-left w-full py-6 px-12`
 export const UpperTag = tw.label`text-base font-bold py-0 my-0
 after:content-['*'] after:text-red-500 after:px-1`
+export const UpperTagNone = tw.label`text-base font-bold py-0 my-0`
 export const Input = tw.input<InputProps>`outline-none w-full h-10 px-6 rounded-lg bg-gray-100 my-1
 ${(p) => (p.$state ? "" : "text-gray-400")}`
 export const UnderTag = tw.p<UnderTagProps>`text-xs font-normal h-[16px]
 ${(p) => (p.$validator ? "text-blue-500" : "text-red-500")}
 ${(p) => (p.$state ? "" : "text-white")}`
+export const UnderTagNone = tw.p`h-[16px]`
+
 
 export const MgmtBtnWrap = tw.div`w-full flex justify-center`
 export const MgmtBtn = tw.button<RegBtnProps>`text-base font-medium px-5 py-2 rounded-xl bg-black text-white

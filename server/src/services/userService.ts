@@ -5,7 +5,6 @@ import { userRowsProps } from "../interface/interfaces"
 
 interface putMyInfoProps{
     name: string,
-    email: string,
     mobile: string
 }
 
@@ -30,9 +29,9 @@ const userService = {
         }
     },
 
-    async putMyInfo(user_id: string, {name, email, mobile}: putMyInfoProps) {
-        const updateMyinfoSql = "UPDATE user SET name = ?, email = ?, mobile = ? WHERE id = ?";
-        const updateMyinfoSqlValues = [name, email, mobile, user_id];
+    async putMyInfo(user_id: string, {name, mobile}: putMyInfoProps) {
+        const updateMyinfoSql = "UPDATE user SET name = ?, mobile = ? WHERE id = ?";
+        const updateMyinfoSqlValues = [name, mobile, user_id];
 
         const connection = await pool.getConnection();
 

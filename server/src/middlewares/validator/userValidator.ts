@@ -9,12 +9,6 @@ export const userValidator = {
             .matches(/^[가-힣a-zA-Z\s]+$/)
             .isLength({ min: 2, max: 20 })
             .withMessage("이름은 2자에서 20자 사이어야 합니다."),
-        body("email")
-            .notEmpty()
-            .withMessage("이메일을 입력해주세요")
-            .trim()
-            .isEmail()
-            .withMessage("이메일 형식이 올바르지 않습니다. 예시: travel@travel.co.kr"),
         body("mobile")
             .notEmpty()
             .withMessage("전화번호를 입력해주세요")

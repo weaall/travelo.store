@@ -106,7 +106,6 @@ export default function HotelChatPage() {
 
     const onClickSendMsg = async () => {
         try {
-            console.log(msgList)
             const config = await sendJWT({
                 method: "post",
                 url: "/msg/hotel/send",

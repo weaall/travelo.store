@@ -11,7 +11,6 @@ import { getThumbnailCFUrl } from "../../utils/s3UrlToCFD.utils";
 import { facilItems, servItems } from "../../data/hotelData";
 
 import * as tw from "./SearchResult.styles";
-import SearchBoxSlim from "../../components/searchBoxSlim/SearchBoxSlim";
 
 export default function SearchResult() {
     const navigate = useNavigate();
