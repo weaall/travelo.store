@@ -20,7 +20,7 @@ interface SearchBoxProps {
 
 export default function SearchBox({ defaultSearchValue, defaultStartDate, defaultEndDate, defaultAdult, defaultChild, currentHotelId, currentHotelName}: SearchBoxProps) {
     const navigate = useNavigate();
-
+    
     const [isSearchDateModalOpen, setIsSearchDateModalOpen] = useState(false);
 
     const openSearchDateModal = () => {
@@ -104,6 +104,10 @@ export default function SearchBox({ defaultSearchValue, defaultStartDate, defaul
         const newDiffDate = dayjs(dateValue.endDate).diff(dayjs(dateValue.startDate), "day");
         setDateValue((prevDateValue) => ({ ...prevDateValue, diffDate: newDiffDate }));
     }, [dateValue.endDate, dateValue.startDate]);
+
+    useEffect(() => {
+        setSearchValue(defaultSearchValue || "");
+    }, [defaultSearchValue]);
 
     return (
         <tw.Container>

@@ -105,6 +105,10 @@ export default function SearchBoxSlim({ defaultSearchValue, defaultStartDate, de
         setDateValue((prevDateValue) => ({ ...prevDateValue, diffDate: newDiffDate }));
     }, [dateValue.endDate, dateValue.startDate]);
 
+    useEffect(() => {
+        setSearchValue(defaultSearchValue || "");
+    }, [defaultSearchValue]);
+
     return (
         <tw.Container>
             <tw.MainContainer>

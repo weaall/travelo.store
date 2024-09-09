@@ -11,6 +11,7 @@ import { getThumbnailCFUrl } from "../../utils/s3UrlToCFD.utils";
 import { facilItems, servItems } from "../../data/hotelData";
 
 import * as tw from "./SearchResult.styles";
+import SearchBoxSlim from "../../components/searchBoxSlim/SearchBoxSlim";
 
 export default function SearchResult() {
     const navigate = useNavigate();
@@ -130,13 +131,15 @@ export default function SearchResult() {
     return (
         <tw.Container>
             <tw.MainContainer>
-                <SearchBox
-                    defaultSearchValue={searchValue}
-                    defaultStartDate={checkInDate}
-                    defaultEndDate={checkOutDate}
-                    defaultAdult={parseInt(adult || "2")}
-                    defaultChild={parseInt(child || "0")}
-                />
+                <tw.SearchWrap>
+                    <SearchBox
+                        defaultSearchValue={searchValue}
+                        defaultStartDate={checkInDate}
+                        defaultEndDate={checkOutDate}
+                        defaultAdult={parseInt(adult || "2")}
+                        defaultChild={parseInt(child || "0")}
+                    />
+                </tw.SearchWrap>
 
                 <tw.SortWrap>
                     <tw.SortBtn className="rounded-l-2xl" $active={sortMethod === "정확도순"} onClick={() => handleSort("정확도순")}>

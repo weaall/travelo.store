@@ -8,7 +8,9 @@ export const Container = tw.div`flex flex-col items-center`
 
 export const ContentsFlex = tw.div`h-auto w-auto flex items-center`
 
-export const MainContainer = tw.div`w-full h-full pt-4 pb-10`
+export const MainContainer = tw.div`w-full h-full pb-10`
+
+export const SearchWrap = tw.div`sticky top-0 z-10`;
 
 export const SortWrap = tw.div`w-full h-12 flex justify-between mb-6 mt-2 border rounded-2xl
 mobile:mx-4 mobile:w-auto`
