@@ -8,7 +8,7 @@ export const Container = tw.div`flex flex-col items-center`
 
 export const ContentsFlex = tw.div`h-auto w-auto flex items-center`
 
-export const MainContainer = tw.div`w-full h-full pb-10`
+export const MainContainer = tw.div`w-full h-full pb-10 px-6`
 
 export const SearchWrap = tw.div`sticky top-0 z-10`;
 
@@ -39,7 +39,7 @@ mobile:w-full`
 export const HotelInfo = tw.div`relative px-5 py-2 space-y-1
 mobile:flex-row`
 export const HotelTitleWrap = tw.div`flex justify-between`
-export const HotelNameWrap = tw.div`mobile:w-[75%] flex flex-col space-y-1`
+export const HotelNameWrap = tw.div`mobile:w-[75%] flex flex-col space-y-1 w-[75%]`
 export const HotelName = tw.h2`text-xl font-bold`
 export const HotelAddress = tw.p`text-xs text-main pl-1 truncate`
 export const AddressSVG = tw.img`w-3`

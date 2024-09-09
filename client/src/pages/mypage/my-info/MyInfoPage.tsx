@@ -112,7 +112,7 @@ export default function MyInfoPage() {
             await axiosInstance.request(config);
 
             setInitialUserInfo(userInfo);
-            
+
             setAlertMessage("수정되었습니다.");
             const handleModalClose = () => {
                 setInputState(false);

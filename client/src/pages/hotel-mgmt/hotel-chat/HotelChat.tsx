@@ -1,12 +1,16 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import * as tw from "./HotelChat.styles";
-import { sendJWT } from "../../../utils/jwtUtils";
-import { axios, axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
 import { useNavigate, useParams } from "react-router-dom";
+
 import Loading from "../../../components/loading/Loading";
 import ImgLoader from "../../../utils/imgLoader";
+
+import { axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
+import { sendJWT } from "../../../utils/jwtUtils";
 import { msgDateFormat } from "../../../utils/msg.utils";
 import { decrypt } from "../../../utils/cryptoJs";
+
+import * as tw from "./HotelChat.styles";
+
 
 interface MsgList {
     hotel_id: number;
@@ -126,7 +130,7 @@ export default function HotelChatPage() {
 
     useEffect(() => {
         fetchChat();
-    }, []);
+    }, [userId]);
 
     const listWrapRef = useRef<HTMLDivElement>(null);
 
