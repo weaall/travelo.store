@@ -48,4 +48,10 @@ bookingRouter.get("/review/hotel/:id", asyncHandler(bookingController.getReviewB
 
 bookingRouter.get("/review/booking/:id", asyncHandler(bookingController.getReviewByBookingId));
 
+bookingRouter.get(
+    "/hotel/:id",
+    isAuthenticated,
+    asyncHandler((req: Request, res: Response) => bookingController.getBookingByHotelId(req as JWTCheck, res)),
+);
+
 export default bookingRouter;

@@ -1,4 +1,4 @@
-import { Response, Request, query } from "express";
+import { Response, Request } from "express";
 import { JWTCheck, RoomPriceRows } from "../interface/interfaces";
 import bookingService from "../services/bookingService";
 import roomService from "../services/roomService";
@@ -293,6 +293,37 @@ const bookingController = {
             }
         } catch (error) {
             const data = await bookingService.getReviewByBookingId(req.params.id);
+
+            res.status(200).json({
+                error: null,
+                data: data,
+            });
+        }
+    },
+
+    async getBookingByHotelId(req: JWTCheck, res: Response) {
+        try {
+            const timeStamp = dayjs().toISOString();
+            const key: string = `/hotel/${req.body.hotel_id}`;
+            const redisData = JSON.parse(await getRedis(key));
+
+            if (redisData === null) {
+                const data = await bookingService.getBookingByHotelId(req.user.id, req.params.id);
+
+                setRedis1D(key, data);
+
+                res.status(200).json({
+                    error: null,
+                    data: data,
+                });
+            } else {
+                res.status(200).json({
+                    error: null,
+                    data: redisData,
+                });
+            }
+        } catch (error) {
+            const data = await bookingService.getBookingByHotelId(req.user.id, req.params.id);
 
             res.status(200).json({
                 error: null,

@@ -8,18 +8,18 @@ export const Container = tw.div`flex flex-col items-center`
 
 export const ContentsFlex = tw.div`h-auto w-auto flex items-center`
 
-export const MainContainer = tw.div`w-full h-full pb-10 px-6`
+export const MainContainer = tw.div`w-full h-full pb-10 px-6 mobile:px-0`
 
 export const SearchWrap = tw.div`sticky top-0 z-10`;
 
 export const SortWrap = tw.div`w-full h-12 flex justify-between mb-6 mt-2 border rounded-2xl
-mobile:mx-4 mobile:w-auto`
+mobile:mx-2 mobile:w-auto`
 export const SortBtn = tw.button<SortProps>`w-1/5 h-full 
 hover:bg-main/[0.5] hover:text-white mobile:text-xs mobile:hover:bg-main
 ${(p) => (p.$active ? "bg-main text-white" : " text-black")}`;
 
 export const HotelList = tw.div`flex flex-col gap-6
-mobile:px-4`
+mobile:px-2`
 
 export const NoHotelWrap = tw.div`w-full flex flex-col justify-center items-center space-y-10 py-16`
 export const NoHotelText = tw.p`text-lg font-medium`

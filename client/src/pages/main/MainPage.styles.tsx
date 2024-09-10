@@ -8,10 +8,11 @@ export const Container = tw.div`flex flex-col items-center py-4`
 
 export const MainContainer = tw.div`flex flex-col w-full justify-center space-y-8`
 
-export const MobileContainer = tw.div`flex flex-col mobile:min-h-screen-16 justify-center`
+export const MobileContainer = tw.div`flex flex-col justify-center 
+mobile:min-h-screen-16 mobile:relative mobile:w-full mobile:px-2`
 
 export const SearchContainer = tw.div`flex shadow-md rounded-md p-1 h-14 border mx-6
-mobile:w-auto mobile:py-4 mobile:h-auto mobile:border-none mobile:mx-4
+mobile:w-full mobile:py-4 mobile:h-auto mobile:border-none mobile:mx-0 mobile:-translate-y-12 
 mobile:flex-col mobile:space-y-4 mobile:bg-gray-100 mobile:rounded-2xl mobile:min-w-[0px] mobile:px-4`
 
 export const SearchWrap = tw.div`w-[34%] h-full flex items-center justify-between py-1 border-r

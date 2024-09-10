@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import Cookies from "js-cookie";
@@ -16,15 +16,36 @@ export default function Header() {
     const [isRoot, setIsRoot] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
-    const handleBackClick = () => {
-        if (!isRoot) {
-            navigate(-1);
-        }
+    const navTitleMapping: { [key: string]: string } = {
+        "/": "Travel.io",
+        "/signin": "로그인",
+        "/signup": "가입하기",
+        "/hotel/mgmt/*": "숙소관리",
     };
+
+    const getNavTitle = (path: string): string => {
+        if (navTitleMapping[path]) {
+            return navTitleMapping[path];
+        }
+        for (const key in navTitleMapping) {
+            if (key.endsWith("*") && path.startsWith(key.slice(0, -1))) {
+                return navTitleMapping[key];
+            }
+        }
+        return "Travel.io";
+    };
+
+    const navTitle = useMemo(() => getNavTitle(location.pathname), [location.pathname]);
 
     const checkSignInState = () => {
         const jwtToken = Cookies.get("jwt");
         setIsSignIn(!!jwtToken);
+    };
+
+    const handleBackClick = () => {
+        if (!isRoot) {
+            navigate(-1);
+        }
     };
 
     const changeMenuState = () => {
@@ -45,28 +66,20 @@ export default function Header() {
         setIsMenuOpen(false);
     }, [headerRender, location]);
 
-    const navTitleMapping: { [key: string]: string } = {
-        "/": "Travel.io",
-        "/signin": "로그인",
-        "/signup": "가입하기",
-    };
-
-    const navTitle: string = navTitleMapping[location.pathname] || "Travel.io";
-
     return (
         <tw.Container>
             <tw.ContentsWrap>
                 <UserMenu isMenuOpen={isMenuOpen} />
                 <tw.NavWrap>
                     <tw.ActiveBtn onClick={handleBackClick}>
-                        {isRoot ? <></> : <tw.BackSvg alt="back" src={require("../../assets/svg/arrow_left_short.svg").default} />}
+                        {isRoot ? null : <tw.BackSvg alt="back" src={require("../../assets/svg/arrow_left_short.svg").default} />}
                     </tw.ActiveBtn>
                     <tw.NavHome onClick={() => navigateClick("/")}>{navTitle}</tw.NavHome>
-                    {isSignIn === false ? (
+                    {!isSignIn ? (
                         <tw.SignInBtn onClick={() => navigateClick("/signin")}>로그인</tw.SignInBtn>
                     ) : (
                         <tw.SignInBtn onClick={changeMenuState}>
-                            <tw.Svg alt="" src={require("../../assets/svg/list_icon.svg").default} />
+                            <tw.Svg alt="menu" src={require("../../assets/svg/list_icon.svg").default} />
                         </tw.SignInBtn>
                     )}
                 </tw.NavWrap>

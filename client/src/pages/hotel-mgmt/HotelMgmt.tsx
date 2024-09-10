@@ -13,6 +13,7 @@ import HotelChatPage from "./hotel-chat/HotelChat"
 import MgmtSideBar from "./mgmt-sidebar/MgmtSideBar"
 import { decrypt, encrypt } from "../../utils/cryptoJs"
 import dayjs from "dayjs"
+import HotelBookingPage from "./hotel-booking/HotelBooking"
 
 export default function HotelMgmt() {
     const navigate = useNavigate();
@@ -64,6 +65,7 @@ export default function HotelMgmt() {
                         <Route path="/cal" element={<PriceCalendar hotel_id={hotelId} />}>
                             <Route path=":room_id/*" element={<HotelMgmt />} />
                         </Route>
+                        <Route path="/booking" element={<HotelBookingPage hotel_id={hotelId} />} />
                         <Route path="/msg" element={<HotelMsgPage hotel_id={hotelId} />} />
                         <Route path="/msg/chat/:encryptedHotelId/:encryptedUserId" element={<HotelChatPage />} />
                     </Routes>
