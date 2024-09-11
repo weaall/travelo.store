@@ -4,8 +4,7 @@ interface ActiveProps{
     $isActive: string;
 }
 
-export const Container = tw.div`min-w-[220px] sticky top-10
-mobile:hidden`
+export const Container = tw.div`min-w-[220px] sticky top-10`
 
 export const MenuWrap = tw.div`w-auto h-auto bg-white p-4 space-y-2
 flex flex-col rounded-3xl border-b shadow-lg`

@@ -15,12 +15,14 @@ interface Booking {
     hotel_id: number;
     room_id: number;
     total_price: number;
+    payment_date: string;
     check_in: string;
     check_out: string;
     name: string;
     mobile: string;
     email: string;
     review: number;
+    state: number;
     RoomData: RoomData | null;
 }
 
@@ -44,7 +46,15 @@ interface RoomList {
 export default function HotelBookingPage({ hotel_id }: { hotel_id: string | undefined }) {
     const navigate = useNavigate();
 
+    const today = dayjs().format('YYYY-MM-DD');
+
     const [loading, setLoading] = useState(true);
+    const [sortMethod, setSortMethod] = useState<string>("예약날짜");
+    const [bookingData, setBookingData] = useState<Booking[]>([]);
+    const [startDate, setStartDate] = useState(dayjs().subtract(1, 'month').format("YYYY-MM-DD"));
+    const [endDate, setEndDate] = useState(dayjs().format("YYYY-MM-DD"));
+    const [filterState, setFilterState] = useState<number | null>(null);
+
     const openLoadingModal = () => {
         setLoading(true);
     };
@@ -52,34 +62,33 @@ export default function HotelBookingPage({ hotel_id }: { hotel_id: string | unde
         setLoading(false);
     };
 
-    const [bookingData, setBookingData] = useState<Booking[]>([]);
-    const [displayCount, setDisplayCount] = useState(5)
-    const [roomList, setRoomList] = useState<RoomList[]>([]);
-
-    const fetchRooms = useCallback(async () => {
+    const fetchRooms = useCallback(async (): Promise<RoomList[]> => {
         try {
             const response = await axiosInstance.get("/room/hotel/" + hotel_id);
             const rooms = response.data.data;
-            setRoomList(rooms);
+            return rooms;
         } catch (error) {
             handleAxiosError(error, navigate);
+            return [];
         }
     }, [hotel_id, navigate]);
 
     const fetchBooking = useCallback(async () => {
         openLoadingModal();
         try {
+            const rooms = await fetchRooms();
+
             const config = await sendJWT({
                 method: "GET",
-                url: `/booking/hotel/`+ hotel_id,
+                url: `/booking/hotel/` + hotel_id,
             });
 
             const response = await axiosInstance.request(config);
             const bookings: Booking[] = response.data.data;
 
             const updatedBookings = bookings.map((booking) => {
-                const roomData = roomList.find((room) => room.id === booking.room_id) || null; // 일치하는 RoomData 찾기
-                return { ...booking, RoomData: roomData }; 
+                const roomData = rooms.find((room) => room.id === booking.room_id) || null;
+                return { ...booking, RoomData: roomData };
             });
 
             setBookingData(updatedBookings);
@@ -88,77 +97,124 @@ export default function HotelBookingPage({ hotel_id }: { hotel_id: string | unde
         } finally {
             closeLoadingModal();
         }
-    },[navigate, roomList, hotel_id]);
+    }, [navigate, hotel_id, fetchRooms]);
 
     useEffect(() => {
-        fetchRooms().then(fetchBooking);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+        fetchBooking();
+    }, [fetchBooking]);
 
-    const groupByCheckInDate = (data: Booking[]) => {
-        return data.reduce((acc, booking) => {
-            const checkInDate = dayjs(booking.check_in).format("MM월 DD일 (ddd)");
-            if (!acc[checkInDate]) {
-                acc[checkInDate] = [];
+    const handleSort = (method: string) => {
+        setSortMethod(method);
+    };
+
+    const handleStateFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedState = e.target.value === "전체" ? null : Number(e.target.value);
+        setFilterState(selectedState);
+    };
+
+    const getFilteredAndSortedData = () => {
+        const filteredBookingData = bookingData.filter((booking) => {
+            const bookingDate = dayjs(booking.payment_date);
+            
+            const dateMatch = 
+                (sortMethod === "예약날짜" && bookingDate.isAfter(dayjs(startDate).subtract(1, 'day')) && bookingDate.isBefore(dayjs(endDate).add(1, 'day'))) ||
+                (sortMethod === "체크인" && dayjs(booking.check_in).isAfter(dayjs(startDate).subtract(1, 'day')) && dayjs(booking.check_in).isBefore(dayjs(endDate).add(1, 'day'))) ||
+                (sortMethod === "체크아웃" && dayjs(booking.check_out).isAfter(dayjs(startDate).subtract(1, 'day')) && dayjs(booking.check_out).isBefore(dayjs(endDate).add(1, 'day')));
+            
+            const stateMatch = filterState === null || booking.state === filterState;
+
+            return dateMatch && stateMatch;
+        });
+
+        return [...filteredBookingData].sort((a, b) => {
+            if (sortMethod === "예약날짜") {
+                return dayjs(a.payment_date).isBefore(dayjs(b.payment_date)) ? 1 : -1;
+            } else if (sortMethod === "체크인") {
+                return dayjs(a.check_in).isBefore(dayjs(b.check_in)) ? -1 : 1;
+            } else if (sortMethod === "체크아웃") {
+                return dayjs(a.check_out).isBefore(dayjs(b.check_out)) ? -1 : 1;
             }
-            acc[checkInDate].push(booking);
-            return acc;
-        }, {} as { [key: string]: Booking[] });
+            return 0;
+        });
     };
 
-    const sortedBookingData = [...bookingData].sort((a, b) => {
-        return new Date(b.check_in).getTime() - new Date(a.check_in).getTime();
-    });
-
-    const groupedBookings = groupByCheckInDate(sortedBookingData.slice(0, displayCount));
-
-    const handleShowMore = () => {
-        setDisplayCount((prevCount) => prevCount + 5);
-    };
+    const sortedBookingData = getFilteredAndSortedData();
 
     return (
         <tw.Container>
             <tw.MobileWrap>
                 <tw.TitleWrap>
-                    <tw.Title>이용후기</tw.Title>
+                    <tw.Title>예약관리</tw.Title>
                 </tw.TitleWrap>
+
+                <tw.FilterWrap>
+                    <tw.DateFilterWrap>
+                        <tw.DateInput type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />~
+                        <tw.DateInput type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} max={today} />
+                    </tw.DateFilterWrap>
+
+                    <tw.SelectFilter onChange={handleStateFilterChange}>
+                        <tw.Option value="전체">전체</tw.Option>
+                        <tw.Option value="0">미결제</tw.Option>
+                        <tw.Option value="1">결제완료</tw.Option>
+                        <tw.Option value="2">예약확정</tw.Option>
+                        <tw.Option value="3">취소요청</tw.Option>
+                        <tw.Option value="4">취소</tw.Option>
+                    </tw.SelectFilter>
+                </tw.FilterWrap>
+
                 <tw.ContentsWrap>
-                    {Object.keys(groupedBookings).length === 0 ? (
-                        <tw.NoBookingWrap>
-                            <tw.NoBookingText>다녀온 여행이 없어요!</tw.NoBookingText>
-                            <tw.GoTripBtn onClick={() => navigate("/")}>여행하러가기</tw.GoTripBtn>
-                        </tw.NoBookingWrap>
-                    ) : (
-                        Object.keys(groupedBookings).map((date) => (
-                            <tw.BookingOuterWrap key={date}>
-                                <tw.DateTitle>{date}</tw.DateTitle>
-                                {groupedBookings[date].map((booking: Booking) => (
-                                    <tw.BookingWrap key={booking.booking_id}>
-                                        <tw.BookingIdWrap>
-                                            <tw.BookingId>ID {booking.booking_id}</tw.BookingId>
-                                        </tw.BookingIdWrap>
-                                        <tw.FlexWrap>
-                                            <tw.HotelInfo>
-                                                <tw.RoomName>{booking.RoomData?.name}</tw.RoomName>
-                                                <tw.RoomName>{booking.name}</tw.RoomName>
-                                                <tw.RoomName>{booking.email}</tw.RoomName>
-                                                <tw.RoomName>{booking.mobile}</tw.RoomName>
-                                            </tw.HotelInfo>
-                                        </tw.FlexWrap>
-                                        <tw.MgmtBtnWrap>
-                                            <tw.MgmtBtn>메세지 보내기</tw.MgmtBtn>
-                                        </tw.MgmtBtnWrap>
-                                    </tw.BookingWrap>
-                                ))}
-                            </tw.BookingOuterWrap>
-                        ))
-                    )}
+                    <tw.Table>
+                        <tw.Thead>
+                            <tw.Tr>
+                                <tw.Th $active={sortMethod === "예약날짜"} onClick={() => handleSort("예약날짜")}>
+                                    예약날짜
+                                </tw.Th>
+                                <tw.Th $active={sortMethod === "체크인"} onClick={() => handleSort("체크인")}>
+                                    체크인
+                                </tw.Th>
+                                <tw.Th $active={sortMethod === "체크아웃"} onClick={() => handleSort("체크아웃")}>
+                                    체크아웃
+                                </tw.Th>
+                                <tw.Th $active={false}>예약상태</tw.Th>
+                            </tw.Tr>
+                        </tw.Thead>
+                        {sortedBookingData.map((booking: Booking) => (
+                            <tw.Tbody key={booking.booking_id}>
+                                <tw.Tr>
+                                    <tw.Td>{dayjs(booking.payment_date).format("YYYY-MM-DD")}</tw.Td>
+                                    <tw.Td>{booking.check_in}</tw.Td>
+                                    <tw.Td>{booking.check_out}</tw.Td>
+                                    <tw.TdState $state={booking.state}>
+                                        {booking.state === 0
+                                            ? "미결제"
+                                            : booking.state === 1
+                                            ? "결제완료"
+                                            : booking.state === 2
+                                            ? "예약확정"
+                                            : booking.state === 3
+                                            ? "취소요청"
+                                            : booking.state === 4
+                                            ? "취소"
+                                            : "확인필요"}
+                                    </tw.TdState>
+                                </tw.Tr>
+                                <tw.Tr>
+                                    <tw.Td>{booking.booking_id}</tw.Td>
+                                    <tw.Td>{booking.name}</tw.Td>
+                                    <tw.Td>{booking.mobile}</tw.Td>
+                                    <tw.Td>{booking.total_price.toLocaleString()}원</tw.Td>
+                                </tw.Tr>
+                                <tw.Tr>
+                                    <tw.Td>{booking?.RoomData?.name}</tw.Td>
+                                    <tw.Td>{booking?.RoomData?.bed_type}</tw.Td>
+                                    <tw.Td>{booking?.RoomData?.view_type}</tw.Td>
+                                    <tw.TdBtn>예약관리</tw.TdBtn>
+                                </tw.Tr>
+                            </tw.Tbody>
+                        ))}
+                    </tw.Table>
                 </tw.ContentsWrap>
-                {displayCount < sortedBookingData.length && (
-                    <tw.ShowMoreWrap>
-                        <tw.ShowMoreBtn onClick={handleShowMore}>더 보기</tw.ShowMoreBtn>
-                    </tw.ShowMoreWrap>
-                )}
             </tw.MobileWrap>
 
             {loading && (
@@ -166,7 +222,6 @@ export default function HotelBookingPage({ hotel_id }: { hotel_id: string | unde
                     <LoadingModal onClose={closeLoadingModal} />
                 </ModalPortal>
             )}
-
         </tw.Container>
     );
 }

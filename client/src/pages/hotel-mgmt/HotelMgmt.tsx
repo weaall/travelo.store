@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { sendJWT } from "../../utils/jwtUtils"
 import { axiosInstance, handleAxiosError } from "../../utils/axios.utils"
-import { Routes, Route, useParams,  useNavigate, useLocation } from "react-router-dom"
+import { Routes, Route, useParams,  useNavigate } from "react-router-dom"
 import { HotelDataProps } from "../../interface/interfaces"
 import * as tw from "./HotelMgmt.styles"
 
@@ -21,6 +21,7 @@ export default function HotelMgmt() {
     const hotelId = decrypt(encryptedId || "");
 
     const [hotelData, setHotelData] = useState<HotelDataProps>();
+    const [drawerOpen, setDrawerOpen] = useState(false);
 
     const fetchHotel = async () => {
         try {
@@ -43,20 +44,34 @@ export default function HotelMgmt() {
         navigate(`/hotel/${encryptedId}/${today}/${tomorrow}/${2}/${0}`);
     };
 
+    const toggleDrawer = () => {
+        setDrawerOpen((prevState) => !prevState);
+    };
+
     useEffect(() => {
         fetchHotel();
     }, [hotelId]);
 
     return (
         <tw.Container>
-            <tw.HotelStateWrap onClick={()=>clickState(hotelId)}>
-                    <tw.HotelName>{hotelData?.name}</tw.HotelName>
-                    <tw.HotelAddress>{hotelData?.address} {hotelData?.address_detail} ({hotelData?.postcode})</tw.HotelAddress>
-                    <tw.HotelStatus $color={hotelData?.permission === 0}>{hotelData?.permission === 0 ? "심사중" : "활성화"}</tw.HotelStatus>
-            </tw.HotelStateWrap>
+            <tw.HotelStatusWrap>
+                <tw.DrawerBtn onClick={()=>toggleDrawer()}>
+                    <tw.Svg alt="" src={require("./../../assets/drawer/hotel_mgmt.svg").default} />
+                </tw.DrawerBtn>
+                <tw.HotelName onClick={() => clickState(hotelId)}>{hotelData?.name}</tw.HotelName>
+                <tw.HotelAddress onClick={() => clickState(hotelId)}>
+                    {hotelData?.address} {hotelData?.address_detail} ({hotelData?.postcode})
+                </tw.HotelAddress>
+                <tw.HotelStatus onClick={() => clickState(hotelId)} $color={hotelData?.permission === 0}>{hotelData?.permission === 0 ? "심사중" : "활성화"}</tw.HotelStatus>
+            </tw.HotelStatusWrap>
+
+            <tw.DrawerWrapMobile $active={drawerOpen}>
+                <MgmtSideBar hotel_id={hotelId} toggleDrawer={toggleDrawer} />
+            </tw.DrawerWrapMobile>
+
             <tw.FlexWrap>
                 <tw.DrawerWrap>
-                    <MgmtSideBar hotel_id={hotelId}/>
+                    <MgmtSideBar hotel_id={hotelId} toggleDrawer={toggleDrawer} />
                 </tw.DrawerWrap>
                 <tw.ContentsWrap>
                     <Routes>
