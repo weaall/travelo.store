@@ -12,6 +12,16 @@ import { getThumbnailCFUrl } from "../../../utils/s3UrlToCFD.utils";
 
 import * as tw from "./HotelRoom.styles";
 
+interface RoomInfo {
+    id: number;
+    name: string;
+    num: number;
+    bed_type_id: number;
+    bed_type: string;
+    view_type_id: number;
+    view_type: string;
+}
+
 export default function HotelRoom({ hotel_id }: { hotel_id: string | undefined }) {
     const navigate = useNavigate();
     
@@ -47,18 +57,7 @@ export default function HotelRoom({ hotel_id }: { hotel_id: string | undefined }
         fetchRooms();
     };
 
-    const [roomList, setRoomList] = useState([
-        {
-            id: 0,
-            name: "",
-            num: 0,
-            bed_type_id: 0,
-            bed_type: "",
-            view_type_id: 0,
-            view_type: "",
-            discount: 0,
-        },
-    ]);
+    const [roomList, setRoomList] = useState<RoomInfo[]>([]);
 
     const fetchRooms = useCallback(async () => {
         openLoadingModal();

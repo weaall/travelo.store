@@ -13,6 +13,12 @@ interface RegReview{
     check_in_date: string,
 }
 
+interface SetBookingStatus{
+    hotel_id: string,
+    booking_id: string,
+    status: number
+}
+
 const bookingService = {
     async addBookingRef(user_id: string, { booking_id, room_id, total_price, check_in, check_out }: BookingRefProps) {
         const connection = await pool.getConnection();
@@ -138,35 +144,6 @@ const bookingService = {
         }
     },
 
-    async getBookingByHotelId(user_id: string, hotel_id: string) {
-        const connection = await pool.getConnection();
-
-        const checkAuthSql = "SELECT name FROM hotel WHERE id = ? and user_id = ?";
-        const checkAuthValue = [hotel_id, user_id];
-
-        const getBookingSql = `SELECT * FROM booking WHERE hotel_id = ?`;
-        const getBookingValue = [hotel_id];
-
-        try {
-            const [authRows, fields]: [RowDataPacket[], FieldPacket[]] = await connection.execute(
-                checkAuthSql,
-                checkAuthValue,
-            );
-
-            if (authRows.length === 0) {
-                throw new CustomError("UNAUTHORIZED", 401);
-            }
-
-            const [rows, field]: [BookingRows[], FieldPacket[]] = await connection.execute(getBookingSql, getBookingValue);
-
-            return rows;
-        } catch (error) {
-            throw error;
-        } finally {
-            connection.release();
-        }
-    },
-
     async regReview(user_id: string, { booking_id, hotel_id, rating, review }: RegReview) {
         const connection = await pool.getConnection();
 
@@ -277,6 +254,64 @@ const bookingService = {
             return rows;
         } catch (error) {
             await connection.rollback();
+            throw error;
+        } finally {
+            connection.release();
+        }
+    },
+
+    async getBookingByHotelId(user_id: string, hotel_id: string) {
+        const connection = await pool.getConnection();
+
+        const checkAuthSql = "SELECT name FROM hotel WHERE id = ? and user_id = ?";
+        const checkAuthValue = [hotel_id, user_id];
+
+        const getBookingSql = `SELECT * FROM booking WHERE hotel_id = ?`;
+        const getBookingValue = [hotel_id];
+
+        try {
+            const [authRows, fields]: [RowDataPacket[], FieldPacket[]] = await connection.execute(
+                checkAuthSql,
+                checkAuthValue,
+            );
+
+            if (authRows.length === 0) {
+                throw new CustomError("UNAUTHORIZED", 401);
+            }
+
+            const [rows, field]: [BookingRows[], FieldPacket[]] = await connection.execute(getBookingSql, getBookingValue);
+
+            return rows;
+        } catch (error) {
+            throw error;
+        } finally {
+            connection.release();
+        }
+    },
+
+    async updateBookingStatus(user_id: string, { hotel_id ,booking_id, status } : SetBookingStatus) {
+        const connection = await pool.getConnection();
+
+        const checkAuthSql = "SELECT name FROM hotel WHERE id = ? and user_id = ?";
+        const checkAuthValue = [hotel_id, user_id];
+
+        const updateBookingSql = 'UPDATE booking SET status = ? WHERE booking_id = ?';
+        const updateBookingValues = [status, booking_id];
+
+        try {
+            const [authRows, fields]: [RowDataPacket[], FieldPacket[]] = await connection.execute(
+                checkAuthSql,
+                checkAuthValue,
+            );
+
+            if (authRows.length === 0) {
+                throw new CustomError("UNAUTHORIZED", 401);
+            }
+
+            const [rows, field]: [RowDataPacket[], FieldPacket[]] = await connection.execute(updateBookingSql, updateBookingValues);
+
+            return rows;
+        } catch (error) {
             throw error;
         } finally {
             connection.release();

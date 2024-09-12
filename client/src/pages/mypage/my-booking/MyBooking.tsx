@@ -23,6 +23,7 @@ interface Booking {
     name: string;
     phone_num: number;
     email: string;
+    status: number;
     hotelData: HotelData;
 }
 
@@ -140,7 +141,19 @@ export default function MyBookingPage() {
                                     <tw.BookingWrap key={booking.booking_id}>
                                         <tw.BookingIdWrap>
                                             <tw.BookingId>ID {booking.booking_id}</tw.BookingId>
-                                            <tw.BookingStatus>확정됨</tw.BookingStatus>
+                                            <tw.BookingStatus $state={booking.status}>
+                                                {booking.status === 0
+                                                    ? "미결제"
+                                                    : booking.status === 1
+                                                    ? "결제완료"
+                                                    : booking.status === 2
+                                                    ? "예약확정"
+                                                    : booking.status === 3
+                                                    ? "취소요청"
+                                                    : booking.status === 4
+                                                    ? "취소"
+                                                    : "확인필요"}
+                                            </tw.BookingStatus>
                                         </tw.BookingIdWrap>
                                         <tw.FlexWrap>
                                             <tw.Pic>

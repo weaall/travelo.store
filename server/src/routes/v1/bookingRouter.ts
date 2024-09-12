@@ -54,4 +54,10 @@ bookingRouter.get(
     asyncHandler((req: Request, res: Response) => bookingController.getBookingByHotelId(req as JWTCheck, res)),
 );
 
+bookingRouter.put(
+    "/hotel/update/status",
+    isAuthenticated,
+    asyncHandler((req: Request, res: Response) => bookingController.updateBookingStatus(req as JWTCheck, res)),
+);
+
 export default bookingRouter;

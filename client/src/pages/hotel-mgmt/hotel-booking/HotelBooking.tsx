@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react"; // 추가된 import
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 
 import { ModalPortal } from "../../../hook/modal/ModalPortal";
 import LoadingModal from "../../../hook/modal/loading/Loading.modal";
+import SetBookingStatusModal from "../../../hook/modal/set-booking-status/SetBookingStatus.modal";
 
 import { sendJWT } from "../../../utils/jwtUtils";
 import { axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
@@ -14,6 +15,7 @@ interface Booking {
     booking_id: string;
     hotel_id: number;
     room_id: number;
+    user_id: number;
     total_price: number;
     payment_date: string;
     check_in: string;
@@ -22,7 +24,7 @@ interface Booking {
     mobile: string;
     email: string;
     review: number;
-    state: number;
+    status: number;
     RoomData: RoomData | null;
 }
 
@@ -46,14 +48,17 @@ interface RoomList {
 export default function HotelBookingPage({ hotel_id }: { hotel_id: string | undefined }) {
     const navigate = useNavigate();
 
-    const today = dayjs().format('YYYY-MM-DD');
+    const today = dayjs().format("YYYY-MM-DD");
 
     const [loading, setLoading] = useState(true);
     const [sortMethod, setSortMethod] = useState<string>("예약날짜");
     const [bookingData, setBookingData] = useState<Booking[]>([]);
-    const [startDate, setStartDate] = useState(dayjs().subtract(1, 'month').format("YYYY-MM-DD"));
+    const [startDate, setStartDate] = useState(dayjs().subtract(1, "month").format("YYYY-MM-DD"));
     const [endDate, setEndDate] = useState(dayjs().format("YYYY-MM-DD"));
     const [filterState, setFilterState] = useState<number | null>(null);
+
+    const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const openLoadingModal = () => {
         setLoading(true);
@@ -115,13 +120,17 @@ export default function HotelBookingPage({ hotel_id }: { hotel_id: string | unde
     const getFilteredAndSortedData = () => {
         const filteredBookingData = bookingData.filter((booking) => {
             const bookingDate = dayjs(booking.payment_date);
-            
-            const dateMatch = 
-                (sortMethod === "예약날짜" && bookingDate.isAfter(dayjs(startDate).subtract(1, 'day')) && bookingDate.isBefore(dayjs(endDate).add(1, 'day'))) ||
-                (sortMethod === "체크인" && dayjs(booking.check_in).isAfter(dayjs(startDate).subtract(1, 'day')) && dayjs(booking.check_in).isBefore(dayjs(endDate).add(1, 'day'))) ||
-                (sortMethod === "체크아웃" && dayjs(booking.check_out).isAfter(dayjs(startDate).subtract(1, 'day')) && dayjs(booking.check_out).isBefore(dayjs(endDate).add(1, 'day')));
-            
-            const stateMatch = filterState === null || booking.state === filterState;
+
+            const dateMatch =
+                (sortMethod === "예약날짜" && bookingDate.isAfter(dayjs(startDate).subtract(1, "day")) && bookingDate.isBefore(dayjs(endDate).add(1, "day"))) ||
+                (sortMethod === "체크인" &&
+                    dayjs(booking.check_in).isAfter(dayjs(startDate).subtract(1, "day")) &&
+                    dayjs(booking.check_in).isBefore(dayjs(endDate).add(1, "day"))) ||
+                (sortMethod === "체크아웃" &&
+                    dayjs(booking.check_out).isAfter(dayjs(startDate).subtract(1, "day")) &&
+                    dayjs(booking.check_out).isBefore(dayjs(endDate).add(1, "day")));
+
+            const stateMatch = filterState === null || booking.status === filterState;
 
             return dateMatch && stateMatch;
         });
@@ -139,6 +148,16 @@ export default function HotelBookingPage({ hotel_id }: { hotel_id: string | unde
     };
 
     const sortedBookingData = getFilteredAndSortedData();
+
+    const openStatusModal = (booking: Booking) => {
+        setSelectedBooking(booking);
+        setIsModalOpen(true);
+    };
+
+    const closeStatusModal = () => {
+        setSelectedBooking(null);
+        setIsModalOpen(false);
+    };
 
     return (
         <tw.Container>
@@ -185,16 +204,16 @@ export default function HotelBookingPage({ hotel_id }: { hotel_id: string | unde
                                     <tw.Td>{dayjs(booking.payment_date).format("YYYY-MM-DD")}</tw.Td>
                                     <tw.Td>{booking.check_in}</tw.Td>
                                     <tw.Td>{booking.check_out}</tw.Td>
-                                    <tw.TdState $state={booking.state}>
-                                        {booking.state === 0
+                                    <tw.TdState $state={booking.status}>
+                                        {booking.status === 0
                                             ? "미결제"
-                                            : booking.state === 1
+                                            : booking.status === 1
                                             ? "결제완료"
-                                            : booking.state === 2
+                                            : booking.status === 2
                                             ? "예약확정"
-                                            : booking.state === 3
+                                            : booking.status === 3
                                             ? "취소요청"
-                                            : booking.state === 4
+                                            : booking.status === 4
                                             ? "취소"
                                             : "확인필요"}
                                     </tw.TdState>
@@ -209,7 +228,7 @@ export default function HotelBookingPage({ hotel_id }: { hotel_id: string | unde
                                     <tw.Td>{booking?.RoomData?.name}</tw.Td>
                                     <tw.Td>{booking?.RoomData?.bed_type}</tw.Td>
                                     <tw.Td>{booking?.RoomData?.view_type}</tw.Td>
-                                    <tw.TdBtn>예약관리</tw.TdBtn>
+                                    <tw.TdBtn onClick={() => openStatusModal(booking)}>예약상태관리</tw.TdBtn>
                                 </tw.Tr>
                             </tw.Tbody>
                         ))}
@@ -220,6 +239,19 @@ export default function HotelBookingPage({ hotel_id }: { hotel_id: string | unde
             {loading && (
                 <ModalPortal>
                     <LoadingModal onClose={closeLoadingModal} />
+                </ModalPortal>
+            )}
+
+            {isModalOpen && selectedBooking && (
+                <ModalPortal>
+                    <SetBookingStatusModal
+                        bookingId={selectedBooking.booking_id}
+                        hotelId={selectedBooking.hotel_id}
+                        status={selectedBooking.status}
+                        checkInDate={selectedBooking.check_in}
+                        userId={selectedBooking.user_id}
+                        onClose={closeStatusModal}
+                    />
                 </ModalPortal>
             )}
         </tw.Container>

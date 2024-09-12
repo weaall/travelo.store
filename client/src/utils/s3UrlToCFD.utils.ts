@@ -8,6 +8,12 @@ export default function S3UrlToCFUrl(s3Url: string): string {
     return s3Url;
 }
 
-export function getThumbnailCFUrl(rearUrl: string){
-    return `${CF_DOMAIN}${rearUrl}/thumbnail`
+export function getThumbnailCFUrl(rearUrl: string): string {
+    const invalidPattern = /\/(?:undefined|0|)\//;
+
+    if (invalidPattern.test(rearUrl)) {
+        return "";
+    }
+
+    return `${CF_DOMAIN}${rearUrl}/thumbnail`;
 }

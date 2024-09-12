@@ -360,6 +360,7 @@ export default function HotelInfo({ hotel_id }: { hotel_id: string | undefined }
     };
 
      useEffect(() => {
+        window.scrollTo(0, 0);
         fetchHotelData();
     }, [fetchHotelData]);
 

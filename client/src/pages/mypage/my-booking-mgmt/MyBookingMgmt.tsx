@@ -14,6 +14,18 @@ import { facilItems, servItems } from "../../../data/hotelData";
 
 import * as tw from "./MyBookingMgmt.styles";
 
+interface BookingData {
+    booking_id: string;
+    hotel_id: number;
+    room_id: number;
+    total_price: number;
+    check_in: string;
+    check_out: string;
+    name: string;
+    mobile: string;
+    emial: string;
+}
+
 export function MyBookingMgmtPage() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
@@ -36,17 +48,7 @@ export function MyBookingMgmtPage() {
         setIsKakaoMapModalOpen(false);
     };
 
-    const [bookingData, setBookingData] = useState({
-        booking_id: "",
-        hotel_id: 0,
-        room_id: 0,
-        total_price: 0,
-        check_in: "",
-        check_out: "",
-        name: "",
-        mobile: 0,
-        emial: "",
-    });
+    const [bookingData, setBookingData] = useState<BookingData>();
 
     const [hotelData, setHotelData] = useState({
         id: "",
@@ -170,7 +172,7 @@ export function MyBookingMgmtPage() {
                             <tw.ContentsFlex>
                                 <tw.Pic>
                                     <ImgLoader
-                                        imageUrl={getThumbnailCFUrl(`/room_img/${bookingData.hotel_id}/${bookingData.room_id}`)}
+                                        imageUrl={getThumbnailCFUrl(`/room_img/${bookingData?.hotel_id}/${bookingData?.room_id}`)}
                                         altText=""
                                         rounded="l-xl mobile:rounded-none mobile:rounded-t-xl"
                                     />
@@ -201,12 +203,12 @@ export function MyBookingMgmtPage() {
                         <tw.CheckWrap>
                             <tw.CheckInWrap>
                                 <tw.CheckLabel>체크인</tw.CheckLabel>
-                                <tw.CheckText>{dayjs(bookingData.check_in).format("YYYY. MM. DD (dddd)")}</tw.CheckText>
+                                <tw.CheckText>{dayjs(bookingData?.check_in).format("YYYY. MM. DD (dddd)")}</tw.CheckText>
                                 <tw.CheckText>({hotelData.check_in}:00 시 이후)</tw.CheckText>
                             </tw.CheckInWrap>
                             <tw.CheckOutWrap>
                                 <tw.CheckLabel>체크아웃</tw.CheckLabel>
-                                <tw.CheckText>{dayjs(bookingData.check_out).format("YYYY. MM. DD (dddd)")}</tw.CheckText>
+                                <tw.CheckText>{dayjs(bookingData?.check_out).format("YYYY. MM. DD (dddd)")}</tw.CheckText>
                                 <tw.CheckText>({hotelData.check_out}:00 시 이전)</tw.CheckText>
                             </tw.CheckOutWrap>
                         </tw.CheckWrap>
@@ -239,7 +241,7 @@ export function MyBookingMgmtPage() {
                                 <tw.DetailLabel>객실 수 및 숙박 수</tw.DetailLabel>
                             </tw.DetailLabelWrap>
                             <tw.DetailTextWrap>
-                                <tw.DetailText>객실 1개 / {dayjs(bookingData.check_out).diff(dayjs(bookingData.check_in), "day")}박</tw.DetailText>
+                                <tw.DetailText>객실 1개 / {dayjs(bookingData?.check_out).diff(dayjs(bookingData?.check_in), "day")}박</tw.DetailText>
                             </tw.DetailTextWrap>
                         </tw.DetailRow>
                         <tw.DetailRow>
@@ -257,7 +259,7 @@ export function MyBookingMgmtPage() {
                                 <tw.DetailLabel>대표 투숙객</tw.DetailLabel>
                             </tw.DetailLabelWrap>
                             <tw.DetailTextWrap>
-                                <tw.DetailText>{bookingData.name}</tw.DetailText>
+                                <tw.DetailText>{bookingData?.name}</tw.DetailText>
                             </tw.DetailTextWrap>
                         </tw.DetailRow>
                         <tw.DetailRow>
@@ -265,7 +267,7 @@ export function MyBookingMgmtPage() {
                                 <tw.DetailLabel>대표 전화번호</tw.DetailLabel>
                             </tw.DetailLabelWrap>
                             <tw.DetailTextWrap>
-                                <tw.DetailText>{bookingData.mobile}</tw.DetailText>
+                                <tw.DetailText>{bookingData?.mobile}</tw.DetailText>
                             </tw.DetailTextWrap>
                         </tw.DetailRow>
                         <tw.DetailRow>
@@ -273,7 +275,7 @@ export function MyBookingMgmtPage() {
                                 <tw.DetailLabel>결제금액</tw.DetailLabel>
                             </tw.DetailLabelWrap>
                             <tw.DetailTextWrap>
-                                <tw.DetailText>{bookingData.total_price.toLocaleString()}원</tw.DetailText>
+                                <tw.DetailText>{bookingData?.total_price.toLocaleString()}원</tw.DetailText>
                             </tw.DetailTextWrap>
                         </tw.DetailRow>
                     </tw.DetailWrap>

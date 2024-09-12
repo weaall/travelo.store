@@ -354,6 +354,7 @@ export default function Payment() {
                             <tw.TotalLabel>합계</tw.TotalLabel>
                             <tw.TotalPrice>{roomData.room_price.reduce((total, room) => total + room.price, 0).toLocaleString()}원</tw.TotalPrice>
                         </tw.TotalPriceRow>
+                        <tw.DateLabel>{checkInDate} ~ {checkOutDate} ({dayjs(checkOutDate).diff(dayjs(checkInDate), "day")}박)</tw.DateLabel>
                     </tw.PriceWrap>
                     <tw.PaymentBtn onClick={openCheckoutModal} $validator={isFormValid()} disabled={!isFormValid()}>
                         결제하기

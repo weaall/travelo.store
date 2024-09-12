@@ -54,6 +54,7 @@ export const PriceLabel = tw.p`text-sm text-gray-600`
 export const TotalPriceRow = tw.div`flex justify-between border-t mt-3 pt-3`
 export const TotalLabel = tw.p`text-lg font-medium`
 export const TotalPrice = tw.p`text-lg font-semibold`
+export const DateLabel = tw.p`text-xs text-end pt-2 text-gray-600`
 
 export const UserWrap = tw.div`flex flex-col mx-1 border p-5`
 export const LabelWrap = tw.div`flex justify-between`

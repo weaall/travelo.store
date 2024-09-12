@@ -182,6 +182,7 @@ const bookingController = {
                         { key: `/timeStamp/msg/chat/${userId}/${hotelId}`, data: timeStamp },
                         { key: `/booking/user/${userId}`, data: await bookingService.getBookingByUserId(userId) },
                         { key: `/timeStamp/room/price/roomId/${roomId}`, data: timeStamp },
+                        { key: `/timeStamp/booking/hotel/${hotelId}`, data: timeStamp },
                     ];
 
                     msetRedis1D(pairs);
@@ -304,22 +305,34 @@ const bookingController = {
     async getBookingByHotelId(req: JWTCheck, res: Response) {
         try {
             const timeStamp = dayjs().toISOString();
-            const key: string = `/hotel/${req.body.hotel_id}`;
+            const timeStampKey: string = `/timeStamp/booking/hotel/${req.params.id}`;
+            const timeStampRedis = JSON.parse(await getRedis(timeStampKey));
+
+            const key: string = `/booking/hotel/${req.params.id}`;
             const redisData = JSON.parse(await getRedis(key));
 
-            if (redisData === null) {
+            if (timeStampRedis === null) {
+                setRedis1D(timeStampKey, timeStamp);
+            }
+
+            if (redisData === null || !dayjs(redisData.timeStamp).isSame(timeStampRedis)) {
                 const data = await bookingService.getBookingByHotelId(req.user.id, req.params.id);
 
-                setRedis1D(key, data);
+                setRedis1D(key, {
+                    ...data,
+                    timeStamp: timeStampRedis,
+                });
 
                 res.status(200).json({
                     error: null,
                     data: data,
                 });
             } else {
+                const { timeStamp, ...sortedRedisData } = redisData;
+
                 res.status(200).json({
                     error: null,
-                    data: redisData,
+                    data: Object.values(sortedRedisData),
                 });
             }
         } catch (error) {
@@ -330,6 +343,19 @@ const bookingController = {
                 data: data,
             });
         }
+    },
+
+    async updateBookingStatus(req: JWTCheck, res: Response) {
+        const data = await bookingService.updateBookingStatus(req.user.id, req.body);
+
+        const timeStamp = dayjs().toISOString();
+         const timeStampKey: string = `/timeStamp/booking/hotel/${req.body.hotel_id}`;
+        setRedis1D(timeStampKey, timeStamp);
+
+        res.status(201).json({
+            error: null,
+            data: data,
+        });
     },
 };
 

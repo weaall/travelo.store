@@ -1,5 +1,9 @@
 import tw from "tailwind-styled-components"
 
+interface StateProps{
+    $state: number
+}
+
 export const Container = tw.div`w-full h-full flex flex-col items-center mb-10`
 export const FlexWrap = tw.div`flex
 mobile:flex-col`
@@ -30,7 +34,19 @@ mobile:flex mobile:flex-col mobile:h-auto`
 
 export const BookingIdWrap = tw.div`flex mx-4 my-4 justify-between`
 export const BookingId = tw.p`text-sm font-semibold`
-export const BookingStatus = tw.p`text-xs font-medium bg-green-200 text-lime-950 py-1 px-2 rounded-lg`
+export const BookingStatus = tw.p<StateProps>`text-xs font-medium bg-green-200 text-lime-950 py-1 px-2 rounded-lg
+  ${(p) =>
+      p.$state === 0
+          ? "bg-red-500 text-white"
+          : p.$state === 1
+          ? "bg-green-500 text-white"
+          : p.$state === 2
+          ? "text-main"
+          : p.$state === 3
+          ? "bg-red-500 text-white"
+          : p.$state === 4
+          ? "text-red-500"
+          : ""}    `;
 
 export const Pic = tw.div`w-4/12 h-36 bg-gray-30
 mobile:h-40 mobile:w-full`
