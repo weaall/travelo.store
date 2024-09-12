@@ -1,8 +1,10 @@
 import { Request, Response } from "express";
 import authService from "../services/authService";
 import { presignedUrl } from "../config/presignedUrl";
-import axios from 'axios';
+import axios from "axios";
 import CustomError from "../utils/customError";
+import { SES } from "../config/ses";
+import { SendEmailCommand } from "@aws-sdk/client-ses";
 
 const authController = {
     async signUp(req: Request, res: Response) {
@@ -100,6 +102,35 @@ const authController = {
             throw new CustomError("INTERNAL_SERVER_ERROR", 500);
         }
     },
+    async sendEmailBySES(req: Request, res: Response) {
+        const { to, subject, message } = req.body;
+
+        console.log(req.body)
+      
+        const params = {
+          Source: "travel.io.checkemail@gmail.com",
+          Destination: {
+            ToAddresses: [to],
+          },
+          Message: {
+            Body: {
+              Text: { Data: message },
+            },
+            Subject: { Data: subject },
+          },
+        };
+      
+        const command = new SendEmailCommand(params);
+      
+        try {
+          const data = await SES.send(command);
+          console.log("Email sent successfully:", data);
+          res.send("Email sent successfully");
+        } catch (err) {
+          console.error("Error sending email:", err);
+          res.status(500).send("Error sending email");
+        }
+      }
 };
 
 export default authController;

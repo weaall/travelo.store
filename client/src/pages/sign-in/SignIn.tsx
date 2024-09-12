@@ -126,6 +126,20 @@ export default function SignIn() {
           }
       };
 
+      const emailData = {
+          to: "weaall@naver.com",
+          subject: "Hello from React",
+          message: "This is a test email from React and AWS SES!",
+      };
+
+      const sendEmail = async () => {
+        try {
+            const response = await axiosInstance.post("/auth/send/email", emailData)
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
     useEffect(() => {
         checkSignInState();
         setFormValid({
@@ -179,7 +193,7 @@ export default function SignIn() {
                 <tw.SignUpWrap>
                     <tw.SignUpBtn onClick={()=>navigate("/signup")}>이메일 가입</tw.SignUpBtn>
                     <tw.SignUpCenter>
-                        <tw.SignUpBtn>이메일 찾기</tw.SignUpBtn>
+                        <tw.SignUpBtn onClick={()=>sendEmail()}>이메일 찾기</tw.SignUpBtn>
                     </tw.SignUpCenter>
                     <tw.SignUpBtn>비밀번호 찾기</tw.SignUpBtn>
                 </tw.SignUpWrap>

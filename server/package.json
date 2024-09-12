@@ -33,6 +33,7 @@
     "shortid": "^2.2.16"
   },
   "devDependencies": {
+    "@aws-sdk/client-ses": "^3.650.0",
     "@aws-sdk/s3-request-presigner": "^3.582.0",
     "@types/axios": "^0.14.0",
     "@types/bcryptjs": "^2.4.6",

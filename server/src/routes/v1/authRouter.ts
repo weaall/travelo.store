@@ -15,5 +15,6 @@ authRouter.post("/naver", authValidator.signInByNaver, validateError, asyncHandl
 authRouter.post("/naver/callback", authValidator.signInByNaverCallback, validateError, asyncHandler(authController.signInByNaverCallback));
 
 authRouter.post("/presignedUrls", authValidator.presignedUrls, validateError, asyncHandler(authController.presignedUrls));
+authRouter.post("/send/email", asyncHandler(authController.sendEmailBySES));
 
 export default authRouter;
