@@ -28,7 +28,12 @@ server/.env
 Dockerfile
 docker-compose.yml
 
+# Nginx configuration
+/nginx/
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 /.idea/.gitignore
+
+
