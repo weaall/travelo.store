@@ -11,7 +11,7 @@ export const ContentsWrap = tw.div`flex flex-col w-full space-y-3 px-10
 mobile:w-full mobile:px-0`
 
 export const MsgWrap = tw.div`flex flex-col w-full rounded-2xl bg-white h-auto shadow-md border max-h-screen-32
-mobile:flex mobile:border-none mobile:shadow-none`
+mobile:flex mobile:border-none mobile:shadow-none min-h-60`
 
 export const ChatWrap = tw.div<UserProps>`flex my-4
 ${(p) => (p.$byUser === 1 ? "flex-row-reverse" : "w-fit")}`
@@ -35,7 +35,7 @@ export const Time = tw.p`text-xs
 mobile:text-xxs`
 
 export const AddTextWrap = tw.div`py-3 px-3 border-t bg-white rounded-b-xl
-mobile:fixed mobile:bottom-0 mobile:w-full`
+mobile:fixed mobile:bottom-0 mobile:w-full `
 export const AddTextBox = tw.div`relative max-w-full`
 export const AddTextField = tw.textarea`min-h-12 max-h-36 py-3 ps-4 pe-20 block border w-full
 outline-main rounded-lg text-sm resize-none overflow-y-hidden`

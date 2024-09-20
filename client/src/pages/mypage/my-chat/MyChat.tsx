@@ -7,6 +7,7 @@ import Loading from "../../../components/loading/Loading";
 import ImgLoader from "../../../utils/imgLoader";
 import { msgDateFormat } from "../../../utils/msg.utils";
 import { decrypt } from "../../../utils/cryptoJs";
+import { getThumbnailCFUrl } from "../../../utils/s3UrlToCFD.utils";
 
 interface MsgList {
     hotel_id: number;
@@ -18,11 +19,6 @@ interface MsgList {
 
 interface HotelData {
     name: string;
-    img: Image;
-}
-
-interface Image {
-    url: string;
 }
 
 export default function MyChatPage() {
@@ -74,7 +70,6 @@ export default function MyChatPage() {
             const response = await axiosInstance.request(config);
             setMsgList(response.data.data);
             await fetchHotel();
-            await fetchHotelImg();
         } catch (error) {
             handleAxiosError(error, navigate);
         } finally {
@@ -86,18 +81,6 @@ export default function MyChatPage() {
         try {
             const response = await axiosInstance.get("/hotel/" + id);
             setHotelData(response.data.data[0]);
-        } catch (error) {
-            handleAxiosError(error, navigate);
-        }
-    };
-
-    const fetchHotelImg = async () => {
-        try {
-            const response = await axiosInstance.get("/hotel/img/" + id);
-            setHotelData((prevData) => ({
-                name: prevData?.name || "",
-                img: response.data.data[0],
-            }));
         } catch (error) {
             handleAxiosError(error, navigate);
         }
@@ -137,13 +120,7 @@ export default function MyChatPage() {
         if (!loading && listWrapRef.current) {
             listWrapRef.current.scrollTop = listWrapRef.current.scrollHeight;
         }
-    }, [loading]);
-
-    useEffect(() => {
-        if (listWrapRef.current) {
-            listWrapRef.current.scrollTop = listWrapRef.current.scrollHeight;
-        }
-    }, [msgList]);
+    }, [loading, msgList]);
 
     const textarea = useRef<HTMLTextAreaElement>(null);
 
@@ -161,10 +138,8 @@ export default function MyChatPage() {
                                 <tw.Pic>
                                     {msg.by_user === 1 ? (
                                         <tw.AddTextSvg alt="" src={require("../../../assets/svg/user_icon.svg").default} />
-                                    ) : hotelData?.img?.url ? (
-                                        <ImgLoader imageUrl={hotelData.img.url} altText="" rounded="full" />
                                     ) : (
-                                        <tw.UnRegWrap>미등록</tw.UnRegWrap>
+                                        <ImgLoader imageUrl={getThumbnailCFUrl(`/hotel_img/${msg.hotel_id}`)} altText="" rounded="full" />
                                     )}
                                 </tw.Pic>
                                 <tw.MsgInfoWrap>

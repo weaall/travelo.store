@@ -10,12 +10,11 @@ export default function BannerSlider() {
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 640); 
 
     const images = [
-        { url: "https://cdn.pixabay.com/photo/2023/08/07/19/47/water-lily-8175845_1280.jpg", href: "/" },
-        { url: "https://cdn.pixabay.com/photo/2023/08/05/08/15/ship-8170663_1280.jpg", href: "/" },
-        { url: "https://cdn.pixabay.com/photo/2017/07/06/19/57/sky-2479213_1280.jpg" , href: "/" },
-        { url: "https://cdn.pixabay.com/photo/2023/08/07/19/47/water-lily-8175845_1280.jpg" , href: "/" },
-        { url: "https://cdn.pixabay.com/photo/2023/08/05/08/15/ship-8170663_1280.jpg" , href: "/" },
-        { url: "https://cdn.pixabay.com/photo/2017/07/06/19/57/sky-2479213_1280.jpg", href: "/" },
+        { url: "https://weaall-s3.s3.ap-northeast-2.amazonaws.com/banner/banner_blog1.svg", href: "https://weaall.github.io" },
+        { url: "https://weaall-s3.s3.ap-northeast-2.amazonaws.com/banner/banner_blog2.svg", href: "https://weaall.github.io" },
+        { url: "https://weaall-s3.s3.ap-northeast-2.amazonaws.com/banner/banner_conred.svg" , href: "/" },
+        { url: "https://weaall-s3.s3.ap-northeast-2.amazonaws.com/banner/banner_blog1.svg", href: "https://weaall.github.io" },
+        { url: "https://weaall-s3.s3.ap-northeast-2.amazonaws.com/banner/banner_blog2.svg", href: "https://weaall.github.io" },
     ];
 
     useEffect(() => {
@@ -73,7 +72,7 @@ export default function BannerSlider() {
                 </tw.ImgButton>
                 <tw.ImgListWrap style={containerStyle}>
                     {images.map((image, index) => (
-                        <tw.ImgWrap key={index} onClick={()=>navigate(`${image.href}`)}>
+                        <tw.ImgWrap key={index} onClick={() => window.open(image.href, '_blank')}>
                             <ImgLoader imageUrl={image.url} altText={`Slide ${index}`} rounded="2xl"/>
                         </tw.ImgWrap>
                     ))}
