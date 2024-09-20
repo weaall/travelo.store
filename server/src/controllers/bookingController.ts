@@ -187,7 +187,7 @@ const bookingController = {
 
                     msetRedis1D(pairs);
 
-                    res.redirect(`http://localhost:3000/success/${orderId}`);
+                    res.redirect(`https://travelo.store/success/${orderId}`);
                 } catch (paymentError) {
                     await bookingService.rollbackBookingRef(bookingRefData[0].user_id, parsedOrderId);
                     throw paymentError;
@@ -196,7 +196,8 @@ const bookingController = {
                 throw new CustomError("UNAUTHORIZED", 401);
             }
         } catch (error) {
-            res.redirect("http://localhost:3000/fail");
+            console.log(error)
+            res.redirect("https://travelo.store/fail");
         }
     },
 

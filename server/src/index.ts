@@ -18,7 +18,7 @@ const app = Express()
 const port = process.env.PORT
 app.use(Express.urlencoded({ extended: true }))
 app.use(Express.json())
-app.use(cors())
+app.use(cors());
 
 app.use((err: CustomError, req: Request, res: Response, next: NextFunction) => {
     req.setTimeout(10000, () => {

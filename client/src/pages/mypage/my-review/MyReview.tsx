@@ -232,7 +232,7 @@ export default function MyReviewPage() {
                     <KakaoMapModal
                         hotelName={selectedHotel.name}
                         address={`${selectedHotel.address} ${selectedHotel.address_detail}`}
-                        imgUrl={selectedHotel.img[0].url}
+                        imgUrl={getThumbnailCFUrl(`/hotel_img/${selectedHotel.hotel_id}`)}
                         onClose={closeKakaoMapModal}
                     />
                 </ModalPortal>

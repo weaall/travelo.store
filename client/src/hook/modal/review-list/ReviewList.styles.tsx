@@ -4,7 +4,7 @@ export const Container = tw.div`w-full h-full bg-zinc-400/[0.3] fixed top-0 z-50
 export const ModalWrap = tw.div`max-w-[28rem] w-[80%] h-auto flex flex-col rounded-[16px] p-6
 bg-white absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%]
 animate-modal
-mobile:w-full mobile:h-full`
+mobile:w-full mobile:h-full mobile:rounded-[0px]`
 
 export const TitleWrap = tw.div`h-[10%]`
 

@@ -227,7 +227,7 @@ const bookingService = {
     async addBooking(user_id: string, { booking_id, hotel_id, room_id, total_price, check_in, check_out, name, mobile, email }: BookingProps) {
         const connection = await pool.getConnection();
 
-        const addBookingSql = `INSERT INTO booking (user_id, booking_id, hotel_id, room_id, total_price, check_in, check_out, name, mobile, email, state) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        const addBookingSql = `INSERT INTO booking (user_id, booking_id, hotel_id, room_id, total_price, check_in, check_out, name, mobile, email, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
         const addBookingValue = [user_id, booking_id, hotel_id, room_id, total_price, check_in, check_out, name, mobile, email, 1];
 
         try {
