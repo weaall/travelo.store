@@ -104,8 +104,6 @@ const authController = {
     },
     async sendEmailBySES(req: Request, res: Response) {
         const { to, subject, message } = req.body;
-
-        console.log(req.body)
       
         const params = {
           Source: "travel.io.checkemail@gmail.com",

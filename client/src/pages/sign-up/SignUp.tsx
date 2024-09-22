@@ -7,6 +7,8 @@ import * as tw from "./SignUp.styles";
 import Terms from "../../hook/modal/Terms/Terms.modal";
 import AlertModal from "../../hook/modal/alert/Alert.modal";
 import { encryptPass } from "../../utils/cryptoJs";
+import ConfirmEmailModal from "../../hook/modal/confirm-email/ConfirmEmail.modal";
+import { customAlphabet } from "nanoid";
 
 export default function SignUp() {
     const navigate = useNavigate();
@@ -25,10 +27,22 @@ export default function SignUp() {
         setOnCloseCallback(() => callback);
         setIsAlertModalOpen(true);
     };
-    
+
     const closeAlertModal = () => {
         setIsAlertModalOpen(false);
         onCloseCallback();
+    };
+
+    const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
+    const [onCloseEmailCallback, setOnCloseEmailCallback] = useState<(result: boolean) => void>(() => {});
+    const openEmailModal = (verification: string, callback: (result: boolean) => void) => {
+        setOnCloseEmailCallback(() => callback);
+        setIsEmailModalOpen(true);
+    };
+
+    const closeEmailModal = (result: boolean) => {
+        setIsEmailModalOpen(false);
+        onCloseEmailCallback(result);
     };
 
     const [formData, setFormData] = useState({
@@ -49,6 +63,7 @@ export default function SignUp() {
 
     const [emailValid, setEmailValid] = useState(false);
     const [termsValid, setTermsValid] = useState(false);
+    const [verification, setVerification] = useState("");
 
     const isFormValid = () => {
         return (
@@ -107,17 +122,19 @@ export default function SignUp() {
         try {
             const response = await axiosInstance.get("/user/email/" + formData.email);
             if (response.data.data === 0) {
-                setAlertMessage("사용이 가능한 이메일 입니다.")
-                const handleModalClose = () => {
-                    setEmailValid(true);
-                };
-                openAlertModal(handleModalClose);
+                generateVerificationCode();
+                sendEmail();
+                openEmailModal(verification, (result) => {
+                    if (result) {
+                        setEmailValid(true);
+                    }
+                });
             } else {
-                setAlertMessage("이미 가입된 이메일입니다.")
+                setAlertMessage("이미 가입된 이메일입니다.");
                 const handleModalClose = () => {
                     setFormData((prevFormData) => ({
                         ...prevFormData,
-                        email: "", 
+                        email: "",
                     }));
                 };
                 openAlertModal(handleModalClose);
@@ -132,6 +149,25 @@ export default function SignUp() {
             setEmailValid(false);
         } else {
             checkEmail();
+        }
+    };
+
+    const generateVerificationCode = () => {
+        const nanoid = customAlphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 6);
+        const newVerificationCode = nanoid(); 
+        setVerification(newVerificationCode);
+    };
+
+    const sendEmail = async () => {
+        const emailData = {
+            to: formData.email,
+            subject: "Travelo.stroe Email Verification Code",
+            message: verification,
+        };
+        try {
+            const response = await axiosInstance.post("/auth/send/email", emailData);
+        } catch (error) {
+            handleAxiosError(error, navigate);
         }
     };
 
@@ -243,6 +279,12 @@ export default function SignUp() {
                     가입하기
                 </tw.RegBtn>
             </tw.ContentsWrap>
+
+            {isEmailModalOpen && (
+                <ModalPortal>
+                    <ConfirmEmailModal verification={verification} onClose={closeEmailModal} />
+                </ModalPortal>
+            )}
 
             {isAlertModalOpen && (
                 <ModalPortal>
