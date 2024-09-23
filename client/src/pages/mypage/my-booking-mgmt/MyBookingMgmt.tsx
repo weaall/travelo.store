@@ -132,6 +132,7 @@ export function MyBookingMgmtPage() {
     }, [navigate, id, fetchHotel, fetchRoom]);
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         fetchBooking();
     }, [fetchBooking]);
 

@@ -83,6 +83,7 @@ export default function MyMsgPage() {
     };
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         fetchMsg();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);

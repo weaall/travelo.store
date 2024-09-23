@@ -81,6 +81,7 @@ export default function PriceCalendar({ hotel_id }: { hotel_id: string | undefin
     };
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         fetchRoomInfo();
         fetchPrice();
     }, []);

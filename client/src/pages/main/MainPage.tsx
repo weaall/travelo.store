@@ -104,6 +104,7 @@ export default function Search({ defaultSearchValue, defaultStartDate, defaultEn
     };
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         const newDiffDate = dayjs(dateValue.endDate).diff(dayjs(dateValue.startDate), "day");
         setDateValue((prevDateValue) => ({ ...prevDateValue, diffDate: newDiffDate }));
     }, [dateValue.endDate, dateValue.startDate]);

@@ -73,6 +73,7 @@ export default function HotelRoom({ hotel_id }: { hotel_id: string | undefined }
     }, [hotel_id, navigate]);
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         fetchRooms();
     }, [fetchRooms]);
 

@@ -71,6 +71,7 @@ export default function HotelMsgPage({ hotel_id }: { hotel_id: string | undefine
     }
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         fetchMsg();
     }, []);
 

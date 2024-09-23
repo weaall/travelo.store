@@ -1,8 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import * as tw from "./Fail.styles";
+import { useEffect } from "react";
 
 export function FailPage() {
     const navigate = useNavigate();
+
+    useEffect(()=>{
+        window.scrollTo(0, 0);
+    },[])
 
     return (
         <tw.Container>

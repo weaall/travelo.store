@@ -53,13 +53,13 @@ export const HotelServWrap = tw.div`flex flex-col py-1 peer/serv`
 export const HotelServList = tw.div`flex pt-1 space-x-2 truncate`
 export const TooltipServ = tw.div`absolute flex flex-wrap top-4 mx-3 p-3 h-auto w-auto bg-black opacity-0 scale-0 rounded-xl
 peer-hover/serv:opacity-100 peer-hover/serv:scale-100 
-transition-opacity duration-300`
+transition-opacity duration-300 mobile:hidden`
 
 export const HotelFacilWrap = tw.div`flex flex-col py-1 peer/facil`
 export const HotelFacilList = tw.div`flex pt-1 space-x-2 truncate`
 export const TooltipFacil = tw.div`absolute flex flex-wrap top-10 mx-3 p-3 h-auto w-auto bg-black opacity-0 scale-0 rounded-xl
 peer-hover/facil:opacity-100 peer-hover/facil:scale-100 
-transition-opacity duration-300`
+transition-opacity duration-300 mobile:hidden`
 
 export const ToolTipText = tw.li`px-3 text-white text-sm font-bold`
 

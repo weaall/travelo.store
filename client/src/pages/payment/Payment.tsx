@@ -210,6 +210,7 @@ export default function Payment() {
     });
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         fetchUser();
         fetchHotel();
         // eslint-disable-next-line react-hooks/exhaustive-deps

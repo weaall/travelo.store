@@ -208,6 +208,7 @@ export default function HotelRegPage() {
     };
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         setFormValid({
             isName: true,
             isPostcode: true,

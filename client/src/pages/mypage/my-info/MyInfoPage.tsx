@@ -159,6 +159,7 @@ export default function MyInfoPage() {
     };
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         fetchUser();
     }, [fetchUser]);
 

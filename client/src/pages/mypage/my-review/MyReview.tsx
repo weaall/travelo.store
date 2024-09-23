@@ -125,6 +125,7 @@ export default function MyReviewPage() {
     },[navigate, hotelDataCache]);
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         fetchBooking();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);

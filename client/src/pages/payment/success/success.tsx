@@ -132,6 +132,7 @@ export function SuccessPage() {
     };
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         fetchBooking();
     }, []);
 

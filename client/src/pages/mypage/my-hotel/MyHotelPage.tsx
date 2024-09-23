@@ -47,6 +47,7 @@ export default function MyHotelPage() {
     }, [navigate]);
     
     useEffect(() => {
+        window.scrollTo(0, 0);
         fetchHotelList();
     }, [fetchHotelList]);
 

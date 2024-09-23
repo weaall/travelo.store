@@ -112,7 +112,7 @@ module.exports = {
         function ({ addUtilities }) {
             const newUtilities = {
                 ".text-shadow-custom": {
-                    "text-shadow": "-1px 0px white, 0px 1px white, 1px 0px yellow, 0px -1px white",
+                    "text-shadow": "-1px 0px white, 0px 1px white, 1px 0px white, 0px -1px white",
                 },
             };
             addUtilities(newUtilities);

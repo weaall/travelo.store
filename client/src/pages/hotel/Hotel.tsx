@@ -203,6 +203,7 @@ export default function Hotel() {
     };
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         fetchHotel();
     }, [checkInDate, checkOutDate ,fetchHotel]);
 

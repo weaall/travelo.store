@@ -105,6 +105,7 @@ export default function HotelBookingPage({ hotel_id }: { hotel_id: string | unde
     }, [navigate, hotel_id, fetchRooms]);
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         fetchBooking();
     }, [fetchBooking]);
 
