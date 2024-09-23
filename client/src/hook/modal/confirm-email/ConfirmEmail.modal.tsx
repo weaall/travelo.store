@@ -9,12 +9,13 @@ interface ModalProps {
 export default function ConfirmEmailModal({ onClose, verification } : ModalProps) {
     const [isClosing, setIsClosing] = useState(false);
     const [inputValue, setInputValue] = useState("");
-
+    const [codeValid, setCodeValid] = useState(true);
+    
     const handleConfirmClick = () => {
-        if (verification === inputValue) {
+        if (verification == inputValue) {
             triggerCloseAnimation(true);
-        }else{
-
+        } else {
+            setCodeValid(false)
         }
     };
 
@@ -35,7 +36,6 @@ export default function ConfirmEmailModal({ onClose, verification } : ModalProps
             setInputValue(value);
         }
     };
-    
 
     return (
         <tw.Container $isClosing={isClosing}>
@@ -43,9 +43,10 @@ export default function ConfirmEmailModal({ onClose, verification } : ModalProps
                 <tw.ContentsWrap>
                     <tw.Message>이메일 인증</tw.Message>
                     <tw.Input maxLength={6} value={inputValue} onChange={handleInputChange} />
+                    <tw.UnderTag $valid={codeValid} >인증번호가 일치하지 않습니다.</tw.UnderTag>
                     <tw.BtnWrap>
-                        <tw.ConfirmBtn onClick={handleConfirmClick}>확인</tw.ConfirmBtn>
                         <tw.CancelBtn onClick={handleCancelClick}>취소</tw.CancelBtn>
+                        <tw.ConfirmBtn onClick={handleConfirmClick}>확인</tw.ConfirmBtn>
                     </tw.BtnWrap>
                 </tw.ContentsWrap>
             </tw.ModalWrap>

@@ -122,15 +122,20 @@ export default function SignUp() {
         try {
             const response = await axiosInstance.get("/user/email/" + formData.email);
             if (response.data.data === 0) {
-                generateVerificationCode();
-                sendEmail();
-                openEmailModal(verification, (result) => {
+
+                const verificationCode = generateVerificationCode();
+                setVerification(verificationCode); 
+
+                await sendEmail(verificationCode); 
+    
+                openEmailModal(verificationCode, (result) => {
                     if (result) {
                         setEmailValid(true);
                     }
                 });
             } else {
                 setAlertMessage("이미 가입된 이메일입니다.");
+                
                 const handleModalClose = () => {
                     setFormData((prevFormData) => ({
                         ...prevFormData,
@@ -154,15 +159,14 @@ export default function SignUp() {
 
     const generateVerificationCode = () => {
         const nanoid = customAlphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 6);
-        const newVerificationCode = nanoid(); 
-        setVerification(newVerificationCode);
+        return nanoid();
     };
 
-    const sendEmail = async () => {
+    const sendEmail = async (verificationCode: string) => {
         const emailData = {
             to: formData.email,
-            subject: "Travelo.stroe Email Verification Code",
-            message: verification,
+            subject: "Travelo.store Email Verification Code",
+            message: verificationCode,
         };
         try {
             const response = await axiosInstance.post("/auth/send/email", emailData);

@@ -17,13 +17,13 @@ export default function RecRegion() {
     const [scrollLeft, setScrollLeft] = useState<number>(0);
 
     const regions: Region[] = [
-        { name: "서울", url: "https://cdn.pixabay.com/photo/2023/08/07/19/47/water-lily-8175845_1280.jpg" },
-        { name: "부산", url: "https://cdn.pixabay.com/photo/2023/08/05/08/15/ship-8170663_1280.jpg" },
-        { name: "강릉", url: "https://cdn.pixabay.com/photo/2017/07/06/19/57/sky-2479213_1280.jpg" },
-        { name: "양양", url: "https://cdn.pixabay.com/photo/2017/07/06/19/57/sky-2479213_1280.jpg" },
-        { name: "여수", url: "https://cdn.pixabay.com/photo/2017/07/06/19/57/sky-2479213_1280.jpg" },
-        { name: "가평", url: "https://cdn.pixabay.com/photo/2017/07/06/19/57/sky-2479213_1280.jpg" },
-        { name: "안산", url: "https://cdn.pixabay.com/photo/2017/07/06/19/57/sky-2479213_1280.jpg" },
+        { name: "서울", url: "https://weaall-s3.s3.ap-northeast-2.amazonaws.com/region/seoul.png" },
+        { name: "부산", url: "https://weaall-s3.s3.ap-northeast-2.amazonaws.com/region/busan.png" },
+        { name: "강릉", url: "https://weaall-s3.s3.ap-northeast-2.amazonaws.com/region/seoul.png" },
+        { name: "양양", url: "https://weaall-s3.s3.ap-northeast-2.amazonaws.com/region/seoul.png" },
+        { name: "여수", url: "https://weaall-s3.s3.ap-northeast-2.amazonaws.com/region/seoul.png" },
+        { name: "가평", url: "https://weaall-s3.s3.ap-northeast-2.amazonaws.com/region/seoul.png" },
+        { name: "안산", url: "https://weaall-s3.s3.ap-northeast-2.amazonaws.com/region/seoul.png" },
     ];
 
     const clickRegion = (name: string) => {

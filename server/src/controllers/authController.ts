@@ -106,7 +106,7 @@ const authController = {
         const { to, subject, message } = req.body;
       
         const params = {
-          Source: "travel.io.checkemail@gmail.com",
+          Source: "Travelo.store@travelo.store",
           Destination: {
             ToAddresses: [to],
           },

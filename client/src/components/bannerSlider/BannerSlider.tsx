@@ -11,9 +11,8 @@ export default function BannerSlider() {
 
     const images = [
         { url: "https://weaall-s3.s3.ap-northeast-2.amazonaws.com/banner/banner_blog1.svg", href: "https://weaall.github.io" },
-        { url: "https://weaall-s3.s3.ap-northeast-2.amazonaws.com/banner/banner_blog2.svg", href: "https://weaall.github.io" },
+        { url: "https://weaall-s3.s3.ap-northeast-2.amazonaws.com/banner/banner_signiel.svg", href: "/" },
         { url: "https://weaall-s3.s3.ap-northeast-2.amazonaws.com/banner/banner_conred.svg" , href: "/" },
-        { url: "https://weaall-s3.s3.ap-northeast-2.amazonaws.com/banner/banner_blog1.svg", href: "https://weaall.github.io" },
         { url: "https://weaall-s3.s3.ap-northeast-2.amazonaws.com/banner/banner_blog2.svg", href: "https://weaall.github.io" },
     ];
 

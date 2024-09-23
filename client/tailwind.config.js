@@ -85,13 +85,13 @@ module.exports = {
                     },
                 },
                 gradient: {
-                    '0%': {
+                    "0%": {
                         backgroundPosition: "0% 50%",
                     },
-                    '50%': {
+                    "50%": {
                         backgroundPosition: "100% 50%",
                     },
-                    '100%': {
+                    "100%": {
                         backgroundPosition: "0% 50%",
                     },
                 },
@@ -104,9 +104,18 @@ module.exports = {
                 gradient: "gradient 1s ease infinite alternate",
             },
             backgroundSize: {
-                '300%': '300%',
-              },
+                "300%": "300%",
+            },
         },
     },
-    plugins: [],
+    plugins: [
+        function ({ addUtilities }) {
+            const newUtilities = {
+                ".text-shadow-custom": {
+                    "text-shadow": "-1px 0px white, 0px 1px white, 1px 0px yellow, 0px -1px white",
+                },
+            };
+            addUtilities(newUtilities);
+        },
+    ],
 };

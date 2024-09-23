@@ -17,7 +17,7 @@ export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
     const navTitleMapping: { [key: string]: string } = {
-        "/": "Travel.io",
+        "/": "Travelo.store",
         "/signin": "로그인",
         "/signup": "가입하기",
         "/hotel/mgmt/*": "숙소관리",
@@ -32,7 +32,7 @@ export default function Header() {
                 return navTitleMapping[key];
             }
         }
-        return "Travel.io";
+        return "Travelo.store";
     };
 
     const navTitle = useMemo(() => getNavTitle(location.pathname), [location.pathname]);

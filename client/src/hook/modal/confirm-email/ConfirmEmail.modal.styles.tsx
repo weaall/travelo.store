@@ -4,6 +4,10 @@ interface Closing {
     $isClosing: boolean;
 }
 
+interface UnderTagProps {
+  $valid: boolean;
+}
+
 export const Container = tw.div<Closing>`
   w-full h-full inset-0 bg-black bg-opacity-30 fixed top-0 z-100
   backdrop-blur-sm
@@ -20,7 +24,9 @@ export const ContentsWrap = tw.div`flex flex-col items-center px-4`;
 
 export const Message = tw.p`font-medium text-base text-center py-4 pb-6 truncate`;
 
-export const Input = tw.input``
+export const Input = tw.input`w-[70%] py-2 mb-4 text-xl px-4 border rounded-xl text-center`
+export const UnderTag = tw.label<UnderTagProps>`w-auto text-center text-red-500 text-sm
+${(p) => (p.$valid ? "text-white" : "text-red-500")}`
 
 export const BtnWrap = tw.div`flex space-x-2`;
 export const ConfirmBtn = tw.button` 

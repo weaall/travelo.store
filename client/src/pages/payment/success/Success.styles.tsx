@@ -1,7 +1,7 @@
 import tw from "tailwind-styled-components"
 
 
-export const Container = tw.div`flex flex-col items-center space-y-5 py-8`
+export const Container = tw.div`flex flex-col items-center space-y-5 py-8 mobile:px-1`
 export const ContentsFlex = tw.div`h-auto w-auto flex flex-wrap items-center content-center`
 
 export const Label = tw.p`text-xl font-semibold mb-4`
