@@ -4,7 +4,6 @@ import { useRecoilState } from "recoil";
 import Cookies from "js-cookie";
 
 import { HeaderRenderAtom } from "../../recoil/HeaderRender.Atom";
-import UserMenu from "../usermenu/UserMenu";
 import * as tw from "./Header.styles";
 import { ModalPortal } from "../../hook/modal/ModalPortal";
 import UserMenuModal from "../../hook/modal/usermenu/UserMenu.modal";
@@ -58,10 +57,6 @@ export default function Header() {
         }
     };
 
-    const changeMenuState = () => {
-        setIsMenuOpen((prev) => !prev);
-    };
-
     const navigateClick = (url: string) => {
         setHeaderRender((prevCount) => prevCount + 1);
         navigate(url);
@@ -80,7 +75,6 @@ export default function Header() {
     return (
         <tw.Container>
             <tw.ContentsWrap>
-                <UserMenu isMenuOpen={isMenuOpen} />
                 <tw.NavWrap>
                     <tw.ActiveBtn onClick={handleBackClick}>
                         {isRoot ? null : <tw.BackSvg alt="back" src={require("../../assets/svg/arrow_left_short.svg").default} />}
