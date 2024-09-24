@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import * as tw from "./KakaMap.modal.styles";
 
 import markerSvg from "../../../assets/svg/marker_icon.svg";
@@ -19,6 +19,19 @@ declare global {
 }
 
 export default function KakaoMapModal({ onClose, hotelName, address, imgUrl }: ModalProps) {
+    const [isClosing, setIsClosing] = useState(false);
+
+    const handleCloseClick = () => {
+        triggerCloseAnimation();
+    };
+
+    const triggerCloseAnimation = () => {
+        setIsClosing(true);
+        setTimeout(() => {
+            onClose();
+        }, 500);
+    };
+
     useEffect(() => {
         // 카카오 맵 스크립트 로드
         const script = document.createElement("script");
@@ -83,10 +96,10 @@ export default function KakaoMapModal({ onClose, hotelName, address, imgUrl }: M
     }, [address, hotelName, imgUrl]);
 
     return (
-        <tw.Container>
-            <tw.ModalWrap>
+        <tw.Container $isClosing={isClosing}>
+            <tw.ModalWrap $isClosing={isClosing}>
                 <tw.TitleWrap>
-                    <tw.CloseBtn onClick={onClose}>
+                    <tw.CloseBtn onClick={handleCloseClick}>
                         <tw.CloseSVG alt="닫기 버튼" src={require("../../../assets/svg/close_svg.svg").default} />
                     </tw.CloseBtn>
                     <tw.Title>주소</tw.Title>

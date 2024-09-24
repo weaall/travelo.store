@@ -6,6 +6,8 @@ import Cookies from "js-cookie";
 import { HeaderRenderAtom } from "../../recoil/HeaderRender.Atom";
 import UserMenu from "../usermenu/UserMenu";
 import * as tw from "./Header.styles";
+import { ModalPortal } from "../../hook/modal/ModalPortal";
+import UserMenuModal from "../../hook/modal/usermenu/UserMenu.modal";
 
 export default function Header() {
     const navigate = useNavigate();
@@ -15,6 +17,14 @@ export default function Header() {
     const [isSignIn, setIsSignIn] = useState(false);
     const [isRoot, setIsRoot] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+
+    const [isUserMenuModalOpen, setIsUserMenuModalOpen] = useState(false);
+    const openUserMenuModal = () => {
+        setIsUserMenuModalOpen(true);
+    };
+    const closeUserMenuModal = () => {
+        setIsUserMenuModalOpen(false);
+    };
 
     const navTitleMapping: { [key: string]: string } = {
         "/": "Travelo.store",
@@ -62,6 +72,7 @@ export default function Header() {
     }, [location.pathname]);
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         checkSignInState();
         setIsMenuOpen(false);
     }, [headerRender, location]);
@@ -78,12 +89,18 @@ export default function Header() {
                     {!isSignIn ? (
                         <tw.SignInBtn onClick={() => navigateClick("/signin")}>로그인</tw.SignInBtn>
                     ) : (
-                        <tw.SignInBtn onClick={changeMenuState}>
+                        <tw.SignInBtn onClick={openUserMenuModal}>
                             <tw.Svg alt="menu" src={require("../../assets/svg/list_icon.svg").default} />
                         </tw.SignInBtn>
                     )}
                 </tw.NavWrap>
             </tw.ContentsWrap>
+
+            {isUserMenuModalOpen && (
+                <ModalPortal>
+                    <UserMenuModal onClose={closeUserMenuModal} />
+                </ModalPortal>
+            )}
         </tw.Container>
     );
 }

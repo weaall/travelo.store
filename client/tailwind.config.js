@@ -95,6 +95,26 @@ module.exports = {
                         backgroundPosition: "0% 50%",
                     },
                 },
+                drawer: {
+                    from: {
+                        transform: "translate(50%, 0)",
+                        opacity: 0,
+                    },
+                    to: {
+                        transform: "translate(0, 0)",
+                        opacity: 1,
+                    },
+                },
+                closeDrawer: {
+                    from: {
+                        transform: "translate(0, 0)",
+                        opacity: 0,
+                    },
+                    to: {
+                        transform: "translate(50%, 0)",
+                        opacity: 1,
+                    },
+                },
             },
             animation: {
                 modal: "modal 0.5s ease-out forwards",
@@ -102,6 +122,8 @@ module.exports = {
                 backdrop: "backdrop 0.5s ease-out forwards",
                 closeBackdrop: "closeBackdrop 0.5s ease-out forwards",
                 gradient: "gradient 1s ease infinite alternate",
+                drawer: "drawer 0.5s ease-out forwards",
+                closeDrawer: "closeDrawer 0.5s ease-out forwards",
             },
             backgroundSize: {
                 "300%": "300%",

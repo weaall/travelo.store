@@ -15,6 +15,19 @@ interface ModalProps {
 
 export default function RegReviewModal({ onClose, bookingId, hotelName, hotelId }: ModalProps) {
     const navigate = useNavigate();
+    const [isClosing, setIsClosing] = useState(false);
+
+    const handleCloseClick = () => {
+        triggerCloseAnimation();
+    };
+
+    const triggerCloseAnimation = () => {
+        setIsClosing(true);
+        setTimeout(() => {
+            onClose();
+        }, 500);
+    };
+    
 
     const [reviewData, setReviewData] = useState({
         hotel_id: hotelId,
@@ -53,17 +66,17 @@ export default function RegReviewModal({ onClose, bookingId, hotelName, hotelId 
 
             await axiosInstance.request(config);
             window.alert("저장완료");
-            onClose();
+            handleCloseClick();
         } catch (error) {
             handleAxiosError(error, navigate);
         }
     };
 
     return (
-        <tw.Container>
-            <tw.ModalWrap>
+        <tw.Container $isClosing={isClosing}>
+            <tw.ModalWrap $isClosing={isClosing}>
                 <tw.TitleWrap>
-                    <tw.CloseBtn onClick={onClose}>
+                    <tw.CloseBtn onClick={handleCloseClick}>
                         <tw.CloseSVG alt="" src={require("../../../assets/svg/close_svg.svg").default}></tw.CloseSVG>
                     </tw.CloseBtn>
                     <tw.Title>후기 작성</tw.Title>

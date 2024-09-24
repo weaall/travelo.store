@@ -10,10 +10,33 @@ import { getThumbnailCFUrl } from "../../../utils/s3UrlToCFD.utils";
 import Loading from "../../../components/loading/Loading";
 
 import * as tw from "./MyHotel.styles";
+import { ModalPortal } from "../../../hook/modal/ModalPortal";
+import KakaoMapModal from "../../../hook/modal/kakao-map/KakaMap.modal";
+
+interface HotelData {
+    id: number;
+    name: string;
+    address: string;
+    address_detail: string;
+    postcode: string;
+}
 
 export default function MyHotelPage() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
+
+    const [isKakaoMapModalOpen, setIsKakaoMapModalOpen] = useState(false);
+    const [selectedHotel, setSelectedHotel] = useState<any>(null);
+
+    const openKakaoMapModal = (hotelData: HotelData) => {
+        setSelectedHotel(hotelData);
+        setIsKakaoMapModalOpen(true);
+    };
+
+    const closeKakaoMapModal = () => {
+        setIsKakaoMapModalOpen(false);
+        setSelectedHotel(null);
+    };
 
     const [hotelList, setHotelList] = useState([
         {
@@ -35,7 +58,7 @@ export default function MyHotelPage() {
                 method: "get",
                 url: "/hotel/me",
             });
-    
+
             const response = await axiosInstance.request(config);
             const hotels = response.data.data;
             setHotelList(hotels);
@@ -45,7 +68,7 @@ export default function MyHotelPage() {
             setLoading(false);
         }
     }, [navigate]);
-    
+
     useEffect(() => {
         window.scrollTo(0, 0);
         fetchHotelList();
@@ -79,9 +102,12 @@ export default function MyHotelPage() {
                                         <ImgLoader imageUrl={getThumbnailCFUrl(`/hotel_img/${hotel.id}`)} altText={hotel.name} rounded="" />
                                     </tw.Pic>
                                     <tw.HotelInfoWrap>
-                                        <tw.HotelAddress>
-                                            {hotel.address} {hotel.address_detail}, {hotel.postcode}
-                                        </tw.HotelAddress>
+                                        <tw.AddressWrap>
+                                            <tw.AddressSVG alt="" src={require("../../../assets/svg/location_icon.svg").default} />
+                                            <tw.HotelAddress onClick={() => openKakaoMapModal(hotel)}>
+                                                {hotel.address} {hotel.address_detail}, {hotel.postcode}
+                                            </tw.HotelAddress>
+                                        </tw.AddressWrap>
                                         <tw.HotelTel>연락처 - {hotel.tel_num}</tw.HotelTel>
                                         <tw.CheckWrap>
                                             <tw.CheckInWrap>
@@ -103,6 +129,17 @@ export default function MyHotelPage() {
                     )}
                 </tw.HotelList>
             </tw.MobileWrap>
+
+            {isKakaoMapModalOpen && selectedHotel && (
+                <ModalPortal>
+                    <KakaoMapModal
+                        hotelName={selectedHotel.name}
+                        address={`${selectedHotel.address} ${selectedHotel.address_detail}`}
+                        imgUrl={getThumbnailCFUrl(`/hotel_img/${selectedHotel.id}`)}
+                        onClose={closeKakaoMapModal}
+                    />
+                </ModalPortal>
+            )}
         </tw.Container>
     );
 }

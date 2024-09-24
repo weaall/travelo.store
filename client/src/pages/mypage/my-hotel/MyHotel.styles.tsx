@@ -37,7 +37,9 @@ export const UnRegWrap = tw.div`flex h-full justify-center items-center text-2xl
 
 export const HotelInfoWrap = tw.div`flex flex-col relative px-5 py-2 space-y-1 w-8/12
 mobile:w-full`
-export const HotelAddress = tw.p`text-gray-400 text-xs hover:cursor-pointer text-main`
+export const AddressWrap = tw.div`flex items-start`
+export const AddressSVG = tw.img`w-2.5 mt-1 mr-1`
+export const HotelAddress = tw.p`text-gray-400 text-xs hover:cursor-pointer text-main pb-3`
 export const HotelTel = tw.p`text-xs`
 
 export const CheckWrap = tw.div`flex w-full border-y`
