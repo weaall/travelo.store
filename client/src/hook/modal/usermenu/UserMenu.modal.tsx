@@ -84,7 +84,7 @@ export default function UserMenuModal({ onClose }: ModalProps) {
                 <tw.ModalWrap $isClosing={isClosing}>
                     <tw.TitleWrap>
                         <tw.CloseBtn onClick={() => handleExitClick()}>
-                            <tw.CloseSVG alt="" src={require("../../../assets/svg/arrow_left_short.svg").default}></tw.CloseSVG>
+                            <tw.CloseSVG alt="" src={require("../../../assets/svg_black/right_icon.svg").default}></tw.CloseSVG>
                         </tw.CloseBtn>
                     </tw.TitleWrap>
                     <tw.MenuWrap>
