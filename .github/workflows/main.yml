@@ -42,12 +42,11 @@ jobs:
     - name: Tag Docker images
       run: |
         IMAGE_URI="${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}"
-        docker tag client:build "${IMAGE_URI}:client-build"
-        docker tag server:build "${IMAGE_URI}:server-build"
+        docker tag client:latest "${IMAGE_URI}:latest"
+        docker tag server:latest "${IMAGE_URI}:latest"
 
     # 7. ECR에 Docker 이미지 푸시
     - name: Push Docker images to Amazon ECR
       run: |
         IMAGE_URI="${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}"
-        docker push "${IMAGE_URI}:client-build"
-        docker push "${IMAGE_URI}:server-build"
+        docker push "${IMAGE_URI}:latest"
