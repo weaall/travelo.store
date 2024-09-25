@@ -2,6 +2,6 @@ version: '3.8'
 
 services:
   nginx:
-    build: null  # GitHub Actions에서 nginx 빌드 제거
+    image: nginx:latest  # 기본 nginx 이미지 사용
   redis:
-    build: null  # redis 빌드 제거
+    image: redis:latest  # 기본 redis 이미지 사용
