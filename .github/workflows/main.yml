@@ -1,5 +1,5 @@
 name: Build and Push to ECR
-
+ 
 on:
   push:
     branches:
@@ -33,7 +33,7 @@ jobs:
       run: |
         aws ecr-public get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin public.ecr.aws
 
-    # 5. Docker Compose로 client와 server 빌드
+    # 5. Docker Compose로 client와 server build
     - name: Build client and server
       run: |
         docker-compose -f docker-compose.yml -f docker-compose.override.yml build client server
