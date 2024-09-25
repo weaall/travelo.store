@@ -1,0 +1,7 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:latest  # 기본 nginx 이미지 사용
+  redis:
+    image: redis:latest  # 기본 redis 이미지 사용
