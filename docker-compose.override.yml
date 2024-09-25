@@ -1,0 +1,7 @@
+version: '3.8'
+
+services:
+  nginx:
+    build: null  # GitHub Actions에서 nginx 빌드 제거
+  redis:
+    build: null  # redis 빌드 제거
