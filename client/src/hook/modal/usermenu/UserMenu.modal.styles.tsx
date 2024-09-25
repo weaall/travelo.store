@@ -27,8 +27,8 @@ mobile:hover:bg-white mobile:hover:text-black`
 
 export const InputWrap = tw.div`flex flex-col text-left py-4`;
 
-export const MenuWrap = tw.div`w-auto h-auto bg-white p-4 space-y-2
-flex flex-col rounded-3xl`;
+export const MenuWrap = tw.div`w-auto h-auto bg-white p-4 space-y-2 
+flex flex-col rounded-3xl overflow-y-scroll`;
 
 export const MenuLabel = tw.label`px-3 pt-2 text-sm font-medium text-main`;
 
