@@ -118,8 +118,8 @@ export default function UserMenuModal({ onClose }: ModalProps) {
                                 <tw.Label>{item.label}</tw.Label>
                             </tw.ListWrap>
                         ))}
+                        <tw.SignOutBtn onClick={logoutClick}>로그아웃</tw.SignOutBtn>
                     </tw.MenuWrap>
-                    <tw.SignOutBtn onClick={logoutClick}>로그아웃</tw.SignOutBtn>
                 </tw.ModalWrap>
             </tw.ModalContainer>
 
