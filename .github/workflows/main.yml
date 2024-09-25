@@ -49,4 +49,4 @@ jobs:
     - name: Push Docker images to Amazon ECR
       run: |
         IMAGE_URI="${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}"
-        docker push "${IMAGE_URI}:latest"
+        docker push "${IMAGE_URI}"
