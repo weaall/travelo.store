@@ -31,7 +31,7 @@ jobs:
     # 4. ECR 로그인
     - name: Login to Amazon ECR
       run: |
-        aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+        aws ecr-public get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin public.ecr.aws
 
     # 5. Docker Compose로 client와 server 빌드
     - name: Build client and server
@@ -41,13 +41,13 @@ jobs:
     # 6. Docker 이미지에 태그 추가
     - name: Tag Docker images
       run: |
-        IMAGE_URI="${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}"
+        IMAGE_URI="public.ecr.aws/e7u1o0y0/weaall/travelo"
         docker tag travelostore_client "${IMAGE_URI}:client-latest"
         docker tag travelostore_server "${IMAGE_URI}:server-latest"
 
     # 7. ECR에 Docker 이미지 푸시
     - name: Push Docker images to Amazon ECR
       run: |
-        IMAGE_URI="${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}"
+        IMAGE_URI="public.ecr.aws/e7u1o0y0/weaall/travelo"
         docker push "${IMAGE_URI}:client-latest"
-        docker push "${IMAGE_URI}:server-latest" 
+        docker push "${IMAGE_URI}:server-latest"
