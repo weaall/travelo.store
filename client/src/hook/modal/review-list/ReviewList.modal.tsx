@@ -1,8 +1,6 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 import * as tw from "./ReviewList.styles";
-import Loading from "../../../components/loading/Loading";
 import dayjs from "dayjs";
 
 interface ModalProps {

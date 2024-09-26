@@ -74,9 +74,10 @@ export default function SetPriceByDateModal({ onClose, hotel_id, room_id, year, 
             });
             await axiosInstance.request(config);
             setAlertMessage("등록되었습니다.");
-            const handleModalClose = () => {};
+            const handleModalClose = () => {
+                handleCloseClick();
+            };
             openAlertModal(handleModalClose);
-            handleCloseClick();
         } catch (error) {
             handleAxiosError(error, navigate);
         }

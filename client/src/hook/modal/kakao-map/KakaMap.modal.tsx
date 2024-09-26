@@ -104,7 +104,7 @@ export default function KakaoMapModal({ onClose, hotelName, address, imgUrl }: M
                     </tw.CloseBtn>
                     <tw.Title>주소</tw.Title>
                 </tw.TitleWrap>
-                <div id="map" style={{ width: "100%", height: "100%" }} />
+                <div id="map" style={{ width: "100%", height: "100%", margin: "0 0 12px 0"}} />
             </tw.ModalWrap>
         </tw.Container>
     );
