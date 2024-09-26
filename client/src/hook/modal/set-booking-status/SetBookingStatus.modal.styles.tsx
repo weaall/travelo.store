@@ -7,18 +7,13 @@ interface RegBtnProps {
 interface Closing {
     $isClosing: boolean;
 }
+export const Container = tw.div<Closing>`w-full h-full bg-zinc-400/[0.3] fixed top-0 z-50
+${(p) => (p.$isClosing ? "animate-closeBackdrop" : "animate-backdrop")}`
 
-export const Container = tw.div<Closing>`
-  w-full h-full inset-0 bg-black bg-opacity-30 fixed top-0 z-100
-  backdrop-blur-sm
-  ${(p) => (p.$isClosing ? "animate-closeBackdrop" : "animate-backdrop")}
-`;
-
-export const ModalWrap = tw.div<Closing>`
-  max-w-[28rem] w-[20rem] h-auto flex flex-col rounded-[16px] p-6
-  bg-white absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%]
-  ${(p) => (p.$isClosing ? "animate-closeModal" : "animate-modal")}
-`;
+export const ModalWrap = tw.div<Closing>`max-w-[28rem] w-[80%] h-[34rem] flex flex-col rounded-[16px] p-6
+bg-white absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%]
+${(p) => (p.$isClosing ? "animate-closeModal mobile:animate-closeMobileModal" : "animate-modal mobile:animate-mobileModal")}
+mobile:w-full mobile:h-full mobile:rounded-t-2xl mobile:mt-6`
 
 export const TitleWrap = tw.div`h-[10%]`;
 

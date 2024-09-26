@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 
 import * as tw from "./RegReview.modal.styles";
 import StarRating from "./StarRating";
+import AlertModal from "../alert/Alert.modal";
+import { ModalPortal } from "../ModalPortal";
 
 interface ModalProps {
     onClose: () => void;
@@ -26,6 +28,19 @@ export default function RegReviewModal({ onClose, bookingId, hotelName, hotelId 
         setTimeout(() => {
             onClose();
         }, 500);
+    };
+
+    const [alertMessage, setAlertMessage] = useState("")
+    const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
+    const [onCloseCallback, setOnCloseCallback] = useState<() => void>(() => {});
+    const openAlertModal = (callback: () => void) => {
+        setOnCloseCallback(() => callback);
+        setIsAlertModalOpen(true);
+    };
+
+    const closeAlertModal = () => {
+        setIsAlertModalOpen(false);
+        onCloseCallback();
     };
     
 
@@ -61,11 +76,13 @@ export default function RegReviewModal({ onClose, bookingId, hotelName, hotelId 
                 },
                 method: "post",
                 url: "/booking/review/reg",
-                data: reviewData
+                data: reviewData,
             });
 
             await axiosInstance.request(config);
-            window.alert("저장완료");
+            setAlertMessage("등록되었습니다.");
+            const handleModalClose = () => {};
+            openAlertModal(handleModalClose);
             handleCloseClick();
         } catch (error) {
             handleAxiosError(error, navigate);
@@ -101,6 +118,13 @@ export default function RegReviewModal({ onClose, bookingId, hotelName, hotelId 
                     등록하기
                 </tw.RegBtn>
             </tw.ModalWrap>
+
+            {isAlertModalOpen && (
+                <ModalPortal>
+                    <AlertModal message={alertMessage} onClose={closeAlertModal} />
+                </ModalPortal>
+            )}
+
         </tw.Container>
     );
 }

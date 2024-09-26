@@ -22,6 +22,18 @@ interface ModalProps {
 
 export default function SetRoomModal({ onClose, hotel_id, room_id }: ModalProps) {
     const navigate = useNavigate();
+    const [isClosing, setIsClosing] = useState(false);
+
+    const handleCloseClick = () => {
+        triggerCloseAnimation();
+    };
+
+    const triggerCloseAnimation = () => {
+        setIsClosing(true);
+        setTimeout(() => {
+            onClose();
+        }, 500);
+    };
 
     const [loading, setLoading] = useState(true);
     const openLoadingModal = () => {
@@ -255,7 +267,7 @@ export default function SetRoomModal({ onClose, hotel_id, room_id }: ModalProps)
                 await axiosInstance.request(config);
                 openAlertModal("저장되었습니다.", () => {
                     fetchRoomInfo();
-                    onClose();
+                    handleCloseClick();
                 });
             }
         } catch (error) {
@@ -276,10 +288,10 @@ export default function SetRoomModal({ onClose, hotel_id, room_id }: ModalProps)
     };
 
     return (
-        <tw.Container>
-            <tw.ModalWrap>
+        <tw.Container $isClosing={isClosing}>
+            <tw.ModalWrap $isClosing={isClosing}>
                 <tw.TitleWrap>
-                    <tw.CloseBtn onClick={onClose}>
+                    <tw.CloseBtn onClick={handleCloseClick}>
                         <tw.CloseSVG alt="" src={require("../../../assets/svg/close_svg.svg").default}></tw.CloseSVG>
                     </tw.CloseBtn>
                     <tw.Title>객실정보수정</tw.Title>

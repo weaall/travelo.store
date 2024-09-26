@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { sendJWT } from "../../../utils/jwtUtils";
-import { axios, axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
+import { axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
 import { useNavigate } from "react-router-dom";
 
 import * as tw from "./RegRoom.modal.styles";
+import { ModalPortal } from "../ModalPortal";
+import AlertModal from "../alert/Alert.modal";
 
 interface ModalProps {
     onClose: () => void;
@@ -12,6 +14,32 @@ interface ModalProps {
 
 export default function RegRoomModal({ onClose, hotel_id }: ModalProps) {
     const navigate = useNavigate();
+
+    const [isClosing, setIsClosing] = useState(false);
+
+    const handleCloseClick = () => {
+        triggerCloseAnimation();
+    };
+
+    const triggerCloseAnimation = () => {
+        setIsClosing(true);
+        setTimeout(() => {
+            onClose();
+        }, 500);
+    };
+
+    const [alertMessage, setAlertMessage] = useState("")
+    const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
+    const [onCloseCallback, setOnCloseCallback] = useState<() => void>(() => {});
+    const openAlertModal = (callback: () => void) => {
+        setOnCloseCallback(() => callback);
+        setIsAlertModalOpen(true);
+    };
+
+    const closeAlertModal = () => {
+        setIsAlertModalOpen(false);
+        onCloseCallback();
+    };
 
     const [roomData, setRoomData] = useState({
         hotel_id: hotel_id,
@@ -44,16 +72,18 @@ export default function RegRoomModal({ onClose, hotel_id }: ModalProps) {
     };
 
     const onClickRegister = async () => {
-        if (window.confirm("저장하시겠습니까?")) {
+        if (window.confirm("등록하시겠습니까?")) {
             try {
                 const config = await sendJWT({
                     method: "post",
                     url: "/room/reg",
                     data: roomData,
                 });
-                await axiosInstance.request(config)
-                window.alert("저장완료");
-                onClose();
+                await axiosInstance.request(config);
+                setAlertMessage("등록되었습니다.");
+                const handleModalClose = () => {};
+                openAlertModal(handleModalClose);
+                handleCloseClick();
             } catch (error) {
                 handleAxiosError(error, navigate);
             }
@@ -84,10 +114,10 @@ export default function RegRoomModal({ onClose, hotel_id }: ModalProps) {
     }, []);
 
     return (
-        <tw.Container>
-            <tw.ModalWrap>
+        <tw.Container $isClosing={isClosing}>
+            <tw.ModalWrap $isClosing={isClosing}>
                 <tw.TitleWrap>
-                    <tw.CloseBtn onClick={onClose}>
+                    <tw.CloseBtn onClick={handleCloseClick}>
                         <tw.CloseSVG alt="" src={require("../../../assets/svg/close_svg.svg").default}></tw.CloseSVG>
                     </tw.CloseBtn>
                     <tw.Title>객실추가</tw.Title>
@@ -126,6 +156,13 @@ export default function RegRoomModal({ onClose, hotel_id }: ModalProps) {
                     </tw.RegBtn>
                 </tw.RegWrap>
             </tw.ModalWrap>
+
+            {isAlertModalOpen && (
+                <ModalPortal>
+                    <AlertModal message={alertMessage} onClose={closeAlertModal} />
+                </ModalPortal>
+            )}
+
         </tw.Container>
     );
 }

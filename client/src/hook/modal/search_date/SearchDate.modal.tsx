@@ -8,7 +8,25 @@ interface ModalProps {
     endDate: string;
 }
 
+interface DateProps {
+    startDate: string,
+    endDate: string,
+}
+
 export default function SearchDateModal({ onClose, startDate, endDate }: ModalProps) {
+    const [isClosing, setIsClosing] = useState(false);
+
+    const handleCloseClick = ({startDate, endDate} : DateProps) => {
+        triggerCloseAnimation({startDate, endDate});
+    };
+
+    const triggerCloseAnimation = ({startDate, endDate} : DateProps ) => {
+        setIsClosing(true);
+        setTimeout(() => {
+            onClose({startDate, endDate});
+        }, 500);
+    };
+
     const [date, setDate] = useState(dayjs());
 
     const [dateValue, setDateValue] = useState({
@@ -99,10 +117,10 @@ export default function SearchDateModal({ onClose, startDate, endDate }: ModalPr
     };
 
     return (
-        <tw.Container>
-            <tw.ModalWrap>
+        <tw.Container $isClosing={isClosing}>
+            <tw.ModalWrap $isClosing={isClosing}>
                 <tw.TitleWrap>
-                    <tw.CloseBtn onClick={() => onClose({ startDate, endDate })}>
+                    <tw.CloseBtn onClick={() => handleCloseClick({ startDate, endDate })}>
                         <tw.CloseSVG alt="" src={require("../../../assets/svg/close_svg.svg").default}></tw.CloseSVG>
                     </tw.CloseBtn>
                     <tw.Title>날짜 선택</tw.Title>
@@ -212,7 +230,7 @@ export default function SearchDateModal({ onClose, startDate, endDate }: ModalPr
                 </tw.CalendarWrap>
 
                 <tw.RegWrap>
-                    <tw.RegBtn onClick={() => onClose(dateValue)} $validator={validator()} disabled={!validator()}>
+                    <tw.RegBtn onClick={() => handleCloseClick(dateValue)} $validator={validator()} disabled={!validator()}>
                         확인
                     </tw.RegBtn>
                 </tw.RegWrap>

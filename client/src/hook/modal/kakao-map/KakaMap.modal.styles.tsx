@@ -4,7 +4,7 @@ interface Closing {
     $isClosing: boolean;
 }
 
-export const Container = tw.div<Closing>`w-full h-full bg-zinc-400/[0.3] fixed top-0 z-50
+export const Container = tw.div<Closing>`w-full h-full bg-zinc-400/[0.3] fixed top-0 z-50 pb-4
 ${(p) => (p.$isClosing ? "animate-closeBackdrop" : "animate-backdrop")}`
 
 

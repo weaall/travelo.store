@@ -9,7 +9,24 @@ interface ModalProps {
     child: number;
 }
 
+interface NumberProps{
+    adult: number;
+    child: number;
+}
+
 export default function SearchPersonModal({ onClose, adult, child}: ModalProps) {
+    const [isClosing, setIsClosing] = useState(false);
+
+    const handleCloseClick = ({adult, child} : NumberProps) => {
+        triggerCloseAnimation({adult, child});
+    };
+
+    const triggerCloseAnimation = ({adult, child} : NumberProps ) => {
+        setIsClosing(true);
+        setTimeout(() => {
+            onClose({adult, child});
+        }, 500);
+    };
 
     const [personValue, setPersonValue] = useState({
         adult: adult,
@@ -34,10 +51,10 @@ export default function SearchPersonModal({ onClose, adult, child}: ModalProps) 
 
 
     return (
-        <tw.Container>
-            <tw.ModalWrap>
+        <tw.Container $isClosing={isClosing}>
+            <tw.ModalWrap $isClosing={isClosing}>
                 <tw.TitleWrap>
-                    <tw.CloseBtn onClick={() => onClose({ adult, child })}>
+                    <tw.CloseBtn onClick={() => handleCloseClick({ adult, child })}>
                         <tw.CloseSVG alt="" src={require("../../../assets/svg/close_svg.svg").default}></tw.CloseSVG>
                     </tw.CloseBtn>
                     <tw.Title>인원 선택</tw.Title>
@@ -72,7 +89,7 @@ export default function SearchPersonModal({ onClose, adult, child}: ModalProps) 
                 </tw.InputWrap>
 
                 <tw.RegWrap>
-                    <tw.RegBtn onClick={() => onClose(personValue)} $validator={true}>
+                    <tw.RegBtn onClick={() => handleCloseClick(personValue)} $validator={true}>
                         확인
                     </tw.RegBtn>
                 </tw.RegWrap>

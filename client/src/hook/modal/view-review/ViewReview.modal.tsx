@@ -13,6 +13,20 @@ interface ModalProps {
 
 export default function ViewReviewModal({ onClose, bookingId, hotelName}: ModalProps) {
     const navigate = useNavigate();
+
+    const [isClosing, setIsClosing] = useState(false);
+
+    const handleCloseClick = () => {
+        triggerCloseAnimation();
+    };
+
+    const triggerCloseAnimation = () => {
+        setIsClosing(true);
+        setTimeout(() => {
+            onClose();
+        }, 500);
+    };
+
     const [loading, setLoading] = useState(true);
 
     const [reviewData, setReviewData] = useState({
@@ -52,10 +66,10 @@ export default function ViewReviewModal({ onClose, bookingId, hotelName}: ModalP
     }
 
     return (
-        <tw.Container>
-            <tw.ModalWrap>
+        <tw.Container $isClosing={isClosing}>
+            <tw.ModalWrap $isClosing={isClosing}>
                 <tw.TitleWrap>
-                    <tw.CloseBtn onClick={onClose}>
+                    <tw.CloseBtn onClick={handleCloseClick}>
                         <tw.CloseSVG alt="" src={require("../../../assets/svg/close_svg.svg").default}></tw.CloseSVG>
                     </tw.CloseBtn>
                     <tw.Title>후기</tw.Title>

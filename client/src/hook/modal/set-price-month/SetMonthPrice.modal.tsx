@@ -1,9 +1,11 @@
-import React, { DragEvent, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { sendJWT } from "../../../utils/jwtUtils";
-import { axios, axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
+import { axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
 import { useNavigate } from "react-router-dom";
 
 import * as tw from "./SetMonthPrice.modal.styles"
+import { ModalPortal } from "../ModalPortal";
+import AlertModal from "../alert/Alert.modal";
 
 interface ModalProps {
     onClose: () => void;
@@ -15,7 +17,31 @@ interface ModalProps {
 
 export default function SetPriceByMonthModal({ onClose, hotel_id, room_id, year, month }: ModalProps) {
     const navigate = useNavigate();
+    const [isClosing, setIsClosing] = useState(false);
 
+    const handleCloseClick = () => {
+        triggerCloseAnimation();
+    };
+
+    const triggerCloseAnimation = () => {
+        setIsClosing(true);
+        setTimeout(() => {
+            onClose();
+        }, 500);
+    };
+
+    const [alertMessage, setAlertMessage] = useState("")
+    const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
+    const [onCloseCallback, setOnCloseCallback] = useState<() => void>(() => {});
+    const openAlertModal = (callback: () => void) => {
+        setOnCloseCallback(() => callback);
+        setIsAlertModalOpen(true);
+    };
+
+    const closeAlertModal = () => {
+        setIsAlertModalOpen(false);
+        onCloseCallback();
+    };
 
     const [priceData, setPriceData] = useState({
         hotel_id: hotel_id,
@@ -43,26 +69,26 @@ export default function SetPriceByMonthModal({ onClose, hotel_id, room_id, year,
     };
     
 
-    const onClickSave= async () => {
-        if (window.confirm("저장하시겠습니까?")) {
-            try {
-                const config = await sendJWT({
-                    method: "post",
-                    url: "/room/price/month",
-                    data: priceData,
-                });
-                await axiosInstance.request(config);
-                window.alert("저장완료");
-                onClose();
-            } catch (error) {
-                handleAxiosError(error, navigate);
-            }
+    const onClickSave = async () => {
+        try {
+            const config = await sendJWT({
+                method: "post",
+                url: "/room/price/month",
+                data: priceData,
+            });
+            await axiosInstance.request(config);
+            setAlertMessage("등록되었습니다.");
+            const handleModalClose = () => {};
+            openAlertModal(handleModalClose);
+            handleCloseClick();
+        } catch (error) {
+            handleAxiosError(error, navigate);
         }
     };
 
     return (
-        <tw.Container>
-            <tw.ModalWrap>
+        <tw.Container $isClosing={isClosing}>
+            <tw.ModalWrap $isClosing={isClosing}>
                 <tw.TitleWrap>
                     <tw.CloseBtn onClick={onClose}>
                         <tw.CloseSVG alt="" src={require("../../../assets/svg/close_svg.svg").default}></tw.CloseSVG>
@@ -107,6 +133,13 @@ export default function SetPriceByMonthModal({ onClose, hotel_id, room_id, year,
                     설정하기
                 </tw.RegBtn>
             </tw.ModalWrap>
+
+            {isAlertModalOpen && (
+                <ModalPortal>
+                    <AlertModal message={alertMessage} onClose={closeAlertModal} />
+                </ModalPortal>
+            )}
+
         </tw.Container>
     );
 }

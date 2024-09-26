@@ -26,6 +26,8 @@ const ITEMS_PER_PAGE = 3;
 export default function ReviewListModal({ onClose, reviewList}: ModalProps) {
     const [currentPage, setCurrentPage] = useState(0);
 
+    const [isClosing, setIsClosing] = useState(false);
+
     const totalPages = Math.ceil(reviewList.length / ITEMS_PER_PAGE);
 
     const prevPage = () => {
@@ -47,8 +49,8 @@ export default function ReviewListModal({ onClose, reviewList}: ModalProps) {
     const currentReviews = reviewList.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
     return (
-        <tw.Container>
-            <tw.ModalWrap>
+        <tw.Container $isClosing={isClosing}>
+            <tw.ModalWrap $isClosing={isClosing}>
                 <tw.TitleWrap>
                     <tw.CloseBtn onClick={onClose}>
                         <tw.CloseSVG alt="" src={require("../../../assets/svg/close_svg.svg").default}></tw.CloseSVG>
