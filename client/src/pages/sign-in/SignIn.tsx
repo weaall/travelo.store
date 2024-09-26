@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { axios, axiosInstance, handleAxiosError } from "../../utils/axios.utils";
+import { axios, axiosInstance } from "../../utils/axios.utils";
 import KaKao from "./Kakao";
 import Naver from "./Naver";
 import { useNavigate } from "react-router-dom";

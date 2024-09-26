@@ -30,8 +30,8 @@ export default function ConfirmModal({ onClose, message }: ModalProps) {
                 <tw.ContentsWrap>
                     <tw.Message>{message}</tw.Message>
                     <tw.BtnWrap>
-                        <tw.ConfirmBtn onClick={handleConfirmClick}>확인</tw.ConfirmBtn>
                         <tw.CancelBtn onClick={handleCancelClick}>취소</tw.CancelBtn>
+                        <tw.ConfirmBtn onClick={handleConfirmClick}>확인</tw.ConfirmBtn>
                     </tw.BtnWrap>
                 </tw.ContentsWrap>
             </tw.ModalWrap>

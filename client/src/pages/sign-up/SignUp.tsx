@@ -4,7 +4,7 @@ import { checkValidEmail, checkValidMobile, checkValidPassword, checkValidUserNa
 import { ModalPortal } from "../../hook/modal/ModalPortal";
 import { useNavigate } from "react-router-dom";
 import * as tw from "./SignUp.styles";
-import Terms from "../../hook/modal/Terms/Terms.modal";
+import Terms from "../../hook/modal/terms/Terms.modal";
 import AlertModal from "../../hook/modal/alert/Alert.modal";
 import { encryptPass } from "../../utils/cryptoJs";
 import ConfirmEmailModal from "../../hook/modal/confirm-email/ConfirmEmail.modal";

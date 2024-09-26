@@ -115,6 +115,22 @@ module.exports = {
                         opacity: 1,
                     },
                 },
+                mobileModal: {
+                    from: {
+                        transform: "translate(-50%, 0)",
+                    },
+                    to: {
+                        transform: "translate(-50%, -50%)",
+                    },
+                },
+                closeMobileModal: {
+                    from: {
+                        transform: "translate(-50%, -50%)",
+                    },
+                    to: {
+                        transform: "translate(-50%, 0)",
+                    },
+                },
             },
             animation: {
                 modal: "modal 0.5s ease-out forwards",
@@ -124,6 +140,8 @@ module.exports = {
                 gradient: "gradient 1s ease infinite alternate",
                 drawer: "drawer 0.5s ease-out forwards",
                 closeDrawer: "closeDrawer 0.5s ease-out forwards",
+                mobileModal: "mobileModal 0.5s ease-out forwards",
+                closeMobileModal: "closeMobileModal 0.5s ease-out forwards",
             },
             backgroundSize: {
                 "300%": "300%",

@@ -15,12 +15,12 @@ export const Container = tw.div<Closing>`
 `;
 
 export const ModalWrap = tw.div<Closing>`
-  max-w-[28rem] w-auto h-auto flex flex-col rounded-[16px] p-6
-  bg-white absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%]
-  ${(p) => (p.$isClosing ? "animate-closeModal" : "animate-modal")}
-`;
+max-w-[28rem] w-auto h-auto flex flex-col rounded-[16px] p-6
+bg-white absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%]
+${(p) => (p.$isClosing ? "animate-closeModal mobile:animate-closeMobileModal" : "animate-modal mobile:animate-mobileModal")}
+mobile:w-auto mobile:h-full mobile:rounded-t-2xl mobile:mt-6`
 
-export const ContentsWrap = tw.div`flex flex-col items-center px-4`;
+export const ContentsWrap = tw.div`flex flex-col items-center`;
 
 export const Message = tw.p`font-medium text-base text-center py-4 pb-6 truncate`;
 

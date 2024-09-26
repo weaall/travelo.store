@@ -37,6 +37,19 @@ const customerKey = nanoid(12);
 export function CheckoutModal( props : ModalProps) {
     const navigate = useNavigate();
 
+    const [isClosing, setIsClosing] = useState(false);
+
+    const handleCloseClick = () => {
+        triggerCloseAnimation();
+    };
+
+    const triggerCloseAnimation = () => {
+        setIsClosing(true);
+        setTimeout(() => {
+            props.onClose();
+        }, 500);
+    };
+
     const { data: paymentWidget } = usePaymentWidget(clientKey, customerKey);
     const paymentMethodsWidgetRef = useRef<ReturnType<PaymentWidgetInstance["renderPaymentMethods"]> | null>(null);
     const [price, setPrice] = useState(props.totalPrice);
@@ -110,10 +123,10 @@ export function CheckoutModal( props : ModalProps) {
 
 
     return (
-        <tw.Container>
-            <tw.ModalWrap>
+        <tw.Container $isClosing={isClosing}>
+            <tw.ModalWrap $isClosing={isClosing}>
                 <tw.TitleWrap>
-                    <tw.CloseBtn onClick={props.onClose}>
+                    <tw.CloseBtn onClick={handleCloseClick}>
                         <tw.CloseSVG alt="닫기 버튼" src={require("../../../assets/svg/close_svg.svg").default} />
                     </tw.CloseBtn>
                     <tw.Title>예약하기</tw.Title>
