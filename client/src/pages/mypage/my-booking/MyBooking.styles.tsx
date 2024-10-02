@@ -17,6 +17,9 @@ export const ContentsWrap = tw.div`flex flex-col w-full space-y-3`
 export const MobileWrap = tw.div`flex flex-col w-full px-10
 mobile:w-full mobile:px-2`
 
+export const DateTitleLoading = tw.p`h-6 w-24 mt-4 rounded shadow-md
+mobile:ml-4
+bg-gradient-to-r from-darkGray via-midGray to-lightGray bg-300% animate-gradient`
 export const DateTitle = tw.p`text-sm font-medium text-gray-400 pt-4
 mobile:ml-4`
 
@@ -29,6 +32,8 @@ mobile:hover:bg-black`
 
 export const BookingOuterWrap =tw.div`space-y-3`
 
+export const BookingWrapLoading = tw.div`h-64 mobile:h-[430px] flex flex-col w-full rounded-2xl shadow-md
+bg-gradient-to-r from-darkGray via-midGray to-lightGray bg-300% animate-gradient`
 export const BookingWrap = tw.div`flex flex-col w-full rounded-2xl bg-white h-auto shadow-md border
 mobile:flex mobile:flex-col mobile:h-auto`
 

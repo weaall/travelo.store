@@ -5,7 +5,6 @@ import dayjs from "dayjs";
 import ImgLoader from "../../../utils/imgLoader";
 import { ModalPortal } from "../../../hook/modal/ModalPortal";
 import KakaoMapModal from "../../../hook/modal/kakao-map/KakaMap.modal";
-import LoadingModal from "../../../hook/modal/loading/Loading.modal";
 
 import { sendJWT } from "../../../utils/jwtUtils";
 import { axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
@@ -38,12 +37,6 @@ interface HotelData {
 export default function MyBookingPage() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
-    const openLoadingModal = () => {
-        setLoading(true);
-    };
-    const closeLoadingModal = () => {
-        setLoading(false);
-    };
 
     const [isKakaoMapModalOpen, setIsKakaoMapModalOpen] = useState(false);
     const [selectedHotel, setSelectedHotel] = useState<any>(null);
@@ -63,7 +56,6 @@ export default function MyBookingPage() {
     const [hotelDataCache, setHotelDataCache] = useState<{ [hotelId: number]: HotelData }>({});
 
     const fetchBooking = useCallback(async () => {
-        openLoadingModal();
         try {
             const config = await sendJWT({
                 method: "GET",
@@ -95,7 +87,7 @@ export default function MyBookingPage() {
         } catch (error) {
             handleAxiosError(error, navigate);
         } finally {
-            closeLoadingModal();
+            setLoading(false)
         }
     }, [navigate, hotelDataCache]);
 
@@ -128,6 +120,14 @@ export default function MyBookingPage() {
                 <tw.TitleWrap>
                     <tw.Title>예약확인</tw.Title>
                 </tw.TitleWrap>
+                {loading ? (
+                    <tw.ContentsWrap>
+                        <tw.BookingOuterWrap>
+                            <tw.DateTitleLoading />
+                            <tw.BookingWrapLoading />
+                        </tw.BookingOuterWrap>
+                    </tw.ContentsWrap>
+                ) : (
                 <tw.ContentsWrap>
                     {Object.keys(groupedBookings).length === 0 ? (
                         <tw.NoBookingWrap>
@@ -189,13 +189,8 @@ export default function MyBookingPage() {
                         ))
                     )}
                 </tw.ContentsWrap>
+                )}
             </tw.MobileWrap>
-
-            {loading && (
-                <ModalPortal>
-                    <LoadingModal onClose={closeLoadingModal} />
-                </ModalPortal>
-            )}
 
             {isKakaoMapModalOpen && selectedHotel && (
                 <ModalPortal>

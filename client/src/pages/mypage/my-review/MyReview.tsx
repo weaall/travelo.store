@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 
@@ -7,7 +7,6 @@ import { ModalPortal } from "../../../hook/modal/ModalPortal";
 import KakaoMapModal from "../../../hook/modal/kakao-map/KakaMap.modal";
 import RegReviewModal from "../../../hook/modal/reg-review/RegReview.modal";
 import ViewReviewModal from "../../../hook/modal/view-review/ViewReview.modal";
-import LoadingModal from "../../../hook/modal/loading/Loading.modal";
 
 import { sendJWT } from "../../../utils/jwtUtils";
 import { axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
@@ -40,12 +39,6 @@ interface HotelData {
 export default function MyReviewPage() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
-    const openLoadingModal = () => {
-        setLoading(true);
-    };
-    const closeLoadingModal = () => {
-        setLoading(false);
-    };
 
     const [isKakaoMapModalOpen, setIsKakaoMapModalOpen] = useState(false);
     const [isRegReviewModalOpen, setIsRegReviewModalOpen] = useState(false);
@@ -54,7 +47,10 @@ export default function MyReviewPage() {
     const [selectedHotel, setSelectedHotel] = useState<any>(null);
     const [bookingData, setBookingData] = useState<Booking[]>([]);
     const [hotelDataCache, setHotelDataCache] = useState<{ [hotelId: number]: HotelData }>({});
-    const [displayCount, setDisplayCount] = useState(5);
+
+    const [visibleDates, setVisibleDates] = useState(3);
+
+    const observer = useRef<IntersectionObserver | null>(null);
 
     const openKakaoMapModal = (hotelData: HotelData) => {
         setSelectedHotel(hotelData);
@@ -88,7 +84,6 @@ export default function MyReviewPage() {
     };
 
     const fetchBooking = useCallback(async () => {
-        openLoadingModal();
         try {
             const config = await sendJWT({
                 method: "GET",
@@ -120,9 +115,9 @@ export default function MyReviewPage() {
         } catch (error) {
             handleAxiosError(error, navigate);
         } finally {
-            closeLoadingModal();
+            setLoading(false);
         }
-    },[navigate, hotelDataCache]);
+    }, [navigate, hotelDataCache]);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -140,16 +135,30 @@ export default function MyReviewPage() {
             return acc;
         }, {} as { [key: string]: Booking[] });
     };
+    
 
     const sortedBookingData = [...bookingData].sort((a, b) => {
         return new Date(b.check_in).getTime() - new Date(a.check_in).getTime();
     });
 
-    const groupedBookings = groupByCheckInDate(sortedBookingData.slice(0, displayCount));
+    const groupedBookings = groupByCheckInDate(sortedBookingData);
 
-    const handleShowMore = () => {
-        setDisplayCount((prevCount) => prevCount + 5);
-    };
+    const visibleDateKeys = Object.keys(groupedBookings).slice(0, visibleDates);
+
+    useEffect(() => {
+        if (loading) return;
+        if (observer.current) observer.current.disconnect();
+
+        const handleObserver = (entries: IntersectionObserverEntry[]) => {
+            if (entries[0].isIntersecting) {
+                setVisibleDates((prev) => prev + 3);
+            }
+        };
+
+        observer.current = new IntersectionObserver(handleObserver);
+        const lastBookingElement = document.querySelector(".last-booking");
+        if (lastBookingElement) observer.current.observe(lastBookingElement);
+    }, [loading, visibleDates, groupedBookings]);
 
     return (
         <tw.Container>
@@ -157,76 +166,76 @@ export default function MyReviewPage() {
                 <tw.TitleWrap>
                     <tw.Title>이용후기</tw.Title>
                 </tw.TitleWrap>
-                <tw.ContentsWrap>
-                    {Object.keys(groupedBookings).length === 0 ? (
-                        <tw.NoBookingWrap>
-                            <tw.NoBookingText>다녀온 여행이 없어요!</tw.NoBookingText>
-                            <tw.GoTripBtn onClick={() => navigate("/")}>여행하러가기</tw.GoTripBtn>
-                        </tw.NoBookingWrap>
-                    ) : (
-                        Object.keys(groupedBookings).map((date) => (
-                            <tw.BookingOuterWrap key={date}>
-                                <tw.DateTitle>{date}</tw.DateTitle>
-                                {groupedBookings[date].map((booking: Booking) => (
-                                    <tw.BookingWrap key={booking.booking_id}>
-                                        <tw.BookingIdWrap>
-                                            <tw.BookingId>ID {booking.booking_id}</tw.BookingId>
-                                        </tw.BookingIdWrap>
-                                        <tw.FlexWrap>
-                                            <tw.Pic>
-                                                <ImgLoader imageUrl={getThumbnailCFUrl(`/hotel_img/${booking.hotel_id}`)} altText="" />
-                                            </tw.Pic>
-                                            <tw.HotelInfo>
-                                                <tw.HotelTitle>{booking.hotelData.name}</tw.HotelTitle>
-                                                <tw.AddressWrap>
-                                                    <tw.AddressSVG alt="" src={require("../../../assets/svg/location_icon.svg").default} />
-                                                    <tw.HotelAddress onClick={() => openKakaoMapModal(booking.hotelData)}>
-                                                        {booking.hotelData.address} {booking.hotelData.address_detail}, {booking.hotelData.postcode}
-                                                    </tw.HotelAddress>
-                                                </tw.AddressWrap>
-                                                <tw.CheckWrap>
-                                                    <tw.CheckInWrap>
-                                                        <tw.CheckLabel>체크인</tw.CheckLabel>
-                                                        <tw.CheckText>{dayjs(booking.check_in).format("YYYY. MM. DD (dddd)")}</tw.CheckText>
-                                                    </tw.CheckInWrap>
-                                                    <tw.CheckOutWrap>
-                                                        <tw.CheckLabel>체크아웃</tw.CheckLabel>
-                                                        <tw.CheckText>{dayjs(booking.check_out).format("YYYY. MM. DD (dddd)")}</tw.CheckText>
-                                                    </tw.CheckOutWrap>
-                                                </tw.CheckWrap>
-                                            </tw.HotelInfo>
-                                        </tw.FlexWrap>
-                                        <tw.MgmtBtnWrap>
-                                            <tw.MgmtBtn
-                                                onClick={() => {
-                                                    if (booking.review === 0) {
-                                                        openRegReviewModal(booking);
-                                                    } else {
-                                                        openViewReviewModal(booking);
-                                                    }
-                                                }}
-                                            >
-                                                {booking.review === 0 ? "후기 남기기" : "후기 확인하기"}
-                                            </tw.MgmtBtn>
-                                        </tw.MgmtBtnWrap>
-                                    </tw.BookingWrap>
-                                ))}
-                            </tw.BookingOuterWrap>
-                        ))
-                    )}
-                </tw.ContentsWrap>
-                {displayCount < sortedBookingData.length && (
-                    <tw.ShowMoreWrap>
-                        <tw.ShowMoreBtn onClick={handleShowMore}>더 보기</tw.ShowMoreBtn>
-                    </tw.ShowMoreWrap>
+                {loading ? (
+                    <tw.ContentsWrap>
+                        <tw.BookingOuterWrap>
+                            <tw.DateTitleLoading />
+                            <tw.BookingWrapLoading />
+                            <tw.DateTitleLoading />
+                            <tw.BookingWrapLoading />
+                        </tw.BookingOuterWrap>
+                    </tw.ContentsWrap>
+                ) : (
+                    <tw.ContentsWrap>
+                        {visibleDateKeys.length === 0 ? (
+                            <tw.NoBookingWrap>
+                                <tw.NoBookingText>다녀온 여행이 없어요!</tw.NoBookingText>
+                                <tw.GoTripBtn onClick={() => navigate("/")}>여행하러가기</tw.GoTripBtn>
+                            </tw.NoBookingWrap>
+                        ) : (
+                            visibleDateKeys.map((date, index) => (
+                                <tw.BookingOuterWrap key={date} className={groupedBookings[date].length === index + 1 ? "last-booking" : ""}>
+                                    <tw.DateTitle>{date}</tw.DateTitle>
+                                    {groupedBookings[date].map((booking: Booking) => (
+                                        <tw.BookingWrap key={booking.booking_id}>
+                                            <tw.BookingIdWrap>
+                                                <tw.BookingId>ID {booking.booking_id}</tw.BookingId>
+                                            </tw.BookingIdWrap>
+                                            <tw.FlexWrap>
+                                                <tw.Pic>
+                                                    <ImgLoader imageUrl={getThumbnailCFUrl(`/hotel_img/${booking.hotel_id}`)} altText="" />
+                                                </tw.Pic>
+                                                <tw.HotelInfo>
+                                                    <tw.HotelTitle>{booking.hotelData.name}</tw.HotelTitle>
+                                                    <tw.AddressWrap>
+                                                        <tw.AddressSVG alt="" src={require("../../../assets/svg/location_icon.svg").default} />
+                                                        <tw.HotelAddress onClick={() => openKakaoMapModal(booking.hotelData)}>
+                                                            {booking.hotelData.address} {booking.hotelData.address_detail}, {booking.hotelData.postcode}
+                                                        </tw.HotelAddress>
+                                                    </tw.AddressWrap>
+                                                    <tw.CheckWrap>
+                                                        <tw.CheckInWrap>
+                                                            <tw.CheckLabel>체크인</tw.CheckLabel>
+                                                            <tw.CheckText>{dayjs(booking.check_in).format("YYYY. MM. DD (dddd)")}</tw.CheckText>
+                                                        </tw.CheckInWrap>
+                                                        <tw.CheckOutWrap>
+                                                            <tw.CheckLabel>체크아웃</tw.CheckLabel>
+                                                            <tw.CheckText>{dayjs(booking.check_out).format("YYYY. MM. DD (dddd)")}</tw.CheckText>
+                                                        </tw.CheckOutWrap>
+                                                    </tw.CheckWrap>
+                                                </tw.HotelInfo>
+                                            </tw.FlexWrap>
+                                            <tw.MgmtBtnWrap>
+                                                <tw.MgmtBtn
+                                                    onClick={() => {
+                                                        if (booking.review === 0) {
+                                                            openRegReviewModal(booking);
+                                                        } else {
+                                                            openViewReviewModal(booking);
+                                                        }
+                                                    }}
+                                                >
+                                                    {booking.review === 0 ? "후기 남기기" : "후기 확인하기"}
+                                                </tw.MgmtBtn>
+                                            </tw.MgmtBtnWrap>
+                                        </tw.BookingWrap>
+                                    ))}
+                                </tw.BookingOuterWrap>
+                            ))
+                        )}
+                    </tw.ContentsWrap>
                 )}
             </tw.MobileWrap>
-
-            {loading && (
-                <ModalPortal>
-                    <LoadingModal onClose={closeLoadingModal} />
-                </ModalPortal>
-            )}
 
             {isKakaoMapModalOpen && selectedHotel && (
                 <ModalPortal>
