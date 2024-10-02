@@ -25,7 +25,6 @@ client/.env
 server/.env
 /**/.env
 /**/.env.local
-Dockerfile
 docker-compose.yml
 
 # Nginx configuration
