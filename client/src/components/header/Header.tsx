@@ -116,9 +116,13 @@ export default function Header() {
                         {isRoot ? null : <tw.BackSvg alt="back" src={require("../../assets/svg/arrow_left_short.svg").default} />}
                     </tw.ActiveBtn>
                     <tw.NavHome onClick={() => navigateClick("/")}>{navTitle}</tw.NavHome>
+                    {!isSignIn ? (
+                        <tw.SignInBtn onClick={() => navigateClick("/signin")}>로그인</tw.SignInBtn>
+                    ) : (
                     <tw.SignInBtn onClick={handleMenuClick}>
                         <tw.Svg alt="menu" src={require("../../assets/svg/list_icon.svg").default} />
                     </tw.SignInBtn>
+                    )}
                 </tw.NavWrap>
             </tw.ContentsWrap>
 

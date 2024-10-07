@@ -11,8 +11,7 @@ export const Container = tw.div`min-h-screen-16 w-full flex flex-col items-cente
 
 export const ContentsWrap = tw.div`max-w-[480px] px-8 w-full flex flex-col pb-6`
 
-export const ContentsLabel = tw.p`text-xl text-center pt-4 pb-6`
-export const ContentsText = tw.p`text-xl text-center pt-4 pb-6`
+export const ContentsLabel = tw.p`text-xl text-center pb-6`
 
 export const InputWrap = tw.div`flex flex-col text-left`
 export const UpperTag = tw.p<UnderTagProps>`text-sm font-medium mt-3
