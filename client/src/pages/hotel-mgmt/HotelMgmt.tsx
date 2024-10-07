@@ -1,19 +1,19 @@
-import { useEffect, useState } from "react"
-import { sendJWT } from "../../utils/jwtUtils"
-import { axiosInstance, handleAxiosError } from "../../utils/axios.utils"
-import { Routes, Route, useParams,  useNavigate } from "react-router-dom"
-import { HotelDataProps } from "../../interface/interfaces"
-import * as tw from "./HotelMgmt.styles"
+import { useEffect, useState } from "react";
+import { sendJWT } from "../../utils/jwtUtils";
+import { axiosInstance, handleAxiosError } from "../../utils/axios.utils";
+import { Routes, Route, useParams, useNavigate } from "react-router-dom";
+import { HotelDataProps } from "../../interface/interfaces";
+import * as tw from "./HotelMgmt.styles";
 
-import HotelInfo from "./hotel-info/HotelInfo"
-import HotelRoom from "./hotel-room/HotelRoom"
-import PriceCalendar from "./hotel-calendar/PriceCalendar"
-import HotelMsgPage from "./hotel-msg/HotelMsg"
-import HotelChatPage from "./hotel-chat/HotelChat"
-import MgmtSideBar from "./mgmt-sidebar/MgmtSideBar"
-import { decrypt, encrypt } from "../../utils/cryptoJs"
-import dayjs from "dayjs"
-import HotelBookingPage from "./hotel-booking/HotelBooking"
+import HotelInfo from "./hotel-info/HotelInfo";
+import HotelRoom from "./hotel-room/HotelRoom";
+import PriceCalendar from "./hotel-calendar/PriceCalendar";
+import HotelChatListPage from "./hotel-chat-list/HotelChatList";
+import HotelChatPage from "./hotel-chat/HotelChat";
+import MgmtSideBar from "./mgmt-sidebar/MgmtSideBar";
+import { decrypt, encrypt } from "../../utils/cryptoJs";
+import dayjs from "dayjs";
+import HotelBookingPage from "./hotel-booking/HotelBooking";
 
 export default function HotelMgmt() {
     const navigate = useNavigate();
@@ -21,7 +21,6 @@ export default function HotelMgmt() {
     const hotelId = decrypt(encryptedId || "");
 
     const [hotelData, setHotelData] = useState<HotelDataProps>();
-    const [drawerOpen, setDrawerOpen] = useState(false);
 
     const fetchHotel = async () => {
         try {
@@ -44,10 +43,6 @@ export default function HotelMgmt() {
         navigate(`/hotel/${encryptedId}/${today}/${tomorrow}/${2}/${0}`);
     };
 
-    const toggleDrawer = () => {
-        setDrawerOpen((prevState) => !prevState);
-    };
-
     useEffect(() => {
         fetchHotel();
     }, [hotelId]);
@@ -55,9 +50,6 @@ export default function HotelMgmt() {
     return (
         <tw.Container>
             <tw.HotelStatusWrap>
-                <tw.DrawerBtn onClick={()=>toggleDrawer()}>
-                    <tw.Svg alt="" src={require("./../../assets/drawer/hotel_mgmt.svg").default} />
-                </tw.DrawerBtn>
                 <tw.HotelName onClick={() => clickState(hotelId)}>{hotelData?.name}</tw.HotelName>
                 <tw.HotelAddress onClick={() => clickState(hotelId)}>
                     {hotelData?.address} {hotelData?.address_detail} ({hotelData?.postcode})
@@ -65,13 +57,9 @@ export default function HotelMgmt() {
                 <tw.HotelStatus onClick={() => clickState(hotelId)} $color={hotelData?.permission === 0}>{hotelData?.permission === 0 ? "심사중" : "활성화"}</tw.HotelStatus>
             </tw.HotelStatusWrap>
 
-            <tw.DrawerWrapMobile $active={drawerOpen}>
-                <MgmtSideBar hotel_id={hotelId} toggleDrawer={toggleDrawer} />
-            </tw.DrawerWrapMobile>
-
             <tw.FlexWrap>
                 <tw.DrawerWrap>
-                    <MgmtSideBar hotel_id={hotelId} toggleDrawer={toggleDrawer} />
+                    <MgmtSideBar hotel_id={hotelId} />
                 </tw.DrawerWrap>
                 <tw.ContentsWrap>
                     <Routes>
@@ -81,7 +69,7 @@ export default function HotelMgmt() {
                             <Route path=":room_id/*" element={<HotelMgmt />} />
                         </Route>
                         <Route path="/booking" element={<HotelBookingPage hotel_id={hotelId} />} />
-                        <Route path="/msg" element={<HotelMsgPage hotel_id={hotelId} />} />
+                        <Route path="/msg" element={<HotelChatListPage hotel_id={hotelId} />} />
                         <Route path="/msg/chat/:encryptedHotelId/:encryptedUserId" element={<HotelChatPage />} />
                     </Routes>
                 </tw.ContentsWrap>

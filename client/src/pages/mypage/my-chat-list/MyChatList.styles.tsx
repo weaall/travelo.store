@@ -20,6 +20,9 @@ mobile:w-full mobile:px-2`
 export const NoMsgWrap = tw.div`w-full flex flex-col justify-center items-center space-y-10 py-16`
 export const NoMsgText = tw.p`text-lg font-medium`
 
+export const ChatWrapLoading = tw.div`flex w-full rounded-2xl bg-white h-auto shadow-md border p-4 cursor-pointer h-24
+mobile:flex mobile:h-20
+bg-gradient-to-r from-darkGray via-midGray to-lightGray bg-300% animate-gradient`
 export const MsgWrap = tw.div`flex w-full rounded-2xl bg-white h-auto shadow-md border p-4 cursor-pointer
 mobile:flex`
 

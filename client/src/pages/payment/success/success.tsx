@@ -95,7 +95,7 @@ export function SuccessPage() {
     const fetchHotel = async (hotelId: number) => {
         try {
             const hotelResponse = await axiosInstance.get("/hotel/" + hotelId);
-            let hotelData = hotelResponse.data.data[0];
+            const hotelData = hotelResponse.data.data[0];
 
             setHotelData(hotelData);
         } catch (error) {

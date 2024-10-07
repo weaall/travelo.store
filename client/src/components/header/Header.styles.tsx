@@ -1,13 +1,9 @@
 import tw from "tailwind-styled-components";
 
-interface MenuOpenProps {
-    $validator: boolean
-}
-
 export const Container = tw.div`w-full border-b`
 export const ContentsWrap = tw.div`m-auto max-w-[840px] h-14 bg-white/[0.7] mobile:px-2`
 
-export const NavWrap = tw.div`flex px-2 h-full w-full items-center justify-between`
+export const NavWrap = tw.div`flex h-full w-full items-center justify-between`
 export const NavHome = tw.button`text-xl`
 
 export const MenuContainer = tw.div``

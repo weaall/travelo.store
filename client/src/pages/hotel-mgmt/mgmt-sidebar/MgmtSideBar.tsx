@@ -2,13 +2,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 import * as tw from "./MgmtSideBar.styles";
 import { encrypt } from "../../../utils/cryptoJs";
 
-export default function MgmtSideBar({ hotel_id, toggleDrawer }: { hotel_id: string | undefined, toggleDrawer: () => void }) {
+export default function MgmtSideBar({ hotel_id }: { hotel_id: string | undefined }) {
     const navigate = useNavigate();
     const location = useLocation();
-    const hotelId = encrypt(hotel_id || "")
+    const hotelId = encrypt(hotel_id || "");
 
     const mgmtList = [
-        { src: require("../../../assets/drawer/hotel_mgmt.svg").default, label: "숙소정보", nav: ""},
+        { src: require("../../../assets/drawer/hotel_mgmt.svg").default, label: "숙소정보", nav: "" },
         { src: require("../../../assets/drawer/room.svg").default, label: "객실관리", nav: "room" },
         { src: require("../../../assets/drawer/booking.svg").default, label: "예약관리", nav: "booking" },
         { src: require("../../../assets/drawer/review.svg").default, label: "이용후기", nav: "review" },
@@ -19,7 +19,6 @@ export default function MgmtSideBar({ hotel_id, toggleDrawer }: { hotel_id: stri
 
     const handleNavigation = (nav: string) => {
         navigate(`/hotel/mgmt/${hotelId}/${nav}`);
-        toggleDrawer();
     };
 
     return (

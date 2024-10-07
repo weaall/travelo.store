@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import * as tw from "./HotelMsg.styles";
-import { sendJWT } from "../../../utils/jwtUtils";
-import { axios, axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
 import { useNavigate } from "react-router-dom";
-import Loading from "../../../components/loading/Loading";
+
+import { sendJWT } from "../../../utils/jwtUtils";
+import { axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
 import { msgDateFormat } from "../../../utils/msg.utils";
-import { decrypt, encrypt } from "../../../utils/cryptoJs";
+import { encrypt } from "../../../utils/cryptoJs";
+
+import * as tw from "./HotelChatList.styles";
 
 interface MsgList {
     hotel_id: number;
@@ -21,7 +22,7 @@ interface UserData {
     name: string;
 }
 
-export default function HotelMsgPage({ hotel_id }: { hotel_id: string | undefined }) {
+export default function HotelChatListPage({ hotel_id }: { hotel_id: string | undefined }) {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
 
@@ -73,11 +74,8 @@ export default function HotelMsgPage({ hotel_id }: { hotel_id: string | undefine
     useEffect(() => {
         window.scrollTo(0, 0);
         fetchMsg();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
-    if (loading) {
-        return <Loading />;
-    }
 
     return (
         <tw.Container>
@@ -85,6 +83,14 @@ export default function HotelMsgPage({ hotel_id }: { hotel_id: string | undefine
                 <tw.TitleWrap>
                     <tw.Title>메세지</tw.Title>
                 </tw.TitleWrap>
+                {loading ? (
+                    <tw.ContentsWrap>
+                        <tw.ChatWrapLoading />
+                        <tw.ChatWrapLoading />
+                        <tw.ChatWrapLoading />
+                        <tw.ChatWrapLoading />
+                    </tw.ContentsWrap>
+                ) : (
                 <tw.ContentsWrap>
                 {msgList.length === 0 ? (
                             <tw.NoMsgWrap>
@@ -111,6 +117,7 @@ export default function HotelMsgPage({ hotel_id }: { hotel_id: string | undefine
                         </tw.MsgWrap>
                     )))}
                 </tw.ContentsWrap>
+                )}
             </tw.MobileWrap>
         </tw.Container>
     );

@@ -22,6 +22,8 @@ mobile:hover:bg-black`
 
 export const RoomList = tw.div`w-full flex flex-col space-y-3 items-center`
 
+export const RoomWrapLoading = tw.div`h-64 mobile:h-[430px] flex flex-col w-full rounded-2xl shadow-md
+bg-gradient-to-r from-darkGray via-midGray to-lightGray bg-300% animate-gradient`
 export const RoomWrap = tw.div`flex flex-col w-full rounded-2xl bg-white h-auto shadow-md border
 mobile:flex mobile:flex-col mobile:h-auto`
 

@@ -2,8 +2,6 @@ import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import ImgLoader from "../../../utils/imgLoader";
-import { ModalPortal } from "../../../hook/modal/ModalPortal";
-import LoadingModal from "../../../hook/modal/loading/Loading.modal";
 
 import { sendJWT } from "../../../utils/jwtUtils";
 import { axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
@@ -27,21 +25,14 @@ interface HotelData {
     name: string;
 }
 
-export default function MyMsgPage() {
+export default function MyChatListPage() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
-    const openLoadingModal = () => {
-        setLoading(true);
-    };
-    const closeLoadingModal = () => {
-        setLoading(false);
-    };
 
     const [msgList, setMsgList] = useState<MsgList[]>([]);
     const [hotelDataCache, setHotelDataCache] = useState<{ [hotelId: number]: HotelData }>({});
 
     const fetchMsg = useCallback(async () => {
-        openLoadingModal();
         try {
             const config = await sendJWT({
                 method: "GET",
@@ -73,7 +64,7 @@ export default function MyMsgPage() {
         } catch (error) {
             handleAxiosError(error, navigate);
         } finally {
-            closeLoadingModal();
+            setLoading(false)
         }
     }, [navigate, hotelDataCache]);
 
@@ -94,6 +85,14 @@ export default function MyMsgPage() {
                 <tw.TitleWrap>
                     <tw.Title>메세지</tw.Title>
                 </tw.TitleWrap>
+                {loading ? (
+                    <tw.ContentsWrap>
+                        <tw.ChatWrapLoading />
+                        <tw.ChatWrapLoading />
+                        <tw.ChatWrapLoading />
+                        <tw.ChatWrapLoading />
+                    </tw.ContentsWrap>
+                ) : (
                 <tw.ContentsWrap>
                     {msgList.length === 0 ? (
                         <tw.NoMsgWrap>
@@ -121,13 +120,8 @@ export default function MyMsgPage() {
                         ))
                     )}
                 </tw.ContentsWrap>
+                )}
             </tw.MobileWrap>
-
-            {loading && (
-                <ModalPortal>
-                    <LoadingModal onClose={closeLoadingModal} />
-                </ModalPortal>
-            )}
         </tw.Container>
     );
 }

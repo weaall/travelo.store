@@ -7,6 +7,7 @@ import { HeaderRenderAtom } from "../../recoil/HeaderRender.Atom";
 import * as tw from "./Header.styles";
 import { ModalPortal } from "../../hook/modal/ModalPortal";
 import UserMenuModal from "../../hook/modal/usermenu/UserMenu.modal";
+import HotelMgmtDrawerModal from "../../hook/modal/hotel-mgmt-drawer/HotelMgmtDrawer.modal";
 
 export default function Header() {
     const navigate = useNavigate();
@@ -23,6 +24,14 @@ export default function Header() {
     };
     const closeUserMenuModal = () => {
         setIsUserMenuModalOpen(false);
+    };
+
+    const [isHotelMgmtModalOpen, setIsHotelMgmtModalOpen] = useState(false);
+    const openHotelMgmtModal = () => {
+        setIsHotelMgmtModalOpen(true);
+    };
+    const closeHotelMgmtModal = () => {
+        setIsHotelMgmtModalOpen(false);
     };
 
     const navTitleMapping: { [key: string]: string } = {
@@ -72,6 +81,33 @@ export default function Header() {
         setIsMenuOpen(false);
     }, [headerRender, location]);
 
+    const isHotelMgmtRoute = location.pathname.startsWith("/hotel/mgmt/");
+
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 640);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth <= 640);
+        };
+
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+    const handleMenuClick = () => {
+        if (!isSignIn) return navigateClick("/signin");
+
+        if (isMobile) {
+            if (isHotelMgmtRoute) {
+                openHotelMgmtModal();
+            } else {
+                openUserMenuModal();
+            }
+        } else {
+            openUserMenuModal();
+        }
+    };
+
     return (
         <tw.Container>
             <tw.ContentsWrap>
@@ -80,19 +116,21 @@ export default function Header() {
                         {isRoot ? null : <tw.BackSvg alt="back" src={require("../../assets/svg/arrow_left_short.svg").default} />}
                     </tw.ActiveBtn>
                     <tw.NavHome onClick={() => navigateClick("/")}>{navTitle}</tw.NavHome>
-                    {!isSignIn ? (
-                        <tw.SignInBtn onClick={() => navigateClick("/signin")}>로그인</tw.SignInBtn>
-                    ) : (
-                        <tw.SignInBtn onClick={openUserMenuModal}>
-                            <tw.Svg alt="menu" src={require("../../assets/svg/list_icon.svg").default} />
-                        </tw.SignInBtn>
-                    )}
+                    <tw.SignInBtn onClick={handleMenuClick}>
+                        <tw.Svg alt="menu" src={require("../../assets/svg/list_icon.svg").default} />
+                    </tw.SignInBtn>
                 </tw.NavWrap>
             </tw.ContentsWrap>
 
             {isUserMenuModalOpen && (
                 <ModalPortal>
                     <UserMenuModal onClose={closeUserMenuModal} />
+                </ModalPortal>
+            )}
+
+            {isHotelMgmtModalOpen && (
+                <ModalPortal>
+                    <HotelMgmtDrawerModal onClose={closeHotelMgmtModal} />
                 </ModalPortal>
             )}
         </tw.Container>
