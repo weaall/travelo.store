@@ -21,13 +21,15 @@ export const TitleWrap = tw.div`h-14`;
 export const CloseBtn = tw.button`w-8 absolute top-4 right-4 group`;
 export const CloseSVG = tw.img`h-full w-full group-hover-scale-105`;
 
-export const SignOutBtn = tw.button`mx-6 py-2 px-4 border border-main rounded-xl
+export const ContentsWrap = tw.div`flex flex-col justify-between w-full h-full`
+
+export const SignOutBtn = tw.button`mx-6 my-6 py-2 px-4 border border-main rounded-xl
 transition ease-in delay-50 hover:bg-main hover:text-white
 mobile:hover:bg-white mobile:hover:text-black`
 
 export const InputWrap = tw.div`flex flex-col text-left py-4`;
 
-export const MenuWrap = tw.div`w-auto h-auto bg-white p-4 space-y-2 
+export const MenuWrap = tw.div`w-auto h-auto bg-white px-4 space-y-2 
 flex flex-col rounded-3xl overflow-y-scroll overflow-hidden`;
 
 export const MenuLabel = tw.label`px-3 pt-2 text-sm font-medium text-main`;
