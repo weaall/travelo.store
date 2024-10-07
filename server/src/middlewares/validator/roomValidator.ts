@@ -15,8 +15,7 @@ export const roomValidator = {
         body("name")
             .notEmpty()
             .trim()
-            .isLength({ min: 2, max: 20 })
-            .matches(/^[가-힣a-zA-Z\s]+$/),
+            .isLength({ min: 2, max: 20 }),
         body("num").notEmpty().trim(),
         body("bed_type_id").notEmpty().trim(),
         body("view_type_id").notEmpty().trim(),
@@ -27,8 +26,7 @@ export const roomValidator = {
         body("name")
             .notEmpty()
             .trim()
-            .isLength({ min: 2, max: 20 })
-            .matches(/^[가-힣a-zA-Z\s]+$/),
+            .isLength({ min: 2, max: 20 }),
         body("num").notEmpty().trim(),
         body("bed_type_id").notEmpty().trim(),
         body("view_type_id").notEmpty().trim(),
