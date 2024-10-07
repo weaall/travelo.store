@@ -20,7 +20,9 @@ mobile:hover:bg-black`
 
 export const HotelList = tw.div`w-full flex flex-col space-y-3 items-center`
 
-export const BookingWrap = tw.div`flex flex-col w-full rounded-2xl bg-white h-auto shadow-md border
+export const HotelWrapLoading = tw.div`h-64 mobile:h-[430px] flex flex-col w-full rounded-2xl shadow-md
+bg-gradient-to-r from-darkGray via-midGray to-lightGray bg-300% animate-gradient`
+export const HotelWrap = tw.div`flex flex-col w-full rounded-2xl bg-white h-auto shadow-md border
 mobile:flex mobile:flex-col mobile:h-auto`
 
 export const UpperWrap = tw.div`flex mx-4 my-4 justify-between`

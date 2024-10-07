@@ -44,9 +44,9 @@ mobile:text-xs`
 export const CheckWrap = tw.div`flex w-full border-y my-3`
 export const CheckInWrap = tw.div`flex flex-col w-[50%] my-5 border-r text-left space-y-1`
 export const CheckOutWrap = tw.div`flex flex-col w-[50%] my-5 text-right space-y-1`
-export const CheckLabel = tw.label`text-sm text-gray-400
+export const CheckLabel = tw.label`text-xs text-gray-400
 mobile:text-xs`
-export const CheckText = tw.text`
+export const CheckText = tw.text` text-sm
 mobile:text-sm`
 export const GuideText = tw.text`text-sm text-center
 mobile:text-xs`
@@ -54,8 +54,8 @@ mobile:text-xs`
 export const DetailWrap = tw.div`flex flex-col border p-6 mx-1 max-w-[640px] w-full rounded-xl`
 export const DetailRow = tw.div`flex border-b p-3 items-center`
 export const DetailLabelWrap = tw.div`min-w-[35%]`
-export const DetailLabel = tw.label`text-gray-400
+export const DetailLabel = tw.label`text-gray-400 text-sm
 mobile:text-xs`
 export const DetailTextWrap = tw.div``
-export const DetailText = tw.text`
+export const DetailText = tw.text`text-sm
 mobile:text-xs`

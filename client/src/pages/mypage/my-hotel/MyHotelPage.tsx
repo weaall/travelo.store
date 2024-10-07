@@ -7,8 +7,6 @@ import ImgLoader from "../../../utils/imgLoader";
 import { encrypt } from "../../../utils/cryptoJs";
 import { getThumbnailCFUrl } from "../../../utils/s3UrlToCFD.utils";
 
-import Loading from "../../../components/loading/Loading";
-
 import * as tw from "./MyHotel.styles";
 import { ModalPortal } from "../../../hook/modal/ModalPortal";
 import KakaoMapModal from "../../../hook/modal/kakao-map/KakaMap.modal";
@@ -72,11 +70,8 @@ export default function MyHotelPage() {
     useEffect(() => {
         window.scrollTo(0, 0);
         fetchHotelList();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [fetchHotelList]);
-
-    if (loading) {
-        return <Loading />;
-    }
 
     return (
         <tw.Container>
@@ -84,6 +79,12 @@ export default function MyHotelPage() {
                 <tw.TitleWrap>
                     <tw.Title>숙소관리</tw.Title>
                 </tw.TitleWrap>
+                {loading ? (
+                    <tw.HotelList>
+                        <tw.HotelWrapLoading />
+                        <tw.HotelWrapLoading />
+                    </tw.HotelList>
+                ) : (
                 <tw.HotelList>
                     {hotelList.length === 0 ? (
                         <tw.NoHotelWrap>
@@ -92,7 +93,7 @@ export default function MyHotelPage() {
                         </tw.NoHotelWrap>
                     ) : (
                         hotelList.map((hotel, index) => (
-                            <tw.BookingWrap key={index}>
+                            <tw.HotelWrap key={index}>
                                 <tw.UpperWrap>
                                     <tw.HotelName>{hotel.name}</tw.HotelName>
                                     <tw.HotelStatus $color={hotel.permission === 0}>{hotel.permission === 0 ? "심사중" : "판매중"}</tw.HotelStatus>
@@ -124,10 +125,11 @@ export default function MyHotelPage() {
                                 <tw.MgmtBtnWrap>
                                     <tw.MgmtBtn onClick={() => navigate("/hotel/mgmt/" + encrypt(hotel.id.toString()))}>숙소 관리하기</tw.MgmtBtn>
                                 </tw.MgmtBtnWrap>
-                            </tw.BookingWrap>
+                            </tw.HotelWrap>
                         ))
                     )}
                 </tw.HotelList>
+                )}
             </tw.MobileWrap>
 
             {isKakaoMapModalOpen && selectedHotel && (

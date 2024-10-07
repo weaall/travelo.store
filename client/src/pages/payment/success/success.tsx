@@ -10,6 +10,7 @@ import * as tw from "./Success.styles";
 import { ModalPortal } from "../../../hook/modal/ModalPortal";
 import KakaoMapModal from "../../../hook/modal/kakao-map/KakaMap.modal";
 import dayjs from "dayjs";
+import { getThumbnailCFUrl } from "../../../utils/s3UrlToCFD.utils";
 
 export function SuccessPage() {
     const navigate = useNavigate();
@@ -61,12 +62,6 @@ export function SuccessPage() {
         spa: 0,
         fitness: 0,
         convenience_store: 0,
-
-        img: [
-            {
-                url: "",
-            },
-        ],
     });
 
     const [roomData, setRoomData] = useState({
@@ -76,12 +71,6 @@ export function SuccessPage() {
         view_type: "",
         bed_type: "",
         discount: 0,
-
-        img: [
-            {
-                url: "",
-            },
-        ],
     });
 
     const fetchBooking = async () => {
@@ -108,9 +97,6 @@ export function SuccessPage() {
             const hotelResponse = await axiosInstance.get("/hotel/" + hotelId);
             let hotelData = hotelResponse.data.data[0];
 
-            const hotelImgResponse = await axiosInstance.get("/hotel/img/" + hotelId);
-            hotelData.img = hotelImgResponse.data.data;
-
             setHotelData(hotelData);
         } catch (error) {
             handleAxiosError(error, navigate);
@@ -121,9 +107,6 @@ export function SuccessPage() {
         try {
             const roomResponse = await axiosInstance.get("/room/" + roomId);
             const room = roomResponse.data.data[0];
-
-            const roomImgResponse = await axiosInstance.get("/room/img/" + roomId);
-            room.img = roomImgResponse.data.data;
 
             setRoomData(room);
         } catch (error) {
@@ -157,11 +140,7 @@ export function SuccessPage() {
                 <tw.RoomWrap>
                     <tw.ContentsFlex>
                         <tw.Pic>
-                            {hotelData?.img?.[0]?.url ? (
-                                <ImgLoader imageUrl={hotelData.img[0].url} altText="" rounded="l-xl mobile:rounded-none mobile:rounded-t-xl" />
-                            ) : (
-                                <tw.UnRegWrap>미등록</tw.UnRegWrap>
-                            )}
+                            <ImgLoader imageUrl={getThumbnailCFUrl(`/hotel_img/${hotelData.id}`)} altText={hotelData.name} rounded="l-xl mobile:rounded-none mobile:rounded-t-xl" />
                         </tw.Pic>
                         <tw.OuterInfoWrap>
                             <tw.RoomInfo>
@@ -181,11 +160,7 @@ export function SuccessPage() {
                 <tw.RoomWrap>
                     <tw.ContentsFlex>
                         <tw.Pic>
-                            {roomData?.img?.[0]?.url ? (
-                                <ImgLoader imageUrl={roomData.img[0].url} altText="" rounded="l-xl mobile:rounded-none mobile:rounded-t-xl" />
-                            ) : (
-                                <tw.UnRegWrap>미등록</tw.UnRegWrap>
-                            )}
+                            <ImgLoader imageUrl={getThumbnailCFUrl(`/room_img/${hotelData.id}/${bookingData.room_id}`)} altText={roomData.name} rounded="l-xl mobile:rounded-none mobile:rounded-t-xl" />
                         </tw.Pic>
                         <tw.OuterInfoWrap>
                             <tw.RoomInfo>
@@ -275,7 +250,7 @@ export function SuccessPage() {
                     <KakaoMapModal
                         hotelName={hotelData.name}
                         address={`${hotelData.address} ${hotelData.address_detail}`}
-                        imgUrl={hotelData.img[0].url}
+                        imgUrl={getThumbnailCFUrl(`/hotel_img/${hotelData.id}`)}
                         onClose={closeKakaoMapModal}
                     />
                 </ModalPortal>
