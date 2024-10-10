@@ -1,6 +1,5 @@
 import { FieldPacket, ResultSetHeader } from "mysql2"
 import pool from "../config/db"
-import CustomError from "../utils/customError"
 
 const hotelService = {
     async checkHotelReg() {

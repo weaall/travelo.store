@@ -91,4 +91,21 @@ export const authValidator = {
         .trim()
         .escape()
     ],
+
+    sendEmailBySES: [
+        body('to')
+        .notEmpty()
+        .trim()
+        .escape(),
+    
+        body('subject')
+        .notEmpty()
+        .trim()
+        .escape(),
+    
+        body('message')
+        .notEmpty()
+        .trim()
+        .escape()
+    ],
 };
