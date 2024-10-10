@@ -5,6 +5,8 @@ import { encrypt } from "../../../utils/cryptoJs";
 export default function MgmtSideBar({ hotel_id }: { hotel_id: string | undefined }) {
     const navigate = useNavigate();
     const location = useLocation();
+
+    const dynamicPath = location.pathname.match(/\/hotel\/mgmt\/([^/]+)/)?.[1];
     const hotelId = encrypt(hotel_id || "");
 
     const mgmtList = [
@@ -15,7 +17,7 @@ export default function MgmtSideBar({ hotel_id }: { hotel_id: string | undefined
         { src: require("../../../assets/drawer/message.svg").default, label: "메세지", nav: "msg" }
     ];
 
-    const isActive = (nav: string) => location.pathname === `/me${nav}`;
+    const isActive = (nav: string) => dynamicPath && location.pathname === `/hotel/mgmt/${dynamicPath}/${nav}`;
 
     const handleNavigation = (nav: string) => {
         navigate(`/hotel/mgmt/${hotelId}/${nav}`);
@@ -26,7 +28,11 @@ export default function MgmtSideBar({ hotel_id }: { hotel_id: string | undefined
             <tw.MenuWrap>
                 <tw.MenuLabel>숙소관리</tw.MenuLabel>
                 {mgmtList.map((item, index) => (
-                    <tw.ListWrap key={index} $isActive={isActive(item.nav) ? 'active' : ''} onClick={() => handleNavigation(item.nav)}>
+                    <tw.ListWrap 
+                        key={index} 
+                        $isActive={isActive(item.nav) ? 'active' : ''} 
+                        onClick={() => handleNavigation(item.nav)}
+                    >
                         <tw.SvgWrap>
                             <tw.Svg alt="" src={item.src} />
                         </tw.SvgWrap>

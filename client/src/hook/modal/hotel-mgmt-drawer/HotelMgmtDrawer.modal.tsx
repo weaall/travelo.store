@@ -10,9 +10,13 @@ export default function HotelMgmtDrawerModal({ onClose }: ModalProps) {
     const navigate = useNavigate();
     const location = useLocation();
 
+    const dynamicPath = location.pathname.match(/\/hotel\/mgmt\/([^/]+)/)?.[1];
+
     const navigateClick = (url: string) => {
-        triggerCloseAnimation();
-        navigate(`/${url}`);
+        if (dynamicPath) {
+            triggerCloseAnimation();
+            navigate(`/hotel/mgmt/${dynamicPath}/${url}`);
+        }
     };
 
     const [isClosing, setIsClosing] = useState(false);
@@ -29,15 +33,14 @@ export default function HotelMgmtDrawerModal({ onClose }: ModalProps) {
     };
 
     const mgmtList = [
-        { src: require("../../../assets/drawer/hotel_mgmt.svg").default, label: "숙소정보", nav: ""},
+        { src: require("../../../assets/drawer/hotel_mgmt.svg").default, label: "숙소정보", nav: "" },
         { src: require("../../../assets/drawer/room.svg").default, label: "객실관리", nav: "room" },
         { src: require("../../../assets/drawer/booking.svg").default, label: "예약관리", nav: "booking" },
         { src: require("../../../assets/drawer/review.svg").default, label: "이용후기", nav: "review" },
         { src: require("../../../assets/drawer/message.svg").default, label: "메세지", nav: "msg" }
     ];
 
-
-    const isActive = (nav: string) => location.pathname === `/me${nav}`;
+    const isActive = (nav: string) => dynamicPath && location.pathname === `/hotel/mgmt/${dynamicPath}/${nav}`;
 
     return (
         <tw.Container $isClosing={isClosing}>
@@ -56,7 +59,7 @@ export default function HotelMgmtDrawerModal({ onClose }: ModalProps) {
                                     key={index}
                                     $isActive={isActive(item.nav) ? "active" : ""}
                                     onClick={() => {
-                                        navigateClick(`me${item.nav}`);
+                                        navigateClick(item.nav);
                                     }}
                                 >
                                     <tw.SvgWrap>
