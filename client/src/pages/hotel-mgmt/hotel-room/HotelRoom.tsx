@@ -26,12 +26,6 @@ export default function HotelRoom({ hotel_id }: { hotel_id: string | undefined }
     const navigate = useNavigate();
     
     const [loading, setLoading] = useState(true);
-    const openLoadingModal = () => {
-        setLoading(true);
-    };
-    const closeLoadingModal = () => {
-        setLoading(false);
-    };
 
     const [isRegModalOpen, setIsRegModalOpen] = useState(false);
 
@@ -60,15 +54,14 @@ export default function HotelRoom({ hotel_id }: { hotel_id: string | undefined }
     const [roomList, setRoomList] = useState<RoomInfo[]>([]);
 
     const fetchRooms = useCallback(async () => {
-        openLoadingModal();
         try {
             const response = await axiosInstance.get("/room/hotel/" + hotel_id);
             const rooms = response.data.data;
             setRoomList(rooms);
         } catch (error) {
             handleAxiosError(error, navigate);
-        } finally {
-            closeLoadingModal();
+        } finally{
+            setLoading(false)
         }
     }, [hotel_id, navigate]);
 
@@ -90,6 +83,12 @@ export default function HotelRoom({ hotel_id }: { hotel_id: string | undefined }
                         </tw.HalfFlex>
                     </tw.ContentsFlex>
 
+                    {loading ? (
+                    <tw.RoomList>
+                        <tw.RoomWrapLoading />
+                        <tw.RoomWrapLoading />
+                    </tw.RoomList>
+                ) : (
                     <tw.RoomList>
                         {roomList.length === 0 ? (
                             <tw.NoRoomWrap>
@@ -122,14 +121,9 @@ export default function HotelRoom({ hotel_id }: { hotel_id: string | undefined }
                             ))
                         )}
                     </tw.RoomList>
+                )}
                 </tw.ContentsWrap>
             </tw.MobileWrap>
-
-            {loading && (
-                <ModalPortal>
-                    <LoadingModal onClose={closeLoadingModal} />
-                </ModalPortal>
-            )}
 
             {isRegModalOpen && (
                 <ModalPortal>

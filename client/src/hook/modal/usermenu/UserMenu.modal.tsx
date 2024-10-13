@@ -87,39 +87,41 @@ export default function UserMenuModal({ onClose }: ModalProps) {
                             <tw.CloseSVG alt="" src={require("../../../assets/svg_black/right_icon.svg").default}></tw.CloseSVG>
                         </tw.CloseBtn>
                     </tw.TitleWrap>
-                    <tw.MenuWrap>
-                        <tw.MenuLabel>마이페이지</tw.MenuLabel>
-                        {myPageList.map((item, index) => (
-                            <tw.ListWrap
-                                key={index}
-                                $isActive={isActive(item.nav) ? "active" : ""}
-                                onClick={() => {
-                                    navigateClick(`me${item.nav}`);
-                                }}
-                            >
-                                <tw.SvgWrap>
-                                    <tw.Svg alt="" src={item.src} />
-                                </tw.SvgWrap>
-                                <tw.Label>{item.label}</tw.Label>
-                            </tw.ListWrap>
-                        ))}
-                        <tw.MenuLabel>숙소관리</tw.MenuLabel>
-                        {hotelMgmtList.map((item, index) => (
-                            <tw.ListWrap
-                                key={index}
-                                $isActive={isActive(item.nav) ? "active" : ""}
-                                onClick={() => {
-                                    navigateClick(`me${item.nav}`);
-                                }}
-                            >
-                                <tw.SvgWrap>
-                                    <tw.Svg alt="" src={item.src} />
-                                </tw.SvgWrap>
-                                <tw.Label>{item.label}</tw.Label>
-                            </tw.ListWrap>
-                        ))}
+                    <tw.ContentsWrap>
+                        <tw.MenuWrap>
+                            <tw.MenuLabel>마이페이지</tw.MenuLabel>
+                            {myPageList.map((item, index) => (
+                                <tw.ListWrap
+                                    key={index}
+                                    $isActive={isActive(item.nav) ? "active" : ""}
+                                    onClick={() => {
+                                        navigateClick(`me${item.nav}`);
+                                    }}
+                                >
+                                    <tw.SvgWrap>
+                                        <tw.Svg alt="" src={item.src} />
+                                    </tw.SvgWrap>
+                                    <tw.Label>{item.label}</tw.Label>
+                                </tw.ListWrap>
+                            ))}
+                            <tw.MenuLabel>숙소관리</tw.MenuLabel>
+                            {hotelMgmtList.map((item, index) => (
+                                <tw.ListWrap
+                                    key={index}
+                                    $isActive={isActive(item.nav) ? "active" : ""}
+                                    onClick={() => {
+                                        navigateClick(`me${item.nav}`);
+                                    }}
+                                >
+                                    <tw.SvgWrap>
+                                        <tw.Svg alt="" src={item.src} />
+                                    </tw.SvgWrap>
+                                    <tw.Label>{item.label}</tw.Label>
+                                </tw.ListWrap>
+                            ))}
+                        </tw.MenuWrap>
                         <tw.SignOutBtn onClick={logoutClick}>로그아웃</tw.SignOutBtn>
-                    </tw.MenuWrap>
+                    </tw.ContentsWrap>
                 </tw.ModalWrap>
             </tw.ModalContainer>
 

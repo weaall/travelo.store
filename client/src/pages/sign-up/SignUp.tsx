@@ -164,7 +164,7 @@ export default function SignUp() {
 
     const sendEmail = async (verificationCode: string) => {
         const emailData = {
-            to: formData.email,
+            email: formData.email,
             subject: "travelo.store Email Verification Code",
             message: verificationCode,
         };

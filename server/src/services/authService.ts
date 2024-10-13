@@ -6,7 +6,7 @@ import pool from "../config/db"
 import CustomError from "../utils/customError"
 require('dotenv').config();
 
-export interface userRows extends RowDataPacket {
+export interface UserRows extends RowDataPacket {
     id: number;
     email: string;
     password: string;
@@ -53,7 +53,7 @@ const authService = {
         const connection = await pool.getConnection();
 
         try {
-            const [rows, fields]: [userRows[], FieldPacket[]] = await connection.execute(checkIdSql, checkIdParams);
+            const [rows, fields]: [UserRows[], FieldPacket[]] = await connection.execute(checkIdSql, checkIdParams);
 
             if (rows.length > 0) {
                 throw new CustomError("이미 존재하는 이메일입니다.", 409);
@@ -79,7 +79,7 @@ const authService = {
         const connection = await pool.getConnection();
 
         try {
-            const [rows, fields]: [userRows[], FieldPacket[]] = await connection.execute(checkIdSql, checkIdParams);
+            const [rows, fields]: [UserRows[], FieldPacket[]] = await connection.execute(checkIdSql, checkIdParams);
 
             if (rows.length === 0) {
                 throw new CustomError("이메일과 비밀번호가 일치하지 않습니다", 401);
@@ -111,7 +111,7 @@ const authService = {
         const connection = await pool.getConnection();
 
         try {
-            const [rows, fields]: [userRows[], FieldPacket[]] = await connection.execute(selectSql, selectParams);
+            const [rows, fields]: [UserRows[], FieldPacket[]] = await connection.execute(selectSql, selectParams);
 
             if (rows.length > 0) {
                 const token = jwt.sign({ id: rows[0].id, ad: rows[0].admin }, JWT_SECRET, {
@@ -143,7 +143,7 @@ const authService = {
         const connection = await pool.getConnection();
 
         try {
-            const [rows, fields]: [userRows[], FieldPacket[]] = await connection.execute(selectSql, selectParams);
+            const [rows, fields]: [UserRows[], FieldPacket[]] = await connection.execute(selectSql, selectParams);
 
             if (rows.length > 0) {
                 const token = jwt.sign({ id: rows[0].id, ad: rows[0].admin }, JWT_SECRET, {

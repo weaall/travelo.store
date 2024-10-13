@@ -11,13 +11,12 @@ export const Container = tw.div`min-h-screen-16 w-full flex flex-col items-cente
 
 export const ContentsWrap = tw.div`max-w-[480px] px-8 w-full flex flex-col pb-6`
 
-export const ContentsLabel = tw.p`text-xl text-center pt-4 pb-6`
-export const ContentsText = tw.p`text-xl text-center pt-4 pb-6`
+export const ContentsLabel = tw.p`text-xl text-center pb-6`
 
 export const InputWrap = tw.div`flex flex-col text-left`
 export const UpperTag = tw.p<UnderTagProps>`text-sm font-medium mt-3
 ${(p) => (p.$validator ? "text-black" : "text-red-400")}`;
-export const Input = tw.input<UnderTagProps>`text-sm w-full h-10 outline-none border-b border-gray-200 placeholder-gray-200
+export const Input = tw.input<UnderTagProps>`text-sm w-full h-10 outline-none border-b rounded-none border-gray-200 placeholder-gray-200
 focus:border-b-2 focus:placeholder-transparent
 ${(p) => (p.$validator ? "focus:border-black" : "border-red-400 focus:border-b-1")}`;
 export const UnderTag = tw.p<UnderTagProps>`text-xs font-normal h-[16px]

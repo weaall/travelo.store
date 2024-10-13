@@ -7,6 +7,7 @@ export const authValidator = {
             .withMessage("이메일을 입력해주세요")
             .trim()
             .isEmail()
+            .isLength({ max: 50 })
             .withMessage("이메일 형식이 올바르지 않습니다. 예시: travel@travel.co.kr"),
 
         body("password")
@@ -87,6 +88,25 @@ export const authValidator = {
         .escape(),
     
         body('keysAndContentTypes.*.contentType')
+        .notEmpty()
+        .trim()
+        .escape()
+    ],
+
+    sendEmailBySES: [
+        body('email')
+        .notEmpty()
+        .trim()
+        .isEmail()
+        .isLength({ max: 50 })
+        .escape(),
+    
+        body('subject')
+        .notEmpty()
+        .isLength({ max: 40 })
+        .escape(),
+    
+        body('message')
         .notEmpty()
         .trim()
         .escape()

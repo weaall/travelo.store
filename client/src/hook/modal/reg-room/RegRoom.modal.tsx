@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 import * as tw from "./RegRoom.modal.styles";
 import { ModalPortal } from "../ModalPortal";
 import AlertModal from "../alert/Alert.modal";
+import LoadingModal from "../loading/Loading.modal";
+import ConfirmModal from "../alert-confirm/Confirm.modal";
 
 interface ModalProps {
     onClose: () => void;
@@ -28,17 +30,47 @@ export default function RegRoomModal({ onClose, hotel_id }: ModalProps) {
         }, 500);
     };
 
-    const [alertMessage, setAlertMessage] = useState("")
+    const [loading, setLoading] = useState(false);
+    const openLoadingModal = () => {
+        setLoading(true);
+    };
+    const closeLoadingModal = () => {
+        setLoading(false);
+    };
+
+    const [alertMessage, setAlertMessage] = useState("");
     const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
-    const [onCloseCallback, setOnCloseCallback] = useState<() => void>(() => {});
-    const openAlertModal = (callback: () => void) => {
-        setOnCloseCallback(() => callback);
+    const [onCloseAlertCallback, setOnCloseAlertCallback] = useState<() => void>(() => {});
+
+    const openAlertModal = (message: string, callback: () => void) => {
+        setAlertMessage(message);
+        setOnCloseAlertCallback(() => callback);
         setIsAlertModalOpen(true);
     };
 
     const closeAlertModal = () => {
         setIsAlertModalOpen(false);
-        onCloseCallback();
+        onCloseAlertCallback();
+    };
+
+    const [confirmMessage, setConfirmMessage] = useState("");
+    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+    const [onCloseConfirmCallback, setOnCloseConfirmCallback] = useState<(result: boolean) => void>(() => {});
+
+    const openConfirmModal = (message: string): Promise<boolean> => {
+        return new Promise((resolve) => {
+            setConfirmMessage(message);
+            setOnCloseConfirmCallback(() => (result: boolean) => {
+                setIsConfirmModalOpen(false);
+                resolve(result);
+            });
+            setIsConfirmModalOpen(true);
+        });
+    };
+
+    const closeConfirmModal = (result: boolean) => {
+        setIsConfirmModalOpen(false);
+        onCloseConfirmCallback(result);
     };
 
     const [roomData, setRoomData] = useState({
@@ -72,21 +104,26 @@ export default function RegRoomModal({ onClose, hotel_id }: ModalProps) {
     };
 
     const onClickRegister = async () => {
-        if (window.confirm("등록하시겠습니까?")) {
-            try {
+        try {
+            const confirmResult = await openConfirmModal("등록하시겠습니까?");
+            if (confirmResult) {
+                openLoadingModal();
+
                 const config = await sendJWT({
                     method: "post",
                     url: "/room/reg",
                     data: roomData,
                 });
                 await axiosInstance.request(config);
-                setAlertMessage("등록되었습니다.");
-                const handleModalClose = () => {};
-                openAlertModal(handleModalClose);
-                handleCloseClick();
-            } catch (error) {
-                handleAxiosError(error, navigate);
+
+                openAlertModal("등록되었습니다.", () => {
+                    handleCloseClick();
+                });
             }
+        } catch (error) {
+            handleAxiosError(error, navigate);
+        } finally {
+            closeLoadingModal();
         }
     };
 
@@ -124,7 +161,7 @@ export default function RegRoomModal({ onClose, hotel_id }: ModalProps) {
                 </tw.TitleWrap>
                 <tw.InputWrap>
                     <tw.UpperTag>객실이름</tw.UpperTag>
-                    <tw.Input value={roomData.name} onChange={onChangeInput} name="name" maxLength={20}/>
+                    <tw.Input value={roomData.name} onChange={onChangeInput} name="name" maxLength={20} />
                     <tw.UpperTag>인원</tw.UpperTag>
                     <tw.Select value={roomData.num} onChange={onChangeSelect} name="num">
                         {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((num) => (
@@ -151,11 +188,23 @@ export default function RegRoomModal({ onClose, hotel_id }: ModalProps) {
                     </tw.Select>
                 </tw.InputWrap>
                 <tw.RegWrap>
-                    <tw.RegBtn onClick={onClickRegister} $validator={roomData.name.length !== 0} disabled={roomData.name.length === 0}>
+                    <tw.RegBtn
+                        onClick={() => {
+                            onClickRegister();
+                        }}
+                        $validator={roomData.name.length !== 0}
+                        disabled={roomData.name.length === 0}
+                    >
                         등록하기
                     </tw.RegBtn>
                 </tw.RegWrap>
             </tw.ModalWrap>
+
+            {loading && (
+                <ModalPortal>
+                    <LoadingModal onClose={closeLoadingModal} />
+                </ModalPortal>
+            )}
 
             {isAlertModalOpen && (
                 <ModalPortal>
@@ -163,6 +212,11 @@ export default function RegRoomModal({ onClose, hotel_id }: ModalProps) {
                 </ModalPortal>
             )}
 
+            {isConfirmModalOpen && (
+                <ModalPortal>
+                    <ConfirmModal message={confirmMessage} onClose={closeConfirmModal} />
+                </ModalPortal>
+            )}
         </tw.Container>
     );
 }

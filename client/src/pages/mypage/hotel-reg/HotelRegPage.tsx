@@ -224,7 +224,7 @@ export default function HotelRegPage() {
         <tw.Container>
             <tw.MobileWrap>
                 <tw.TitleWrap>
-                    <tw.Title>내정보</tw.Title>
+                    <tw.Title>호텔등록</tw.Title>
                 </tw.TitleWrap>
 
                 <tw.InputWrap>

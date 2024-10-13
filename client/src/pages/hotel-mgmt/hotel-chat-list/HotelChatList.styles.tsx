@@ -27,8 +27,9 @@ export const MsgWrap = tw.div`flex w-full rounded-2xl bg-white h-auto shadow-md 
 mobile:flex`
 
 export const PicWrap = tw.div`w-[20%] flex justify-center`
-export const Pic = tw.div`w-16 h-16 bg-gray-30 mr-4 mobile:w-12 mobile:h-12`
-export const UnRegWrap = tw.div`flex h-full justify-center items-center text-2xl font-bold`
+export const Pic = tw.div`w-16 h-16 bg-gray-30 mr-4 content-center
+mobile:w-12 mobile:h-12`
+export const Svg = tw.img`w-8`
 
 export const MsgInfoWrap = tw.div`flex flex-col justify-between py-1 w-[80%]`
 
@@ -42,4 +43,4 @@ export const LowerWrap = tw.div`w-full flex justify-between items-center`
 export const Text = tw.p`text-sm max-w-[340px] truncate text-gray-400 font-medium
 mobile:max-w-[75%] mobile:text-xs`
 export const Checked = tw.div<CheckedProps>`w-2 h-2 bg-main rounded-full
-${(p) => (p.$checked ? "block" : "hidden")}`
+${(p) => (p.$checked  ? "block" : "hidden")}`

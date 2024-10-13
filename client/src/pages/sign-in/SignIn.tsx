@@ -138,7 +138,7 @@ export default function SignIn() {
     return (
         <tw.Container>
             <tw.ContentsWrap>
-                <tw.ContentsLabel>Travel.io</tw.ContentsLabel>
+                <tw.ContentsLabel>travelo.store</tw.ContentsLabel>
 
                 <tw.InputWrap>
                     <tw.UpperTag $validator={formValid.isEmail}>이메일 주소</tw.UpperTag>

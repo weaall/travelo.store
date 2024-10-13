@@ -103,12 +103,12 @@ const authController = {
         }
     },
     async sendEmailBySES(req: Request, res: Response) {
-        const { to, subject, message } = req.body;
+        const { email, subject, message } = req.body;
       
         const params = {
-          Source: "Travelo.store@travelo.store",
+          Source: "travelo@travelo.store",
           Destination: {
-            ToAddresses: [to],
+            ToAddresses: [email],
           },
           Message: {
             Body: {
@@ -122,10 +122,8 @@ const authController = {
       
         try {
           const data = await SES.send(command);
-          console.log("Email sent successfully:", data);
           res.send("Email sent successfully");
         } catch (err) {
-          console.error("Error sending email:", err);
           res.status(500).send("Error sending email");
         }
       }
