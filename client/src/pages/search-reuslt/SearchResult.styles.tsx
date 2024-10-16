@@ -12,6 +12,8 @@ export const MainContainer = tw.div`w-full h-full pb-10 px-6 mobile:px-0`
 
 export const SearchWrap = tw.div`sticky top-0 z-10`;
 
+export const UpperWrap = tw.div`flex justify-between`
+export const HotelNum = tw.p``
 export const SortWrap = tw.div`flex flex-col text-sm items-end my-2 relative mr-2 mobile:mb-4 mobile:text-base`
 export const SortNowBtn = tw.button`flex text-end w-auto py-1`
 export const SortSvg = tw.img`ml-1 mt-[1.5px] w-5 mobile:w-[22px] mobile:mt-[2px]`
@@ -19,7 +21,7 @@ export const SortDrawer = tw.div<SortProps>`absolute top-8 z-10 bg-white h-auto 
 shadow-md hover:shadow-xl mobile:w-40
 ${(p) => (p.$active ? "block" : "hidden")}`;
 export const SortBtn = tw.button<SortProps>`h-full w-full py-2.5 px-4 flex justify-between
-hover:bg-gray-100/[0.8] mobile:hover:bg-main
+hover:bg-gray-100/[0.8] mobile:hover:bg-white
 ${(p) => (p.$active ? "font-bold" : "")}`;
 
 export const HotelList = tw.div`flex flex-col gap-6

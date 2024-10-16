@@ -140,6 +140,22 @@ export default function SearchResult() {
 
     const currentHotels = sortedHotelList.slice(0, visibleHotels);
 
+    useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+        const drawerElement = document.querySelector(".sort-wrap");
+        if (drawerElement && !drawerElement.contains(event.target as Node)) {
+            setSortDrawerOpen(false);
+        }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+    };
+}, [sortDrawerOpen]);
+
+
     return (
         <tw.Container>
             <tw.MainContainer>
@@ -153,29 +169,29 @@ export default function SearchResult() {
                     />
                 </tw.SearchWrap>
 
-                <tw.SortWrap>
-                <tw.SortNowBtn onClick={handleSortDrawer}>
-                    {sortMethod}
-                    <tw.SortSvg alt="" src={require("../../assets/svg/updown_icon.svg").default} />
-                </tw.SortNowBtn>
+                <tw.UpperWrap>
+                    <tw.HotelNum></tw.HotelNum>
+                    <tw.SortWrap className="sort-wrap">
+                        <tw.SortNowBtn onClick={handleSortDrawer}>
+                            {sortMethod}
+                            <tw.SortSvg alt="" src={require("../../assets/svg/updown_icon.svg").default} />
+                        </tw.SortNowBtn>
 
-                <tw.SortDrawer $active={sortDrawerOpen}>
-                    {sortOptions.map((option, index) => (
-                        <tw.SortBtn
-                            key={option.method}
-                            className={index === 0 ? "rounded-t-xl" : index === sortOptions.length - 1 ? "rounded-b-xl" : ""}
-                            $active={sortMethod === option.method}
-                            onClick={() => handleSort(option.method)}
-                        >
-                            {option.label}
-                            {sortMethod === option.method && (
-                                <tw.SortSvg alt="selected" src={require("../../assets/svg/check_icon.svg").default} />
-                            )}
-
-                        </tw.SortBtn>
-                    ))}
-                </tw.SortDrawer>
-            </tw.SortWrap>
+                        <tw.SortDrawer $active={sortDrawerOpen}>
+                            {sortOptions.map((option, index) => (
+                                <tw.SortBtn
+                                    key={option.method}
+                                    className={index === 0 ? "rounded-t-xl" : index === sortOptions.length - 1 ? "rounded-b-xl" : ""}
+                                    $active={sortMethod === option.method}
+                                    onClick={() => handleSort(option.method)}
+                                >
+                                    {option.label}
+                                    {sortMethod === option.method && <tw.SortSvg alt="selected" src={require("../../assets/svg/check_icon.svg").default} />}
+                                </tw.SortBtn>
+                            ))}
+                        </tw.SortDrawer>
+                    </tw.SortWrap>
+                </tw.UpperWrap>
 
                 {loading ? (
                     <tw.HotelList>

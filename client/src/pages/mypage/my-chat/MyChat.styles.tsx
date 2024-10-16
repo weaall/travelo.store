@@ -10,7 +10,7 @@ mobile:mt-0`
 export const ContentsWrap = tw.div`flex flex-col w-full space-y-3 px-10
 mobile:w-full mobile:px-0`
 
-export const MsgWrap = tw.div`flex flex-col w-full rounded-2xl bg-white h-auto shadow-md border max-h-screen-32
+export const MsgWrap = tw.div`flex flex-col w-full rounded-2xl bg-white h-auto shadow-md border min-h-screen-32 max-h-screen-32
 mobile:flex mobile:border-none mobile:shadow-none min-h-60`
 
 export const ChatWrap = tw.div<UserProps>`flex my-4
@@ -44,4 +44,4 @@ export const AddTextBtn = tw.button`mt-1.5 py-1.5 px-3 inline-flex flex-shrink-0
 export const AddTextSvg = tw.img`w-6`
 export const AddTextNum = tw.p`text-end px-3 text-xs text-gray-500`
 
-export const ListWrap = tw.div`overflow-y-auto pb-3`
+export const ListWrap = tw.div`overflow-y-auto pb-6`
