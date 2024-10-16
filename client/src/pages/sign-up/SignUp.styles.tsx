@@ -16,7 +16,7 @@ export const FlexWrap = tw.div`flex justify-center items-center text-center`
 
 export const UpperTag = tw.p<UnderTagProps>`text-sm font-medium mt-3
 ${(p) => (p.$validator ? "text-black" : "text-red-400")}`;
-export const Input = tw.input<UnderTagProps>`text-sm w-full h-10 outline-none border-b border-gray-200 placeholder-gray-200
+export const Input = tw.input<UnderTagProps>`text-sm w-full h-10 outline-none border-b rounded-none border-gray-200 placeholder-gray-200
 focus:border-b-2 focus:placeholder-transparent disabled:bg-white disabled:text-gray-300
 ${(p) => (p.$validator ? "focus:border-black" : "border-red-400 focus:border-b-1")}`;
 export const UnderTag = tw.p<UnderTagProps>`text-xs font-normal h-[16px]

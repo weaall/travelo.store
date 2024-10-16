@@ -24,7 +24,7 @@ export const UpperTag = tw.p<UnderTagProps>`text-sm font-medium mt-3
 after:content-['*'] after:text-red-500 after:px-1
 ${(p) => (p.$validator ? "text-black" : "text-red-400")}`
 export const UpperTagNon = tw.label`text-sm font-medium mt-3`
-export const Input = tw.input<UnderTagProps>`text-sm w-full h-10 outline-none border-b border-gray-200 placeholder-gray-200
+export const Input = tw.input<UnderTagProps>`text-sm w-full h-10 outline-none rounded-none border-b border-gray-200 placeholder-gray-200
 focus:border-b-2 focus:placeholder-transparent disabled:bg-white disabled:text-gray-500
 ${(p) => (p.$validator ? "focus:border-black" : "border-red-400 focus:border-b-1")}`;
 export const UnderTag = tw.p<UnderTagProps>`text-xs font-normal h-[16px]

@@ -138,7 +138,10 @@ export default function SignIn() {
     return (
         <tw.Container>
             <tw.ContentsWrap>
-                <tw.ContentsLabel>travelo.store</tw.ContentsLabel>
+                <tw.LogoWrap>
+                    <tw.LogoImg src={require("../../assets/travelo_logo.png")} alt="Logo" />
+                    <tw.ContentsLabel>Journey for your tomorrow.</tw.ContentsLabel>
+                </tw.LogoWrap>
 
                 <tw.InputWrap>
                     <tw.UpperTag $validator={formValid.isEmail}>이메일 주소</tw.UpperTag>

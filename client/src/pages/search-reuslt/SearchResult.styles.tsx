@@ -12,11 +12,17 @@ export const MainContainer = tw.div`w-full h-full pb-10 px-6 mobile:px-0`
 
 export const SearchWrap = tw.div`sticky top-0 z-10`;
 
-export const SortWrap = tw.div`w-full h-12 flex justify-between mb-6 mt-2 border rounded-2xl
-mobile:mx-2 mobile:w-auto`
-export const SortBtn = tw.button<SortProps>`w-1/5 h-full 
-hover:bg-main/[0.5] hover:text-white mobile:text-xs mobile:hover:bg-main
-${(p) => (p.$active ? "bg-main text-white" : " text-black")}`;
+export const UpperWrap = tw.div`flex justify-between`
+export const HotelNum = tw.p``
+export const SortWrap = tw.div`flex flex-col text-sm items-end my-2 relative mr-2 mobile:mb-4 mobile:text-base`
+export const SortNowBtn = tw.button`flex text-end w-auto py-1`
+export const SortSvg = tw.img`ml-1 mt-[1.5px] w-5 mobile:w-[22px] mobile:mt-[2px]`
+export const SortDrawer = tw.div<SortProps>`absolute top-8 z-10 bg-white h-auto w-36 flex flex-col border rounded-xl 
+shadow-md hover:shadow-xl mobile:w-40
+${(p) => (p.$active ? "block" : "hidden")}`;
+export const SortBtn = tw.button<SortProps>`h-full w-full py-2.5 px-4 flex justify-between
+hover:bg-gray-100/[0.8] mobile:hover:bg-white
+${(p) => (p.$active ? "font-bold" : "")}`;
 
 export const HotelList = tw.div`flex flex-col gap-6
 mobile:px-2`
@@ -46,8 +52,8 @@ export const AddressSVG = tw.img`w-3`
 export const RatingWrap = tw.div`flex items-center ml-4`
 export const RatingLabel = tw.p`text-xl font-bold text-white bg-black rounded-xl px-3 py-1`
 
-export const HotelP = tw.p`text-xs`
-export const HotelComp = tw.p`text-xs bg-gray-100 py-1 px-2 rounded-lg`
+export const HotelP = tw.p`text-sm font-bold`
+export const HotelComp = tw.p`text-xs`
 
 export const HotelServWrap = tw.div`flex flex-col py-1 peer/serv`
 export const HotelServList = tw.div`flex pt-1 space-x-2 truncate`
@@ -61,7 +67,7 @@ export const TooltipFacil = tw.div`absolute flex flex-wrap top-10 mx-3 p-3 h-aut
 peer-hover/facil:opacity-100 peer-hover/facil:scale-100 
 transition-opacity duration-300 mobile:hidden`
 
-export const ToolTipText = tw.li`px-3 text-white text-sm font-bold`
+export const ToolTipText = tw.p`px-2 text-white text-sm font-medium`
 
 export const PriceWrap = tw.div`flex flex-col text-end`
 export const TotalLabel = tw.p`text-xs text-gray-400`
