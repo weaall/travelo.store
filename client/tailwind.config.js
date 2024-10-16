@@ -31,7 +31,7 @@ module.exports = {
             },
             minHeight: {
                 "screen-16": "calc(100vh - 4.1rem)",
-                "screen-32": "calc(100vh - 8.1rem)",
+                "screen-32": "calc(100vh - 146rem)",
             },
             maxHeight: {
                 "screen-16": "calc(100vh - 3.8rem)",

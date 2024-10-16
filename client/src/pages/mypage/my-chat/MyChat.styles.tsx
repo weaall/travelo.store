@@ -16,7 +16,7 @@ mobile:flex mobile:border-none mobile:shadow-none min-h-60`
 export const ChatWrap = tw.div<UserProps>`flex my-4
 ${(p) => (p.$byUser === 1 ? "flex-row-reverse" : "w-fit")}`
 
-export const Pic = tw.div`w-10 h-10 bg-gray-30 mx-4 mobile:w-12 mobile:h-12`
+export const Pic = tw.div`w-10 h-10 bg-gray-30 mx-4 mobile:mx-2`
 export const UnRegWrap = tw.div`flex h-full justify-center items-center text-2xl font-bold`
 
 export const MsgInfoWrap = tw.div`flex flex-col max-w-[55%] `
@@ -44,4 +44,4 @@ export const AddTextBtn = tw.button`mt-1.5 py-1.5 px-3 inline-flex flex-shrink-0
 export const AddTextSvg = tw.img`w-6`
 export const AddTextNum = tw.p`text-end px-3 text-xs text-gray-500`
 
-export const ListWrap = tw.div`overflow-y-auto pb-6`
+export const ListWrap = tw.div`overflow-y-auto pb-2`
