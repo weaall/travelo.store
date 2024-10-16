@@ -139,7 +139,7 @@ export default function MyChatPage() {
                                     {msg.by_user === 1 ? (
                                         <tw.AddTextSvg alt="" src={require("../../../assets/svg/user_icon.svg").default} />
                                     ) : (
-                                        <ImgLoader imageUrl={getThumbnailCFUrl(`/hotel_img/${msg.hotel_id}`)} altText="" rounded="full" />
+                                        <ImgLoader imageUrl={getThumbnailCFUrl(`/hotel_img/${id}`)} altText="" rounded="full" />
                                     )}
                                 </tw.Pic>
                                 <tw.MsgInfoWrap>
