@@ -17,7 +17,8 @@ export default function SearchResult() {
     const { searchValue, checkInDate, checkOutDate, adult, child } = useParams();
 
     const [loading, setLoading] = useState(true);
-    const [sortMethod, setSortMethod] = useState<string>("정확도순");
+    const [sortMethod, setSortMethod] = useState<string>("인기순");
+    const [sortDrawerOpen, setSortDrawerOpen] = useState<boolean>(false);
     const [hotelList, setHotelList] = useState([
         {
             hotel_id: 0,
@@ -56,6 +57,7 @@ export default function SearchResult() {
     const observer = useRef<IntersectionObserver | null>(null);
 
     const fetchSearch = useCallback(async () => {
+        setLoading(true)
         try {
             const response = await axiosInstance.get("/search", {
                 params: {
@@ -106,23 +108,34 @@ export default function SearchResult() {
         if (lastHotelElement) observer.current.observe(lastHotelElement);
     }, [loading, visibleHotels]);
 
+    const sortOptions = [
+        { method: "인기순", label: "인기순" },
+        { method: "낮은 요금순", label: "낮은 요금순" },
+        { method: "높은 요금순", label: "높은 요금순" },
+        { method: "평점순", label: "평점순" },
+        { method: "정확도순", label: "정확도순" },
+    ];
+    
+    const handleSortDrawer = () => setSortDrawerOpen(prev => !prev);
+
     const handleSort = (method: string) => {
         setSortMethod(method);
+        setSortDrawerOpen(false);
     };
 
     const sortedHotelList = [...hotelList].sort((a, b) => {
-        if (sortMethod === "정확도순") {
-            return 0; // 기본적으로 검색 결과 순서로 유지 (정확도순)
-        } else if (sortMethod === "낮은 요금순") {
-            return a.room_price.reduce((total, room) => total + room.price, 0) - b.room_price.reduce((total, room) => total + room.price, 0);
-        } else if (sortMethod === "높은 요금순") {
-            return b.room_price.reduce((total, room) => total + room.price, 0) - a.room_price.reduce((total, room) => total + room.price, 0);
-        } else if (sortMethod === "인기순") {
-            return 0; // 예시: 리뷰 수 또는 예약 수로 정렬하는 로직 추가 가능
-        } else if (sortMethod === "평점순") {
-            return b.rating - a.rating;
+        switch (sortMethod) {
+            case "낮은 요금순":
+                return a.room_price.reduce((total, room) => total + room.price, 0) - b.room_price.reduce((total, room) => total + room.price, 0);
+            case "높은 요금순":
+                return b.room_price.reduce((total, room) => total + room.price, 0) - a.room_price.reduce((total, room) => total + room.price, 0);
+            case "평점순":
+                return b.rating - a.rating;
+            case "정확도순":
+            case "인기순":
+            default:
+                return 0;
         }
-        return 0;
     });
 
     const currentHotels = sortedHotelList.slice(0, visibleHotels);
@@ -141,22 +154,28 @@ export default function SearchResult() {
                 </tw.SearchWrap>
 
                 <tw.SortWrap>
-                    <tw.SortBtn className="rounded-l-2xl" $active={sortMethod === "정확도순"} onClick={() => handleSort("정확도순")}>
-                        정확도순
-                    </tw.SortBtn>
-                    <tw.SortBtn $active={sortMethod === "낮은 요금순"} onClick={() => handleSort("낮은 요금순")}>
-                        낮은 요금순
-                    </tw.SortBtn>
-                    <tw.SortBtn $active={sortMethod === "높은 요금순"} onClick={() => handleSort("높은 요금순")}>
-                        높은 요금순
-                    </tw.SortBtn>
-                    <tw.SortBtn $active={sortMethod === "인기순"} onClick={() => handleSort("인기순")}>
-                        인기순
-                    </tw.SortBtn>
-                    <tw.SortBtn className="rounded-r-2xl" $active={sortMethod === "평점순"} onClick={() => handleSort("평점순")}>
-                        평점순
-                    </tw.SortBtn>
-                </tw.SortWrap>
+                <tw.SortNowBtn onClick={handleSortDrawer}>
+                    {sortMethod}
+                    <tw.SortSvg alt="" src={require("../../assets/svg/updown_icon.svg").default} />
+                </tw.SortNowBtn>
+
+                <tw.SortDrawer $active={sortDrawerOpen}>
+                    {sortOptions.map((option, index) => (
+                        <tw.SortBtn
+                            key={option.method}
+                            className={index === 0 ? "rounded-t-xl" : index === sortOptions.length - 1 ? "rounded-b-xl" : ""}
+                            $active={sortMethod === option.method}
+                            onClick={() => handleSort(option.method)}
+                        >
+                            {option.label}
+                            {sortMethod === option.method && (
+                                <tw.SortSvg alt="selected" src={require("../../assets/svg/check_icon.svg").default} />
+                            )}
+
+                        </tw.SortBtn>
+                    ))}
+                </tw.SortDrawer>
+            </tw.SortWrap>
 
                 {loading ? (
                     <tw.HotelList>

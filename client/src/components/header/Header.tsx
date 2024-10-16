@@ -34,14 +34,13 @@ export default function Header() {
         setIsHotelMgmtModalOpen(false);
     };
 
-    const navTitleMapping: { [key: string]: string } = {
-        "/": "travelo.store",
-        "/signin": "로그인",
-        "/signup": "가입하기",
-        "/hotel/mgmt/*": "숙소관리",
+    const navTitleMapping: { [key: string]: { type: "text" | "image"; value: string } } = {
+        "/": { type: "image", value: require("../../assets/travelo_logo.png") },
+        "/signup": { type: "text", value: "가입하기" },
+        "/hotel/mgmt/*": { type: "text", value: "숙소관리" },
     };
-
-    const getNavTitle = (path: string): string => {
+    
+    const getNavTitle = (path: string): { type: "text" | "image"; value: string } => {
         if (navTitleMapping[path]) {
             return navTitleMapping[path];
         }
@@ -50,7 +49,7 @@ export default function Header() {
                 return navTitleMapping[key];
             }
         }
-        return "travelo.store";
+        return { type: "image", value: require("../../assets/travelo_logo.png") }; 
     };
 
     const navTitle = useMemo(() => getNavTitle(location.pathname), [location.pathname]);
@@ -115,7 +114,13 @@ export default function Header() {
                     <tw.ActiveBtn onClick={handleBackClick}>
                         {isRoot ? null : <tw.BackSvg alt="back" src={require("../../assets/svg/arrow_left_short.svg").default} />}
                     </tw.ActiveBtn>
-                    <tw.NavHome onClick={() => navigateClick("/")}>{navTitle}</tw.NavHome>
+                    <tw.NavHome onClick={() => navigateClick("/")}>
+                    {navTitle.type === "text" ? (
+                        navTitle.value
+                    ) : (
+                        <tw.NavImg src={navTitle.value} alt="Logo" />
+                    )}
+                    </tw.NavHome>
                     {!isSignIn ? (
                         <tw.SignInBtn onClick={() => navigateClick("/signin")}>로그인</tw.SignInBtn>
                     ) : (
