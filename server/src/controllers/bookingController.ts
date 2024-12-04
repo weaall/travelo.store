@@ -2,7 +2,7 @@ import { Response, Request } from "express";
 import { JWTCheck, RoomPriceRows } from "../interface/interfaces";
 import bookingService from "../services/bookingService";
 import roomService from "../services/roomService";
-import { getRedis, msetRedis1D, setRedis, setRedis1D } from "../utils/redisUtils";
+import { getRedis, msetRedis1D, setRedis1D } from "../utils/redisUtils";
 import dayjs from "dayjs";
 import CustomError from "../utils/customError";
 import msgService from "../services/msgService";
@@ -68,7 +68,7 @@ const bookingController = {
             if (redisData === null) {
                 const data = await bookingService.getBookingById(req.user.id, req.params.id);
 
-                setRedis(key, data);
+                setRedis1D(key, data);
 
                 res.status(200).json({
                     error: null,

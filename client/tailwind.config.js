@@ -30,7 +30,7 @@ module.exports = {
                 apple: ['"Apple SD Gothic Neo"', "Noto Sans KR", "sans-serif"],
             },
             minHeight: {
-                "screen-16": "calc(100vh - 4.1rem)",
+                "screen-16": "calc(100vh - 15rem)",
                 "screen-32": "calc(100vh - 146rem)",
             },
             maxHeight: {

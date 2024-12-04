@@ -1,6 +1,6 @@
 import { Response, Request } from "express";
 import searchService from "../services/searchService";
-import { getRedis, setRedis, setRedis1D, setRedis1H } from "../utils/redisUtils";
+import { getRedis, setRedis1D, setRedis1H } from "../utils/redisUtils";
 import dayjs from "dayjs";
 import { RoomPriceRows } from "../interface/interfaces";
 import { getSearchRows, priceFilter } from "../interface/mysql.interface";

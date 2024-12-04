@@ -10,7 +10,7 @@ export const ContentsFlex = tw.div`h-auto w-auto flex items-center`
 
 export const MainContainer = tw.div`w-full h-full pb-10 px-6 mobile:px-0`
 
-export const SearchWrap = tw.div`sticky top-0 z-10`;
+export const SearchWrap = tw.div`sticky top-0 z-20`;
 
 export const UpperWrap = tw.div`flex justify-between`
 export const HotelNum = tw.p``

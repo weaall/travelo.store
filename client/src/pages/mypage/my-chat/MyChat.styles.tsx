@@ -10,8 +10,19 @@ mobile:mt-0`
 export const ContentsWrap = tw.div`flex flex-col w-full space-y-3 px-10
 mobile:w-full mobile:px-0`
 
-export const MsgWrap = tw.div`flex flex-col w-full rounded-2xl bg-white h-auto shadow-md border min-h-screen-32 max-h-screen-32
-mobile:flex mobile:border-none mobile:shadow-none min-h-60`
+export const MsgWrap = tw.div`flex flex-col w-full rounded-2xl bg-white h-auto shadow-md border min-h-screen-16 max-h-screen-32
+mobile:flex mobile:border-none mobile:shadow-none`
+
+export const ChatWrapLoading = tw.div`flex my-4 w-fit`
+export const PicLoading = tw.div`w-10 h-10 bg-gray-30 mx-4 mobile:mx-2 rounded-full
+bg-gradient-to-r from-darkGray via-midGray to-lightGray bg-300% animate-gradient`
+export const MsgInfoWrapLoading = tw.div`flex flex-col max-w-[55%]`
+export const NameLoading = tw.div`w-20 h-5 my-1 rounded-[4px]
+bg-gradient-to-r from-darkGray via-midGray to-lightGray bg-300% animate-gradient`
+export const TextWrapLoading = tw.div`bg-main/[0.9] mt-2 p-4 rounded-xl whitespace-pre-line w-fit inline-block text-white
+bg-gradient-to-r from-darkGray via-midGray to-lightGray bg-300% animate-gradient h-80 w-52`
+export const TimeWrapLoading = tw.div`flex-col text-end mt-auto ml-2 mr-4
+bg-gradient-to-r from-darkGray via-midGray to-lightGray bg-300% animate-gradient`
 
 export const ChatWrap = tw.div<UserProps>`flex my-4
 ${(p) => (p.$byUser === 1 ? "flex-row-reverse" : "w-fit")}`
@@ -44,4 +55,4 @@ export const AddTextBtn = tw.button`mt-1.5 py-1.5 px-3 inline-flex flex-shrink-0
 export const AddTextSvg = tw.img`w-6`
 export const AddTextNum = tw.p`text-end px-3 text-xs text-gray-500`
 
-export const ListWrap = tw.div`overflow-y-auto pb-2`
+export const ListWrap = tw.div`overflow-y-auto pb-2 min-h-screen-16`

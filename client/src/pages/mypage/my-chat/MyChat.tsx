@@ -3,7 +3,6 @@ import * as tw from "./MyChat.styles";
 import { sendJWT } from "../../../utils/jwtUtils";
 import { axios, axiosInstance, handleAxiosError } from "../../../utils/axios.utils";
 import { useNavigate, useParams } from "react-router-dom";
-import Loading from "../../../components/loading/Loading";
 import ImgLoader from "../../../utils/imgLoader";
 import { msgDateFormat } from "../../../utils/msg.utils";
 import { decrypt } from "../../../utils/cryptoJs";
@@ -25,6 +24,7 @@ export default function MyChatPage() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [msgList, setMsgList] = useState<MsgList[]>([]);
+
     const [hotelData, setHotelData] = useState<HotelData>();
     const [text, setText] = useState("");
 
@@ -124,14 +124,22 @@ export default function MyChatPage() {
 
     const textarea = useRef<HTMLTextAreaElement>(null);
 
-    if (loading) {
-        return <Loading />;
-    }
-
     return (
         <tw.Container>
             <tw.ContentsWrap>
                 <tw.MsgWrap>
+                {loading ? (
+                    <tw.ListWrap>
+                        <tw.ChatWrapLoading>
+                            <tw.PicLoading />
+                            <tw.MsgInfoWrapLoading>
+                                <tw.NameLoading />
+                                <tw.TextWrapLoading />
+                            </tw.MsgInfoWrapLoading>
+                            <tw.TimeWrapLoading />
+                        </tw.ChatWrapLoading>
+                    </tw.ListWrap>
+                ) : (
                     <tw.ListWrap ref={listWrapRef}>
                         {msgList.map((msg) => (
                             <tw.ChatWrap key={msg.created_at} $byUser={msg.by_user}>
@@ -154,6 +162,7 @@ export default function MyChatPage() {
                             </tw.ChatWrap>
                         ))}
                     </tw.ListWrap>
+                )}
                     <tw.AddTextWrap>
                         <tw.AddTextBox>
                             <tw.AddTextField ref={textarea} onInput={handleResizeHeight} rows={1} value={text} onChange={handleTextChange}></tw.AddTextField>
