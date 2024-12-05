@@ -133,18 +133,18 @@ module.exports = {
                 },
                 mobileModal30: {
                     from: {
-                        transform: "translate(-50%, 100%)",
+                        transform: "translate(-50%, 60%)",
                     },
                     to: {
-                        transform: "translate(-50%, 20%)",
+                        transform: "translate(-50%, 10%)",
                     },
                 },
                 closeMobileModal30: {
                     from: {
-                        transform: "translate(-50%, 20%)",
+                        transform: "translate(-50%, 10%)",
                     },
                     to: {
-                        transform: "translate(-50%, 100%)",
+                        transform: "translate(-50%, 60%)",
                     },
                 },
             },

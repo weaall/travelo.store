@@ -41,7 +41,8 @@ export default function ConfirmEmailModal({ onClose, verification } : ModalProps
         <tw.Container $isClosing={isClosing}>
             <tw.ModalWrap $isClosing={isClosing}>
                 <tw.ContentsWrap>
-                    <tw.Message>이메일 인증</tw.Message>
+                    <tw.Title>이메일 인증</tw.Title>
+                    <tw.Label>인증번호 6자리를 입력해주세요.</tw.Label>
                     <tw.Input maxLength={6} value={inputValue} onChange={handleInputChange} />
                     <tw.UnderTag $valid={codeValid} >인증번호가 일치하지 않습니다.</tw.UnderTag>
                     <tw.BtnWrap>

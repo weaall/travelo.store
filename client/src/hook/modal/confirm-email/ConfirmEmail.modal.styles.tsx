@@ -22,7 +22,8 @@ mobile:min-w-full mobile:h-auto mobile:rounded-t-2xl mobile:mt-6`
 
 export const ContentsWrap = tw.div`flex flex-col items-center`;
 
-export const Message = tw.p`font-medium text-lg text-center pb-6 truncate mobile:text-xl`;
+export const Title = tw.p`font-medium text-lg text-center pb-6 truncate mobile:text-xl`;
+export const Label = tw.p`text-xs pb-2`
 
 export const Input = tw.input`w-[70%] py-2 mb-4 text-xl px-4 border rounded-xl text-center`
 export const UnderTag = tw.label<UnderTagProps>`w-auto text-center text-red-500 text-sm
