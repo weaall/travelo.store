@@ -9,7 +9,7 @@ export const Container = tw.div`flex flex-col items-center py-4`
 export const MainContainer = tw.div`flex flex-col w-full justify-center space-y-8`
 
 export const MobileContainer = tw.div`flex flex-col justify-center 
-mobile:min-h-screen-16 mobile:relative mobile:w-full mobile:px-2`
+mobile:min-h-screen-3 mobile:relative mobile:w-full mobile:px-2`
 
 export const SearchContainer = tw.div`flex shadow-md rounded-md p-1 h-14 border mx-6
 mobile:w-full mobile:py-4 mobile:h-auto mobile:border-none mobile:mx-0 mobile:-translate-y-12 
