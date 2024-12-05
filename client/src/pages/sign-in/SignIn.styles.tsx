@@ -7,7 +7,7 @@ interface SignInBtnProps {
     $validator: boolean
 }
 
-export const Container = tw.div`min-h-screen-16 w-full flex flex-col items-center justify-center`
+export const Container = tw.div`min-h-screen-4 w-full flex flex-col items-center justify-center`
 
 export const ContentsWrap = tw.div`max-w-[480px] px-8 w-full flex flex-col pb-6`
 

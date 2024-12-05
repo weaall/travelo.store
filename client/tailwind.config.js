@@ -32,6 +32,7 @@ module.exports = {
             minHeight: {
                 "screen-16": "calc(100vh - 15rem)",
                 "screen-3": "calc(100vh - 3rem)",
+                "screen-4": "calc(100vh - 4.1rem)",
             },
             maxHeight: {
                 "screen-16": "calc(100vh - 3.8rem)",
@@ -130,6 +131,22 @@ module.exports = {
                         transform: "translate(-50%, 0)",
                     },
                 },
+                mobileModal30: {
+                    from: {
+                        transform: "translate(-50%, 100%)",
+                    },
+                    to: {
+                        transform: "translate(-50%, 20%)",
+                    },
+                },
+                closeMobileModal30: {
+                    from: {
+                        transform: "translate(-50%, 20%)",
+                    },
+                    to: {
+                        transform: "translate(-50%, 100%)",
+                    },
+                },
             },
             animation: {
                 modal: "modal 0.5s ease-out forwards",
@@ -141,6 +158,8 @@ module.exports = {
                 closeDrawer: "closeDrawer 0.5s ease-out forwards",
                 mobileModal: "mobileModal 0.5s ease-out forwards",
                 closeMobileModal: "closeMobileModal 0.5s ease-out forwards",
+                mobileModal30: "mobileModal30 0.5s ease-out forwards",
+                closeMobileModal30: "closeMobileModal30 0.5s ease-out forwards",
             },
             backgroundSize: {
                 "300%": "300%",
