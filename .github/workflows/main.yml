@@ -51,3 +51,41 @@ jobs:
         IMAGE_URI="public.ecr.aws/e7u1o0y0/weaall/travelo"
         docker push "${IMAGE_URI}:client-latest"
         docker push "${IMAGE_URI}:server-latest"
+
+    # 8. ECS 태스크 정의 업데이트
+    - name: Register new ECS task definition
+      id: task-def
+      run: |
+        FAMILY="travelo-task"
+        CONTAINER_DEFINITIONS=$(cat <<EOF
+        [
+          {
+            "name": "client",
+            "image": "public.ecr.aws/e7u1o0y0/weaall/travelo:client-latest",
+            "memory": 512,
+            "cpu": 256,
+            "essential": true
+          },
+          {
+            "name": "server",
+            "image": "public.ecr.aws/e7u1o0y0/weaall/travelo:server-latest",
+            "memory": 512,
+            "cpu": 256,
+            "essential": true
+          }
+        ]
+        EOF
+        )
+        echo "{\"family\": \"${FAMILY}\", \"containerDefinitions\": ${CONTAINER_DEFINITIONS}}" > task-def.json
+        aws ecs register-task-definition --cli-input-json file://task-def.json > task-def-output.json
+        TASK_REVISION=$(jq -r '.taskDefinition.taskDefinitionArn' < task-def-output.json)
+        echo "task-revision=${TASK_REVISION}" >> $GITHUB_ENV
+
+    # 9. ECS 서비스 업데이트
+    - name: Update ECS service
+      run: |
+        SERVICE_NAME="${{ env.ECS_SERVICE_NAME }}"
+        CLUSTER_NAME="${{ env.ECS_CLUSTER_NAME }}"
+        aws ecs update-service --cluster $CLUSTER_NAME --service $SERVICE_NAME --task-definition ${{ env.task-revision }}
+        aws ecs wait services-stable --cluster $CLUSTER_NAME --services $SERVICE_NAME
+
