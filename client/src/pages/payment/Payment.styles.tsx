@@ -24,7 +24,7 @@ export const UnRegWrap = tw.div`flex h-full justify-center items-center text-2xl
 
 export const Label = tw.p`text-xl font-semibold mb-4`
 
-export const OuterWrap = tw.div`flex flex-col border mx-1 p-4 gap-2`
+export const OuterWrap = tw.div`flex flex-col border mx-1 p-4 gap-2 h-[350px] justify-center mobile:h-auto`
 export const HotelInfoWrap = tw.div`space-y-1`
 export const HotelTitle = tw.p`text-base font-medium truncate
 mobile:text-lg`
@@ -48,7 +48,7 @@ export const RoomLabel = tw.p`text-sm text-gray`
 export const RoomText = tw.p`text-xs text-gray-400
 mobile:text-xs`
 
-export const PriceWrap = tw.div`flex flex-col mx-1 border p-5`
+export const PriceWrap = tw.div`flex flex-col mx-1 border px-5 justify-center h-[170px] mobile:h-auto mobile:py-5`
 export const PriceRow = tw.div`flex justify-between py-1`
 export const PriceLabel = tw.p`text-sm text-gray-600`
 export const TotalPriceRow = tw.div`flex justify-between border-t mt-3 pt-3`
