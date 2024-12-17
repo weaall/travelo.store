@@ -16,13 +16,32 @@ const fetchImage = async (url: string): Promise<Blob> => {
     return response.blob();
 };
 
+const registerServiceWorker = () => {
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker
+                .register('/service-worker.js')
+                .then((registration) => {
+                    console.log('Service Worker registered with scope:', registration.scope);
+                })
+                .catch((error) => {
+                    console.log('Service Worker registration failed:', error);
+                });
+        });
+    }
+};
+
 export default function ImgLoader({ imageUrl, altText, rounded }: ImageLoaderProps) {
     const cloudFrontUrl = S3UrlToCFUrl(imageUrl);
+
+    useEffect(() => {
+        registerServiceWorker();
+    }, []);
 
     const { data: imageBlob, isError } = useQuery<Blob, Error>({
         queryKey: ["image", cloudFrontUrl],
         queryFn: () => fetchImage(cloudFrontUrl),
-        gcTime: Infinity,
+        gcTime: 24 * 60 * 60 * 1000,
     });
 
     const [imageSrc, setImageSrc] = useState<string | null>(null);
