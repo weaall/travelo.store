@@ -8,13 +8,12 @@ self.addEventListener("install", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
-    // 이미지 요청일 경우만 처리
     if (
         event.request.url.endsWith(".jpg") ||
         event.request.url.endsWith(".png") ||
         event.request.url.endsWith(".gif") ||
         event.request.url.endsWith(".jpeg") ||
-        event.request.url.endsWith(".svg")
+        event.request.url.endsWith(".svg") 
     ) {
         event.respondWith(
             caches.match(event.request).then((cachedResponse) => {

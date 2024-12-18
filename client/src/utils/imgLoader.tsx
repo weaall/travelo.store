@@ -70,7 +70,6 @@ export default function ImgLoader({ imageUrl, altText, rounded }: ImageLoaderPro
             className={`w-full h-full object-cover ${rounded ? `rounded-${rounded}` : ""}`}
             src={imageSrc}
             alt={altText}
-            srcSet={`${cloudFrontUrl}`}
             loading="lazy"
         />
     );
