@@ -17,15 +17,15 @@ const fetchImage = async (url: string): Promise<Blob> => {
 };
 
 const registerServiceWorker = () => {
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
+    if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
             navigator.serviceWorker
-                .register('/service-worker.js')
+                .register("/service-worker.js")
                 .then((registration) => {
-                    console.log('Service Worker registered with scope:', registration.scope);
+                    console.log("Service Worker registered with scope:", registration.scope);
                 })
                 .catch((error) => {
-                    console.log('Service Worker registration failed:', error);
+                    console.log("Service Worker registration failed:", error);
                 });
         });
     }
@@ -34,11 +34,7 @@ const registerServiceWorker = () => {
 export default function ImgLoader({ imageUrl, altText, rounded }: ImageLoaderProps) {
     const cloudFrontUrl = S3UrlToCFUrl(imageUrl);
 
-    useEffect(() => {
-        registerServiceWorker();
-    }, []);
-
-    const { data: imageBlob, isError } = useQuery<Blob, Error>({
+    const { data: imageBlob, isError, isLoading } = useQuery<Blob, Error>({
         queryKey: ["image", cloudFrontUrl],
         queryFn: () => fetchImage(cloudFrontUrl),
         gcTime: 24 * 60 * 60 * 1000,
@@ -47,22 +43,36 @@ export default function ImgLoader({ imageUrl, altText, rounded }: ImageLoaderPro
     const [imageSrc, setImageSrc] = useState<string | null>(null);
 
     useEffect(() => {
+        registerServiceWorker();
+
         if (imageBlob) {
             const objectUrl = URL.createObjectURL(imageBlob);
             setImageSrc(objectUrl);
+
+            if (navigator.serviceWorker?.controller) {
+                navigator.serviceWorker.controller.postMessage({
+                    type: "CACHE_BLOB",
+                    url: cloudFrontUrl,
+                    blob: imageBlob,
+                });
+            }
 
             return () => {
                 URL.revokeObjectURL(objectUrl);
             };
         }
-    }, [imageBlob]);
+    }, [imageBlob, cloudFrontUrl]);
 
-    if (!imageSrc) {
-        return <div className={`flex h-full justify-center items-center text-2xl font-bold`}></div>;
+    if (isLoading) {
+        return <div className="flex h-full justify-center items-center text-2xl font-bold"></div>;
     }
 
     if (isError) {
-        return <div className={`flex h-full justify-center items-center text-2xl font-bold`}>미등록</div>;
+        return <div className="flex h-full justify-center items-center text-2xl font-bold"></div>;
+    }
+
+    if (!imageSrc) {
+        return <div className="flex h-full justify-center items-center text-2xl font-bold"></div>;
     }
 
     return (

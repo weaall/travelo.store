@@ -1,9 +1,8 @@
-// service-worker.js
 self.addEventListener("install", (event) => {
     event.waitUntil(
-        caches.open("image-cache").then((cache) => {
+        caches.open("image-cache").then(() => {
             console.log("Service Worker Installed");
-        }),
+        })
     );
 });
 
@@ -13,23 +12,36 @@ self.addEventListener("fetch", (event) => {
         event.request.url.endsWith(".png") ||
         event.request.url.endsWith(".gif") ||
         event.request.url.endsWith(".jpeg") ||
-        event.request.url.endsWith(".svg") 
+        event.request.url.endsWith(".svg")
     ) {
+        console.log("Intercepted fetch:", event.request.url);
+
         event.respondWith(
             caches.match(event.request).then((cachedResponse) => {
                 if (cachedResponse) {
-                    // 캐시된 이미지를 반환할 때 로그 출력
-                    console.log("Returning cached image:", event.request.url);
-                    return cachedResponse; // 캐시에서 이미지 반환
+                    console.log("Serving cached response:", event.request.url);
+                    return cachedResponse;
                 }
-                // 캐시가 없으면 네트워크 요청 후 캐시 저장
                 return fetch(event.request).then((networkResponse) => {
                     return caches.open("image-cache").then((cache) => {
-                        cache.put(event.request, networkResponse.clone()); // 네트워크 응답 캐시 저장
+                        cache.put(event.request, networkResponse.clone());
                         return networkResponse;
                     });
                 });
-            }),
+            })
         );
+    }
+});
+
+self.addEventListener("message", async (event) => {
+    if (event.data.type === "CACHE_BLOB") {
+        const { url, blob } = event.data;
+
+        const response = new Response(blob);
+
+        const cache = await caches.open("image-cache");
+        await cache.put(url, response);
+
+        console.log(`Blob cached for ${url}`);
     }
 });
